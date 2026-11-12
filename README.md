@@ -10,6 +10,12 @@ Filtros ilustrados y rutas offline comparten cuatro paisajes regionales. El HTML
 
 Aplicación web de turismo sostenible y personalizado en Ecuador, diseñada para wambras y negocios locales.
 
+## Trabajar en equipo
+
+[![Abrir en GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/Leonel19-git/chulla-vida)
+
+Abre el proyecto en el navegador sin instalar nada: Codespaces instala las dependencias y arranca la app. Para hacer cambios con ramas y Pull Requests, organizar tareas y revisar antes de unir, sigue [CONTRIBUTING.md](CONTRIBUTING.md).
+
 ## Ejecutar
 
 Requiere Node.js y npm.

@@ -1,0 +1,26 @@
+{
+  "name": "CHULLA VIDA",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:24-bookworm",
+  "containerEnv": {
+    "__VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS": ".app.github.dev"
+  },
+  "postCreateCommand": "npm ci",
+  "postAttachCommand": {
+    "app": "npm run dev"
+  },
+  "forwardPorts": [5173],
+  "portsAttributes": {
+    "5173": {
+      "label": "CHULLA VIDA",
+      "onAutoForward": "openBrowser"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "bradlc.vscode-tailwindcss",
+        "oxc.oxc-vscode"
+      ]
+    }
+  }
+}
