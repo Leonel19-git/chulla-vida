@@ -85,3 +85,10 @@
     opacity: 1;
   }
 }
+
+.animated-logo .brand-logo-tagline {
+  font-family: "Plus Jakarta Sans", system-ui, sans-serif;
+  font-size: 46px;
+  font-weight: 700;
+  fill: #062c5e;
+}

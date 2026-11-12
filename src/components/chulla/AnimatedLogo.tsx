@@ -93,6 +93,11 @@ export function AnimatedLogo({ variant = 'intro', paused = false, forceMotion = 
     <g className="brand-logo-piece brand-logo-forest"><image {...imageProps} clipPath={clip('forest')} mask={clip('outside-sun')} /></g>
     <g className="brand-logo-piece brand-logo-land"><image {...imageProps} clipPath={clip('land')} mask={clip('outside-sun')} /></g>
     <g className="brand-logo-piece brand-logo-sun-arrival"><image {...imageProps} className="brand-logo-sun" clipPath={clip('sun')} /></g>
-    <g className="brand-logo-wordmark"><image {...imageProps} clipPath={clip('wordmark')} /></g>
+    <g className="brand-logo-wordmark">
+      <image {...imageProps} clipPath={clip('wordmark')} />
+      {/* The supplied raster misspells its tagline; this band redraws that one line over it. */}
+      <rect x="90" y="924" width="1095" height="56" fill="#fefdfb" />
+      <text className="brand-logo-tagline" x="636.5" y="968" textAnchor="middle" textLength="1004" lengthAdjust="spacing">TURISMO SOSTENIBLE Y CONSCIENTE</text>
+    </g>
   </svg>;
 }

@@ -123,7 +123,7 @@ Checkout pairs its form with a 243px summary; below 700px the summary moves abov
 
 ## Components and interaction
 
-- **Logo:** AnimatedLogo clips the unchanged supplied raster into four landscape pieces, sun and wordmark, registered in SVG. The pieces assemble individually; the actual sun rotates. Preserve the original artwork, proportions and seam registration.
+- **Logo:** AnimatedLogo clips the unchanged supplied raster into four landscape pieces, sun and wordmark, registered in SVG. The pieces assemble individually; the actual sun rotates. Preserve the original artwork, proportions and seam registration. The supplied raster misspells its tagline («CONSCISTENTE»); AnimatedLogo redraws that single line as live text, «TURISMO SOSTENIBLE Y CONSCIENTE», over a paper band. The PNG file itself stays untouched.
 - **Cards:** photograph, province/locality, title, duration/adventure/group icons with text, price and “Conocer”. No description paragraph. Navy headings, turquoise facts and a red saved heart express brand color through useful states.
 - **Details:** tabs “Lo esencial”, “Incluye” and “Ve pilas” keep context concise; story, expenses and FAQs expand on request. Keep reference-image and demo-price disclosure.
 - **Planner:** eight steps retain checked choices, tabular totals, bounded counters and a desktop recap. Origin offers 28 Ecuadorian cities plus custom input. Group budget starts at $20, with $20/$50/$150/$500 presets in a mobile two-column grid. The catalog has 28 destinations; added ideas carry indicative prices and no fabricated verification or contact details.
