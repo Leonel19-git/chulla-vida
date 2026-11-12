@@ -1,0 +1,532 @@
+/* CHULLA VIDA · natural paper, páramo green and warm clay.
+   Final material and reading scale; component layouts retain their own behavior. */
+:root {
+  --ink: #28372d;
+  --navy: #28372d;
+  --teal: #304a36;
+  --teal-dark: #233d2a;
+  --cream: #f3efe5;
+  --paper: #fffdf8;
+  --muted: #5e6658;
+  --line: #ddd8cb;
+  --andes-clay: #995137;
+  --andes-clay-dark: #7f402d;
+  --andes-sage: #e9eddf;
+  --andes-linen: #eee8db;
+  --andes-clay-wash: #f3e7df;
+}
+body { background: var(--cream); }
+.sidebar { border-color: #dcd7c9; }
+.sidebar-mode { font-size: 12px; padding-bottom: 22px; }
+.main-navigation { gap: 7px; }
+.main-navigation > button { font-size: 13px; min-height: 48px; border-radius: 11px; }
+.main-navigation > button.active { background: #e6ebdd; }
+.nav-count { font-size: 11px; border-radius: 6px; }
+.sidebar-ethos { border-radius: 16px; background: #eee9d9; padding: 24px 20px; }
+.sidebar-ethos h3 { font-size: 29px; line-height: 1.12; }
+.sidebar-ethos p { font-size: 12px; line-height: 1.75; }
+.sidebar-help, .replay-intro { font-size: 12px; min-height: 44px; }
+.sidebar-country { font-size: 10px; letter-spacing: 0; }
+.topbar { height: 82px; background: #fffdf8; }
+.topbar-title { font-size: 14px; }
+.topbar-greeting { font-size: 12px; color: var(--muted); }
+.business-switch { font-size: 12px; min-height: 40px; border-radius: 10px; }
+.header-intro { font-size: 12px; min-height: 40px; border-radius: 10px; }
+.icon-button { border-radius: 10px; min-width: 36px; min-height: 36px; }
+.profile-avatar { width: 36px; height: 36px; }
+.header-popover { border-radius: 17px; padding: 23px; }
+.header-popover h2 { font-size: 17px; }
+.header-popover small, .profile-popover > p { font-size: 12px; line-height: 1.7; }
+.profile-popover strong, .notification-item strong { font-size: 13px; }
+.notification-item p { font-size: 12px; }
+.button { border-radius: 11px; font-size: 13px; }
+.text-button { font-size: 12px; }
+.field { font-size: 13px; border-radius: 10px; border-color: #cfcabb; min-height: 46px; }
+.field-label { font-size: 13px; }
+.small-note { font-size: 12px; line-height: 1.8; }
+.form-error { font-size: 13px; }
+
+/* Landscape and discovery. */
+.main-content { padding-top: 30px; }
+.discovery-hero { height: 380px; border-radius: 22px; box-shadow: 0 8px 24px rgb(58 50 30 / 9%); }
+.hero-photo { filter: saturate(.94); }
+.hero-shade { background: linear-gradient(90deg, rgb(25 39 27 / 88%), rgb(25 39 27 / 52%) 49%, rgb(25 39 27 / 3%) 88%); }
+.hero-copy { padding: 43px 43px 32px; width: 76%; }
+.hero-copy h1 { font-size: clamp(45px, 4.2vw, 62px); line-height: 1.04; font-weight: 450; letter-spacing: -.025em; }
+.hero-copy > p { color: #f5f3e8; font-size: 14px; line-height: 1.8; margin: 18px 0 21px; }
+.hero-button { font-size: 13px; min-height: 46px; padding: 12px 18px; }
+.hero-watch { font-size: 12px; min-height: 44px; }
+.hero-note { font-size: 11px; color: #f0ead8; padding-top: 18px; }
+.hero-location { font-size: 11px; padding: 9px 13px; bottom: 22px; right: 23px; }
+.trip-strip { margin-top: 18px; padding: 23px; border-radius: 16px; gap: 15px; box-shadow: 0 3px 10px rgb(62 51 30 / 3%); }
+.trip-strip-label strong { font-size: 14px; }
+.trip-strip-label > span, .trip-strip-values { font-size: 12px; color: var(--muted); }
+.trip-strip > .text-button { font-size: 12px; }
+.discovery-section { margin-top: 42px; }
+.section-heading { margin-bottom: 25px; }
+.section-heading h2 { font: 500 35px/1.15 Newsreader, Georgia, serif; letter-spacing: -.025em; }
+.section-heading p { font-size: 13px; line-height: 1.75; color: var(--muted); }
+.catalog-note { font-size: 11px; }
+.region-tabs { gap: 7px; flex-wrap: wrap; }
+.region-tabs > button { font-size: 12px; min-height: 42px; padding: 10px 15px; border-radius: 24px; color: #58614e; }
+.region-tabs > button.active { background: var(--andes-clay); color: #fff; }
+.filter-button { font-size: 12px; min-height: 42px; border-radius: 24px; padding: 10px 15px; }
+.search-sort { margin-top: 18px; gap: 18px; }
+.search-field { min-height: 48px; height: 48px; border-color: #d5cebd; border-radius: 12px; padding-inline: 15px; }
+.search-field > input { font-size: 13px; }
+.sort-field, .sort-field select { font-size: 12px; color: #525e4b; }
+.sort-field select { max-width: 140px; }
+.discovery-filters { border-radius: 16px; padding: 17px 20px 20px; gap: 16px; }
+.discovery-filters .field-label { font-size: 12px; line-height: 1.7; }
+.discovery-filters .field { font-size: 13px; }
+.results-count { margin: 21px 0 16px; font-size: 12px; color: var(--muted); line-height: 1.6; gap: 14px; }
+.results-count .text-button { font-size: 12px; }
+.experience-grid { gap: 24px; }
+.experience-card { border-radius: 19px; border-color: #ddd6c5; box-shadow: 0 4px 13px rgb(63 51 28 / 4%); }
+.experience-card:hover { border-color: #b4b69c; box-shadow: 0 7px 24px rgb(63 51 28 / 9%); }
+.experience-photo { height: 200px; }
+.region-label { top: 14px; left: 14px; font-size: 11px; border-radius: 20px; padding: 6px 11px; background: #fffdf5f2; }
+.save-button { top: 12px; right: 12px; height: 37px; width: 37px; }
+.save-button svg { height: 18px; width: 18px; }
+.experience-body { padding: 19px 19px 17px; }
+.place-location { font-size: 11px; color: #59664f; line-height: 1.7; }
+.place-location svg { width: 13px; height: 13px; }
+.experience-body h3 { font-size: 18px; font-weight: 700; line-height: 1.35; margin-top: 9px; letter-spacing: -.025em; min-height: 0; }
+.experience-description { font-size: 13px; line-height: 1.75; min-height: 45px; margin-top: 10px; color: #5e6658; }
+.experience-meta { font-size: 12px; gap: 17px; padding-top: 16px; color: #57674e; flex-wrap: wrap; }
+.experience-meta svg { width: 14px; height: 14px; }
+.experience-bottom { margin-top: 17px; padding-top: 14px; gap: 10px; }
+.experience-price { display: flex; flex-direction: column; gap: 3px; }
+.experience-bottom strong { font-size: 25px; line-height: 1.15; letter-spacing: -.035em; }
+.experience-bottom small { font-size: 11px; line-height: 1.5; color: var(--muted); }
+.experience-link { display: inline-flex; align-items: center; justify-content: center; gap: 7px; border: 1px solid #c8ccba; border-radius: 24px; padding: 10px 13px; min-height: 42px; font-size: 12px; font-weight: 650; color: var(--teal); background: #f4f4e9; flex-shrink: 0; }
+.experience-link:hover { border-color: var(--teal); color: #fffdf8; background: var(--teal); }
+.experience-link > svg { transition: transform 180ms ease-out; }
+.experience-link:hover > svg { transform: translate(2px, -2px); }
+.catalog-footnote { font-size: 11px; line-height: 1.8; margin-top: 20px; }
+
+/* All traveler surfaces share a readable paper material. */
+.page-heading { margin-bottom: 30px; }
+.page-heading p { font-size: 14px; max-width: 68ch; }
+.empty-state { border-radius: 19px; padding-block: 64px; }
+.empty-state p { font-size: 13px; }
+.segmented-tabs { gap: 7px; }
+.segmented-tabs > button { font-size: 12px; border-radius: 22px; min-height: 42px; }
+.cv-dialog { border-radius: 22px; }
+.dialog-top { padding: 20px 26px; }
+.dialog-top h2 { font-size: 20px; line-height: 1.4; }
+.dialog-content { padding: 28px; }
+.dialog-content > p { font-size: 13px; line-height: 1.85; }
+.dialog-content > h3, .detail-columns h3 { font-size: 16px; }
+.soft-tag { border-radius: 20px; font-size: 11px; padding: 7px 11px; }
+.detail-facts > span, .check-list li, .plain-list li { font-size: 13px; }
+.detail-facts { gap: 19px; }
+.detail-price-bar span { font-size: 12px; }
+.detail-price-bar strong { font-size: 29px; }
+.itinerary-list h3 { font-size: 16px; }
+.itinerary-list p, .itinerary-list .text-button { font-size: 12px; }
+.itinerary-list img { border-radius: 11px; }
+.plan-totals { font-size: 13px; line-height: 1.7; }
+.plan-totals strong { font-size: 16px; }
+.faq-list summary { font-size: 14px; line-height: 1.7; padding-block: 21px; }
+.faq-list details > p { font-size: 13px; line-height: 1.85; }
+.help-view .faq-list { border-radius: 18px; padding-inline: 26px; }
+.help-note { border-radius: 17px; padding: 27px; }
+.help-note h3 { font-size: 29px; }
+.help-note p { font-size: 13px; }
+.request-row { padding: 26px; border-radius: 18px; }
+.request-description h3 { font-size: 20px; line-height: 1.4; }
+.request-description p, .request-date span { font-size: 12px; }
+.status-pill { font-size: 11px; padding: 6px 11px; border-radius: 20px; }
+.request-actions .text-button { min-height: 40px; }
+.festival-list { border-radius: 19px; }
+.festival-row { padding-block: 31px; }
+.festival-symbol { border-radius: 16px; }
+.festival-row h2 { font-size: 32px; }
+.festival-row p { font-size: 13px; }
+.festival-date, .festival-row .button { font-size: 12px; }
+.community-shell { border-radius: 20px; grid-template-columns: 220px minmax(0, 1fr); }
+.community-channels h2 { font-size: 14px; }
+.community-channels > button { font-size: 13px; min-height: 44px; border-radius: 10px; }
+.community-channels > p, .conversation-heading p, .conversation > .small-note { font-size: 12px; }
+.conversation-heading h2 { font-size: 19px; }
+.message-name strong { font-size: 13px; }
+.message-name span { font-size: 11px; }
+.message p { font-size: 14px; line-height: 1.8; }
+.message-avatar { width: 35px; height: 35px; font-size: 11px; }
+.message-form .field { min-width: 0; }
+.community-invite { border-radius: 19px; padding: 33px; margin-top: 44px; }
+.community-invite h2 { font-size: 34px; }
+.community-invite p { font-size: 13px; }
+.community-invite .button { font-size: 12px; }
+
+/* An understated editorial music module. */
+.music-section-andina { margin-top: 48px; padding-top: 41px; }
+.music-section-andina .music-intro h2 { font-size: 35px; }
+.music-section-andina .music-intro p { font-size: 13px; color: #5e6658; }
+.music-section-andina .music-spotify { font-size: 12px; }
+.music-section-andina .music-player { border-radius: 19px; padding: 26px 23px; background: #304a36; box-shadow: 0 6px 20px rgb(38 52 31 / 8%); }
+.music-section-andina .music-route-art { border-radius: 11px; }
+.music-section-andina .music-player-content h3 { font-size: 21px; }
+.music-section-andina .music-player-content > p, .music-section-andina .music-type, .music-section-andina .music-mood { font-size: 12px; }
+.music-section-andina .music-play-button { font-size: 12px; min-height: 44px; border-radius: 24px; }
+.music-section-andina .music-play-button:hover { transform: none; }
+.music-section-andina .music-direct-link { font-size: 12px; min-height: 30px; }
+.music-section-andina .music-picks > button { border-radius: 12px; padding: 15px 11px; }
+.music-section-andina .music-picks strong { font-size: 13px; }
+.music-section-andina .music-picks small { font-size: 12px; }
+.music-section-andina .music-pick-icon { border-radius: 9px; }
+.app-footer { padding-block: 28px; }
+.app-footer strong { font-size: 11px; }
+.app-footer span, .footer-links { font-size: 11px; line-height: 1.7; }
+.social-button { font-size: 12px; border-radius: 22px; min-height: 42px; padding-inline: 14px; }
+.app-footer .social-demo-label { font-size: 11px; }
+.social-feedback { border-radius: 16px; }
+.social-feedback > span { font-size: 12px; }
+.social-feedback strong { font-size: 13px; }
+
+/* Business management keeps its operational structure and clear states. */
+.host-workspace, .host-editor, .host-business-form, .host-empty { border-radius: 17px; }
+.host-welcome, .host-experience { border-radius: 21px; }
+.host-welcome h2 { font: 500 clamp(31px, 3vw, 41px)/1.12 Newsreader, Georgia, serif; }
+.host-welcome p { font-size: 14px; line-height: 1.8; }
+.host-workspace label, .host-workspace select { font-size: 13px; }
+.host-summary span { font-size: 12px; }
+.host-summary strong { font-size: 29px; }
+.host-subnav > button { font-size: 14px; min-height: 48px; }
+.host-section-heading h2 { font-size: 21px; }
+.host-section-heading p, .host-empty p, .host-experience-copy > p:not(.host-location) { font-size: 13px; }
+.host-request-main h3 { font-size: 15px; }
+.host-request-main > p, .host-request-meta, .host-request-status, .host-requests-footnote, .host-demo-note p { font-size: 12px; }
+.host-request-status { border-radius: 18px; }
+.host-request-filters > button { font-size: 12px; border-radius: 22px; }
+.host-request-filters > button > span { font-size: 11px; }
+.host-small-button { font-size: 12px !important; border-radius: 10px; }
+.host-danger, .host-cancel-confirm p { font-size: 12px; }
+.host-experience-copy h3 { font-size: 25px; }
+.host-location, .host-experience-details dt, .host-editorial-note p, .host-link-button, .host-text-button { font-size: 13px; }
+.host-experience-details dd { font-size: 16px; }
+.host-editorial-note h3 { font-size: 16px; }
+.host-catalog-label { font-size: 11px; border-radius: 20px; }
+.host-field { font-size: 13px; }
+.host-field .field { font-size: 14px; border-radius: 10px; }
+
+/* Planner selections, form controls and checkout belong to the same world. */
+.planner-choice, .planner-preset { border-radius: 15px; }
+.planner-city { border-radius: 11px; }
+.planner-aside { background: #f0ead7; }
+.planner-progress-label { font-size: 11px; }
+.planner-summary dt, .planner-aside > p:not(.planner-summary-foot), .planner-summary-foot { font-size: 12px; }
+.planner-summary dd, .planner-aside h4 { font-size: 13px; }
+.planner-summary dd > span, .planner-city small { font-size: 11px; }
+.planner-interest > span:not(.planner-choice-check), .planner-region strong, .planner-adventure strong, .planner-distance-choice strong { font-size: 13px; }
+.planner-region > span:not(.planner-choice-check), .planner-adventure > span > span, .planner-distance-choice small { font-size: 13px; }
+.checkout-demo-banner, .checkout-steps li { font-size: 12px; }
+.checkout-summary { border-radius: 15px; }
+.checkout-summary > div > p, .checkout-summary dt, .checkout-summary dd { font-size: 12px; }
+.checkout-summary > div > .checkout-summary-note { font-size: 11px; }
+.checkout-grand-total small { font-size: 11px; }
+.checkout-step-description, .checkout-price-note { font-size: 13px; }
+.checkout-date-group .field-label > small, .checkout-group small { font-size: 12px; line-height: 1.7; }
+.checkout-method { border-radius: 13px; min-height: 76px; }
+.checkout-method strong { font-size: 14px; }
+.checkout-method small { font-size: 12px; }
+.checkout-demo-card { border-radius: 16px; }
+.checkout-demo-card > div, .checkout-demo-card > span { font-size: 11px; }
+.checkout-outcome legend, .checkout-outcome > label { font-size: 12px; line-height: 1.7; }
+.checkout-outcome > label { min-height: 36px; }
+.checkout-transfer, .checkout-qr { border-radius: 13px; }
+.checkout-transfer strong, .checkout-qr strong { font-size: 14px; }
+.checkout-transfer p, .checkout-qr p, .checkout-qr small { font-size: 12px; }
+.checkout-review dt, .checkout-review dd { font-size: 13px; }
+.checkout-confirm-note p, .checkout-success > p { font-size: 13px; line-height: 1.8; }
+.checkout-actions .button, .checkout-actions .text-button { font-size: 12px; }
+.checkout-receipt { border-radius: 14px; }
+.checkout-receipt > span, .checkout-receipt dt, .checkout-receipt dd, .checkout-receipt > small { font-size: 12px; }
+.checkout-receipt .checkout-reference { font-size: 11px; }
+.checkout-success-actions .button { font-size: 13px; }
+
+@media (min-width: 1650px) {
+  .discovery-hero { height: 410px; }
+  .hero-copy { padding: 48px 50px 37px; }
+  .experience-photo { height: 230px; }
+}
+@media (min-width: 701px) and (max-width: 1200px) {
+  .topbar { gap: 12px; }
+  .topbar-actions { gap: 10px; }
+  .topbar-title { font-size: 13px; }
+  .business-switch { font-size: 11px; padding-inline: 10px; }
+  .hero-copy { padding: 37px 33px; width: 85%; }
+  .hero-copy h1 { font-size: 49px; }
+  .hero-copy > p { font-size: 13px; }
+  .trip-strip { padding: 20px 17px; gap: 12px; }
+  .trip-strip-label strong { font-size: 13px; }
+  .trip-strip-label > span { font-size: 11px; }
+  .trip-strip-values { font-size: 11px; gap: 10px; padding-right: 10px; }
+  .experience-grid { gap: 18px; }
+  .experience-photo { height: 183px; }
+  .experience-body { padding: 17px 15px 15px; }
+  .experience-body h3 { font-size: 17px; }
+  .experience-link { padding-inline: 11px; font-size: 11px; }
+  .region-tabs > button { padding-inline: 11px; }
+}
+@media (min-width: 701px) and (max-width: 960px) {
+  .sidebar { padding-inline: 10px; }
+  .main-navigation > button { font-size: 12px; gap: 9px; padding-inline: 10px; }
+  .sidebar-ethos p { font-size: 11px; }
+  .sidebar-country { font-size: 9px; white-space: normal; line-height: 1.8; }
+  .sidebar-help, .replay-intro { font-size: 11px; }
+  .topbar-actions { gap: 7px; }
+  .topbar-left { gap: 8px; }
+  .hero-copy h1 { font-size: 47px; }
+  .hero-actions { gap: 12px; }
+  .hero-watch { font-size: 11px; }
+  .section-heading h2 { font-size: 32px; }
+  .region-tabs { gap: 3px; }
+  .region-tabs > button { font-size: 11px; padding-inline: 9px; }
+  .filter-button { padding-inline: 12px; }
+  .community-shell { grid-template-columns: 170px minmax(0, 1fr); }
+  .community-channels > button { font-size: 12px; }
+}
+@media (max-width: 700px) {
+  .sidebar-mode { font-size: 12px; }
+  .main-navigation > button { font-size: 13px; }
+  .sidebar-country { font-size: 10px; }
+  .topbar { height: 70px; padding-inline: 18px; }
+  .topbar-left { gap: 9px; }
+  .topbar-actions { gap: 3px; }
+  .header-intro { min-width: 30px; width: 30px; }
+  .business-switch { min-height: 36px; padding: 6px; }
+  .profile-avatar { width: 30px; height: 30px; }
+  .icon-button { min-width: 32px; min-height: 36px; }
+  .mobile-brand-name { font-size: 12px; }
+  .mobile-menu { min-width: 25px; }
+  .main-content { padding: 20px 18px 32px; }
+  .discovery-hero { height: 432px; border-radius: 20px; }
+  .hero-copy { width: 100%; padding: 35px 26px 28px; }
+  .hero-copy h1 { font-size: 44px; line-height: 1.04; letter-spacing: -.03em; max-width: 350px; }
+  .hero-copy > p { font-size: 13px; line-height: 1.8; margin: 19px 0 22px; max-width: 30ch; }
+  .hero-actions { gap: 11px; }
+  .hero-button { min-height: 44px; padding: 12px 15px; font-size: 12px; }
+  .hero-watch { font-size: 11px; min-height: 42px; }
+  .hero-note { font-size: 10px; padding-top: 16px; margin-top: 0; }
+  .hero-location { font-size: 10px; padding: 8px 11px; bottom: 18px; right: 17px; }
+  .trip-strip { padding: 20px 15px; border-radius: 16px; gap: 11px; align-items: flex-start; }
+  .trip-strip-icon { height: 37px; width: 37px; }
+  .trip-strip-label { min-width: 0; }
+  .trip-strip-label strong { font-size: 13px; line-height: 1.5; }
+  .trip-strip-label > span { font-size: 11px; line-height: 1.65; margin-top: 3px; }
+  .trip-strip > .text-button { font-size: 11px; gap: 5px; align-self: center; padding: 5px 0; }
+  .discovery-section { margin-top: 35px; }
+  .section-heading { margin-bottom: 22px; }
+  .section-heading h2 { font-size: 32px; }
+  .section-heading p { font-size: 13px; line-height: 1.75; max-width: 35ch; margin-top: 9px; }
+  .discovery-tools { gap: 11px; }
+  .region-tabs { gap: 6px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; flex-basis: 100%; }
+  .region-tabs > button { justify-content: center; min-height: 43px; padding: 10px 9px; font-size: 12px; border-color: #dcd4c1; }
+  .region-tabs > button.active { border-color: var(--andes-clay); }
+  .region-tabs > button svg { width: 15px; height: 15px; }
+  .filter-button { min-height: 42px; font-size: 12px; }
+  .search-sort { gap: 12px; margin-top: 15px; }
+  .search-field { height: 48px; min-height: 48px; }
+  .search-field > input { font-size: 13px; }
+  .sort-field, .sort-field select { font-size: 12px; }
+  .results-count { font-size: 11px; margin: 16px 0 17px; }
+  .results-count .text-button { font-size: 11px; gap: 5px; }
+  .experience-grid { grid-template-columns: minmax(0, 1fr); gap: 23px; }
+  .experience-photo { height: 225px; }
+  .experience-body { padding: 20px; }
+  .experience-body h3 { font-size: 21px; line-height: 1.35; }
+  .experience-description { font-size: 14px; line-height: 1.75; min-height: 0; }
+  .place-location { font-size: 12px; }
+  .experience-meta { font-size: 12px; padding-top: 17px; gap: 21px; }
+  .experience-bottom { padding-top: 16px; margin-top: 17px; }
+  .experience-bottom strong { font-size: 28px; }
+  .experience-bottom small { font-size: 12px; }
+  .experience-link { font-size: 13px; min-height: 44px; padding-inline: 16px; }
+  .discovery-filters { padding: 16px; gap: 12px; }
+  .discovery-filters .field-label { font-size: 12px; }
+  .discovery-filters .field { font-size: 12px; padding: 10px; }
+  .catalog-footnote { font-size: 11px; }
+  .page-heading h1 { font-size: 37px; }
+  .page-heading p { font-size: 13px; }
+  .empty-state { padding: 48px 23px; }
+  .empty-state p { font-size: 13px; }
+  .segmented-tabs > button { font-size: 12px; padding-inline: 13px; }
+  .cv-dialog { border-radius: 20px; }
+  .dialog-top { padding: 18px 20px; }
+  .dialog-top h2 { font-size: 18px; }
+  .dialog-content { padding: 23px; }
+  .dialog-content > p { font-size: 13px; }
+  .dialog-content .button { font-size: 12px; padding: 11px 13px; }
+  .detail-facts > span { font-size: 12px; }
+  .detail-price-actions .button { font-size: 12px; }
+  .itinerary-list > li { gap: 10px; }
+  .itinerary-list h3 { font-size: 14px; }
+  .itinerary-list p, .itinerary-list .text-button { font-size: 11px; }
+  .itinerary-list > li > strong { font-size: 16px; }
+  .plan-totals { font-size: 12px; }
+  .plan-totals strong { font-size: 14px; }
+  .faq-list summary { font-size: 13px; }
+  .faq-list details > p { font-size: 13px; }
+  .help-view .faq-list { padding-inline: 20px; }
+  .help-note { padding: 23px 20px; }
+  .help-note h3 { font-size: 27px; }
+  .help-note p { font-size: 13px; }
+  .request-row { padding: 23px 20px; }
+  .request-description h3 { font-size: 20px; }
+  .request-description p, .request-date span { font-size: 12px; }
+  .request-actions { gap: 14px; flex-wrap: wrap; }
+  .request-actions .button { font-size: 12px; }
+  .festival-list { padding-inline: 20px; }
+  .festival-row h2 { font-size: 29px; }
+  .festival-row p { font-size: 13px; }
+  .festival-row .button { font-size: 12px; }
+  .festival-date { font-size: 11px; }
+  .community-shell { grid-template-columns: minmax(0, 1fr); }
+  .community-channels { gap: 6px; padding: 16px 13px 12px; }
+  .community-channels > button { font-size: 12px; min-height: 43px; padding: 10px; }
+  .community-channels > p { font-size: 11px; line-height: 1.8; }
+  .conversation-heading { padding: 22px 20px; }
+  .conversation-heading h2 { font-size: 18px; }
+  .conversation-heading p { font-size: 12px; }
+  .messages { padding: 23px 19px; }
+  .message-name strong { font-size: 13px; }
+  .message-name span { font-size: 11px; }
+  .message p { font-size: 13px; }
+  .message-form { padding-inline: 17px; }
+  .message-form .button { font-size: 12px; }
+  .conversation > .small-note { font-size: 11px; padding-inline: 19px; }
+  .community-invite { padding: 27px 23px; }
+  .community-invite h2 { font-size: 31px; }
+  .community-invite p { font-size: 13px; }
+  .community-invite .button { font-size: 12px; margin-left: 0; }
+  .music-section-andina { margin-top: 39px; padding-top: 34px; gap: 22px; }
+  .music-section-andina .music-intro h2 { font-size: 33px; }
+  .music-section-andina .music-intro p { font-size: 13px; }
+  .music-section-andina .music-player { padding: 25px 21px; gap: 18px; }
+  .music-section-andina .music-route-art { flex-basis: 89px; width: 89px; }
+  .music-section-andina .music-player-content h3 { font-size: 20px; }
+  .music-section-andina .music-picks strong { font-size: 13px; }
+  .music-section-andina .music-picks small { font-size: 12px; }
+  .app-footer { padding-block: 27px; gap: 21px; }
+  .app-footer strong { font-size: 12px; }
+  .app-footer span, .footer-links { font-size: 11px; }
+  .social-button { font-size: 12px; }
+  .mobile-bottom-nav button { font-size: 11px; }
+  .host-welcome-copy { padding: 30px 25px; }
+  .host-welcome h2 { font-size: 35px; }
+  .host-welcome p { font-size: 13px; }
+  .host-workspace label, .host-workspace select { font-size: 12px; }
+  .host-subnav { gap: 21px; }
+  .host-subnav > button { font-size: 13px; }
+  .host-summary span { font-size: 12px; }
+  .host-summary strong { font-size: 27px; }
+  .host-request-main h3 { font-size: 14px; }
+  .host-request-main > p, .host-request-meta { font-size: 12px; }
+  .host-request-status { font-size: 11px; }
+  .host-experience-copy { padding: 24px; }
+  .host-experience-copy h3 { font-size: 24px; }
+  .host-experience-copy > .button { font-size: 12px; }
+  .host-experience-details dt { font-size: 12px; }
+  .host-experience-details dd { font-size: 14px; }
+  .host-form-footer .button { font-size: 12px; }
+  .planner-header p { font-size: 12px; }
+  .planner-progress-label { font-size: 0; }
+  .planner-step-caption { font-size: 11px; }
+  .planner-footer .button { font-size: 12px; }
+  .planner-interest > span:not(.planner-choice-check) { font-size: 12px; }
+  .planner-region strong { font-size: 13px; }
+  .planner-region > span:not(.planner-choice-check) { font-size: 12px; }
+  .checkout-demo-banner { font-size: 11px; }
+  .checkout-steps li { font-size: 11px; }
+  .checkout-summary { border-radius: 13px; }
+  .checkout-summary > div { padding: 15px; }
+  .checkout-summary > div > p, .checkout-summary dt, .checkout-summary dd { font-size: 11px; }
+  .checkout-grand-total > span { font-size: 12px; }
+  .checkout-grand-total small { font-size: 10px; }
+  .checkout-actions .button, .checkout-actions .text-button { font-size: 12px; }
+  .checkout-review dt, .checkout-review dd { font-size: 12px; }
+}
+@media (max-width: 380px) {
+  .topbar { padding-inline: 13px; }
+  .topbar-left { gap: 7px; }
+  .topbar-actions { gap: 0; }
+  .mobile-brand-name { font-size: 11px; }
+  .main-content { padding-inline: 13px; }
+  .hero-copy { padding: 31px 22px 24px; }
+  .hero-copy h1 { font-size: 40px; }
+  .hero-copy > p { font-size: 13px; max-width: 27ch; }
+  .hero-actions { gap: 4px 12px; }
+  .hero-watch { font-size: 11px; }
+  .hero-note { font-size: 10px; max-width: 23ch; align-items: flex-start; line-height: 1.7; }
+  .hero-note svg { margin-top: 2px; }
+  .trip-strip { flex-wrap: wrap; }
+  .trip-strip-label { flex: 1; }
+  .trip-strip > .text-button { margin: 0 0 0 48px; }
+  .section-heading h2 { font-size: 31px; }
+  .results-count { align-items: flex-start; }
+  .results-count .text-button { max-width: 118px; text-align: right; justify-content: flex-end; padding-top: 0; }
+  .experience-photo { height: 200px; }
+  .experience-body { padding: 19px; }
+  .experience-body h3 { font-size: 20px; }
+  .experience-link { padding-inline: 13px; }
+  .dialog-content { padding: 21px; }
+  .detail-price-actions .button { flex-basis: 100%; }
+  .dialog-actions { flex-wrap: wrap; }
+  .dialog-actions .button { flex-basis: 100%; }
+  .music-section-andina .music-player { padding: 22px 17px; gap: 14px; }
+  .music-section-andina .music-route-art { width: 75px; flex-basis: 75px; height: 170px; }
+  .music-section-andina .music-player-content h3 { font-size: 19px; }
+  .music-section-andina .music-play-button { padding-inline: 10px; }
+  .music-section-andina .music-mood { font-size: 11px; }
+  .host-request-actions { flex-wrap: wrap; }
+  .host-form-footer > div { grid-template-columns: 1fr; }
+  .planner-region { min-height: 164px; }
+  .planner-footer .button { font-size: 11px; }
+  .checkout-layout { padding: 19px; }
+  .checkout-summary > img { width: 60px; }
+  .checkout-summary > div { padding: 13px; }
+  .checkout-grand-total strong { font-size: 21px; }
+  .checkout-actions .button { font-size: 11px; padding-inline: 11px; }
+  .checkout-actions .text-button { font-size: 11px; }
+  .checkout-demo-card > strong { font-size: 16px; letter-spacing: .06em; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .experience-link > svg { transition: none; }
+  .experience-link:hover > svg { transform: none; }
+}
+
+/* Colours from the original logo bring life to useful states and icons. */
+:root {
+  --brand-turquoise: #079da5;
+  --brand-navy: #103452;
+  --brand-red: #c93143;
+  --brand-maize: #efb22c;
+}
+.topbar-title, .section-heading h2, .experience-body h3 { color: var(--brand-navy); }
+.main-navigation > button.active > svg { color: #087b81; }
+.nav-count { background: #d9eee5; color: #145e62; }
+.trip-strip-icon { background: #f5e7b9; color: var(--brand-navy); }
+.hero-button > svg { color: #087b81; }
+.region-tabs > button.active { background: var(--brand-navy); border-color: var(--brand-navy); }
+.region-label { background: #f4fcf6f5; color: #1d5960; border-color: #c3e1d5; }
+.save-button:hover, .save-button.is-saved { color: var(--brand-red); background: #fff0ec; }
+.save-button.is-saved > svg { fill: #c9314319; }
+.experience-body { padding-top: 17px; }
+.experience-body h3 { margin-top: 8px; }
+.experience-meta { padding-top: 15px; gap: 10px 14px; font-size: 11px; }
+.experience-meta > span { gap: 5px; white-space: nowrap; }
+.experience-meta svg { color: #087b81; }
+.experience-link { color: #145e62; background: #eaf4e9; border-color: #b9d4c4; }
+.experience-link:hover { background: var(--brand-navy); border-color: var(--brand-navy); color: #fffdf8; }
+.experience-bottom strong { color: var(--brand-navy); }
+.music-section-andina .music-heading-icon { color: #087b81; }
+.music-section-andina .music-play-button { color: var(--brand-navy); background: #f1c451; border-color: #f1c451; }
+.social-button { color: var(--brand-navy); border-color: #c7d8c8; }
+.social-button:hover { background: #e5f1e8; border-color: #8ebfb3; }
+@media (max-width: 700px) {
+  .experience-body { padding-top: 18px; }
+  .experience-meta { font-size: 12px; gap: 11px 16px; }
+  .experience-bottom { margin-top: 16px; }
+}

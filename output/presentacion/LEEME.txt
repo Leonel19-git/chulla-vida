@@ -1,0 +1,32 @@
+CHULLA VIDA · MATERIAL PARA EXPONER
+
+Web pública: https://chulla-vida.vercel.app/
+
+CHULLA-VIDA-pitch.pptx
+Presentación editable de 5 diapositivas. Las notas del presentador contienen
+el guion oral, tiempos, pasos de la demo y fuentes. Usa la vista Moderador.
+
+CHULLA-VIDA-pitch.pdf
+Las mismas 5 diapositivas para proyectar o compartir sin PowerPoint.
+
+Guion-5-minutos.md
+Guion por diapositiva con tiempos sugeridos y una demo de 45 segundos.
+Ensaya una vez con cronómetro y deja el QR visible al terminar.
+
+chulla-vida-qr.png y chulla-vida-qr.svg
+QR de la página pública, listo para compartir o imprimir.
+
+chulla-vida-logo.png
+Logo actualizado aportado por el equipo, conservado sin modificar.
+
+ANTES DE PRESENTAR
+Abre la web y deja cargado el prototipo. En la diapositiva 2, muestra el
+planificador, el presupuesto desde $20, una región y el guardado de una
+experiencia. Si no hay conexión, explica el recorrido usando la captura.
+
+ALCANCE
+Los cobros, retiros y perfiles son simulados. La actividad se guarda en el
+navegador. Las metas a 90 días son propuestas, no resultados alcanzados.
+La personalización actual funciona con reglas. Kichwa sigue como borrador
+editorial unificado pendiente de revisión regional. La ruta descargada es
+un esquema sin GPS y hay que guardarla antes de quedarse sin internet.

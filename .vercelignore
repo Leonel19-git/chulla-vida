@@ -1,0 +1,7 @@
+.impeccable/
+.Codex/
+node_modules/
+dist/
+.env*
+*.log
+output/

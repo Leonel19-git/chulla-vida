@@ -1,0 +1,14 @@
+CHULLA VIDA · Enlace público y código QR
+https://chulla-vida.vercel.app/
+
+El QR abre la página pública de Vercel. No requiere iniciar sesión en Vercel.
+PNG: 1200 × 1200 px. SVG: vectorial para ampliar sin perder calidad.
+PDF: cartel A4 listo para imprimir. Mantén libre el margen blanco del QR.
+
+Versión de demostración: no realiza cobros ni transferencias reales.
+Planes de prueba: semanal USD 2,99; mensual USD 4,99; anual USD 49,99.
+Ruta offline y comunidad: acceso con plan activo. Pasaporte básico gratuito; premium con el anual.
+Negocios: comisión simulada del 10%; el 90% queda disponible al validar la llegada.
+Datos guardados en cada navegador, sin cuentas privadas ni sincronización entre dispositivos.
+Kichwa: interfaz ampliada con base unificada, borrador pendiente de revisión regional.
+Algunos textos largos y relatos conservan su español original.
