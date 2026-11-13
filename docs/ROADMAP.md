@@ -19,7 +19,7 @@ Actualizado: 13 de noviembre de 2026.
 | Revisión de reembolsos | Solicitud persistida e idempotente implementada | La solicitud no devuelve dinero; operación del proveedor pendiente |
 | Suscripciones y liquidaciones reales | Pendiente | Proveedor y operación comercial; los planes y porcentajes actuales siguen siendo demo |
 | CMS y avisos locales | Borradores, exportación y preferencias implementados | Publicación comercial, multimedia y avisos externos requieren proveedores y revisión |
-| Producción | Sin publicar esta actualización | Verificar primero configuración y QA visual |
+| Producción | Publicada y verificada por HTTP el 13 de noviembre | https://chulla-vida.vercel.app/ · faltan revisión visual y micrófono real; servicios externos sin configuración |
 
 ## Próxima etapa
 

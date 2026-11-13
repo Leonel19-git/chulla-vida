@@ -1,5 +1,15 @@
 # Verificación final · CHULLA VIDA
 
+## Publicación de reservas, pagos y voz · 13 de noviembre de 2026
+
+- Proyecto y equipo de la CLI verificados contra `.vercel/project.json`; el conector no tenía acceso a ese proyecto. Publicación explícita en el proyecto existente, sin crear otro: `dpl_CsX8NsUZvZi9AHw6PfCZMgAcufo5`, producción READY, alias **https://chulla-vida.vercel.app/**.
+- `npm run check` aprobado antes del despliegue. Se conservan avisos de lint y tamaño de bundle. La corrección de silencio de voz añade cobertura para respuestas meteorológicas pendientes, interrupción y cierre; 24 pruebas del asistente aprobadas.
+- HTTP público sin cookies: portada, módulos actuales de pagos/voz, manifiesto, worker y fallback offline responden 200. El catálogo actual y la navegación de pagos están en el bundle. Los módulos de pagos y voz coinciden con el build local al normalizar nombres de dependencias.
+- `/api/payments/config`: 200, `enabled=false`; `/api/assistant`: 503 con `mode=unconfigured`; GET de `/api/payments/prepare`: 405. La reescritura SPA conserva las funciones.
+- Vercel no tiene variables de producción configuradas. No se habilitaron cuentas Supabase, pagos reales ni IA generativa. El asistente de catálogo/FAQ y la voz del navegador no necesitan el proveedor remoto para sus respuestas locales.
+- No se validó micrófono/audio real ni una captura visual: el host de navegador automatizado no estaba disponible. No se declara QA visual completado.
+- Evidencia local: `.impeccable/review/production-current-results.json` y `verify-current-production.mjs`. No se efectuaron cobros ni consultas facturables al proveedor de IA.
+
 ## Membresías, pasaporte y publicación · 23 de octubre de 2026
 
 - Planes de prueba: semanal $2,99, mensual $4,99, anual $49,99. Rutas offline y comunidad requieren membresía activa; premium del pasaporte solo anual. Pasaporte básico gratuito, sellos de prueba identificados y sellos de visitas validadas sin duplicados.

@@ -2,7 +2,9 @@
 
 **Continuación: reservas y tarjeta.** «Reservas y pagos» reúne solicitudes conectadas, confirmación del anfitrión, revisión del total, salida a PayPhone y consulta del resultado verificado por servidor. El retorno de la pasarela no aprueba pagos por sí solo. Las fichas referenciales siguen sin venta; las pruebas locales conservan su simulación independiente. La integración está desactivada hasta configurar Supabase y la cuenta PayPhone. Configuración y límites en [pagos con tarjeta](docs/PAGOS_ECUADOR.md).
 
-Si la página local no abre, ejecuta `npm.cmd run dev -- --host 127.0.0.1 --port 5173 --strictPort` y abre `http://127.0.0.1:5173/`. El servidor debe permanecer encendido. Esta continuación no se ha desplegado a producción.
+**Publicada el 13 de noviembre:** [https://chulla-vida.vercel.app/](https://chulla-vida.vercel.app/), despliegue `dpl_CsX8NsUZvZi9AHw6PfCZMgAcufo5`, estado READY. Se comprobó acceso público HTTP 200, catálogo actual, módulos de pagos y voz y funciones API. No hay variables de servicios configuradas en Vercel: cuentas conectadas, cobros e IA remota siguen pendientes. La voz de catálogo usa las capacidades del navegador con permiso explícito; no se probó un micrófono real. Detalle en [la guía de MIJIN](docs/ASISTENTE_IA.md).
+
+Si la página local no abre, ejecuta `npm.cmd run dev -- --host 127.0.0.1 --port 5173 --strictPort` y abre `http://127.0.0.1:5173/`. El servidor debe permanecer encendido.
 
 **Actualización del 13 de noviembre:** la página local fue reparada y ahora incluye 51 fichas (18 amazónicas nuevas), más color, ubicación con accesos y mapas externos opt-in, MIJIN centrado en voz y pasaporte como libro. También incorpora borrador de viaje, checklist, editor de contenido y preferencias de avisos. Resultado: 161 pruebas aprobadas. Detalle y límites en [estado actual](docs/ESTADO_2026_11_13.md); los párrafos anteriores sobre 33 fichas describen la base previa.
 
