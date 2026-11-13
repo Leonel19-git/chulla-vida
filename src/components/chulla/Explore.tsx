@@ -6,6 +6,7 @@ import { matchesPreferences, rankPlaces } from '../../lib/recommendations';
 import { money, normalize, placeImage, shortTitle } from './content';
 import { Dialog } from './Dialog';
 import { RegionalSpotlight } from './RegionalSpotlight';
+import { CatalogExplorer, CatalogSaved } from '../../features/catalog/CatalogExplorer';
 
 export function ExperienceCard({ place }: { place: Place }) {
   const { t, savedPlaceIds, toggleSavedPlace, setSelectedPlace } = useApp();
@@ -26,7 +27,11 @@ export function ExperienceCard({ place }: { place: Place }) {
 }
 
 
-export function Explore({ onPlan, onIntro, onOffline }: { onPlan: () => void; onIntro: () => void; onOffline: () => void }) {
+export function Explore(props: { onPlan: () => void; onIntro: () => void; onOffline: () => void }) {
+  const [demo, setDemo] = useState(false);
+  return demo ? <><div className="v3-catalog-note"><p><strong>Catálogo anterior de demostración.</strong> Negocios, reseñas, pagos, confirmaciones y sellos de esta sección son ficticios y solo se guardan en este navegador.</p><button className="button button-secondary" onClick={() => setDemo(false)}>Volver a las 33 fichas de V3</button></div><LegacyExplore {...props} /></> : <CatalogExplorer onPlan={() => window.dispatchEvent(new Event('cv3:plan'))} onDownloads={() => window.dispatchEvent(new Event('cv3:downloads'))} onDemo={() => setDemo(true)} />;
+}
+function LegacyExplore({ onPlan, onIntro, onOffline }: { onPlan: () => void; onIntro: () => void; onOffline: () => void }) {
   const { t, places, selectedRegion, setSelectedRegion, searchQuery, setSearchQuery, onboarding, setIsOnboardingOpen } = useApp();
   const [sort, setSort] = useState('recommended');
   const [filters, setFilters] = useState(false);
@@ -63,6 +68,9 @@ export function Explore({ onPlan, onIntro, onOffline }: { onPlan: () => void; on
 }
 
 export function SavedView() {
+  return <><CatalogSaved /><details className="v3-detail-section"><summary>Guardados del catálogo demo anterior</summary><LegacySavedView /></details></>;
+}
+function LegacySavedView() {
   const { t, places, savedPlaceIds, setActiveTab } = useApp();
   const saved = places.filter(p => savedPlaceIds.includes(p.id));
   return <section><div className="page-heading"><h1>{t("Esos lugares que te esperan")}</h1><p>{t("Tus favoritos, juntos. Porque una buena escapada empieza con una idea.")}</p></div>{saved.length ? <div className="experience-grid">{saved.map(p => <ExperienceCard key={p.id} place={p} />)}</div> : <div className="empty-state"><Bookmark size={38} /><h2>{t("Tu próxima historia puede empezar aquí")}</h2><p>{t("Toca el corazón en una experiencia para guardarla y volver cuando quieras.")}</p><button className="button button-primary" onClick={() => setActiveTab('feed')}>{t("Explorar Ecuador")}<ArrowRight size={17} /></button></div>}</section>;

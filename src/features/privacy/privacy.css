@@ -1,0 +1,12 @@
+.privacy-banner{position:fixed;inset:auto 20px 90px;z-index:80;display:flex;gap:18px;align-items:center;padding:20px 24px;background:var(--paper,#fffdf8);color:var(--ink,#28372d);border:1px solid var(--line,#ddd8cb);border-radius:14px;box-shadow:0 12px 40px #10251f26;max-width:1120px;margin-inline:auto}.privacy-banner>svg{flex:none;color:var(--teal)}.privacy-banner strong{font-size:16px}.privacy-banner p{font-size:14px;line-height:1.65;max-width:70ch;margin-top:5px}.privacy-actions{display:flex;gap:8px;flex-wrap:wrap;flex:none;max-width:310px}.privacy-actions .button{min-height:44px;font-size:13px}.privacy-editor{font-size:16px;line-height:1.7}.privacy-editor>label{display:grid;grid-template-columns:24px 1fr;gap:8px;padding-block:20px;border-bottom:1px solid var(--line)}.privacy-editor label span{grid-column:2;font-size:14px;color:var(--muted)}.privacy-editor input{width:20px;height:20px;accent-color:var(--teal)}.privacy-editor .dialog-actions{flex-wrap:wrap}@media(max-width:760px){.privacy-banner{inset:auto 12px 78px;display:block;padding:18px}.privacy-banner>svg{display:none}.privacy-actions{margin-top:14px;max-width:none}.privacy-banner p{font-size:14px}.privacy-actions .button{flex:1;white-space:normal}}
+/* 3.0: tres opciones con el mismo peso visual, banner compacto que no tapa navegación ni a MIJIN */
+.privacy-banner{inset:auto 16px 16px;z-index:120;padding:16px 20px;gap:16px}
+.privacy-banner p{font-size:14px}
+.privacy-actions{max-width:none;flex-wrap:nowrap}
+.privacy-choice{min-height:44px;padding:10px 16px;font-size:14px;font-weight:650;background:var(--paper,#fffdf8);color:#012960;border:1.5px solid #012960;border-radius:11px;white-space:nowrap}
+.privacy-choice:hover{background:#012960;color:#fff}
+.privacy-choice:focus-visible{outline:3px solid #fed65a;outline-offset:2px}
+.privacy-link{background:none;border:0;padding:0;color:#012960;text-decoration:underline;font:inherit;cursor:pointer}
+body:has(.privacy-banner) .mijin-launcher{visibility:hidden}
+@media(max-width:900px){.privacy-banner{display:block}.privacy-actions{margin-top:12px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.privacy-choice{white-space:normal;padding:8px 6px;font-size:13px}}
+@media(max-width:760px){.privacy-banner{inset:auto 10px 82px}}

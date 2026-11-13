@@ -1,5 +1,36 @@
 # CHULLA VIDA
 
+**Continuación: reservas y tarjeta.** «Reservas y pagos» reúne solicitudes conectadas, confirmación del anfitrión, revisión del total, salida a PayPhone y consulta del resultado verificado por servidor. El retorno de la pasarela no aprueba pagos por sí solo. Las fichas referenciales siguen sin venta; las pruebas locales conservan su simulación independiente. La integración está desactivada hasta configurar Supabase y la cuenta PayPhone. Configuración y límites en [pagos con tarjeta](docs/PAGOS_ECUADOR.md).
+
+Si la página local no abre, ejecuta `npm.cmd run dev -- --host 127.0.0.1 --port 5173 --strictPort` y abre `http://127.0.0.1:5173/`. El servidor debe permanecer encendido. Esta continuación no se ha desplegado a producción.
+
+**Actualización del 13 de noviembre:** la página local fue reparada y ahora incluye 51 fichas (18 amazónicas nuevas), más color, ubicación con accesos y mapas externos opt-in, MIJIN centrado en voz y pasaporte como libro. También incorpora borrador de viaje, checklist, editor de contenido y preferencias de avisos. Resultado: 161 pruebas aprobadas. Detalle y límites en [estado actual](docs/ESTADO_2026_11_13.md); los párrafos anteriores sobre 33 fichas describen la base previa.
+
+La continuación **3.0** ya está conectada a la interfaz principal: 33 fichas de los tres catálogos, filtros por región/precio/moneda/duración, fuentes completas, guardados, biblioteca descargada, Cultura Viva y MIJIN en modo catálogo/FAQ. Las fichas nuevas no son ofertas ni tienen compra habilitada. El prototipo de pagos anterior se conserva mediante «Abrir catálogo de demostración».
+
+```sh
+npm install
+npm run dev
+```
+
+En Windows PowerShell, usa `npm.cmd` si `npm.ps1` está bloqueado. Abre la URL que imprime Vite y recarga la pestaña para ver el código actualizado; esta actualización local todavía no se ha publicado en Vercel.
+
+Prueba estos recorridos:
+
+1. **Explorar:** busca Saraguro, abre la ficha, consulta la fuente, guarda y descarga. Cambia a Galápagos: conserva USD/EUR, rangos y avisos históricos.
+2. **Armar viaje:** prueba Quito, USD 20 totales, una persona y un día. Los gastos desconocidos se indican; Galápagos con USD 20 no se presenta como viable.
+3. **MIJIN:** abre «Habla con MIJIN». Pregunta por una ficha o el pasaporte. Voz y lectura son opcionales; clima requiere elegir una localidad y consultar al proveedor.
+4. **Sin señal:** consulta/borrar fichas descargadas. La apertura offline de la web usa el build de producción y necesita verificación de navegador; en desarrollo se prueba la biblioteca, no la instalación PWA.
+5. **Cuenta y negocio:** sin variables muestra conexión pendiente. Con Supabase configurado permite registro, recuperación y solicitudes; los administradores autorizados revisan evidencia privada. Sigue [SUPABASE_SETUP.md](docs/SUPABASE_SETUP.md).
+
+Comprobaciones: `npm run check` (lint, build, API, pruebas y verificaciones de dominio/catálogos/legales). No hay un proveedor de pagos real conectado. El adaptador de IA remota está apagado por defecto. Las pantallas V3 nuevas están en español; las comprobaciones de traducción heredadas no certifican su cobertura.
+
+Diagnóstico y límites: [auditoría](docs/AUDITORIA_CHULLA_VIDA.md), [arquitectura](docs/ARQUITECTURA.md), [estado y pendientes](docs/ROADMAP.md), [QA](docs/QA_CHECKLIST.md), [catálogos](docs/CATALOGOS.md), [MIJIN](docs/ASISTENTE_IA.md) y [offline](docs/MODO_OFFLINE.md).
+
+## Referencia del prototipo anterior
+
+Lo que sigue describe el catálogo demo y los flujos locales conservados, no la operativa comercial de las 33 fichas V3.
+
 Selector persistente de español, inglés, francés, portugués, chino simplificado y dos opciones de Kichwa. Sierra y Amazonía cambian realmente la interfaz mediante una base editorial unificada de 635 frases; son un borrador común pendiente de revisión regional, no dos dialectos validados. Incluye navegación, planificación, ruta descargable, planes, pasaporte y cobros. Algunos textos largos de checkout y publicación conservan el español de origen, al igual que relatos locales, nombres propios y contenido del usuario. Detalles en `src/i18n/README.md`.
 
 La versión incorpora membresías de demostración, pasaporte con sellos animados y «Cobros y retiros» para negocios. Toda la economía es simulada: no hay cobros, transferencias, suscripciones recurrentes reales ni proveedor de pagos conectado.

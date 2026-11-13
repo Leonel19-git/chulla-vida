@@ -4,6 +4,8 @@ import { useApp } from '../../context/AppContext';
 import { Dialog } from './Dialog';
 import { faqs, money, normalize, placeImage, shortTitle } from './content';
 import type { Raymi } from '../../types';
+import { ConsentMedia } from '../../features/privacy/ConsentMedia';
+export { CultureView as FestivalsView } from '../../features/catalog/CultureView';
 
 
 const music = [
@@ -32,7 +34,7 @@ export function MusicPanel() {
       </div>
     </div>
     <div className="music-picks" role="group" aria-label={t("Seleccionar música para la ruta")}>{music.map((s, i) => <button key={s.title} className={selection === i ? 'active' : ''} aria-pressed={selection === i} onClick={() => setSelection(i)}><span className={`music-pick-icon ${s.class}`}><Music2 size={17} /></span><span><strong>{t(s.title)}</strong><small>{t(s.region)}</small></span>{selection === i ? <Check size={17} aria-label={t("Seleccionada")} /> : <ArrowRight size={16} />}</button>)}</div>
-    {open && <Dialog title={t(m.title)} onClose={() => setOpen(false)}><div className="dialog-content music-embed-dialog"><p className="muted">{t("Una playlist compartida para tu viaje por Ecuador.")} {t("Pulsa reproducir dentro de Spotify para escuchar.")}</p><iframe className="spotify-embed" title={`Spotify: ${m.title}`} src={`https://open.spotify.com/embed/${m.embed}?utm_source=generator`} width="100%" height="352" allow="clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" /><p className="small-note">{t("Si el reproductor no carga, abre la selección directamente en Spotify. Algunas funciones dependen de tu cuenta.")}</p><a className="button button-secondary full-width" href={m.url} target="_blank" rel="noreferrer">{t("Abrir en Spotify")}<ExternalLink size={16} /></a></div></Dialog>}
+    {open && <Dialog title={t(m.title)} onClose={() => setOpen(false)}><div className="dialog-content music-embed-dialog"><p className="muted">{t("Una playlist compartida para tu viaje por Ecuador.")} {t("Pulsa reproducir dentro de Spotify para escuchar.")}</p><ConsentMedia><iframe className="spotify-embed" title={`Spotify: ${m.title}`} src={`https://open.spotify.com/embed/${m.embed}?utm_source=generator`} width="100%" height="352" allow="clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" /></ConsentMedia><p className="small-note">{t("Si el reproductor no carga, abre la selección directamente en Spotify. Algunas funciones dependen de tu cuenta.")}</p><a className="button button-secondary full-width" href={m.url} target="_blank" rel="noreferrer">{t("Abrir en Spotify")}<ExternalLink size={16} /></a></div></Dialog>}
   </section>;
 }
 
@@ -45,7 +47,7 @@ export function HelpView() {
 }
 function SearchIcon() { return <CircleHelp size={19} />; }
 
-export function FestivalsView() {
+export function LegacyFestivalsView() {
   const { t, raymis } = useApp();
   const [selected, setSelected] = useState<Raymi | null>(null);
   return <section><div className="page-heading"><h1>{t("Un Ecuador que celebra")}</h1><p>{t("Conoce sus Raymis y tradiciones. Acércate con curiosidad y respeto.")}</p></div><div className="festival-list">{[...raymis].sort((a, b) => a.id === 'raymi-kapak' ? -1 : b.id === 'raymi-kapak' ? 1 : 0).map((r, i) => <article className="festival-row" key={r.id}><div className={`festival-symbol festival-symbol-${i % 3}`}><CalendarDays size={28} /></div><div><span className="place-location"><MapPin size={13} />{r.provincia} · {r.region}</span><h2>{r.nombre.split(' (')[0]}</h2><p>{r.significado_ancestral}</p><span className="festival-date">{t("Referencia del calendario:")} {r.fecha_celebracion}</span></div><button className="button button-secondary" onClick={() => setSelected(r)}>{t("Conocer tradición")}<ArrowUpRight size={16} /></button></article>)}</div><p className="small-note">{t("Las celebraciones pueden variar según cada comunidad. Consulta las fechas y condiciones de participación con sus organizadores.")}</p>{selected && <Dialog title={selected.nombre.split(' (')[0]} onClose={() => setSelected(null)}><div className="dialog-content"><p className="place-location"><MapPin size={15} />{selected.canton}, {selected.provincia}</p><p>{selected.historia_origen}</p><h3>{t("Participa con respeto")}</h3><ul className="plain-list">{selected.protocolo_respeto.map(p => <li key={p}>{p}</li>)}</ul><h3>{t("Elementos de la tradición")}</h3><div className="plan-interests">{selected.elementos_rituales.map(e => <span className="soft-tag" key={e}>{e}</span>)}</div></div></Dialog>}</section>;

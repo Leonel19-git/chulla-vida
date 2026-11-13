@@ -90,7 +90,7 @@ export const isReservation: Validator<Reservation> = (value): value is Reservati
     && oneOf(value.estado, ['pendiente', 'confirmado', 'pagado', 'validado_en_sitio', 'liquidado_al_local', 'completado', 'cancelado'])
     && oneOf(value.metodo_pago, ['tarjeta', 'transferencia', 'deuna']) && bool(value.notificacion_whatsapp_enviada)
     && (value.pago_demo === undefined || (isDemoPayment(value.pago_demo) && value.pagado_en === ''
-      && oneOf(value.estado, ['pendiente', 'confirmado', 'completado', 'cancelado'])))
+      && oneOf(value.estado, ['pendiente', 'confirmado', 'validado_en_sitio', 'completado', 'cancelado'])))
     && (value.validado_en === undefined || str(value.validado_en)) && (value.liquidado_en === undefined || str(value.liquidado_en))
     && Array.isArray(value.extras_seleccionados) && value.extras_seleccionados.length <= 100
     && value.extras_seleccionados.every(extra => record(extra) && str(extra.nombre) && num(extra.precio) && extra.precio >= 0);

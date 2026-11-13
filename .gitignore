@@ -25,8 +25,15 @@ dist-ssr
 
 .vercel
 .env*
+!.env.example
+
+# Evidencia local de las pruebas de navegador
+playwright-report/
+test-results/
 
 # Herramientas locales y paquetes generados
 .impeccable/
 .Codex/
 output/*.zip
+
+.claude/

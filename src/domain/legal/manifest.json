@@ -1,0 +1,820 @@
+{
+  "schemaVersion": 1,
+  "generatedBy": "scripts/build-legal-manifest.mjs",
+  "notice": "Borradores sin revisión jurídica. Ningún documento es publicable mientras tenga campos pendientes o no exista aprobación registrada.",
+  "documents": [
+    {
+      "id": "terms",
+      "slug": "terminos",
+      "file": "01_TERMINOS_Y_CONDICIONES.md",
+      "title": "CHULLA VIDA — Términos y condiciones de uso (BORRADOR PARA REVISIÓN LEGAL)",
+      "version": "0.9",
+      "date": "2026-11-12",
+      "sha256": "1a5748ba0dbbdfb31404a8fbf2f9a316623562d4ba3bd70cdf569aad9a7b3d13",
+      "bytes": 8112,
+      "pendingFieldCount": 12,
+      "pendingFields": [
+        {
+          "text": "[FECHA DE APROBACIÓN]",
+          "line": 3,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[RAZÓN SOCIAL / NOMBRE LEGAL]",
+          "line": 3,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[RUC, SI APLICA]",
+          "line": 3,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[DOMICILIO, ECUADOR]",
+          "line": 3,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[CONTACTO]",
+          "line": 3,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[DOMINIO]",
+          "line": 3,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[SOPORTE]",
+          "line": 3,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[PENDIENTE: DETERMINAR SI CHULLA VIDA ACTÚA COMO INTERMEDIARIO, AGENTE, OPERADOR O VENDEDOR DE CADA SERVICIO, SEGÚN CONTRATOS Y REGULACIÓN.]",
+          "line": 11,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[SOPORTE]",
+          "line": 55,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[URL DE AYUDA]",
+          "line": 55,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[DEFINIR PROCEDIMIENTO Y MECANISMOS DE MEDIACIÓN CON ASESORÍA LEGAL]",
+          "line": 55,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[CORREO]",
+          "line": 59,
+          "kind": "placeholder"
+        }
+      ],
+      "status": "draft_pending_legal_review"
+    },
+    {
+      "id": "privacy",
+      "slug": "privacidad",
+      "file": "02_POLITICA_DE_PRIVACIDAD.md",
+      "title": "CHULLA VIDA — Política de privacidad y protección de datos (BORRADOR)",
+      "version": "0.9",
+      "date": "2026-11-12",
+      "sha256": "688ea04047a74c58dfb42f56d400cba6137f6675215332b4c42be8f952f0ee18",
+      "bytes": 8476,
+      "pendingFieldCount": 22,
+      "pendingFields": [
+        {
+          "text": "[RAZÓN SOCIAL / PERSONA LEGAL]",
+          "line": 3,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[RUC]",
+          "line": 3,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[DOMICILIO]",
+          "line": 3,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[CORREO DE PRIVACIDAD]",
+          "line": 3,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[SITIO]",
+          "line": 3,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[SI EXISTE O CUANDO CORRESPONDA; NO INVENTAR NOMBRAMIENTO]",
+          "line": 3,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[LINK A LISTA DE PROVEEDORES]",
+          "line": 35,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[PERÍODO]",
+          "line": 39,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[PLAZO DE PURGA / EXCEPCIONES]",
+          "line": 39,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[PLAZO LEGAL ASESORADO]",
+          "line": 39,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[PLAZO]",
+          "line": 39,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[PLAZO O NINGUNA PERSISTENCIA]",
+          "line": 39,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[PLAZO O SESIÓN]",
+          "line": 39,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[PLAZO]",
+          "line": 39,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[PLAZO DE PRUEBA LEGAL]",
+          "line": 39,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[CORREO PRIVACIDAD]",
+          "line": 43,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[RUTA EN LA APP]",
+          "line": 43,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[CONTACTO SEGURIDAD]",
+          "line": 47,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[CANAL]",
+          "line": 63,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[CORREO DE PRIVACIDAD]",
+          "line": 63,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[DIRECCIÓN]",
+          "line": 63,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[URL DE FORMULARIO]",
+          "line": 63,
+          "kind": "placeholder"
+        }
+      ],
+      "status": "draft_pending_legal_review"
+    },
+    {
+      "id": "cookies",
+      "slug": "cookies",
+      "file": "03_POLITICA_DE_COOKIES.md",
+      "title": "CHULLA VIDA — Política de cookies y almacenamiento (BORRADOR)",
+      "version": "0.9",
+      "date": "2026-11-12",
+      "sha256": "6c03d51c3a5f953634cda49497f2143298562a4c4b0f4de03933834c2218451a",
+      "bytes": 5034,
+      "pendingFieldCount": 23,
+      "pendingFields": [
+        {
+          "text": "[RESPONSABLE LEGAL]",
+          "line": 3,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[CORREO]",
+          "line": 3,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[SITIO]",
+          "line": 3,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[NOMBRE_COOKIE_SESIÓN]",
+          "line": 21,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[PROVEEDOR]",
+          "line": 21,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[DURACIÓN]",
+          "line": 21,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[PAÍS/MECANISMO]",
+          "line": 21,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[CONSENTIMIENTO]",
+          "line": 22,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[DURACIÓN]",
+          "line": 22,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[SEGÚN DISEÑO]",
+          "line": 22,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[ANALYTICS_SI_EXISTE]",
+          "line": 23,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[PROVEEDOR]",
+          "line": 23,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[DURACIÓN]",
+          "line": 23,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[TIPO]",
+          "line": 23,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[PAÍS]",
+          "line": 23,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[EMBED_SOCIAL_SI_EXISTE]",
+          "line": 24,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[PROVEEDOR]",
+          "line": 24,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[DURACIÓN]",
+          "line": 24,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[PAÍS]",
+          "line": 24,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[OFFLINE_CACHE]",
+          "line": 25,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[CORREO]",
+          "line": 43,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[URL]",
+          "line": 43,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[URL]",
+          "line": 43,
+          "kind": "placeholder"
+        }
+      ],
+      "status": "draft_pending_legal_review"
+    },
+    {
+      "id": "merchant-agreement",
+      "slug": "acuerdo-comerciantes",
+      "file": "04_ACUERDO_COMERCIANTES_ANFITRIONES.md",
+      "title": "CHULLA VIDA — Acuerdo de afiliación para comerciantes y anfitriones (BORRADOR)",
+      "version": null,
+      "date": null,
+      "sha256": "9ae18a16b95835dbcb81cf77a3a84a3f70aafade26da2a1e47671c9988078204",
+      "bytes": 5610,
+      "pendingFieldCount": 15,
+      "pendingFields": [
+        {
+          "text": "[ENTIDAD OPERADORA DE CHULLA VIDA, RUC, DOMICILIO]",
+          "line": 3,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[OPERADOR / PERSONA / EMPRESA / ASOCIACIÓN, IDENTIFICACIÓN LEGAL, REPRESENTANTE Y DOMICILIO]",
+          "line": 3,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[FECHA]",
+          "line": 3,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[MONTO O %]",
+          "line": 19,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[MONTO O %]",
+          "line": 19,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[APROBADO]",
+          "line": 19,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[PLAZO]",
+          "line": 19,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[PLAZO]",
+          "line": 23,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[PERÍODO]",
+          "line": 43,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[REGLAS]",
+          "line": 43,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[CAUSAS/AVISO]",
+          "line": 43,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[REGLAS]",
+          "line": 43,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[LICENCIAS]",
+          "line": 43,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[REVISAR]",
+          "line": 43,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[REPRESENTANTES]",
+          "line": 43,
+          "kind": "placeholder"
+        }
+      ],
+      "status": "draft_pending_legal_review"
+    },
+    {
+      "id": "community-agreement",
+      "slug": "convenio-comunidades",
+      "file": "05_ACUERDO_COMUNIDADES_REPARTO.md",
+      "title": "CHULLA VIDA — Convenio de colaboración comunitaria y reparto de ingresos (BORRADOR)",
+      "version": null,
+      "date": null,
+      "sha256": "11a5fd045ccf96d55a34c798f246f89fade4b55834954f36b26ae8086d0eb6a8",
+      "bytes": 4556,
+      "pendingFieldCount": 15,
+      "pendingFields": [
+        {
+          "text": "[CHULLA VIDA, REPRESENTANTE LEGAL]",
+          "line": 3,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[ORGANIZACIÓN / COMUNIDAD / ASOCIACIÓN, REPRESENTANTE LEGÍTIMAMENTE AUTORIZADO]",
+          "line": 3,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[FECHA / LUGAR]",
+          "line": 3,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[DOCUMENTACIÓN, CUANDO CORRESPONDA]",
+          "line": 3,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[USD]",
+          "line": 15,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[USD]",
+          "line": 15,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[USD]",
+          "line": 15,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[USD]",
+          "line": 15,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[USD]",
+          "line": 15,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[USD]",
+          "line": 15,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[USD]",
+          "line": 15,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[X %]",
+          "line": 15,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[PERÍODO]",
+          "line": 15,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[FRECUENCIA]",
+          "line": 35,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[CANAL]",
+          "line": 35,
+          "kind": "placeholder"
+        }
+      ],
+      "status": "draft_pending_legal_review"
+    },
+    {
+      "id": "booking-policy",
+      "slug": "reservas-cancelaciones",
+      "file": "06_POLITICA_RESERVAS_CANCELACIONES.md",
+      "title": "CHULLA VIDA — Política de reservas, cambios, cancelaciones y reembolsos (BORRADOR)",
+      "version": "0.9",
+      "date": "2026-11-12",
+      "sha256": "8be2f1ab96fe07d45ae3bfb14b32867f953ef18a509a11bc44bcf6f425fa151c",
+      "bytes": 3931,
+      "pendingFieldCount": 7,
+      "pendingFields": [
+        {
+          "text": "[RAZÓN SOCIAL]",
+          "line": 3,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[SOPORTE Y HORARIO]",
+          "line": 3,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[PLAZO REAL SEGÚN PASARELA/LEY]",
+          "line": 27,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[CONTACTO]",
+          "line": 27,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[CORREO]",
+          "line": 31,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[FORMULARIO]",
+          "line": 31,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[PLAZOS Y CANALES]",
+          "line": 31,
+          "kind": "placeholder"
+        }
+      ],
+      "status": "draft_pending_legal_review"
+    },
+    {
+      "id": "consent-texts",
+      "slug": "consentimientos",
+      "file": "07_TEXTOS_CONSENTIMIENTO_UI.md",
+      "title": "CHULLA VIDA — Textos de consentimiento para interfaces (BORRADOR)",
+      "version": "0.1",
+      "date": "2026-11",
+      "sha256": "c6d9ad805b1f1fe2bf715b81995b96f686da3c9eecc047b425a8e4d2536c2157",
+      "bytes": 2436,
+      "pendingFieldCount": 15,
+      "pendingFields": [
+        {
+          "text": "[enlace]",
+          "line": 6,
+          "kind": "editorial_note"
+        },
+        {
+          "text": "[Casilla obligatoria no premarcada; registrar versión y fecha]",
+          "line": 6,
+          "kind": "editorial_note"
+        },
+        {
+          "text": "[enlace]",
+          "line": 7,
+          "kind": "editorial_note"
+        },
+        {
+          "text": "[Aviso informativo separado; no usar para obtener consentimiento genérico]",
+          "line": 7,
+          "kind": "editorial_note"
+        },
+        {
+          "text": "[Desmarcada por defecto]",
+          "line": 10,
+          "kind": "editorial_note"
+        },
+        {
+          "text": "[Activación voluntaria, permiso del navegador, sin grabación persistente por defecto]",
+          "line": 13,
+          "kind": "editorial_note"
+        },
+        {
+          "text": "[Solo al activar función, permiso independiente]",
+          "line": 16,
+          "kind": "editorial_note"
+        },
+        {
+          "text": "[Distinguir comunicaciones operativas necesarias de push opcional]",
+          "line": 19,
+          "kind": "editorial_note"
+        },
+        {
+          "text": "[Opt-in separado; frecuencia y revocación claras]",
+          "line": 20,
+          "kind": "editorial_note"
+        },
+        {
+          "text": "[anexo de alcance]",
+          "line": 26,
+          "kind": "editorial_note"
+        },
+        {
+          "text": "[finalidad]",
+          "line": 26,
+          "kind": "editorial_note"
+        },
+        {
+          "text": "[canales]",
+          "line": 26,
+          "kind": "editorial_note"
+        },
+        {
+          "text": "[plazo]",
+          "line": 26,
+          "kind": "editorial_note"
+        },
+        {
+          "text": "[Consentimiento documentado; para contenido cultural colectivo consultar representación comunitaria]",
+          "line": 26,
+          "kind": "editorial_note"
+        },
+        {
+          "text": "[CORREO DE PRIVACIDAD]",
+          "line": 29,
+          "kind": "placeholder"
+        }
+      ],
+      "status": "draft_pending_legal_review"
+    },
+    {
+      "id": "legal-checklist",
+      "slug": "checklist-legal",
+      "file": "08_CHECKLIST_LEGAL.md",
+      "title": "CHULLA VIDA — Checklist de preparación jurídica (BORRADOR)",
+      "version": null,
+      "date": null,
+      "sha256": "413233284dfbe7054b9b77842c78752a847b6aa04cb7ac9f490359392f321227",
+      "bytes": 2525,
+      "pendingFieldCount": 0,
+      "pendingFields": [],
+      "checklistItems": [
+        {
+          "text": "Identificar responsable del tratamiento: razón social, RUC, domicilio, correo y representante.",
+          "done": false
+        },
+        {
+          "text": "Definir el rol comercial de Chulla Vida: intermediario, vendedor u operador según cada flujo.",
+          "done": false
+        },
+        {
+          "text": "Validar permisos, registros y habilitaciones turísticas de la empresa, operadores y guías cuando proceda.",
+          "done": false
+        },
+        {
+          "text": "Completar y aprobar términos, privacidad, cookies, reservas y acuerdos con anfitriones/comunidades.",
+          "done": false
+        },
+        {
+          "text": "Mapear cada dato, finalidad, base de legitimación, plazo de conservación, destinatario y país de tratamiento.",
+          "done": false
+        },
+        {
+          "text": "Evaluar exigencias de delegado de protección de datos, evaluaciones de impacto y transferencias internacionales según actividades reales.",
+          "done": false
+        },
+        {
+          "text": "Firmar acuerdos de tratamiento con Supabase, hosting, email, proveedor IA/voz, pagos, mapas y analítica según rol.",
+          "done": false
+        },
+        {
+          "text": "Verificar obligaciones de información, seguridad, atención de derechos e incidentes bajo normativa vigente.",
+          "done": false
+        },
+        {
+          "text": "Revisar mecanismos de tratamiento de datos de menores y requisitos de representación.",
+          "done": false
+        },
+        {
+          "text": "Implementar gestión de cookies: bloquear opcionales antes del permiso; aceptar, rechazar y revocar con igual facilidad.",
+          "done": false
+        },
+        {
+          "text": "Obtener autorización para fotografías, testimonios, videos, narrativas y elementos culturales comunitarios.",
+          "done": false
+        },
+        {
+          "text": "Verificar precios finales, impuestos, tasas, reembolsos, responsabilidades, atención al consumidor y comprobantes.",
+          "done": false
+        },
+        {
+          "text": "Aprobar criterios documentales de verificación comercial sin publicar información sensible.",
+          "done": false
+        },
+        {
+          "text": "Verificar pagos con el proveedor en sandbox y conciliación, sin almacenar datos completos de tarjetas.",
+          "done": false
+        },
+        {
+          "text": "Probar solicitudes de derechos de titulares, exportación, eliminación cuando proceda y revocación de consentimientos.",
+          "done": false
+        },
+        {
+          "text": "Definir plazos de retención y eliminación de audios, transcripciones, geolocalización, comprobantes y registros.",
+          "done": false
+        },
+        {
+          "text": "Comprobar que el sistema no exponga datos privados en cachés offline o logs.",
+          "done": false
+        },
+        {
+          "text": "Definir procedimiento de quejas, soporte, conflictos con operadores y reembolsos.",
+          "done": false
+        },
+        {
+          "text": "Registrar fecha, versión y aprobador de cada política; bloquear publicación de borradores con campos pendientes.",
+          "done": false
+        }
+      ],
+      "status": "draft_pending_legal_review"
+    },
+    {
+      "id": "data-processing-agreement",
+      "slug": "encargo-tratamiento",
+      "file": "09_ACUERDO_ENCARGO_TRATAMIENTO_DATOS.md",
+      "title": "ACUERDO DE ENCARGO DE TRATAMIENTO DE DATOS — MODELO (BORRADOR)",
+      "version": "0.1",
+      "date": "2026-11",
+      "sha256": "4911e578f9486987715eecf73162821dcc705432f7a31fc2d828a3b82aef1792",
+      "bytes": 2499,
+      "pendingFieldCount": 13,
+      "pendingFields": [
+        {
+          "text": "[RESPONSABLE, RUC, DOMICILIO]",
+          "line": 5,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[ENCARGADO, IDENTIFICACIÓN, DOMICILIO]",
+          "line": 5,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[SERVICIO]",
+          "line": 7,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[PLAZO]",
+          "line": 7,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[USUARIOS, ANFITRIONES, PERSONAL]",
+          "line": 8,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[IDENTIFICACIÓN, CONTACTO, RESERVAS, VOZ, UBICACIÓN, ETC.]",
+          "line": 8,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[DESCRIPCIÓN CONCRETA]",
+          "line": 9,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[LISTADO]",
+          "line": 12,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[PLAZOS ACORDADOS]",
+          "line": 14,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[DEFINIR RESPONSABILIDADES, LEY APLICABLE Y RESOLUCIÓN DE CONTROVERSIAS]",
+          "line": 18,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[RESPONSABLE]",
+          "line": 22,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[ENCARGADO]",
+          "line": 22,
+          "kind": "placeholder"
+        },
+        {
+          "text": "[FECHA]",
+          "line": 22,
+          "kind": "placeholder"
+        }
+      ],
+      "status": "draft_pending_legal_review"
+    }
+  ]
+}

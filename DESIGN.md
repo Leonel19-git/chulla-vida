@@ -159,3 +159,27 @@ LanguageSelector is visible in the intro and header. Preserve native language na
 
 ### Pitch refresh, 23 October 2026
 The current supplied logo is public/chulla-vida-logo.png, reused untouched with registered landscape clips and a wordmark boundary that preserves its taller lettering. The hero reads «Ecuador te espera. Sal a vivirlo.» Music offers the user-supplied Sierra/folklore, Costa and Oriente playlists, with a matching landscape, translated regional labels and no autoplay. Each selection keeps the correct Spotify link and embed. The five-slide pitch follows the same navy, turquoise, maize and red palette.
+
+### V3 additions, 12 November 2026
+
+The public catalog now opens with «Ecuador se vive. Arma tu próxima historia.» and 33 source-backed records. The original demo remains available through an explicit link. Existing logo and regional illustrations are retained; Galápagos cards use the schematic island illustration rather than mainland coast photography.
+
+New operational views use 16px inputs and body copy, 14px secondary explanations, 18–22px local headings, and Newsreader editorial headings. Fonts are self-hosted under the existing family names. These additions intentionally increase the old 11–13px operational text sizes. Warning materials use warm sand and brown; normal actions retain páramo green, with navy on the MIJIN launcher. Color, radius and type additions were flagged as advisory differences by the mechanical detector; visual verification remains pending.
+
+New surfaces: source-preserving experience detail, budget ideas with unknown costs, Cultura Viva with unconfirmed editions, account/business verification pending configuration, selected downloads, local FAQ/voice/weather controls and legal drafts. External Spotify embeds mount only after media consent and opening the player; revocation removes them.
+
+### Connected payments continuation, 13 November 2026
+
+This narrow extension inherits the existing dialog, account and task flows. Earlier payment, wallet and withdrawal descriptions remain the historical local demo. Source evidence: `src/features/payments/payments.css`, `PaymentsPanel.tsx`, `RefundReview.tsx`, `api.ts`, `reference.ts` and `src/features/workspace/WorkspaceVivo.tsx`. It establishes no replacement visual world or new palette.
+
+The source retains warm paper, navy headings, páramo-green actions and sage availability notices. Newsreader supplies the panel heading; Plus Jakarta Sans remains the operational face. Continue V3's readable operational hierarchy: body and fields (16px), secondary explanations and action labels (14px), local headings (19px), and tabular amounts (22px). These are surface roles, not replacements for the incumbent discovery scale.
+
+**The Verified State Rule.** Show loading, failed consultation and empty results as distinct states. Availability is unknown after a failed configuration request; keep payment disabled until checked. Text describes sandbox, live, pending and review states alongside color. A return reference alone never supplies a success state.
+
+**The Review Before Departure Rule.** Keep the date → host confirmation → PayPhone sequence visible, with reservation amount, environment and cancellation conditions before leaving the application. The local practice action remains a separately labeled section. Refund review is a request with persistent status, not a successful transfer animation.
+
+Live review also includes the published terms version, dates and full text behind a native disclosure. An explicit checkbox and acceptance action precede payment; only server-confirmed acceptance enables the payment action. Loading, missing, changed and failed terms remain readable blocking states. This disclosure extends the existing form language without introducing a new display style.
+
+The panel uses a centered reading column (maximum 860px), thin separators and the incumbent control language. Long references wrap; amounts use tabular numerals. Controls retain minimum heights (44px buttons, 46px fields) and a visible turquoise focus outline (3px, offset 3px). At the source breakpoint (560px), steps stack and actions fill the available row; the surrounding native dialog retains its existing scrolling and focus behavior. No new shadow or motion vocabulary was added.
+
+Recorded from source only: desktop/mobile rendering and responsive inspection remain unverified because browser access was unavailable. The detector's operational-size advisories are consistent with the existing V3 additions and do not constitute visual approval. Not canonized: residual tiny legacy labels and any unrendered claim of visual correctness; neither earns a future system rule.

@@ -21,3 +21,5 @@
   :root { scrollbar-color: #a8b8b2 #f4f6f3; scrollbar-width: thin; }
   @media (prefers-reduced-motion: reduce) { *:not([data-user-motion="true"] *), *:not([data-user-motion="true"] *)::before, *:not([data-user-motion="true"] *)::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; } }
 }
+@font-face{font-family:Newsreader;src:url('@fontsource-variable/newsreader/files/newsreader-latin-wght-normal.woff2') format('woff2');font-style:normal;font-weight:200 800;font-display:swap}
+@font-face{font-family:'Plus Jakarta Sans';src:url('@fontsource-variable/plus-jakarta-sans/files/plus-jakarta-sans-latin-wght-normal.woff2') format('woff2');font-style:normal;font-weight:200 800;font-display:swap}

@@ -5,3 +5,5 @@ dist/
 .env*
 *.log
 output/
+.claude/
+CHULLA_VIDA_3_PAQUETE/

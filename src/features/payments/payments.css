@@ -1,0 +1,57 @@
+.payments-panel { max-width: 860px; margin-inline: auto; padding: 26px; color: var(--ink); font-size: 16px; line-height: 1.7; }
+.payments-panel h3 { font: 500 clamp(29px, 4vw, 38px)/1.15 Newsreader, Georgia, serif; color: var(--brand-navy, #103452); margin: 0 0 12px; }
+.payments-panel h4 { font-size: 19px; line-height: 1.4; margin: 0 0 9px; color: var(--brand-navy, #103452); }
+.payments-panel p { margin-block: 10px; max-width: 70ch; }
+.payments-heading { display: flex; align-items: start; gap: 18px; }
+.payments-heading > svg { flex: none; margin-top: 4px; color: var(--teal); }
+.payments-steps { display: flex; gap: 15px 25px; flex-wrap: wrap; list-style: none; padding: 20px 0; margin: 12px 0 22px; border-bottom: 1px solid var(--line); }
+.payments-steps li { display: flex; gap: 9px; align-items: center; font-size: 14px; }
+.payments-steps svg { flex: none; color: var(--teal); }
+.payments-availability { padding: 20px; background: var(--andes-sage, #e9eddf); border-radius: 11px; margin-bottom: 26px; }
+.payments-availability > strong { font-size: 17px; }
+.payments-availability p, .payments-footnote { font-size: 14px; line-height: 1.7; color: var(--muted, #52675d); }
+.payments-panel .button { min-height: 44px; font-size: 14px; justify-content: center; white-space: normal; text-align: center; }
+.payments-panel .button:focus-visible, .payments-panel .field:focus-visible, .payments-tabs button:focus-visible { outline: 3px solid var(--brand-turquoise, #079da5); outline-offset: 3px; }
+.payments-panel button:disabled { opacity: .6; cursor: not-allowed; }
+.payments-panel .field { width: 100%; min-width: 0; font-size: 16px; min-height: 46px; }
+.payments-account, .payments-offers { margin-block: 30px; }
+.payments-controls { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px; margin-block: 28px 20px; }
+.payments-tabs { display: flex; gap: 9px; flex-wrap: wrap; }
+.payments-tabs button { min-height: 44px; border: 1px solid var(--line); border-radius: 9px; padding: 9px 14px; font-size: 14px; }
+.payments-tabs button[aria-pressed=true] { background: var(--brand-navy, #103452); border-color: var(--brand-navy, #103452); color: var(--paper, #fffdf6); }
+.payments-bookings { list-style: none; margin: 0; padding: 0; }
+.payments-bookings > li { padding: 24px 0; border-bottom: 1px solid var(--line); }
+.payments-booking-title, .payments-booking-state { display: flex; align-items: baseline; gap: 12px; justify-content: space-between; flex-wrap: wrap; }
+.payments-booking-title > h4 { flex: 1 1 230px; }
+.payments-booking-title > strong { font-size: 22px; font-variant-numeric: tabular-nums; color: var(--teal); }
+.payments-bookings > li > p, .payments-bookings > li > p > span { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
+.payments-booking-state { font-size: 14px; margin-block: 15px; }
+.payments-booking-state > span { overflow-wrap: anywhere; }
+.payments-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+.payments-review { padding: 22px 0 6px; margin-top: 24px; border-top: 1px solid var(--line); }
+.payments-panel dl { margin-block: 18px; }
+.payments-panel dl > div { display: flex; gap: 12px; justify-content: space-between; padding-block: 9px; border-bottom: 1px solid var(--line); }
+.payments-panel dd { margin: 0; text-align: right; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; max-width: 70%; }
+.payments-return { padding: 24px 0; border-block: 1px solid var(--line); margin-top: 26px; }
+.payments-result-heading { display: flex; gap: 12px; align-items: start; color: var(--teal); }
+.payments-result-heading svg { flex: none; }
+.payments-empty { margin-block: 25px; padding-block: 18px; }
+.payments-empty > svg { color: var(--teal); margin-bottom: 15px; }
+.payments-offers { padding-top: 25px; border-top: 1px solid var(--line); }
+.payments-offers form { display: grid; gap: 18px; margin-top: 20px; }
+.payments-offers label { display: grid; gap: 8px; }
+.payments-demo { display: flex; align-items: start; gap: 16px; border-top: 1px solid var(--line); margin-top: 30px; padding-top: 26px; }
+.payments-demo > svg { flex: none; color: var(--teal); margin-top: 3px; }
+.payments-demo .button { margin-block: 8px 18px; }
+.payments-warning { padding: 16px; background: #fff1d5; color: #704b15; border-radius: 9px; }
+.payments-notice { font-weight: 600; overflow-wrap: anywhere; }
+.payments-refund-form { display: grid; gap: 14px; margin-block: 20px; }
+.payments-refund-form label { display: grid; gap: 8px; }
+.payments-refund-form textarea { min-height: 110px; resize: vertical; }
+.payments-checkout-terms { margin-top: 26px; padding-block: 22px; border-top: 1px solid var(--line); }
+.payments-checkout-terms summary { cursor: pointer; text-decoration: underline; text-underline-offset: 4px; }
+.payments-checkout-terms article { margin-block: 18px; }
+.payments-checkout-terms > label { display: flex; align-items: start; gap: 12px; margin-top: 20px; }
+.payments-checkout-terms input[type=checkbox] { flex: none; width: 20px; height: 20px; margin-top: 4px; accent-color: var(--teal); }
+.payments-checkout-terms .text-button { min-height: 44px; font-size: 14px; text-decoration: underline; text-underline-offset: 4px; }
+@media (max-width: 560px) { .payments-panel { padding: 20px 16px; } .payments-heading { gap: 12px; } .payments-heading > svg { width: 24px; } .payments-steps { flex-direction: column; gap: 12px; } .payments-actions .button { flex: 1 1 100%; } .payments-panel dl > div { align-items: start; } .payments-tabs { width: 100%; } .payments-tabs button { flex: 1; } .payments-booking-title > h4 { flex-basis: 100%; } }
