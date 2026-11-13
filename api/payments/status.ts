@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { isPaymentReference } from '../../src/domain/payments/index';
-import { authenticatedUser, method, paymentConfig, readPaymentStatus, serviceClient } from '../../src/domain/payments/server';
+import { isPaymentReference } from '../../src/domain/payments/index.js';
+import { authenticatedUser, method, paymentConfig, readPaymentStatus, serviceClient } from '../../src/domain/payments/server.js';
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (!method(req,res,'GET')) return;
   const reference = req.query.reference;

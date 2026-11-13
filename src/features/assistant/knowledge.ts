@@ -1,8 +1,8 @@
-import type { Experience } from '../../domain/catalog/types';
-import { petAdmission, planItinerary } from '../../domain/planner';
-import { eventStatusLabel, getEventsByMonth, monthName, CULTURAL_EVENTS } from '../../domain/culture';
-import { REGION_LABELS } from '../../domain/catalog/types';
-import { answerCommunityShare, agreementFor } from '../../domain/transparency';
+import type { Experience } from '../../domain/catalog/types.js';
+import { petAdmission, planItinerary } from '../../domain/planner/index.js';
+import { eventStatusLabel, getEventsByMonth, monthName, CULTURAL_EVENTS } from '../../domain/culture/index.js';
+import { REGION_LABELS } from '../../domain/catalog/types.js';
+import { answerCommunityShare, agreementFor } from '../../domain/transparency/index.js';
 
 const MONTHS = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
 

@@ -1,6 +1,6 @@
 import type { VercelRequest,VercelResponse } from '@vercel/node';
-import { checkProviderConfirmation,isPaymentReference } from '../../src/domain/payments/index';
-import { authenticatedUser,method,paymentConfig,providerPost,readPaymentStatus,serviceClient } from '../../src/domain/payments/server';
+import { checkProviderConfirmation,isPaymentReference } from '../../src/domain/payments/index.js';
+import { authenticatedUser,method,paymentConfig,providerPost,readPaymentStatus,serviceClient } from '../../src/domain/payments/server.js';
 
 /** Retry verification of the provider return; does not create or repeat a charge. */
 export default async function handler(req: VercelRequest,res: VercelResponse) {

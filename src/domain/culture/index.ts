@@ -1,7 +1,7 @@
-import type { CulturalEvent, EventEdition, RegionId } from '../catalog/types';
-import { CULTURAL_EVENT_SEED, CULTURE_CHECKED_AT, CULTURE_SOURCE, LOJA_FESTIVAL_AGENDA_URL } from './data';
+import type { CulturalEvent, EventEdition, RegionId } from '../catalog/types.js';
+import { CULTURAL_EVENT_SEED, CULTURE_CHECKED_AT, CULTURE_SOURCE, LOJA_FESTIVAL_AGENDA_URL } from './data.js';
 
-export type { CulturalEvent, EventConfirmation, EventEdition } from '../catalog/types';
+export type { CulturalEvent, EventConfirmation, EventEdition } from '../catalog/types.js';
 export { CULTURE_CHECKED_AT, CULTURE_SOURCE, LOJA_FESTIVAL_AGENDA_URL };
 
 function deepFreeze<T>(value: T): T {

@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { getWeather } from '../src/domain/weather/index';
+import { getWeather } from '../src/domain/weather/index.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Cache-Control', 'public, max-age=300, s-maxage=600');

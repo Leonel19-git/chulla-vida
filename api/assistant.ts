@@ -1,8 +1,8 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { createClient } from '@supabase/supabase-js';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import type { Experience } from '../src/domain/catalog/types';
-import { answerLocally, retrieveExperiences } from '../src/features/assistant/knowledge';
+import type { Experience } from '../src/domain/catalog/types.js';
+import { answerLocally, retrieveExperiences } from '../src/features/assistant/knowledge.js';
 
 const usage = new Map<string, { minute: number; minuteCount: number; day: string; dayCount: number }>();
 /** Per-instance guard. Configure a shared gateway quota before enabling across multiple server instances. */

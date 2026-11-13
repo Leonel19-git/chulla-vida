@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { checkedCheckoutUrl, isPaymentReference } from '../../src/domain/payments/index';
-import { authenticatedUser, method, paymentConfig, providerPost, serviceClient } from '../../src/domain/payments/server';
+import { checkedCheckoutUrl, isPaymentReference } from '../../src/domain/payments/index.js';
+import { authenticatedUser, method, paymentConfig, providerPost, serviceClient } from '../../src/domain/payments/server.js';
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (!method(req,res,'POST')) return;
   const config = paymentConfig();

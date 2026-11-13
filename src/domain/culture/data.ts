@@ -1,4 +1,4 @@
-import type { CulturalEvent, EventEdition } from '../catalog/types';
+import type { CulturalEvent, EventEdition } from '../catalog/types.js';
 
 /** Fecha en que se revisó el contenido semilla contra la sección 5 de la especificación. */
 export const CULTURE_CHECKED_AT = '2026-11-12';

@@ -1,6 +1,6 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import type { PaymentEnvironment, CheckoutStatus } from './index';
+import type { PaymentEnvironment, CheckoutStatus } from './index.js';
 
 export interface PaymentConfig { enabled: boolean; ready: boolean; provider: 'payphone'; environment: PaymentEnvironment; reason?: string; appUrl: string; token: string; storeId: string; supabaseUrl: string; serviceKey: string }
 export function paymentConfig(env: Record<string, string | undefined> = process.env): PaymentConfig {

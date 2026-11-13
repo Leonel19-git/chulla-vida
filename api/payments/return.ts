@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { checkProviderConfirmation, isPaymentReference } from '../../src/domain/payments/index';
-import { method, paymentConfig, providerPost, serviceClient } from '../../src/domain/payments/server';
+import { checkProviderConfirmation, isPaymentReference } from '../../src/domain/payments/index.js';
+import { method, paymentConfig, providerPost, serviceClient } from '../../src/domain/payments/server.js';
 
 /** Public provider return: query values only identify the transaction to verify server-side. */
 export default async function handler(req: VercelRequest, res: VercelResponse) {

@@ -1,4 +1,4 @@
-import type { Experience, RegionId } from '../catalog/types';
+import type { Experience, RegionId } from '../catalog/types.js';
 
 export type BudgetClassification = 'dentro_del_presupuesto' | 'posiblemente_viable' | 'supera_presupuesto' | 'sin_datos_suficientes';
 export type CostKind = 'transport' | 'food' | 'lodging' | 'fees' | 'pet' | 'contingency';

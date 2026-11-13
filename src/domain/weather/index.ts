@@ -1,4 +1,4 @@
-import type { WeatherReference } from '../catalog/types';
+import type { WeatherReference } from '../catalog/types.js';
 
 export interface WeatherDay { date: string; minC: number; maxC: number; rainProbability: number | null }
 export interface WeatherHour { time: string; temperatureC: number; rainProbability: number | null }
