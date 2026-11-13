@@ -145,7 +145,7 @@ export function getUpcomingEvents(now: Date, options: { monthsAhead?: number } =
     if (event.editions.some(edition => edition.confirmation === 'community_defined')) continue;
 
     // Un mes que ya cubrió una edición terminada no vuelve a ofrecerse como «próximo».
-    const lastEnded = editions.at(-1);
+    const lastEnded = editions.slice(-1)[0];
     const endedIndex = lastEnded ? Number(lastEnded.endDate.slice(0, 4)) * 12 + Number(lastEnded.endDate.slice(5, 7)) : -Infinity;
     for (let offset = 0; offset <= monthsAhead && offset < 12; offset += 1) {
       const index = today.year * 12 + (today.month - 1) + offset;
@@ -182,7 +182,7 @@ export function eventStatusLabel(event: CulturalEvent, now: Date): string {
       ? `En curso: ${range}, según la agenda oficial citada. ${REVALIDATE}`
       : `Programada ${range}, según la agenda oficial citada. ${REVALIDATE}`;
   }
-  const lastEnded = editions.at(-1);
+  const lastEnded = editions.slice(-1)[0];
   if (lastEnded) {
     return `Edición ${lastEnded.year} finalizada el ${formatDay(lastEnded.endDate, true)}. La próxima fecha está por confirmar.`;
   }
@@ -229,7 +229,7 @@ export function filterCulturalEvents(filters: { region?: RegionId | 'all'; month
  */
 export function eventStatus(event: CulturalEvent, today?: Date): { label: string; upcoming: boolean } {
   if (!today) {
-    const edition = datedEditions(event).at(-1);
+    const edition = datedEditions(event).slice(-1)[0];
     return {
       label: edition
         ? `Edición ${edition.year} programada ${formatDateRange(edition.startDate, edition.endDate)}, según la agenda oficial citada. ${REVALIDATE}`
