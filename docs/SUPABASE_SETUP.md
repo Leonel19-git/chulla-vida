@@ -1,4 +1,21 @@
-# Cuentas y permisos de CHULLA VIDA 3.0
+# Supabase de CHULLA VIDA
+
+## Proyecto conectado (14-11-2026)
+
+- Proyecto: **chulla-vida** · ref `xtgfbhhsekavwyolizjq` · región São Paulo (sa-east-1) · plan gratis.
+- Panel: https://supabase.com/dashboard/project/xtgfbhhsekavwyolizjq
+- API: https://xtgfbhhsekavwyolizjq.supabase.co
+- 19 migraciones aplicadas con `supabase db push --remote`; semilla `supabase/seed/seed.sql` cargada: 51 fichas publicadas, 0 reservables.
+- Auth: confirmación por correo activada, código de 6 dígitos, contraseña mínima de 10 caracteres con mayúsculas, minúsculas y números, Site URL https://chulla-vida.vercel.app.
+- Vercel (producción y vista previa): `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SERVICE_ROLE_KEY` (solo servidor).
+- La contraseña de la base está en `.env.local` (ignorado por git), variable `SUPABASE_DB_PASSWORD`.
+
+### Pendiente para que lleguen los correos con código
+
+El plan gratis usa el correo de prueba de Supabase: solo envía a miembros de la organización, con un límite muy bajo por hora, y no permite cambiar plantillas. Para que cualquier persona reciba el código hay que configurar un SMTP propio (por ejemplo Resend, Brevo o el correo del dominio) en Authentication → Emails → SMTP Settings. Después, descomentar las secciones `[auth.email.template.*]` de `supabase/config.toml` y ejecutar `npx supabase config push` para subir las plantillas de `supabase/templates/`, que muestran el código `{{ .Token }}`.
+
+Mientras tanto, el correo por defecto de Supabase envía un enlace de confirmación en lugar del código; la app acepta ambos.
+
 
 **Actualización de reservas y tarjeta:** el directorio `supabase/migrations/` contiene ahora el esquema normalizado completo y migraciones posteriores para checkout y revisión de reembolsos. Aplica **todos los archivos, en orden de nombre**, en un proyecto de pruebas nuevo; no te limites a las dos migraciones históricas mencionadas más abajo. Las nuevas pruebas SQL usan ese conjunto completo. No se aplicaron cambios a una base alojada en esta sesión.
 
