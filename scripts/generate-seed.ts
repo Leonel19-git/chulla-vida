@@ -410,8 +410,8 @@ export function loadDomain(): SeedInput {
     throw new Error(`No se encontró la exportación ${label} (${names.join(' / ')}).`);
   };
   return {
-    experiences: pick<Experience[]>(catalog, ['EXPERIENCES', 'experiences'], 'de experiencias'),
-    catalogSources: pick<CatalogSource[]>(catalog, ['CATALOG_SOURCES', 'catalogSources'], 'de fuentes del catálogo'),
+    experiences: pick<Experience[]>(catalog, ['ALL_EXPERIENCES', 'EXPERIENCES', 'experiences'], 'de experiencias'),
+    catalogSources: pick<CatalogSource[]>(catalog, ['catalogSources', 'CATALOG_SOURCES'], 'de fuentes del catálogo'),
     culturalEvents: pick<CulturalEvent[]>(culture, ['CULTURAL_EVENTS', 'culturalEvents'], 'de festividades'),
     cultureSource: (culture.CULTURE_SOURCE ?? culture.cultureSource) as CultureSourceInfo | undefined,
   };

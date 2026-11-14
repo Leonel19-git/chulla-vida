@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ArrowLeft, ArrowRight, BookOpen, Compass, Download, Heart, Mic, PawPrint, Send, Store, Users } from 'lucide-react';
 import { Dialog } from '../../components/chulla/Dialog';
+import { useConsent } from '../privacy/ConsentContext';
 import './welcome.css';
 
 export const WELCOME_KEY = 'chullavida:v3:welcome';
@@ -54,19 +55,24 @@ function saveTravelPreferences(preferences: TravelPreferences) {
 /** Se monta una vez. Abre en la primera visita (después de la intro de marca) o con el evento `cv3:welcome`. */
 export function WelcomeGate() {
   const [open, setOpen] = useState(false);
+  const [auto, setAuto] = useState(false);
+  const { preferences } = useConsent();
   useEffect(() => {
-    const show = () => setOpen(true);
+    const show = () => { setAuto(false); setOpen(true); };
+    const showAuto = () => { setAuto(true); setOpen(true); };
     window.addEventListener('cv3:welcome', show);
     let timer: ReturnType<typeof setTimeout> | undefined;
     const firstVisit = !readTravelPreferences()?.completed;
-    const afterIntro = () => { if (firstVisit) timer = setTimeout(show, 250); };
+    const afterIntro = () => { if (firstVisit) timer = setTimeout(showAuto, 250); };
     if (firstVisit) {
       window.addEventListener('cv3:intro-closed', afterIntro, { once: true });
-      timer = setTimeout(() => { if (!document.querySelector('.brand-intro[open]')) show(); }, 800);
+      timer = setTimeout(() => { if (!document.querySelector('.brand-intro[open]')) showAuto(); }, 800);
     }
     return () => { window.removeEventListener('cv3:welcome', show); window.removeEventListener('cv3:intro-closed', afterIntro); if (timer) clearTimeout(timer); };
   }, []);
-  return open ? <WelcomeFlow onClose={() => setOpen(false)} /> : null;
+  // En la primera visita, el banner de cookies va primero: la bienvenida espera a que la persona elija su nivel de privacidad.
+  if (!open || (auto && !preferences)) return null;
+  return <WelcomeFlow onClose={() => setOpen(false)} />;
 }
 
 type Step = 'choose' | 'interests' | 'trip' | 'tour' | 'host';

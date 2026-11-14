@@ -10,15 +10,49 @@ Estado: **preparado y probado localmente; no conectado a un proyecto Supabase re
 
 1. Crea un proyecto Supabase de desarrollo. Conserva las claves de servidor fuera del repositorio.
 2. Copia `.env.example` a `.env.local`. Completa `VITE_SUPABASE_URL` y `VITE_SUPABASE_PUBLISHABLE_KEY` con la URL y clave **publicable** del proyecto. Alternativamente se admite la clave pública `anon` en `VITE_SUPABASE_ANON_KEY`. Nunca introduzcas `service_role` ni `sb_secret_*` en una variable `VITE_*`.
-3. En Authentication, habilita correo y contraseña y la confirmación de correo. Configura la URL del sitio y las URLs de redirección de desarrollo/staging/producción. El formulario vuelve a la ruta del sitio con `#cuenta`.
-4. Configura SMTP para las entregas reales y comprueba confirmación, reenvío desde Supabase y recuperación. El repositorio no contiene credenciales SMTP ni un envío de prueba validado.
+3. Configura Authentication para el **código de 6 dígitos por correo** siguiendo la sección «Cuentas con código por correo» de abajo (OTP de 6, confirmación activada, plantillas, Site URL y Redirect URLs).
+4. Configura SMTP para las entregas reales y comprueba registro con código, reenvío y recuperación. El repositorio no contiene credenciales SMTP ni un envío de prueba validado.
 5. Instala la CLI oficial de Supabase en tu entorno de trabajo y vincula este directorio con el proyecto de desarrollo. Aplica las dos migraciones en orden mediante `supabase db push`, después de revisar el proyecto seleccionado. Para desarrollo local con la CLI y Docker, usa `supabase start` y `supabase db reset`; esta última orden reinicia la base local y carga `supabase/seed.sql`.
 6. Para una base remota, ejecuta el contenido de `supabase/seed.sql` en el SQL Editor del proyecto de desarrollo después de las migraciones. La semilla del catálogo es idempotente. Las migraciones se aplican una vez y se controlan mediante el historial de Supabase.
-7. Reinicia Vite (`npm run dev`). Abre «Mi cuenta», crea una cuenta de prueba, confirma el correo y prueba el inicio y cierre de sesión.
+7. Reinicia Vite (`npm run dev`). Abre «Cuenta y negocio», crea una cuenta de prueba, escribe el código que llega al correo y prueba el inicio y cierre de sesión, «Entrar con un código» y «Recuperar acceso».
 
-No se ha ejecutado ninguna de estas operaciones contra infraestructura alojada durante esta entrega. Sin estas variables la interfaz explica lo pendiente y permite seguir explorando públicamente.
+No se ha ejecutado ninguna de estas operaciones contra infraestructura alojada durante esta entrega. Sin estas variables la interfaz explica lo pendiente, permite seguir explorando y ofrece un **recorrido de demostración** rotulado que simula el paso del código (el código de demo es `123456`, se muestra en pantalla). La demo no llama a la red, no crea cuentas ni guarda la contraseña.
 
-El alta registra en los metadatos de Auth únicamente `draft_terms_acknowledged`: reconocimiento declarado por el usuario de los borradores visibles. Este dato es editable por el propio usuario y **no sirve como aceptación probatoria de términos aprobados, autorización para marketing ni habilitación comercial**. Antes de producción hace falta un registro de aceptación del documento aprobado, con su versión/hash, fecha y finalidad, controlado por servidor. El proyecto mantiene bloqueadas las compras mientras esto y las demás validaciones estén pendientes.
+## Cuentas con código por correo (Auth y correo)
+
+La interfaz (`src/features/auth/AccessFlow.tsx`, con `supabase-js` v2) usa estos flujos:
+
+| Acción | Llamadas | Notas |
+| --- | --- | --- |
+| Crear cuenta | `auth.signUp({ email, password, options: { data, emailRedirectTo } })` → `auth.verifyOtp({ email, token, type: 'signup' })` | Contraseña de 10 a 72 caracteres con letras y números (reglas visibles). Términos sin premarcar; marketing en casilla separada y opcional. |
+| Reenviar código de alta | `auth.resend({ type: 'signup', email })` | Cuenta regresiva de 60 s y máximo 5 reenvíos por pantalla; Supabase aplica además sus propios límites. |
+| Entrar con contraseña | `auth.signInWithPassword` | Errores traducidos, nunca el texto crudo del servidor. |
+| Entrar con un código | `auth.signInWithOtp({ email, options: { shouldCreateUser: false } })` → `verifyOtp({ type: 'email' })` | `shouldCreateUser: false` impide crear cuentas que se salten los Términos. |
+| Recuperar acceso | `auth.resetPasswordForEmail` → `verifyOtp({ type: 'recovery' })` → `auth.updateUser({ password })` | El evento `PASSWORD_RECOVERY` también abre «Elige tu contraseña nueva». |
+
+Metadatos guardados al registrarse: `display_name`, `terms_version` y `privacy_version` (versión + 12 primeros caracteres del SHA-256 del borrador en `src/domain/legal/manifest.json`), `terms_accepted_at`, `marketing_opt_in` y, por compatibilidad, `draft_terms_acknowledged`. Tras confirmar el código se llama a `record_consent('email_marketing', …, 'signup')` para dejar evidencia del marketing (aceptado o rechazado) en `consent_events`. Los metadatos de usuario son editables por el propio usuario: **no son prueba de aceptación de términos aprobados**. Cuando exista una versión aprobada, registrar la aceptación con `accept_legal_document` desde el servidor. El proyecto mantiene bloqueadas las compras reales mientras esto y las demás validaciones estén pendientes.
+
+Errores que se traducen: código que no coincide o vencido (Supabase devuelve `otp_expired` para ambos; la interfaz distingue por el tiempo transcurrido desde el envío), demasiados intentos (`over_request_rate_limit`, HTTP 429, y un límite local de 5 intentos por código), demasiados correos (`over_email_send_rate_limit`), correo ya registrado (`user_already_exists` / `email_exists`), contraseña débil, credenciales inválidas, correo sin confirmar, red caída y SMTP restringido (`email_address_not_authorized`). Si la confirmación está activada, Supabase no revela si un correo ya existía al registrarse: la pantalla del código lo explica sin confirmar ni negar la existencia de la cuenta.
+
+### Pasos exactos en el panel de Supabase
+
+1. **Authentication → Sign In / Providers → Email**: activar *Email*, activar **Confirm email**, poner **Email OTP Length = 6** y dejar **Email OTP Expiration = 3600** segundos (la interfaz dice «vence en 60 minutos»; si cambias el valor, actualiza `OTP_EXPIRY_SECONDS` en `src/features/auth/auth-flow.ts` y el texto de las plantillas). Activar *Secure email change*. En *Password requirements* poner **mínimo 10** y exigir letras y dígitos; activar la protección contra contraseñas filtradas si el plan lo permite.
+2. **Authentication → URL Configuration**:
+   - **Site URL**: `https://chulla-vida.vercel.app`
+   - **Redirect URLs**: `https://chulla-vida.vercel.app/**`, `https://*-chulla-vida.vercel.app/**` (vistas previas de Vercel, si las usas) y `http://localhost:5173/**` para desarrollo. La aplicación pide volver a `/#cuenta`.
+3. **Authentication → Email Templates**: para cada plantilla, pega el HTML completo del archivo indicado y el asunto sugerido:
+   | Plantilla en Supabase | Archivo | Asunto sugerido |
+   | --- | --- | --- |
+   | Confirm signup | `supabase/templates/confirm-signup.html` | `Tu código para activar CHULLA VIDA: {{ .Token }}` |
+   | Magic Link (se usa para «Entrar con un código») | `supabase/templates/magic-link.html` | `Tu código para entrar a CHULLA VIDA` |
+   | Reset Password | `supabase/templates/recovery.html` | `Tu código para recuperar el acceso` |
+   | Change Email Address | `supabase/templates/email-change.html` | `Confirma tu nuevo correo en CHULLA VIDA` |
+   Las plantillas muestran `{{ .Token }}` grande y legible, el logo desde `https://chulla-vida.vercel.app/brand/logo-320.webp`, colores de marca y texto en español. **No incluyen enlace mágico a propósito**: algunos filtros de correo «visitan» los enlaces y gastan el código de un solo uso. Si alguna vez se añade `{{ .ConfirmationURL }}`, la interfaz no lo necesita.
+4. **Authentication → Rate Limits**: revisar los límites de envío de correo y de verificación (los de fábrica son bajos con el SMTP de prueba de Supabase).
+5. **Project Settings → Authentication → SMTP Settings**: configurar un proveedor con dominio propio autenticado (SPF, DKIM y DMARC). El SMTP de prueba de Supabase solo envía a direcciones del equipo y con límites muy bajos; la interfaz lo explica si responde `email_address_not_authorized`.
+6. Prueba de humo: crear cuenta → recibir el correo con el código → escribirlo (o pegarlo) → sesión abierta; pedir reenvío tras 60 s y comprobar que el código anterior deja de valer; «Entrar con un código»; «Recuperar acceso» → código → contraseña nueva.
+
+Nada de esto se ejecutó contra un proyecto alojado en esta entrega: el código está probado con `supabase-js` simulado (`tests/unit/auth-panel.test.tsx`, `tests/unit/auth-flow.test.tsx`).
 
 ## Esquema
 

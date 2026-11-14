@@ -1,6 +1,7 @@
 import type { Experience, ExperiencePrice } from '../types';
 import { GENERAL_DOCUMENT, GENERAL_NOTES } from '../sources';
-import { MEDIA_COTOPAXI, MEDIA_QUILOTOA, days, defineExperience, petAskAuthority, wx, type ExperienceInput } from './shared';
+import { days, defineExperience, petAskAuthority, wx, type ExperienceInput } from './shared';
+import { placeMedia } from './place-photos';
 
 /** Precio referencial en USD por persona, tal como lo da el catálogo general. */
 const referential = (amount: number): ExperiencePrice => ({
@@ -35,6 +36,7 @@ const general = (input: GeneralInput): Experience =>
 export const GENERAL_EXPERIENCES: readonly Experience[] = [
   general({
     id: 'gen-01-saraguro-ancestral',
+    media: placeMedia('gen-01-saraguro-ancestral'),
     sourceOrder: 1,
     title: 'Saraguro Ancestral',
     localizedRegion: 'sierra',
@@ -55,6 +57,7 @@ export const GENERAL_EXPERIENCES: readonly Experience[] = [
   }),
   general({
     id: 'gen-02-quilotoa-shalala',
+    media: placeMedia('gen-02-quilotoa-shalala'),
     sourceOrder: 2,
     title: 'Quilotoa Shalalá',
     localizedRegion: 'sierra',
@@ -72,10 +75,10 @@ export const GENERAL_EXPERIENCES: readonly Experience[] = [
     activities: ['Senderismo', 'Fotografía', 'Observación del paisaje', 'Recorridos por comunidades locales'],
     price: referential(38),
     tags: ['naturaleza', 'laguna', 'volcan', 'senderismo', 'miradores', 'turismo-comunitario', 'fotografia', 'varios-dias'],
-    media: [MEDIA_QUILOTOA],
   }),
   general({
     id: 'gen-03-yunguilla',
+    media: placeMedia('gen-03-yunguilla'),
     sourceOrder: 3,
     title: 'Yunguilla',
     localizedRegion: 'sierra',
@@ -97,6 +100,7 @@ export const GENERAL_EXPERIENCES: readonly Experience[] = [
   }),
   general({
     id: 'gen-04-salasaca-viva',
+    media: placeMedia('gen-04-salasaca-viva'),
     sourceOrder: 4,
     title: 'Salasaca Viva',
     localizedRegion: 'sierra',
@@ -117,6 +121,7 @@ export const GENERAL_EXPERIENCES: readonly Experience[] = [
   }),
   general({
     id: 'gen-05-oyacachi',
+    media: placeMedia('gen-05-oyacachi'),
     sourceOrder: 5,
     title: 'Oyacachi',
     // La fuente la ubica en la «Transición Andino-Amazónica»: por provincia (Napo) se filtra en Amazonía.
@@ -139,6 +144,7 @@ export const GENERAL_EXPERIENCES: readonly Experience[] = [
   }),
   general({
     id: 'gen-06-valle-de-intag',
+    media: placeMedia('gen-06-valle-de-intag'),
     sourceOrder: 6,
     title: 'Valle de Íntag',
     localizedRegion: 'sierra',
@@ -160,6 +166,7 @@ export const GENERAL_EXPERIENCES: readonly Experience[] = [
   }),
   general({
     id: 'gen-07-banos-de-agua-santa',
+    media: placeMedia('gen-07-banos-de-agua-santa'),
     sourceOrder: 7,
     title: 'Baños de Agua Santa',
     localizedRegion: 'sierra',
@@ -183,6 +190,7 @@ export const GENERAL_EXPERIENCES: readonly Experience[] = [
   }),
   general({
     id: 'gen-08-cuenca',
+    media: placeMedia('gen-08-cuenca'),
     sourceOrder: 8,
     title: 'Cuenca',
     localizedRegion: 'sierra',
@@ -203,6 +211,7 @@ export const GENERAL_EXPERIENCES: readonly Experience[] = [
   }),
   general({
     id: 'gen-09-parque-nacional-cotopaxi',
+    media: placeMedia('gen-09-parque-nacional-cotopaxi'),
     sourceOrder: 9,
     title: 'Parque Nacional Cotopaxi',
     localizedRegion: 'sierra',
@@ -234,10 +243,10 @@ export const GENERAL_EXPERIENCES: readonly Experience[] = [
     price: referential(40),
     tags: ['area-protegida', 'volcan', 'paramo', 'senderismo', 'ciclismo', 'fauna', 'fotografia'],
     petPolicy: petAskAuthority('el Parque Nacional Cotopaxi'),
-    media: [MEDIA_COTOPAXI],
   }),
   general({
     id: 'gen-10-otavalo',
+    media: placeMedia('gen-10-otavalo'),
     sourceOrder: 10,
     title: 'Otavalo',
     localizedRegion: 'sierra',
@@ -258,6 +267,7 @@ export const GENERAL_EXPERIENCES: readonly Experience[] = [
   }),
   general({
     id: 'gen-11-quito',
+    media: placeMedia('gen-11-quito'),
     sourceOrder: 11,
     title: 'Quito',
     localizedRegion: 'sierra',
@@ -278,6 +288,7 @@ export const GENERAL_EXPERIENCES: readonly Experience[] = [
   }),
   general({
     id: 'gen-12-loja',
+    media: placeMedia('gen-12-loja'),
     sourceOrder: 12,
     title: 'Loja',
     localizedRegion: 'sierra',
@@ -306,6 +317,7 @@ export const GENERAL_EXPERIENCES: readonly Experience[] = [
   }),
   general({
     id: 'gen-13-riobamba',
+    media: placeMedia('gen-13-riobamba'),
     sourceOrder: 13,
     title: 'Riobamba',
     localizedRegion: 'sierra',
@@ -326,6 +338,7 @@ export const GENERAL_EXPERIENCES: readonly Experience[] = [
   }),
   general({
     id: 'gen-14-mindo',
+    media: placeMedia('gen-14-mindo'),
     sourceOrder: 14,
     title: 'Mindo',
     localizedRegion: 'sierra',

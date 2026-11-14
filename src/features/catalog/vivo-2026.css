@@ -1,0 +1,70 @@
+/* Ecuador Vivo 2026: héroe con regiones, tarjetas y ficha. Usa los tokens de src/index.css. */
+
+/* Héroe: la foto cambia con la región que miras; las cuatro regiones viven dentro del héroe */
+.cv-hero{min-height:560px;align-items:flex-start;padding-bottom:150px;background:var(--cv-navy)}
+.cv-hero .vivo-hero-photo{animation:cv-fade .7s var(--cv-ease) both}
+.cv-hero .vivo-hero-shade{background:linear-gradient(90deg,#012960e6 0%,#01296099 46%,#0129601a 100%),linear-gradient(0deg,#012960cc 0%,transparent 42%)}
+.cv-hero h1{font-size:clamp(44px,4.6vw,68px);margin-bottom:18px}.cv-hero .vivo-hero-copy>p{margin-bottom:22px}
+.cv-hero h1 em{color:var(--cv-maize)}
+.cv-hero .vivo-primary{background:var(--cv-maize);color:var(--cv-navy)!important;box-shadow:0 8px 22px #fed65a33;transition:transform var(--cv-dur-1) var(--cv-ease),background-color var(--cv-dur-1)}
+.cv-hero .vivo-primary:hover{background:#ffe07f;transform:translateY(-2px)}
+.cv-hero .vivo-voice-hero>span.cv-pulse{border-radius:50%}
+.cv-hero .vivo-hero-place{flex-wrap:wrap;margin-top:28px}
+.cv-hero .vivo-hero-place small{font-size:11px;color:#dfe7ef}
+.cv-hero-regions{position:absolute;left:clamp(20px,4vw,65px);right:clamp(20px,4vw,65px);bottom:26px;z-index:2;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;max-width:760px}
+.cv-hero-regions button{display:flex;align-items:center;gap:11px;min-height:58px;padding:10px 14px;border-radius:var(--cv-r-m);background:#fffdf7eb;color:var(--cv-ink);text-align:left;border:1px solid #ffffff80;border-left:5px solid var(--tone);box-shadow:var(--cv-shadow-1);transition:transform var(--cv-dur-2) var(--cv-ease),box-shadow var(--cv-dur-2),background-color var(--cv-dur-1)}
+.cv-hero-regions button>svg{color:var(--tone);flex:none}
+.cv-hero-regions strong{display:block;font-size:14px;line-height:1.3}
+.cv-hero-regions small{display:block;font-size:12px;color:var(--cv-muted)}
+.cv-hero-regions button:hover,.cv-hero-regions button:focus-visible{transform:translateY(-3px);box-shadow:var(--cv-shadow-2);background:var(--tone-wash)}
+.cv-hero-regions button[aria-pressed=true]{background:var(--tone);color:#fff;border-color:var(--tone)}
+.cv-hero-regions button[aria-pressed=true] svg,.cv-hero-regions button[aria-pressed=true] small{color:#fff}
+.cv-hero .vivo-hero-ticket{bottom:auto;top:30px;right:30px}
+.cv-hero .vivo-hero-ticket>svg{color:var(--cv-petrol)}.cv-hero .vivo-hero-ticket button{background:var(--cv-petrol)}
+
+/* Tarjetas: banda superior con el color de su región, foto con zoom suave y elevación */
+.vivo-card{border-color:var(--cv-line);box-shadow:var(--cv-shadow-1);position:relative}
+.vivo-card::before{content:"";position:absolute;inset:0 0 auto;height:5px;background:var(--tone,var(--cv-petrol));z-index:2}
+@media (prefers-reduced-motion:no-preference){
+  .vivo-card{transition:transform var(--cv-dur-2) var(--cv-ease),box-shadow var(--cv-dur-2) var(--cv-ease),opacity var(--cv-dur-3) var(--cv-ease)}
+  .vivo-card:hover,.vivo-card:focus-within{transform:translateY(-6px);box-shadow:var(--cv-shadow-3)}
+  .vivo-card-photo img{transition:transform .7s var(--cv-ease)}
+  .vivo-card:hover .vivo-card-photo img{transform:scale(1.07)}
+  .vivo-grid{animation:cv-fade-up .45s var(--cv-ease) both}
+  .vivo-save.is-saved svg,.vivo-detail-landscape>button[aria-pressed=true] svg{animation:cv-heart .5s var(--cv-ease-pop)}
+}
+.vivo-save{width:44px;height:44px}
+.vivo-card-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch}
+.vivo-card-actions>.vivo-card-open{flex:1 1 180px}
+.vivo-card-actions>:not(.vivo-card-open){flex:1 1 140px}
+.vivo-card-price>span{color:var(--cv-muted)}
+
+/* Ficha */
+.vivo-detail-landscape{height:clamp(220px,34vw,320px)}
+.vivo-detail-landscape img{animation:cv-fade .5s var(--cv-ease) both}
+.vivo-photo-credit{position:absolute;right:12px;bottom:10px;max-width:min(70%,420px);padding:4px 9px;border-radius:var(--cv-r-s);background:#012960cc;color:#fff;font-size:11px;line-height:1.5;text-align:right}
+.vivo-photo-credit a{color:#fff;text-decoration:underline}
+.vivo-detail-landscape>span{bottom:46px}
+.vivo-detail-cta{flex-direction:column;align-items:stretch;gap:16px}
+.vivo-detail-cta>div:first-child{flex:none}
+.vivo-detail-cta>div:last-child{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.vivo-detail-cta>div:last-child>:last-child{order:-1;flex:1 1 100%}
+.vivo-detail-cta .button{min-height:46px}
+
+@media (max-width:1100px){.cv-hero .vivo-hero-ticket{display:none}}
+@media (max-width:760px){
+  .cv-hero{min-height:0;padding:34px 20px 24px;flex-direction:column;align-items:stretch}
+  .cv-hero .vivo-hero-copy{max-width:none}
+  .cv-hero h1{font-size:clamp(40px,12vw,54px)}
+  .cv-hero .vivo-hero-actions{flex-direction:column;align-items:stretch;gap:10px}
+  .cv-hero .vivo-hero-actions>*{justify-content:center;min-height:48px;width:100%}
+  .cv-hero .vivo-host-hero{white-space:normal}
+  .cv-hero-regions{position:static;grid-template-columns:repeat(2,minmax(0,1fr));margin-top:22px;gap:8px}
+  .cv-hero-regions button{min-height:54px;padding:8px 10px}
+  .cv-hero .vivo-hero-route{display:none}
+  .vivo-location-invite{flex-wrap:wrap}.vivo-location-invite>div{flex:1 1 200px}.vivo-location-invite>button{flex:1 1 100%;justify-content:center;min-height:44px}
+  .vivo-detail-cta>div:last-child{justify-content:stretch}
+  .vivo-detail-cta>div:last-child>*{flex:1 1 100%}
+  .vivo-photo-credit{left:12px;right:12px;max-width:none;text-align:left}
+  .vivo-detail-landscape>span{bottom:auto;top:16px;left:16px}
+}

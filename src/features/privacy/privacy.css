@@ -1,12 +1,104 @@
-.privacy-banner{position:fixed;inset:auto 20px 90px;z-index:80;display:flex;gap:18px;align-items:center;padding:20px 24px;background:var(--paper,#fffdf8);color:var(--ink,#28372d);border:1px solid var(--line,#ddd8cb);border-radius:14px;box-shadow:0 12px 40px #10251f26;max-width:1120px;margin-inline:auto}.privacy-banner>svg{flex:none;color:var(--teal)}.privacy-banner strong{font-size:16px}.privacy-banner p{font-size:14px;line-height:1.65;max-width:70ch;margin-top:5px}.privacy-actions{display:flex;gap:8px;flex-wrap:wrap;flex:none;max-width:310px}.privacy-actions .button{min-height:44px;font-size:13px}.privacy-editor{font-size:16px;line-height:1.7}.privacy-editor>label{display:grid;grid-template-columns:24px 1fr;gap:8px;padding-block:20px;border-bottom:1px solid var(--line)}.privacy-editor label span{grid-column:2;font-size:14px;color:var(--muted)}.privacy-editor input{width:20px;height:20px;accent-color:var(--teal)}.privacy-editor .dialog-actions{flex-wrap:wrap}@media(max-width:760px){.privacy-banner{inset:auto 12px 78px;display:block;padding:18px}.privacy-banner>svg{display:none}.privacy-actions{margin-top:14px;max-width:none}.privacy-banner p{font-size:14px}.privacy-actions .button{flex:1;white-space:normal}}
-/* 3.0: tres opciones con el mismo peso visual, banner compacto que no tapa navegación ni a MIJIN */
-.privacy-banner{inset:auto 16px 16px;z-index:120;padding:16px 20px;gap:16px}
-.privacy-banner p{font-size:14px}
-.privacy-actions{max-width:none;flex-wrap:nowrap}
-.privacy-choice{min-height:44px;padding:10px 16px;font-size:14px;font-weight:650;background:var(--paper,#fffdf8);color:#012960;border:1.5px solid #012960;border-radius:11px;white-space:nowrap}
-.privacy-choice:hover{background:#012960;color:#fff}
-.privacy-choice:focus-visible{outline:3px solid #fed65a;outline-offset:2px}
-.privacy-link{background:none;border:0;padding:0;color:#012960;text-decoration:underline;font:inherit;cursor:pointer}
+/* CHULLA VIDA · Privacidad y cookies por niveles (Privado / Equilibrado / Personalizado) */
+.consent-banner,.privacy-editor,.privacy-toast,.rights-form,.data-protection{
+  --cv-navy:#012960;--cv-red:#c61534;--cv-maize:#fed65a;--cv-turq:#0e8aa0;--cv-turq-ink:#0a6474;
+  --cv-paper:#fffdf8;--cv-ink:#1d2b3a;--cv-muted:#4f5d6b;--cv-line:#dcd6c8;--cv-soft:#f3efe4;
+}
+
+/* ── Banner de primera visita ── */
+.privacy-banner.consent-banner{position:fixed;inset:auto 16px 16px;z-index:120;display:grid;gap:14px;max-width:1120px;margin-inline:auto;
+  max-height:min(88vh,720px);overflow:auto;overscroll-behavior:contain;padding:20px 22px;background:var(--cv-paper);color:var(--cv-ink);
+  border:1px solid var(--cv-line);border-radius:18px;box-shadow:0 18px 50px #01296033,0 2px 0 var(--cv-maize) inset;
+  animation:cv-consent-rise .45s cubic-bezier(.2,.8,.2,1) both}
+.consent-banner::before{content:"";position:sticky;top:-20px;display:block;height:5px;margin:-20px -22px 0;border-radius:18px 18px 0 0;
+  background:linear-gradient(90deg,var(--cv-navy) 0 25%,var(--cv-red) 25% 50%,var(--cv-maize) 50% 75%,var(--cv-turq) 75%)}
+.consent-banner-intro{display:flex;gap:14px;align-items:flex-start}
+.consent-banner-badge{flex:none;display:grid;place-items:center;width:44px;height:44px;border-radius:14px;background:var(--cv-navy);color:var(--cv-maize)}
+.consent-banner h2{margin:0;font-family:inherit;font-weight:750;font-size:19px;line-height:1.25;color:var(--cv-navy);letter-spacing:-.01em}
+.consent-banner p{margin:4px 0 0;font-size:14px;line-height:1.6;max-width:78ch;color:var(--cv-ink)}
+.consent-banner-actions{display:flex;align-items:center;justify-content:flex-end;gap:12px;flex-wrap:wrap}
+.consent-hint{margin:0;font-size:14px;color:var(--cv-red);font-weight:600;min-height:1px}
+.consent-save{min-height:48px;padding:12px 22px;font-size:15px;font-weight:700;border-radius:12px;background:var(--cv-navy);color:#fff;border:2px solid var(--cv-navy);cursor:pointer;transition:transform .15s,background .15s}
+.consent-save:hover{background:#00204d}
+.consent-save:active{transform:translateY(1px)}
+.consent-save:focus-visible,.consent-level:focus-within,.privacy-link:focus-visible,.consent-switch input:focus-visible+span{outline:3px solid var(--cv-maize);outline-offset:2px}
+.privacy-link{background:none;border:0;padding:0;color:var(--cv-navy);text-decoration:underline;text-underline-offset:2px;font:inherit;font-weight:600;cursor:pointer;min-height:24px}
 body:has(.privacy-banner) .mijin-launcher{visibility:hidden}
-@media(max-width:900px){.privacy-banner{display:block}.privacy-actions{margin-top:12px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.privacy-choice{white-space:normal;padding:8px 6px;font-size:13px}}
-@media(max-width:760px){.privacy-banner{inset:auto 10px 82px}}
+
+/* ── Tarjetas de nivel: mismo tamaño, mismo peso, ninguna destacada por defecto ── */
+.consent-levels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.consent-level{position:relative;display:grid;align-content:start;gap:6px;min-height:44px;padding:14px 14px 14px;border:2px solid var(--cv-line);border-radius:14px;
+  background:#fff;cursor:pointer;transition:border-color .2s,box-shadow .2s,transform .2s,background .2s}
+.consent-level:hover{border-color:var(--cv-turq);transform:translateY(-2px);box-shadow:0 8px 22px #01296014}
+.consent-level input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.consent-level-head{display:flex;align-items:center;gap:10px}
+.consent-level-head strong{font-size:16px;color:var(--cv-navy)}
+.consent-level-icon{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--cv-soft);color:var(--cv-navy);transition:background .2s,color .2s}
+.consent-level-private .consent-level-icon{color:var(--cv-navy)}
+.consent-level-balanced .consent-level-icon{color:var(--cv-turq-ink)}
+.consent-level-custom .consent-level-icon{color:var(--cv-red)}
+.consent-level-check{margin-left:auto;display:grid;place-items:center;width:24px;height:24px;border-radius:50%;border:2px solid var(--cv-line);color:transparent;transition:all .2s}
+.consent-level-tagline{font-size:14px;line-height:1.5;color:var(--cv-ink)}
+.consent-level-detail{font-size:13px;line-height:1.5;color:var(--cv-muted)}
+.consent-level-detail b{color:var(--cv-ink)}
+.consent-level.is-selected{border-color:var(--cv-navy);background:linear-gradient(180deg,#fff 0,#fffaf0 100%);box-shadow:0 0 0 3px #fed65a88}
+.consent-level.is-selected .consent-level-icon{background:var(--cv-navy);color:var(--cv-maize)}
+.consent-level.is-selected .consent-level-check{background:var(--cv-navy);border-color:var(--cv-navy);color:var(--cv-maize);animation:cv-consent-pop .3s ease-out}
+
+/* ── Editor «Privacidad y cookies» ── */
+.privacy-editor{font-size:16px;line-height:1.65;color:var(--cv-ink);display:grid;gap:16px}
+.privacy-editor-lead{margin:0;color:var(--cv-muted)}
+.privacy-current{display:flex;gap:8px;align-items:flex-start;margin:0;padding:10px 12px;border-radius:12px;background:#e8f6f8;color:var(--cv-turq-ink);font-size:14px}
+.privacy-current svg{flex:none;margin-top:3px}
+.consent-categories{border:0;margin:0;padding:0;display:grid;gap:0}
+.consent-categories legend{font-weight:700;color:var(--cv-navy);margin-bottom:6px;font-size:17px}
+.consent-category{display:grid;grid-template-columns:56px 1fr;gap:12px;padding:16px 0;border-top:1px solid var(--cv-line);cursor:pointer}
+.consent-category.is-off{cursor:default}
+.consent-category.is-off .consent-category-text{opacity:.78}
+.consent-category-text{display:grid;gap:3px;font-size:14px;color:var(--cv-muted)}
+.consent-category-text strong{font-size:16px;color:var(--cv-ink);display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.consent-category-text b{color:var(--cv-ink)}
+.consent-tag{font-style:normal;font-size:12px;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--cv-soft);color:var(--cv-navy)}
+.consent-tag-off{background:#f6e3e6;color:#8f0f26}
+.consent-switch{position:relative;display:block;width:52px;height:44px}
+.consent-switch input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:inherit;z-index:1}
+.consent-switch span{position:absolute;top:10px;left:0;width:48px;height:26px;border-radius:99px;background:#c9c3b5;transition:background .2s}
+.consent-switch span::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px #0004;transition:transform .2s}
+.consent-switch input:checked+span{background:var(--cv-turq-ink)}
+.consent-switch input:checked+span::after{transform:translateX(22px)}
+.consent-switch input:disabled+span{opacity:.7}
+.consent-switch input:disabled:checked+span{background:var(--cv-navy);opacity:1}
+.privacy-editor-more{margin:0;font-size:14px;color:var(--cv-muted)}
+.privacy-editor .dialog-actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end}
+.privacy-editor .dialog-actions .button{min-height:48px}
+
+/* ── Aviso flotante ── */
+.privacy-toast{position:fixed;left:50%;bottom:20px;z-index:130;margin:0;max-width:min(520px,calc(100vw - 32px));padding:12px 16px;border-radius:12px;
+  background:var(--cv-navy);color:#fff;font-size:14px;line-height:1.5;box-shadow:0 10px 30px #0003;transform:translate(-50%,140%);opacity:0;
+  transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .35s;pointer-events:none}
+.privacy-toast.is-visible{transform:translate(-50%,0);opacity:1}
+.privacy-toast:empty{padding:0}
+
+.consent-media-blocked p{margin:0 0 10px}
+
+@keyframes cv-consent-rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes cv-consent-pop{0%{transform:scale(.6)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+
+@media (max-width:900px){
+  .consent-levels{grid-template-columns:1fr}
+  .consent-level:not(.is-selected) .consent-level-detail{display:none}
+}
+@media (max-width:760px){
+  .privacy-banner.consent-banner{inset:auto 10px 10px;padding:16px 16px 14px;gap:12px}
+  .consent-banner::before{top:-16px;margin:-16px -16px 0}
+  .consent-banner-badge{display:none}
+  .consent-banner h2{font-size:17px}
+  .consent-banner-actions{justify-content:stretch}
+  .consent-save{flex:1}
+  .consent-level{padding:12px}
+  .consent-category{grid-template-columns:52px 1fr}
+  .privacy-editor .dialog-actions .button{flex:1 1 100%}
+}
+@media (prefers-reduced-motion:reduce){
+  .consent-banner,.consent-level,.consent-level-check,.consent-switch span,.consent-switch span::after,.privacy-toast,.consent-save{animation:none!important;transition:none!important}
+  .consent-level:hover{transform:none}
+}

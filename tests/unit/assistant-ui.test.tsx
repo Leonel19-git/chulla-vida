@@ -10,17 +10,21 @@ vi.mock('../../src/components/chulla/Dialog', () => ({
 }));
 const weatherMocks = vi.hoisted(() => ({ search: vi.fn(), get: vi.fn() }));
 vi.mock('../../src/domain/weather', async importOriginal => ({ ...await importOriginal<typeof import('../../src/domain/weather')>(), searchWeatherLocalities: weatherMocks.search, getWeather: weatherMocks.get }));
-const start = vi.fn(); const abort = vi.fn(); const synthesis = { speak: vi.fn(), cancel: vi.fn(), getVoices: () => [] };
+const start = vi.fn(); const abort = vi.fn(); const stop = vi.fn();
+const voices = [{ lang: 'es-ES', name: 'España' }, { lang: 'en-US', name: 'English' }, { lang: 'es-MX', name: 'México' }];
+const synthesis = { speak: vi.fn(), cancel: vi.fn(), resume: vi.fn(), paused: false, getVoices: vi.fn(() => voices), addEventListener: vi.fn(), removeEventListener: vi.fn() };
+const spoken = () => synthesis.speak.mock.calls.map(call => call[0].text).join(' ');
 class FakeRecognition {
   static instances: FakeRecognition[] = [];
   lang = ''; continuous = false; interimResults = false;
   onresult: ((event: unknown) => void) | null = null; onend: (() => void) | null = null; onerror: ((event: unknown) => void) | null = null;
-  start = start; abort = abort;
+  maxAlternatives = 0; start = start; abort = abort; stop = stop;
   constructor() { FakeRecognition.instances.push(this); }
 }
 class FakeUtterance { text: string; lang = ''; rate = 1; voice = null; onend: (() => void) | null = null; onerror: (() => void) | null = null; constructor(text: string) { this.text = text; } }
 function open() { fireEvent.click(screen.getByRole('button', { name: 'Habla con MIJIN, tu pana de aventuras' })); }
-function begin() { fireEvent.click(screen.getByLabelText('Activar conversación de voz en esta sesión')); fireEvent.click(screen.getByRole('button', { name: 'Hablar con MIJIN' })); }
+function begin() { fireEvent.click(screen.getByRole('button', { name: 'Hablar con MIJIN' })); }
+function fail(error: string) { act(() => { FakeRecognition.instances.at(-1)?.onerror?.({ error }); }); }
 function phrase(text: string, final = true) { act(() => { FakeRecognition.instances.at(-1)?.onresult?.({ resultIndex: 0, results: [Object.assign([{ transcript: text }], { isFinal: final })] }); }); }
 async function typeFallback(text: string) {
   const input = await screen.findByLabelText('Consulta accesible para MIJIN'); fireEvent.change(input, { target: { value: text } }); fireEvent.submit(input.closest('form')!);
@@ -28,24 +32,71 @@ async function typeFallback(text: string) {
 beforeEach(() => {
   vi.stubGlobal('SpeechRecognition', FakeRecognition); vi.stubGlobal('SpeechSynthesisUtterance', FakeUtterance); vi.stubGlobal('speechSynthesis', synthesis);
   vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(true);
-  FakeRecognition.instances = []; start.mockClear(); abort.mockClear(); synthesis.speak.mockClear(); synthesis.cancel.mockClear(); weatherMocks.get.mockReset(); weatherMocks.search.mockReset();
+  FakeRecognition.instances = []; start.mockClear(); abort.mockClear(); stop.mockClear(); synthesis.getVoices.mockImplementation(() => voices); window.sessionStorage.clear(); synthesis.speak.mockClear(); synthesis.cancel.mockClear(); weatherMocks.get.mockReset(); weatherMocks.search.mockReset();
 });
 afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 describe('MIJIN se usa hablando, con permiso y subtítulos', () => {
-  it('abrir no inicia voz ni red y el campo de texto está disponible desde el inicio', () => {
+  it('abrir no inicia voz ni red; tocar el micrófono es el gesto: muestra el aviso y recién entonces escucha', () => {
     const network = vi.fn(); vi.stubGlobal('fetch', network); render(<MijinAssistant />); open();
     expect(screen.getByRole('dialog')).toBeInTheDocument(); expect(screen.getByLabelText('Consulta accesible para MIJIN')).toBeInTheDocument();
     expect(start).not.toHaveBeenCalled(); expect(network).not.toHaveBeenCalled(); expect(synthesis.speak).not.toHaveBeenCalled();
-    expect(screen.getByRole('button', { name: 'Hablar con MIJIN' })).toBeDisabled();
+    expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Hablar con MIJIN' })).toBeEnabled();
+    expect(screen.queryByText(/CHULLA VIDA no guarda audio/)).not.toBeInTheDocument();
     begin(); expect(start).toHaveBeenCalledTimes(1);
+    const instance = FakeRecognition.instances.at(-1)!;
+    expect(instance.lang).toBe('es-EC'); expect(instance.interimResults).toBe(true); expect(instance.continuous).toBe(false);
+    expect(screen.getByText(/CHULLA VIDA no guarda audio/)).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Detener micrófono' })); expect(abort).toHaveBeenCalled();
+    expect(network).not.toHaveBeenCalled();
+  });
+  it('el aviso breve aparece una sola vez por sesión', () => {
+    render(<MijinAssistant />); open(); begin(); expect(screen.getByText(/CHULLA VIDA no guarda audio/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Cerrar prueba' })); open(); begin();
+    expect(start).toHaveBeenCalledTimes(2); expect(screen.queryByText(/CHULLA VIDA no guarda audio/)).not.toBeInTheDocument();
+  });
+  it.each([
+    ['not-allowed', /candado/], ['service-not-allowed', /candado/], ['network', /necesita internet/],
+    ['no-speech', /No te escuché/], ['audio-capture', /No encontré un micrófono/],
+  ])('explica el error %s y deja el micrófono apagado', (error, message) => {
+    render(<MijinAssistant />); open(); begin(); fail(error);
+    expect(screen.getByText(message)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Hablar con MIJIN' })).toBeEnabled();
+    act(() => { FakeRecognition.instances.at(-1)?.onend?.(); });
+    expect(screen.getByText(message)).toBeInTheDocument(); expect(synthesis.speak).not.toHaveBeenCalled();
+  });
+  it('si el navegador no admite es-EC reintenta con es-ES', () => {
+    render(<MijinAssistant />); open(); begin(); fail('language-not-supported');
+    expect(FakeRecognition.instances).toHaveLength(2); expect(FakeRecognition.instances[1].lang).toBe('es-ES'); expect(start).toHaveBeenCalledTimes(2);
+  });
+  it('si termina por silencio sin marcar la frase como final, usa el subtítulo en vivo', () => {
+    render(<MijinAssistant />); open(); begin(); phrase('Quiero conocer Saraguro', false);
+    expect(screen.getByRole('region', { name: 'Subtítulos de la conversación' })).toHaveTextContent('Quiero conocer Saraguro'); expect(synthesis.speak).not.toHaveBeenCalled();
+    act(() => { FakeRecognition.instances.at(-1)?.onend?.(); });
+    expect(spoken()).toMatch(/saraguro/i);
+  });
+  it('elige una voz en español por preferencia regional, trocea y respeta la velocidad', () => {
+    render(<MijinAssistant />); open();
+    fireEvent.change(screen.getByLabelText('Velocidad'), { target: { value: '0.85' } });
+    begin(); phrase('Quiero conocer Saraguro');
+    const utterances = synthesis.speak.mock.calls.map(call => call[0]);
+    expect(utterances.length).toBeGreaterThan(0);
+    utterances.forEach(utterance => { expect(utterance.voice?.name).toBe('México'); expect(utterance.rate).toBe(0.85); expect(utterance.text.length).toBeLessThanOrEqual(200); });
+  });
+  it('espera a voiceschanged cuando las voces todavía no cargaron', async () => {
+    let loaded = false; synthesis.getVoices.mockImplementation(() => loaded ? voices : []);
+    render(<MijinAssistant />); open(); begin(); phrase('Quiero conocer Saraguro');
+    expect(synthesis.speak).not.toHaveBeenCalled();
+    const listener = synthesis.addEventListener.mock.calls.find(call => call[0] === 'voiceschanged')?.[1] as () => void;
+    loaded = true; await act(async () => { listener(); await Promise.resolve(); });
+    expect(synthesis.speak).toHaveBeenCalled(); expect(synthesis.speak.mock.calls[0][0].voice?.name).toBe('México');
   });
   it('una frase final recibe respuesta hablada automática sin Enviar; un resultado parcial no consulta', () => {
     render(<MijinAssistant />); open(); begin(); phrase('Quiero conocer Sara', false); expect(synthesis.speak).not.toHaveBeenCalled();
     phrase('Quiero conocer Saraguro');
-    expect(synthesis.speak).toHaveBeenCalledTimes(1);
-    expect(synthesis.speak.mock.calls[0][0].text).toMatch(/saraguro/i);
-    expect(synthesis.speak.mock.calls[0][0].text).toContain('$45');
+    expect(synthesis.speak).toHaveBeenCalled();
+    expect(spoken()).toMatch(/saraguro/i);
+    expect(spoken()).toContain('$45');
     expect(screen.getByRole('button', { name: 'Interrumpir y hablar con MIJIN' })).toBeInTheDocument();
     expect(screen.getByText(/01_catalogo_14_destinos/)).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Enviar' })).not.toBeInTheDocument();
@@ -65,7 +116,9 @@ describe('MIJIN se usa hablando, con permiso y subtítulos', () => {
     vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(false); render(<MijinAssistant downloadedExperiences={[]} />); open();
     fireEvent.click(screen.getByRole('button', { name: 'Quiero conocer Saraguro' }));
     expect(screen.getByText(/Sin conexión: no hay fichas descargadas/)).toBeInTheDocument(); expect(screen.queryByRole('button', { name: 'Ver ficha' })).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Hablar con MIJIN' })).toBeDisabled();
+    fireEvent.click(screen.getByRole('button', { name: 'Hablar con MIJIN' }));
+    expect(start).not.toHaveBeenCalled(); expect(FakeRecognition.instances).toHaveLength(0);
+    expect(screen.getByText(/Sin conexión, el reconocimiento de voz/)).toBeInTheDocument();
   });
   it('una orden de voz puede abrir una pantalla sin modificar reservas ni pedir texto', () => {
     const navigate = vi.fn(); window.addEventListener('cv3:plan', navigate); render(<MijinAssistant />); open(); begin(); phrase('Abre mi viaje');
@@ -88,10 +141,14 @@ describe('MIJIN se usa hablando, con permiso y subtítulos', () => {
   });
   it('sin reconocimiento permite abrir la alternativa accesible y consultar sin permisos de audio', async () => {
     vi.stubGlobal('SpeechRecognition', undefined); render(<MijinAssistant />); open();
-    expect(screen.getByRole('button', { name: 'Hablar con MIJIN' })).toBeDisabled();
+    fireEvent.click(screen.getByRole('button', { name: 'Hablar con MIJIN' }));
+    expect(screen.getAllByText(/Firefox o un Safari antiguo/).length).toBeGreaterThan(0);
+    await waitFor(() => expect(document.activeElement).toBe(screen.getByLabelText('Consulta accesible para MIJIN')));
     await typeFallback('Quiero conocer Saraguro');
     await waitFor(() => expect(screen.getByText(/Saraguro Ancestral:/i)).toBeInTheDocument());
     expect(start).not.toHaveBeenCalled(); expect(synthesis.speak).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: 'Escuchar respuesta' }));
+    expect(spoken()).toMatch(/saraguro/i);
   });
   it('detener una consulta descarta la respuesta tardía del proveedor', async () => {
     let resolveSearch: (value: unknown[]) => void = () => undefined;
@@ -125,7 +182,7 @@ describe('MIJIN se usa hablando, con permiso y subtítulos', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Respuesta con voz' }));
     fireEvent.click(screen.getByRole('button', { name: 'Hablar con MIJIN' }));
     phrase('Quiero conocer Saraguro');
-    expect(synthesis.speak).toHaveBeenCalledTimes(1);
+    expect(spoken()).toMatch(/saraguro/i);
   });
   it.each(['Detener', 'Cerrar prueba'])('%s impide que un pronóstico pendiente reproduzca audio después', async action => {
     let resolveWeather!: (value: WeatherReport) => void;

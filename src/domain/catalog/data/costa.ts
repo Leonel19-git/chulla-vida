@@ -1,6 +1,7 @@
 import type { Experience, ExperiencePrice, ItineraryStep } from '../types';
 import { COSTA_DOCUMENT, COSTA_NOTES } from '../sources';
-import { MEDIA_AGUA_BLANCA, defineExperience, hours, petAskAuthority, wx, type ExperienceInput } from './shared';
+import { defineExperience, hours, petAskAuthority, wx, type ExperienceInput } from './shared';
+import { placeMedia } from './place-photos';
 
 /** Tarifa propuesta de noviembre de 2026: no es cotización aceptada ni precio oficial. */
 const proposed = (amount: number, includes: string[], excludes: string[]): ExperiencePrice => ({
@@ -35,6 +36,7 @@ const costa = (input: CostaInput): Experience =>
 export const COSTA_EXPERIENCES: readonly Experience[] = [
   costa({
     id: 'costa-01-raices-de-manabi',
+    media: placeMedia('costa-01-raices-de-manabi'),
     sourceOrder: 1,
     title: 'Agua Blanca',
     experienceName: 'Raíces de Manabí',
@@ -78,10 +80,10 @@ export const COSTA_EXPERIENCES: readonly Experience[] = [
     ),
     tags: ['patrimonio', 'cultura-mantena', 'turismo-comunitario', 'arqueologia', 'laguna', 'gastronomia', 'area-protegida'],
     petPolicy: petAskAuthority('el entorno del Parque Nacional Machalilla'),
-    media: [MEDIA_AGUA_BLANCA],
   }),
   costa({
     id: 'costa-02-guayaquil-vivo',
+    media: placeMedia('costa-02-guayaquil-vivo'),
     sourceOrder: 2,
     title: 'Guayaquil',
     experienceName: 'Guayaquil Vivo',
@@ -129,6 +131,7 @@ export const COSTA_EXPERIENCES: readonly Experience[] = [
   }),
   costa({
     id: 'costa-03-pacifico-activo',
+    media: placeMedia('costa-03-pacifico-activo'),
     sourceOrder: 3,
     title: 'Salinas',
     experienceName: 'Pacífico Activo',
@@ -176,6 +179,7 @@ export const COSTA_EXPERIENCES: readonly Experience[] = [
   }),
   costa({
     id: 'costa-04-sabores-de-manta',
+    media: placeMedia('costa-04-sabores-de-manta'),
     sourceOrder: 4,
     title: 'Manta',
     experienceName: 'Sabores de Manta',
@@ -221,6 +225,7 @@ export const COSTA_EXPERIENCES: readonly Experience[] = [
   }),
   costa({
     id: 'costa-05-aventura-marina',
+    media: placeMedia('costa-05-aventura-marina'),
     sourceOrder: 5,
     title: 'Salango',
     experienceName: 'Aventura Marina',
@@ -266,6 +271,7 @@ export const COSTA_EXPERIENCES: readonly Experience[] = [
   }),
   costa({
     id: 'costa-06-expedicion-natural',
+    media: placeMedia('costa-06-expedicion-natural'),
     sourceOrder: 6,
     title: 'Isla de la Plata',
     experienceName: 'Expedición Natural',
@@ -313,6 +319,7 @@ export const COSTA_EXPERIENCES: readonly Experience[] = [
   }),
   costa({
     id: 'costa-07-ola-y-manglar',
+    media: placeMedia('costa-07-ola-y-manglar'),
     sourceOrder: 7,
     title: 'Mompiche',
     experienceName: 'Ola y Manglar',

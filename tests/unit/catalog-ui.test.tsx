@@ -66,3 +66,22 @@ it('impide cargar un embed sin permiso y lo retira al revocar', async () => {
   await user.click(screen.getByRole('button', { name: 'Revocar medios' }));
   expect(screen.queryByTitle('Reproductor externo')).not.toBeInTheDocument();
 });
+describe('portada Ecuador Vivo', () => {
+  it('las regiones del héroe filtran el catálogo y marcan la elegida', async () => {
+    const user = userEvent.setup();
+    Element.prototype.scrollIntoView = vi.fn();
+    render(<Catalog />);
+    const galapagos = screen.getByRole('button', { name: /^Galápagos, \d+ fichas$/ });
+    await user.click(galapagos);
+    expect(galapagos).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getAllByRole('article')).toHaveLength(experiences.filter(item => item.localizedRegion === 'galapagos').length);
+  });
+  it('cuenta los pasos, el reparto por región y aclara que la compra es de prueba', async () => {
+    render(<Catalog />);
+    expect(await screen.findByRole('heading', { name: 'Así funciona CHULLA VIDA' })).toBeInTheDocument();
+    expect(screen.getAllByRole('listitem').some(item => /Compra o pregunta/.test(item.textContent ?? ''))).toBe(true);
+    const bars = screen.getByRole('list', { name: 'Fichas por región' });
+    expect(bars.textContent).toContain(`${experiences.filter(item => item.localizedRegion === 'amazonia').length} fichas`);
+    expect(screen.getAllByText(/modo prueba, sin cobro/).length).toBeGreaterThan(0);
+  });
+});

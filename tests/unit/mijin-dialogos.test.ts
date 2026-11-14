@@ -12,6 +12,12 @@ describe('MIJIN responde las preguntas obligatorias sin inventar', () => {
     expect(answer.text).toMatch(/Sierra/);
     expect(answer.text).toMatch(/orientativas/);
   });
+  it('fiestas de junio: no repite la fecha ni deja dobles puntos', () => {
+    const answer = ask('¿Qué fiestas hay en junio?');
+    expect(answer.text).toMatch(/Inti Raymi/);
+    expect(answer.text).not.toMatch(/\.\./);
+    expect(answer.text.match(/cada comunidad define sus días/g)?.length ?? 0).toBeLessThanOrEqual(1);
+  });
   it('verificar mi negocio: revisión humana y sin aval del Gobierno', () => {
     expect(ask('¿Cómo verifico mi negocio?').text).toMatch(/no es un aval del Gobierno/);
   });

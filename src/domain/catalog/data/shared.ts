@@ -1,4 +1,4 @@
-import type { Experience, ExperienceDuration, ExperienceMedia, PetPolicy, WeatherReference } from '../types';
+import type { Experience, ExperienceDuration, PetPolicy, WeatherReference } from '../types';
 import { SOURCE_CHECKED_AT } from '../sources';
 import { SOURCE_TEXTS } from './source-texts';
 
@@ -86,28 +86,10 @@ export const hours = (label: string, min: number, max: number, dayCount: number 
   nights: null,
 });
 
-/* Únicas imágenes locales con licencia documentada en public/images/CREDITS.md que retratan un lugar del catálogo. */
-export const MEDIA_QUILOTOA: ExperienceMedia = {
-  src: '/images/quilotoa.jpg',
-  alt: 'Panorámica de la laguna del cráter del Quilotoa.',
-  credit: 'Annom, vía Wikimedia Commons',
-  license: 'Dominio público',
-  depictsThisPlace: true,
-};
-export const MEDIA_COTOPAXI: ExperienceMedia = {
-  src: '/images/andes.jpg',
-  alt: 'Volcán Cotopaxi nevado visto desde el páramo.',
-  credit: 'Gerard Prins, vía Wikimedia Commons',
-  license: 'CC BY-SA 3.0',
-  depictsThisPlace: true,
-};
-export const MEDIA_AGUA_BLANCA: ExperienceMedia = {
-  src: '/images/coast.jpg',
-  alt: 'Laguna sulfurosa de Agua Blanca, en el Parque Nacional Machalilla.',
-  credit: 'Delphine Ménard (notafish), vía Wikimedia Commons',
-  license: 'CC BY-SA 2.0 FR',
-  depictsThisPlace: true,
-};
+/*
+ * Las fotos reales de cada ficha (Wikimedia Commons, licencia libre, créditos en public/images/CREDITS.md)
+ * viven en ./place-photos.ts, generado por scripts/fetch-place-images.py. Cada ficha las toma con placeMedia(id).
+ */
 
 function deepFreeze<T>(value: T): T {
   if (value && typeof value === 'object' && !Object.isFrozen(value)) {

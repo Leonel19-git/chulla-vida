@@ -1,7 +1,9 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import type { Session } from '@supabase/supabase-js';
-import { FileCheck2, LogIn, ShieldCheck, Store, UserRound } from 'lucide-react';
+import { FileCheck2, MailCheck, PlayCircle, Store, UserRound } from 'lucide-react';
 import { getSupabase, supabaseConfiguration } from '../../lib/supabase';
+import { AccessFlow } from './AccessFlow';
+import { demoGateway, supabaseGateway } from './auth-gateway';
 import './auth.css';
 
 interface Application { id: string; organization_id: string; status: string; created_at: string }
@@ -20,14 +22,13 @@ export function AuthPanel({ experienceId }: { experienceId?: string }) {
 function AccountPanel({ experienceId }: { experienceId?: string }) {
   const configuration = supabaseConfiguration();
   const client = getSupabase();
+  const gateway = useMemo(() => client ? supabaseGateway(client) : null, [client]);
+  const demoAuth = useMemo(() => demoGateway(), []);
   const [session, setSession] = useState<Session | null>(null);
-  const [mode, setMode] = useState<'login' | 'signup' | 'reset' | 'password'>('login');
+  const [recovering, setRecovering] = useState(false);
+  const [demo, setDemo] = useState(false);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
-  const [accepted, setAccepted] = useState(false);
   const [organization, setOrganization] = useState('');
   const [kind, setKind] = useState('business');
   const [treatmentConsent, setTreatmentConsent] = useState(false);
@@ -66,8 +67,8 @@ function AccountPanel({ experienceId }: { experienceId?: string }) {
       if (!active) return;
       authEventObserved = true;
       applySession(nextSession);
-      if (event === 'PASSWORD_RECOVERY') setMode('password');
-      if (!nextSession) setMode('login');
+      if (event === 'PASSWORD_RECOVERY') setRecovering(true);
+      if (!nextSession) setRecovering(false);
     });
     return () => { active = false; subscription.unsubscribe(); };
   }, [client]);
@@ -91,32 +92,6 @@ function AccountPanel({ experienceId }: { experienceId?: string }) {
     }).catch(() => { if (active) setNotice('No se pudo conectar. Comprueba tu conexión y vuelve a intentarlo.'); });
     return () => { active = false; };
   }, [client, session?.user.id, revision]);
-
-  async function submitAuth(event: FormEvent) {
-    event.preventDefault(); if (!client || busy) return;
-    setBusy(true); setNotice('');
-    try {
-      if (mode === 'signup') {
-        if (!accepted) throw new Error('Lee y reconoce los borradores antes de crear tu cuenta.');
-        const { data, error } = await client.auth.signUp({ email: email.trim(), password,
-          options: { data: { display_name: name.trim(), draft_terms_acknowledged: true }, emailRedirectTo: `${location.origin}${location.pathname}#cuenta` } });
-        if (error) throw error;
-        setNotice(data.session ? 'Cuenta creada. La confirmación de correo depende de la configuración del proyecto.' : 'Revisa tu correo para confirmar la cuenta. Si no llega, comprueba el correo no deseado.');
-      } else if (mode === 'reset') {
-        const { error } = await client.auth.resetPasswordForEmail(email.trim(), { redirectTo: `${location.origin}${location.pathname}#cuenta` });
-        if (error) throw error;
-        setNotice('Si existe una cuenta con ese correo, recibirás instrucciones para cambiar la contraseña.');
-      } else if (mode === 'password') {
-        const { error } = await client.auth.updateUser({ password }); if (error) throw error;
-        setMode('login'); setNotice('Contraseña actualizada.');
-      } else {
-        const { error } = await client.auth.signInWithPassword({ email: email.trim(), password }); if (error) throw error;
-        setNotice('Sesión iniciada. Tus permisos se comprueban en el servidor.');
-      }
-      setPassword('');
-    } catch { setNotice('No se pudo completar la acción. Revisa los datos, la confirmación del correo y tu conexión.'); }
-    finally { setBusy(false); }
-  }
 
   async function apply(event: FormEvent) {
     event.preventDefault(); if (!client || busy || !treatmentConsent) return;
@@ -186,16 +161,18 @@ function AccountPanel({ experienceId }: { experienceId?: string }) {
     finally { setBusy(false); }
   }
 
-  if (!configuration.available) return <section className="auth-panel"><ShieldCheck size={30} /><h2>Tu cuenta de CHULLA VIDA</h2><p>{configuration.reason}</p><p>Puedes explorar y guardar tus ideas en este dispositivo. El selector de viajero o negocio es una demostración local.</p><details><summary>Qué falta para conectar las cuentas</summary><p>Configurar la URL y clave pública de Supabase, aplicar las migraciones y probar el correo de confirmación. Las instrucciones están en docs/SUPABASE_SETUP.md del proyecto.</p></details></section>;
+  if (!configuration.available || !gateway) return <section className="auth-panel">
+    <div className="auth-hero"><span className="auth-hero-mark" aria-hidden="true"><MailCheck size={26} /></span><div><h2>Tu cuenta de CHULLA VIDA</h2>
+      <p>Crearás tu cuenta con tu correo y un <strong>código de 6 números</strong> que te llega al instante. Las cuentas se activan cuando conectemos el servidor; mientras tanto puedes explorar todo y guardar tus ideas en este dispositivo.</p></div></div>
+    {demo ? <><p className="auth-demo-banner" role="note"><PlayCircle size={18} aria-hidden="true" />Recorrido de demostración: nada sale de tu navegador, no se crean cuentas ni se envían correos.</p>
+      <AccessFlow key="demo" gateway={demoAuth} /><button type="button" className="text-button auth-demo-exit" onClick={() => setDemo(false)}>Salir de la demostración</button></>
+      : <button type="button" className="button button-primary auth-demo-start" onClick={() => setDemo(true)}><PlayCircle size={17} />Ver recorrido de demostración</button>}
+    <p className="auth-limit">{configuration.available ? 'Las cuentas en línea todavía no están disponibles.' : configuration.reason} El selector de viajero o negocio es una demostración local.</p>
+    <details><summary>Qué falta para conectar las cuentas</summary><p>Configurar la URL y la clave pública de Supabase, aplicar las migraciones, cargar las plantillas de correo con código y probar el envío. Las instrucciones están en docs/SUPABASE_SETUP.md del proyecto.</p></details>
+  </section>;
 
-  return <section className="auth-panel" aria-busy={busy}><div className="auth-heading"><UserRound size={25} /><h2>{session ? 'Tu cuenta conectada' : 'Tu cuenta de CHULLA VIDA'}</h2></div>
-    {(!session || mode === 'password') ? <><div className="auth-tabs" aria-label="Acceso a cuenta">{(['login', 'signup', 'reset'] as const).map(value => <button key={value} type="button" aria-pressed={mode === value} onClick={() => { setMode(value); setPassword(''); setNotice(''); }}>{value === 'login' ? 'Entrar' : value === 'signup' ? 'Crear cuenta' : 'Recuperar acceso'}</button>)}</div><form onSubmit={submitAuth} className="auth-form">
-      {mode !== 'password' && <label>Correo electrónico<input className="field" type="email" autoComplete="email" maxLength={254} value={email} onChange={event => setEmail(event.target.value)} required /></label>}
-      {mode === 'signup' && <label>Cómo te llamas<input className="field" autoComplete="name" maxLength={100} value={name} onChange={event => setName(event.target.value)} required /></label>}
-      {mode !== 'reset' && <label>{mode === 'password' ? 'Nueva contraseña' : 'Contraseña'}<input className="field" type="password" autoComplete={mode === 'login' ? 'current-password' : 'new-password'} minLength={8} maxLength={128} value={password} onChange={event => setPassword(event.target.value)} required /></label>}
-      {mode === 'signup' && <label className="auth-check"><input type="checkbox" checked={accepted} onChange={event => setAccepted(event.target.checked)} required /><span>He leído los borradores de términos y privacidad disponibles en el pie de página. Comprendo que el servicio comercial sigue pendiente de revisión legal y no hay pagos habilitados.</span></label>}
-      <button className="button button-primary" disabled={busy || (mode === 'signup' && !accepted)}><LogIn size={16} />{busy ? 'Conectando…' : mode === 'signup' ? 'Crear cuenta y confirmar correo' : mode === 'reset' ? 'Enviar instrucciones' : mode === 'password' ? 'Guardar contraseña' : 'Iniciar sesión'}</button>
-    </form></> : <><p>Sesión de <strong>{session.user.email}</strong>. {admin ? 'Administrador autorizado por el servidor.' : 'Viajero. Representar un negocio requiere revisión.'}</p><div className="auth-actions"><button className="button button-secondary" disabled={busy} onClick={() => setRevision(value => value + 1)}>Actualizar datos</button><button className="button button-secondary" onClick={async () => { setBusy(true); const { error } = await client!.auth.signOut(); setNotice(error ? 'No se pudo cerrar la sesión. Vuelve a intentarlo.' : 'Sesión cerrada.'); setBusy(false); }}>Cerrar sesión</button></div>
+  return <section className="auth-panel" aria-busy={busy}><div className="auth-heading"><UserRound size={25} /><h2>{session && !recovering ? 'Tu cuenta conectada' : 'Tu cuenta de CHULLA VIDA'}</h2></div>
+    {(!session || recovering) ? <AccessFlow gateway={gateway} startWithNewPassword={recovering} onRecoveryVerified={() => setRecovering(true)} onPasswordUpdated={() => { setRecovering(false); setNotice('Contraseña actualizada. Tu sesión sigue abierta.'); }} /> : <><p>Sesión de <strong>{session.user.email}</strong>. {admin ? 'Administrador autorizado por el servidor.' : 'Viajero. Representar un negocio requiere revisión.'}</p><div className="auth-actions"><button className="button button-secondary" disabled={busy} onClick={() => setRevision(value => value + 1)}>Actualizar datos</button><button className="button button-secondary" onClick={async () => { setBusy(true); const { error } = await client!.auth.signOut(); setNotice(error ? 'No se pudo cerrar la sesión. Vuelve a intentarlo.' : 'Sesión cerrada.'); setBusy(false); }}>Cerrar sesión</button></div>
       {experienceId && <form className="auth-form" onSubmit={inquire}><h3>Consultar esta experiencia</h3><p>Tu consulta llegará al equipo de la plataforma. No hay disponibilidad ni operador confirmado para estas fichas.</p><label>Tu pregunta<textarea className="field" maxLength={2000} minLength={1} value={message} onChange={event => setMessage(event.target.value)} required /></label><button className="button button-primary" disabled={busy || !message.trim()}>Registrar consulta</button></form>}
       <section className="auth-section"><h3><Store size={20} />Representar un negocio o comunidad</h3><form onSubmit={apply} className="auth-form"><label>Nombre de tu organización<input className="field" value={organization} onChange={event => setOrganization(event.target.value)} minLength={2} maxLength={160} required /></label><label>Represento<select className="field" value={kind} onChange={event => setKind(event.target.value)}><option value="business">Un negocio</option><option value="community">Una comunidad</option></select></label><label className="auth-check"><input type="checkbox" checked={treatmentConsent} onChange={event => setTreatmentConsent(event.target.checked)} required /><span>Autorizo el tratamiento de los datos que envío para revisar esta solicitud. No autorizo publicidad y no recibiré verificación automática.</span></label><button className="button button-primary" disabled={busy || !treatmentConsent}>Solicitar revisión</button></form></section>
       {applications.length > 0 && <section className="auth-section"><h3><FileCheck2 size={20} />{admin ? 'Solicitudes para revisión' : 'Tus solicitudes'}</h3>{applications.map(application => { const org = organizations.find(item => item.id === application.organization_id); return <article className="auth-request" key={application.id}><strong>{org?.name ?? 'Organización'}</strong><span>{statusLabel[application.status] ?? application.status}{org && ` · ${statusLabel[org.verification_status] ?? org.verification_status}`}</span><small>Referencia: {application.id}</small>{documents.filter(document => document.request_id === application.id).map((document, index) => <div className="auth-actions" key={document.id}><button className="button button-secondary" disabled={busy} onClick={() => openDocument(document)}>Preparar acceso privado al documento {index + 1}</button>{documentLinks[document.id] && <a href={documentLinks[document.id]} target="_blank" rel="noreferrer" className="button button-secondary">Abrir documento · vence en 60 s</a>}</div>)}{application.status === 'submitted' && !admin && <label>Adjuntar documento privado (PDF, JPG o PNG; máximo 5 MB)<input type="file" accept="application/pdf,image/jpeg,image/png" disabled={busy} onChange={event => { void upload(application, event.target.files?.[0]); event.target.value = ''; }} /></label>}{admin && application.status === 'submitted' && <div className="auth-actions"><button className="button button-secondary" disabled={busy || reviewNote.trim().length < 5} onClick={() => review(application.id, 'rejected')}>Rechazar con motivo</button><button className="button button-primary" disabled={busy || reviewNote.trim().length < 5} onClick={() => review(application.id, 'approved')}>Registrar aprobación</button></div>}</article>; })}{admin && <div className="auth-form"><label>Motivo de la revisión (mínimo 5 caracteres)<textarea className="field" value={reviewNote} onChange={event => setReviewNote(event.target.value)} minLength={5} maxLength={2000} /></label><label>Referencia oficial comprobada, solo si corresponde<input className="field" value={registryReference} onChange={event => setRegistryReference(event.target.value)} maxLength={1000} /></label><p>Sin referencia oficial se registra únicamente revisión de identidad. Verifica la documentación antes de aprobar.</p></div>}</section>}

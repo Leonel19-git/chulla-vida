@@ -201,6 +201,23 @@ function ingestGalapagos(source) {
   });
 }
 
+/**
+ * Fotos reales (Wikimedia Commons, licencia libre) registradas por scripts/fetch-place-images.py.
+ * Solo se aplican a las inspiraciones amazónicas: las otras 33 fichas que muestra la app viven en
+ * src/domain/catalog/data/*.ts y toman su foto de place-photos.ts, generado del mismo registro.
+ */
+function applyPlacePhotos(records) {
+  const registryPath = join(root, 'scripts/place-images.json');
+  if (!existsSync(registryPath)) return;
+  const photos = new Map(JSON.parse(readFileSync(registryPath, 'utf8')).map(photo => [photo.id, photo]));
+  for (const record of records) {
+    const photo = photos.get(record.id);
+    if (!photo) continue;
+    record.media = [{ src: photo.src, srcLarge: photo.srcLarge || photo.src, alt: photo.alt, credit: `${photo.author} · Wikimedia Commons`,
+      license: photo.license, pageUrl: photo.pageUrl, depictsThisPlace: true }];
+  }
+}
+
 export function buildCatalog() {
   const sources = readSources();
   const experiences = [...ingestGeneral(sources[0]), ...ingestCosta(sources[1]), ...ingestGalapagos(sources[2]), ...ingestAmazonia(sources[3], base)];
@@ -208,6 +225,7 @@ export function buildCatalog() {
     const count = experiences.filter(record => record.contentSourceId === source.id).length;
     if (count !== source.expectedCount) throw new Error(`${source.id}: ${count} fichas; se esperaban ${source.expectedCount}`);
   }
+  applyPlacePhotos(experiences.filter(record => record.contentSourceId === sources[3].id));
   return { schemaVersion: 1, importedAt: sources.map(source => source.checkedAt).sort().at(-1), catalogSources: sources.map(({ text: _text, ...source }) => source), experiences };
 }
 

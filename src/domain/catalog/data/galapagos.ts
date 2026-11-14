@@ -1,6 +1,7 @@
 import type { CostComponent, DatedNotice, Experience, ExperiencePrice } from '../types';
 import { GALAPAGOS_DOCUMENT, GALAPAGOS_FIXED_COSTS, GALAPAGOS_NOTES, GALAPAGOS_STATUS_SNAPSHOT } from '../sources';
 import { days, defineExperience, hours, petProhibitedGalapagos, wx, type ExperienceInput } from './shared';
+import { placeMedia } from './place-photos';
 
 const PUERTO_AYORA = wx('Puerto Ayora', -0.74, -90.31);
 const PUERTO_BAQUERIZO = wx('Puerto Baquerizo Moreno', -0.9, -89.61);
@@ -75,6 +76,7 @@ const PLAN_DISCLAIMER =
 export const GALAPAGOS_EXPERIENCES: readonly Experience[] = [
   galapagos({
     id: 'gal-01-bartolome-bahia-sullivan',
+    media: placeMedia('gal-01-bartolome-bahia-sullivan'),
     sourceOrder: 1,
     title: 'Bartolomé y Bahía Sullivan',
     subregion: 'Galápagos central',
@@ -101,6 +103,7 @@ export const GALAPAGOS_EXPERIENCES: readonly Experience[] = [
   }),
   galapagos({
     id: 'gal-02-seymour-norte-las-bachas',
+    media: placeMedia('gal-02-seymour-norte-las-bachas'),
     sourceOrder: 2,
     title: 'Isla Seymour Norte y Las Bachas',
     subregion: 'Galápagos central',
@@ -120,6 +123,7 @@ export const GALAPAGOS_EXPERIENCES: readonly Experience[] = [
   }),
   galapagos({
     id: 'gal-03-plaza-sur-punta-carrion',
+    media: placeMedia('gal-03-plaza-sur-punta-carrion'),
     sourceOrder: 3,
     title: 'Plaza Sur y Punta Carrión',
     subregion: 'Galápagos central',
@@ -141,6 +145,7 @@ export const GALAPAGOS_EXPERIENCES: readonly Experience[] = [
   }),
   galapagos({
     id: 'gal-04-kicker-rock-tour-360',
+    media: placeMedia('gal-04-kicker-rock-tour-360'),
     sourceOrder: 4,
     title: 'Kicker Rock (León Dormido) y Tour 360°',
     subregion: 'Galápagos oriental',
@@ -164,6 +169,7 @@ export const GALAPAGOS_EXPERIENCES: readonly Experience[] = [
   }),
   galapagos({
     id: 'gal-05-san-cristobal-terrestre',
+    media: placeMedia('gal-05-san-cristobal-terrestre'),
     sourceOrder: 5,
     title: 'San Cristóbal terrestre: El Junco, Galapaguera y Puerto Chino',
     subregion: 'Galápagos oriental',
@@ -196,6 +202,7 @@ export const GALAPAGOS_EXPERIENCES: readonly Experience[] = [
   }),
   galapagos({
     id: 'gal-06-los-tuneles-cabo-rosa',
+    media: placeMedia('gal-06-los-tuneles-cabo-rosa'),
     sourceOrder: 6,
     title: 'Los Túneles (Cabo Rosa)',
     subregion: 'Galápagos occidental',
@@ -216,6 +223,7 @@ export const GALAPAGOS_EXPERIENCES: readonly Experience[] = [
   }),
   galapagos({
     id: 'gal-07-sierra-negra-volcan-chico',
+    media: placeMedia('gal-07-sierra-negra-volcan-chico'),
     sourceOrder: 7,
     title: 'Volcán Sierra Negra y Volcán Chico',
     subregion: 'Galápagos occidental',
@@ -236,6 +244,7 @@ export const GALAPAGOS_EXPERIENCES: readonly Experience[] = [
   }),
   galapagos({
     id: 'gal-08-tintoreras-concha-perla',
+    media: placeMedia('gal-08-tintoreras-concha-perla'),
     sourceOrder: 8,
     title: 'Tintoreras y Concha Perla',
     subregion: 'Galápagos occidental',
@@ -255,6 +264,7 @@ export const GALAPAGOS_EXPERIENCES: readonly Experience[] = [
   }),
   galapagos({
     id: 'gal-09-isabela-4-dias',
+    media: placeMedia('gal-09-isabela-4-dias'),
     sourceOrder: 9,
     title: 'Isabela en 4 días (tierra firme)',
     kind: 'multi_day_program',
@@ -292,6 +302,7 @@ export const GALAPAGOS_EXPERIENCES: readonly Experience[] = [
   }),
   galapagos({
     id: 'gal-10-galapagos-origins-5-dias',
+    media: placeMedia('gal-10-galapagos-origins-5-dias'),
     sourceOrder: 10,
     title: 'Galápagos Origins: Santa Cruz y San Cristóbal (5 días)',
     kind: 'multi_day_program',
@@ -328,6 +339,7 @@ export const GALAPAGOS_EXPERIENCES: readonly Experience[] = [
   }),
   galapagos({
     id: 'gal-11-plan-economico-5-dias',
+    media: placeMedia('gal-11-plan-economico-5-dias'),
     sourceOrder: 11,
     title: 'Plan económico: 5 días / 4 noches',
     kind: 'trip_plan',
@@ -399,6 +411,7 @@ export const GALAPAGOS_EXPERIENCES: readonly Experience[] = [
   }),
   galapagos({
     id: 'gal-12-plan-normal-5-dias',
+    media: placeMedia('gal-12-plan-normal-5-dias'),
     sourceOrder: 12,
     title: 'Plan normal: 5 días / 4 noches',
     kind: 'trip_plan',

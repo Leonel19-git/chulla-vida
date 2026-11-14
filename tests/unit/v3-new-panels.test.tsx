@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { render, screen, fireEvent, within } from '@testing-library/react';
-import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ReactNode } from 'react';
 import { AppProvider } from '../../src/context/AppContext';
 import { EXPERIENCES } from '../../src/domain/catalog';
@@ -14,6 +14,8 @@ beforeAll(() => {
   HTMLDialogElement.prototype.close ??= function (this: HTMLDialogElement) { this.removeAttribute('open'); };
 });
 beforeEach(() => localStorage.clear());
+afterEach(() => vi.unstubAllEnvs());
+const withoutSupabase = () => { vi.stubEnv('VITE_SUPABASE_URL', ''); vi.stubEnv('VITE_SUPABASE_PUBLISHABLE_KEY', ''); vi.stubEnv('VITE_SUPABASE_ANON_KEY', ''); };
 const wrap = (node: ReactNode) => render(<AppProvider>{node}</AppProvider>);
 
 describe('Bienvenida de doble entrada', () => {
@@ -56,6 +58,7 @@ describe('Espacio de anfitriones', () => {
     expect(screen.getByText(/Credencial o licencia de guía/)).toBeInTheDocument();
   });
   it('la solicitud de demostración queda en revisión y nunca se aprueba sola', () => {
+    withoutSupabase();
     wrap(<HostHub onClose={() => {}} />);
     fireEvent.change(screen.getByLabelText(/Nombre del emprendimiento/), { target: { value: 'Turismo Comunitario Prueba' } });
     fireEvent.click(screen.getByRole('button', { name: /Guardar solicitud de demostración/ }));
@@ -93,5 +96,16 @@ describe('Ilustraciones por ficha', () => {
     const withPhoto = EXPERIENCES.filter(item => item.media.some(media => media.depictsThisPlace));
     expect(withPhoto.length).toBeGreaterThan(0);
     for (const item of withPhoto) expect(experienceVisual(item).photo).toBe(true);
+  });
+});
+describe('fotos reales con srcset', () => {
+  it('deduce la versión de 1280 px solo para fotos por ficha y conserva el crédito', async () => {
+    const { largePhotoFor } = await import('../../src/features/catalog/experienceArt');
+    expect(largePhotoFor({ src: '/images/places/gen-08-cuenca-640.webp' })).toBe('/images/places/gen-08-cuenca-1280.webp');
+    expect(largePhotoFor({ src: '/images/andes-640.webp' })).toBeUndefined();
+    expect(largePhotoFor({ src: '/images/coast.jpg', srcLarge: '/images/coast-1280.webp' })).toBe('/images/coast-1280.webp');
+    const base = EXPERIENCES[0]!;
+    const visual = experienceVisual({ ...base, media: [{ src: '/images/places/x-640.webp', alt: 'Plaza', credit: 'Autora', license: 'CC BY 4.0', depictsThisPlace: true }] });
+    expect(visual).toMatchObject({ photo: true, srcSet: '/images/places/x-640.webp 640w, /images/places/x-1280.webp 1280w', credit: 'Autora · CC BY 4.0' });
   });
 });

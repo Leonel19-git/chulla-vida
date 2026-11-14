@@ -1,0 +1,114 @@
+/* Compra en pasos · CHULLA VIDA: navy, turquesa, maíz y coral sobre papel cálido. */
+.buy-button-wrap { display: inline-flex; flex-direction: column; align-items: flex-start; gap: 6px; max-width: 100%; }
+.buy-button { --buy-a: #0b8f96; --buy-b: #103452; position: relative; overflow: hidden; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; min-width: 44px; padding: 10px 18px; border: 0; border-radius: 999px; color: #fff; font-weight: 700; font-size: 15px; letter-spacing: .01em; background: linear-gradient(120deg, var(--buy-a), var(--buy-b)); box-shadow: 0 6px 16px rgba(16, 52, 82, .22); cursor: pointer; transition: transform .18s ease, box-shadow .18s ease; }
+.buy-button::after { content: ''; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, .35) 50%, transparent 70%); transform: translateX(-120%); transition: transform .6s ease; }
+.buy-button:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(16, 52, 82, .28); }
+.buy-button:hover::after { transform: translateX(120%); }
+.buy-button:focus-visible { outline: 3px solid #f2b632; outline-offset: 3px; }
+.buy-button.is-quote { --buy-a: #c4542f; --buy-b: #8a3b1f; }
+.buy-detail .buy-button { font-size: 16px; padding: 12px 24px; }
+.buy-button-note { font-size: 13px; line-height: 1.5; color: #4f5f58; max-width: 48ch; }
+.buy-owned { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700; color: #0b6b55; background: #e3f4ec; border-radius: 999px; padding: 3px 10px; }
+
+.buy-checkout { padding: 22px 26px 28px; color: #19323c; font-size: 16px; line-height: 1.6; }
+.buy-test-ribbon { display: flex; gap: 10px; align-items: flex-start; margin: 0 0 18px; padding: 12px 14px; border-radius: 12px; background: repeating-linear-gradient(135deg, #fff4cf 0 14px, #ffeab0 14px 28px); color: #4a3500; border: 1px solid #f2b632; font-size: 14px; }
+.buy-test-ribbon svg { flex: none; margin-top: 2px; }
+.buy-steps { display: flex; gap: 6px; list-style: none; padding: 0; margin: 0 0 16px; counter-reset: step; overflow-x: auto; scrollbar-width: none; }
+.buy-steps li { flex: 1 0 auto; display: flex; align-items: center; gap: 7px; font-size: 12px; color: #5d6b66; padding: 6px 8px; border-bottom: 3px solid #dfe5df; transition: border-color .3s ease, color .3s ease; }
+.buy-steps li > span { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: #e7ece6; font-weight: 700; flex: none; }
+.buy-steps li[aria-current=step] { color: #103452; font-weight: 700; border-color: #079da5; }
+.buy-steps li[aria-current=step] > span { background: #079da5; color: #fff; }
+.buy-steps li[data-done] { color: #0b6b55; border-color: #7fcfb2; }
+.buy-steps li[data-done] > span { background: #e3f4ec; color: #0b6b55; }
+.buy-step-title { font: 500 clamp(24px, 4vw, 30px)/1.2 Newsreader, Georgia, serif; color: #103452; margin: 6px 0 14px; outline: none; }
+.buy-form { display: grid; gap: 16px; animation: buy-in .35s ease both; }
+.buy-form > label, .buy-grid label, .buy-line label { display: grid; gap: 6px; font-size: 14px; font-weight: 600; }
+.buy-form label > span { display: inline-flex; align-items: center; gap: 6px; }
+.buy-checkout .field { width: 100%; min-height: 46px; font-size: 16px; min-width: 0; }
+.buy-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; }
+.buy-line { padding: 14px 16px; border-radius: 14px; background: #f3f7f4; border: 1px solid #dde7e0; display: grid; gap: 8px; }
+.buy-line h4 { margin: 0; font-size: 16px; color: #103452; }
+.buy-price-type { margin: 0; font-size: 13px; color: #4f5f58; }
+.buy-range input[type=range] { width: 100%; min-height: 44px; accent-color: #079da5; }
+.buy-range output { font-weight: 700; color: #103452; font-variant-numeric: tabular-nums; }
+.buy-hint { display: flex; gap: 6px; align-items: flex-start; margin: 0; font-size: 13px; color: #4f5f58; }
+.buy-hint svg { flex: none; margin-top: 2px; }
+.buy-line-total { margin: 0; font-variant-numeric: tabular-nums; }
+.buy-line-total strong { color: #0b6b55; font-size: 18px; }
+.buy-quote-list ul { margin: 0; padding-left: 20px; font-size: 14px; }
+.buy-error { min-height: 1em; margin: 0; color: #a1351c; font-weight: 600; }
+.buy-error:empty { display: none; }
+.buy-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: space-between; align-items: center; }
+.buy-actions .button { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; }
+.buy-summary { margin: 0; display: grid; gap: 0; }
+.buy-summary > div { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px dashed #cfd9d2; }
+.buy-summary dt { font-weight: 600; }
+.buy-summary dt small { display: block; font-weight: 400; font-size: 12px; color: #5d6b66; }
+.buy-summary dd { margin: 0; font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
+.buy-summary-total { border-bottom: 0 !important; font-size: 19px; color: #103452; }
+.buy-details { border: 1px solid #dde7e0; border-radius: 12px; padding: 10px 14px; }
+.buy-details summary { cursor: pointer; font-weight: 700; min-height: 32px; display: flex; align-items: center; }
+.buy-details h5 { margin: 10px 0 4px; font-size: 14px; color: #103452; }
+.buy-details ul { margin: 0; padding-left: 20px; font-size: 14px; }
+.buy-includes { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+.buy-role { margin: 0; padding: 12px 14px; border-left: 4px solid #079da5; background: #eef8f8; border-radius: 0 10px 10px 0; font-size: 14px; }
+.buy-accept { display: flex !important; grid-template-columns: none; gap: 12px; align-items: flex-start; font-weight: 400 !important; }
+.buy-accept input { width: 22px; height: 22px; flex: none; margin-top: 2px; accent-color: #079da5; }
+.buy-pay { display: grid; gap: 14px; animation: buy-in .35s ease both; }
+.buy-pay-total { margin: 0; font-size: 18px; }
+.buy-pay-total strong { font: 600 32px/1.1 Newsreader, Georgia, serif; color: #103452; }
+.buy-pay-total span { color: #6b5100; font-weight: 600; font-size: 14px; }
+.buy-real { padding: 12px 14px; border-radius: 12px; background: #eef8f8; }
+.buy-rejected { display: flex; gap: 10px; padding: 12px 14px; border-radius: 12px; background: #fdeee9; color: #7d2a14; animation: buy-shake .4s ease; }
+.buy-rejected p { margin: 2px 0 0; font-size: 14px; }
+.buy-done { display: grid; gap: 14px; justify-items: start; animation: buy-in .4s ease both; }
+.buy-done-head { display: flex; gap: 14px; align-items: flex-start; }
+.buy-done-head h4 { margin: 0; font: 500 24px/1.25 Newsreader, Georgia, serif; color: #103452; }
+.buy-done-head p { margin: 4px 0 0; }
+.buy-done-label { display: inline-block; font-size: 12px !important; font-weight: 800; letter-spacing: .06em; background: #ffd76a; color: #3d2a00; padding: 3px 10px; border-radius: 6px; margin: 0 0 6px !important; }
+.buy-burst { display: grid; place-items: center; width: 58px; height: 58px; flex: none; border-radius: 50%; color: #fff; background: radial-gradient(circle at 30% 30%, #2fc4a0, #0b6b55); box-shadow: 0 0 0 0 rgba(47, 196, 160, .5); animation: buy-pop .5s cubic-bezier(.2, 1.4, .4, 1) both, buy-ring 1.6s ease-out .4s 2; }
+.buy-qr { border-radius: 10px; border: 6px solid #fffdf6; box-shadow: 0 4px 14px rgba(16, 52, 82, .16); }
+.buy-quote-reason { display: flex; gap: 10px; margin: 0; padding: 12px 14px; border-radius: 12px; background: #fdf1ea; color: #7a3519; }
+.buy-quote-reason svg { flex: none; margin-top: 2px; }
+
+/* Cédula / pasaporte */
+.cedula-field { border: 1px solid #dde7e0; border-radius: 14px; padding: 14px 16px; margin: 0; display: grid; gap: 10px; transition: border-color .25s ease, box-shadow .25s ease; }
+.cedula-field legend { font-weight: 700; font-size: 14px; padding: 0 6px; }
+.cedula-field[data-state=valid] { border-color: #2fa883; box-shadow: 0 0 0 3px rgba(47, 168, 131, .15); }
+.cedula-field[data-state=invalid] { border-color: #d0603e; }
+.cedula-switch { display: flex; gap: 8px; flex-wrap: wrap; }
+.cedula-switch label { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 6px 14px; border: 1px solid #cfd9d2; border-radius: 999px; font-size: 14px; cursor: pointer; }
+.cedula-switch label:has(input:checked) { border-color: #079da5; background: #eef8f8; font-weight: 700; }
+.cedula-switch input { accent-color: #079da5; width: 18px; height: 18px; }
+.cedula-input { display: grid; gap: 6px; font-size: 14px; font-weight: 600; }
+.cedula-box { position: relative; display: flex; align-items: center; }
+.cedula-box > svg { position: absolute; left: 12px; color: #4f5f58; pointer-events: none; }
+.cedula-box .field { padding-left: 42px; padding-right: 58px; font-variant-numeric: tabular-nums; letter-spacing: .12em; font-size: 18px; }
+.cedula-count { position: absolute; right: 12px; font-size: 12px; color: #5d6b66; font-variant-numeric: tabular-nums; }
+.cedula-status { display: flex; gap: 8px; align-items: center; margin: 0; min-height: 28px; font-size: 14px; }
+.cedula-field[data-state=valid] .cedula-status { color: #0b6b55; }
+.cedula-field[data-state=invalid] .cedula-status { color: #a1351c; }
+.cedula-check { display: grid; place-items: center; animation: buy-pop .45s cubic-bezier(.2, 1.4, .4, 1) both; }
+.cedula-masked { font-variant-numeric: tabular-nums; letter-spacing: .08em; }
+.cedula-status { align-items: flex-start; }
+.cedula-card { display: grid; gap: 2px; min-width: 0; padding: 10px 14px; border-radius: 12px; background: linear-gradient(135deg, #ecf8f3, #f6fbf9); border: 1px solid #bfe3d4; }
+.cedula-status .cedula-card-title { display: inline; color: #0b6b55; font-size: 14px; }
+.cedula-card-number { font-variant-numeric: tabular-nums; letter-spacing: .1em; font-size: 17px; font-weight: 700; color: #12324a; overflow-wrap: anywhere; }
+.cedula-card-meta { font-size: 12.5px; color: #3f5650; }
+.cedula-honesty { margin: 0; font-size: 12px; color: #5d6b66; }
+
+@keyframes buy-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes buy-pop { from { opacity: 0; transform: scale(.4); } to { opacity: 1; transform: scale(1); } }
+@keyframes buy-ring { to { box-shadow: 0 0 0 18px rgba(47, 196, 160, 0); } }
+@keyframes buy-shake { 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
+@media (max-width: 560px) {
+  .buy-checkout { padding: 16px 16px 22px; }
+  .buy-steps li { font-size: 0; gap: 0; justify-content: center; }
+  .buy-steps li[aria-current=step] { font-size: 12px; gap: 6px; }
+  .buy-actions .button { flex: 1 1 100%; }
+  .buy-summary > div { flex-direction: column; gap: 2px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .buy-button, .buy-button::after, .buy-form, .buy-pay, .buy-done, .buy-burst, .cedula-check, .buy-rejected, .buy-steps li { animation: none !important; transition: none !important; }
+  .buy-button:hover { transform: none; }
+}

@@ -148,10 +148,11 @@ describe('nada es reservable ni está verificado', () => {
   it('solo usa imágenes locales con crédito documentado y que retratan el lugar', () => {
     const credits = readFileSync(resolve('public/images/CREDITS.md'), 'utf8');
     const withMedia = EXPERIENCES.filter(record => record.media.length > 0);
-    expect(ids(withMedia)).toEqual(['gen-02-quilotoa-shalala', 'gen-09-parque-nacional-cotopaxi', 'costa-01-raices-de-manabi']);
+    // Fotos reales por ficha (tests/unit/place-images.test.ts revisa licencias y archivos en detalle).
+    expect(withMedia.length).toBeGreaterThanOrEqual(25);
     for (const media of withMedia.flatMap(record => record.media)) {
-      expect(media.src).toMatch(/^\/images\/[a-z]+\.jpg$/);
-      expect(credits).toContain(media.src.replace('/images/', ''));
+      expect(media.src).toMatch(/^\/images\/places\/[a-z0-9-]+-640\.webp$/);
+      expect(credits).toContain(media.src.replace('/images/places/', ''));
       expect(() => readFileSync(resolve(`public${media.src}`))).not.toThrow();
       expect(media.credit).not.toBe('');
       expect(media.license).not.toBe('');
@@ -336,7 +337,7 @@ describe('Costa: 7 experiencias con tarifa propuesta', () => {
       'Confirmar menú y régimen de alimentación; verificar apertura de laguna, accesibilidad y punto exacto de encuentro.',
     ]);
     expect(record.petPolicy.status).toBe('ask_conditions');
-    expect(record.media[0]).toMatchObject({ src: '/images/coast.jpg', license: 'CC BY-SA 2.0 FR', depictsThisPlace: true });
+    expect(record.media[0]).toMatchObject({ src: '/images/places/costa-01-raices-de-manabi-640.webp', license: 'CC BY-SA 2.0 fr', depictsThisPlace: true });
   });
 
   it('no promete lo que la fuente condiciona a un convenio', () => {

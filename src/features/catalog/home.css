@@ -1,0 +1,100 @@
+/* Secciones de la portada (cargan bajo demanda). Tokens en src/index.css. */
+.cv-home-block{margin:0 0 56px;color:var(--cv-ink)}
+.cv-home-heading{margin-bottom:24px;max-width:62ch}
+.cv-home-heading h2,.cv-passport-teaser h2,.cv-culture-copy h2,.cv-privacy-fallback h2{font:500 var(--cv-text-xl)/1.12 Newsreader,Georgia,serif;letter-spacing:-.025em;color:var(--cv-navy);margin:0 0 10px}
+.cv-home-heading p{font-size:15px;line-height:1.7;color:var(--cv-muted)}
+
+/* Cómo funciona: una secuencia real, por eso lleva número */
+.cv-how-steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;counter-reset:step}
+.cv-how-steps li{position:relative;background:var(--cv-card);border:1px solid var(--cv-line);border-radius:var(--cv-r-l);padding:18px 18px 20px;box-shadow:var(--cv-shadow-1)}
+.cv-how-steps li:not(:last-child)::after{content:"";position:absolute;top:58px;right:-14px;width:12px;border-top:2px dashed var(--cv-maize-2)}
+.cv-step-art{width:100%;height:auto;max-height:96px;border-radius:var(--cv-r-m);background:var(--cv-paper-2);margin-bottom:14px}
+.cv-step-number{position:absolute;top:10px;left:10px;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--cv-red);color:#fff;font-weight:750;font-size:14px;box-shadow:0 0 0 3px var(--cv-card)}
+.cv-how-steps h3{display:flex;align-items:center;gap:8px;font-size:17px;color:var(--cv-navy);margin-bottom:6px}
+.cv-how-steps h3 svg{color:var(--cv-petrol)}
+.cv-how-steps p{font-size:14px;line-height:1.65;color:var(--cv-muted)}
+
+/* Números y barras */
+.cv-stats{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:28px;align-items:center;padding:28px;border-radius:var(--cv-r-xl);background:linear-gradient(135deg,var(--cv-navy),var(--cv-petrol));color:#fff}
+.cv-stats-numbers{display:flex;flex-wrap:wrap;gap:22px 34px}
+.cv-stats-numbers p{display:flex;flex-direction:column}
+.cv-stats-numbers strong{font:500 clamp(42px,5vw,60px)/1 Newsreader,Georgia,serif;color:var(--cv-maize);font-variant-numeric:tabular-nums}
+.cv-stats-numbers span{font-size:14px;color:#dbe6ee;margin-top:6px}
+.cv-stats-bars{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.cv-stats-bars li{display:grid;grid-template-columns:118px minmax(0,1fr) 74px;gap:12px;align-items:center;font-size:14px}
+.cv-bar-label{display:flex;align-items:center;gap:7px;font-weight:650}
+.cv-bar-track{height:12px;border-radius:var(--cv-r-pill);background:#ffffff1f;overflow:hidden}
+.cv-bar-track i{display:block;height:100%;border-radius:inherit;background:var(--tone-wash);transform-origin:left;transform:scaleX(var(--bar,1))}
+.cv-bar-value{text-align:right;color:#dbe6ee;font-variant-numeric:tabular-nums}
+.cv-reveal-on .cv-stats-bars li:not(.is-revealed) .cv-bar-track i{transform:scaleX(0)}
+.cv-stats-bars .cv-bar-track i{transition:transform 1s var(--cv-ease) .15s}
+
+/* Destacadas */
+.cv-featured-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.cv-featured-list li{background:var(--tone-wash);border-radius:var(--cv-r-l);overflow:hidden;display:flex;flex-direction:column}
+.cv-featured-photo{display:block;aspect-ratio:16/10;overflow:hidden;width:100%}
+.cv-featured-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.cv-featured-list li>div{padding:14px 16px 18px}
+.cv-featured-list h3{font:500 22px/1.15 Newsreader,Georgia,serif;color:var(--cv-navy);margin:10px 0 6px}
+.cv-featured-list p{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--cv-muted)}
+.cv-chip{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 12px;border-radius:var(--cv-r-pill);background:var(--tone);color:#fff;font-size:13px;font-weight:650}
+.cv-chip:hover{filter:brightness(1.12)}
+
+/* Cultura Viva */
+.cv-culture-band{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.3fr);gap:28px;padding:38px 30px 30px;border-radius:var(--cv-r-xl);background:radial-gradient(circle at 0% 0%,#e0344f 0,transparent 45%),var(--cv-red);color:#fff6e2;overflow:hidden}
+.cv-culture-copy>svg{color:var(--cv-maize)}
+.cv-culture-copy h2{color:#fff3cf;margin-top:10px}
+.cv-culture-copy p{font-size:15px;line-height:1.7;max-width:46ch}
+.cv-culture-cta{display:inline-flex;align-items:center;gap:10px;margin-top:18px;min-height:46px;padding:0 18px;border-radius:var(--cv-r-m);background:#fff3cf;color:var(--cv-navy);font-weight:700;font-size:14px}
+.cv-culture-cta:hover{background:#fff}
+.cv-culture-list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.cv-culture-list li{display:flex;gap:14px;align-items:flex-start;padding:12px 14px;border-radius:var(--cv-r-m);background:#fffdf7;color:var(--cv-ink);border-left:5px solid var(--tone)}
+.cv-culture-date{flex:none;display:grid;place-items:center;width:56px;height:56px;border-radius:var(--cv-r-m);background:var(--tone-wash);color:var(--tone);text-transform:capitalize}
+.cv-culture-date strong{font-size:16px;line-height:1}.cv-culture-date small{font-size:11px}
+.cv-culture-list h3{font-size:16px;color:var(--cv-navy)}
+.cv-culture-meta{font-size:12px;color:var(--cv-muted);margin-top:2px}
+.cv-culture-status{font-size:13px;margin-top:4px;color:var(--cv-ink)}
+.cv-culture-status.is-orientative{color:#7a5a00}
+
+/* Pasaporte */
+.cv-passport-teaser{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:30px;align-items:center;padding:30px;border-radius:var(--cv-r-xl);background:var(--cv-paper-2);border:1px solid var(--cv-line)}
+.cv-passport-teaser p{font-size:15px;line-height:1.75;color:var(--cv-muted);margin-bottom:18px;max-width:52ch}
+.cv-passport-stamps{display:grid;grid-template-columns:repeat(2,minmax(0,140px));gap:14px;justify-content:center;padding:22px;border-radius:var(--cv-r-l);background:var(--cv-navy)}
+.cv-passport-stamps span{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;aspect-ratio:1;border-radius:50%;border:3px double var(--tone-wash);color:var(--tone-wash);transform:rotate(var(--stamp-rot,-8deg));text-align:center}
+.cv-passport-stamps strong{font-size:14px}.cv-passport-stamps small{font-size:11px;opacity:.85}
+@media (prefers-reduced-motion:no-preference){.cv-reveal-on .cv-passport-stamps span.is-revealed{animation:cv-stamp .55s var(--cv-ease) both;animation-delay:calc(var(--i,0) * 160ms)}}
+.cv-reveal-on .cv-passport-stamps span[data-reveal]{transform:rotate(var(--stamp-rot,-8deg))}
+
+/* Confianza */
+.cv-trust-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.cv-trust-list li{padding:20px;border-radius:var(--cv-r-l);background:var(--cv-card);border:1px solid var(--cv-line);border-top:4px solid var(--cv-mint)}
+.cv-trust-list li:nth-child(2){border-top-color:var(--cv-maize-2)}.cv-trust-list li:nth-child(3){border-top-color:var(--cv-red)}.cv-trust-list li:nth-child(4){border-top-color:var(--cv-navy)}
+.cv-trust-list svg{color:var(--cv-petrol);margin-bottom:10px}
+.cv-trust-list h3{font-size:16px;color:var(--cv-navy);margin-bottom:6px}
+.cv-trust-list p{font-size:14px;line-height:1.65;color:var(--cv-muted)}
+
+/* Respaldo de protección de datos */
+.cv-privacy-fallback{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:24px;align-items:center;padding:28px;border-radius:var(--cv-r-xl);background:var(--cv-card);border:1px solid var(--cv-line)}
+.cv-privacy-fallback svg{color:var(--cv-petrol)}
+.cv-privacy-fallback p{font-size:15px;line-height:1.7;color:var(--cv-muted)}
+.cv-privacy-actions{display:grid;gap:10px}
+.cv-privacy-actions .button{justify-content:flex-start;min-height:48px;font-size:14px;white-space:normal;text-align:left}
+
+@media (max-width:1100px){
+  .cv-how-steps,.cv-featured-list,.cv-trust-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .cv-how-steps li:not(:last-child)::after{display:none}
+  .cv-stats,.cv-culture-band,.cv-passport-teaser,.cv-privacy-fallback{grid-template-columns:1fr}
+}
+@media (max-width:620px){
+  .cv-home-block{margin-bottom:40px}
+  .cv-how-steps,.cv-featured-list,.cv-trust-list{grid-template-columns:1fr}
+  .cv-stats,.cv-culture-band,.cv-passport-teaser,.cv-privacy-fallback{padding:22px 18px}
+  .cv-stats-bars li{grid-template-columns:96px minmax(0,1fr) 64px;gap:8px;font-size:13px}
+  .cv-passport-stamps{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:620px){
+  .cv-how-steps li{display:grid;grid-template-columns:84px minmax(0,1fr);column-gap:14px;align-items:start;padding:14px}
+  .cv-how-steps .cv-step-art{grid-row:1 / span 2;margin:0;max-height:none;height:84px}
+  .cv-how-steps h3{grid-column:2;margin-top:2px}.cv-how-steps p{grid-column:2}
+  .cv-step-number{top:6px;left:6px;width:26px;height:26px;font-size:13px}
+}

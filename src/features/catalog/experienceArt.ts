@@ -122,9 +122,42 @@ export function experienceArt(experience: Pick<Experience, 'id' | 'localizedRegi
   return value;
 }
 
+export interface ExperienceVisual {
+  src: string;
+  /** srcset 640w/1280w solo cuando existe la versión grande. */
+  srcSet?: string;
+  alt: string;
+  /** «Autor · licencia», para el pie de foto y el title de la tarjeta. */
+  credit: string | null;
+  /** Página de la obra original (Wikimedia Commons u otra), si se registró. */
+  sourceUrl?: string;
+  photo: boolean;
+}
+
+/**
+ * Las fotos por ficha se guardan como /images/places/<id>-640.webp y <id>-1280.webp (siempre en par).
+ * Si el registro trae `srcLarge`, manda ese valor; si no, solo se deduce la versión grande
+ * para esa carpeta, nunca para imágenes regionales que no tienen par de 1280 px.
+ */
+export function largePhotoFor(media: { src: string; srcLarge?: unknown }): string | undefined {
+  if (typeof media.srcLarge === 'string' && media.srcLarge.startsWith('/images/')) return media.srcLarge;
+  if (/^\/images\/places\/[a-z0-9-]+-640\.webp$/.test(media.src)) return media.src.replace(/-640\.webp$/, '-1280.webp');
+  return undefined;
+}
+
 /** Fotografía solo si muestra de verdad el lugar; si no, ilustración propia de la ficha. */
-export function experienceVisual(experience: Experience): { src: string; alt: string; credit: string | null; photo: boolean } {
-  const media = experience.media.find(item => item.depictsThisPlace);
-  if (media) return { src: media.src, alt: media.alt, credit: media.credit ? `${media.credit} · ${media.license}` : null, photo: true };
+export function experienceVisual(experience: Experience): ExperienceVisual {
+  const media = experience.media.find(item => item.depictsThisPlace) as (Experience['media'][number] & { srcLarge?: unknown; pageUrl?: unknown }) | undefined;
+  if (media) {
+    const large = largePhotoFor(media);
+    return {
+      src: media.src,
+      ...(large ? { srcSet: `${media.src} 640w, ${large} 1280w` } : {}),
+      alt: media.alt,
+      credit: media.credit ? `${media.credit} · ${media.license}` : null,
+      ...(typeof media.pageUrl === 'string' && /^https:\/\//.test(media.pageUrl) ? { sourceUrl: media.pageUrl } : {}),
+      photo: true,
+    };
+  }
   return { src: experienceArt(experience), alt: `Ilustración original de ${experience.title}; no es una fotografía del lugar`, credit: null, photo: false };
 }

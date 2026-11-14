@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Tu código para activar CHULLA VIDA</title>
+</head>
+<body style="margin:0;padding:0;background:#f4f1e8;font-family:'Plus Jakarta Sans',Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#19323c;">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;">Tu código es {{ .Token }}. Vence en 60 minutos.</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f1e8;padding:24px 12px;">
+<tr><td align="center">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 12px 32px rgba(16,52,82,.12);">
+<tr><td style="height:8px;background:linear-gradient(90deg,#103452 0%,#079da5 45%,#efb22c 75%,#c93143 100%);background-color:#079da5;font-size:0;line-height:0;">&nbsp;</td></tr>
+<tr><td align="center" style="padding:28px 28px 8px;">
+<img src="https://chulla-vida.vercel.app/brand/logo-320.webp" width="160" alt="CHULLA VIDA" style="display:block;width:160px;max-width:60%;height:auto;border:0;">
+</td></tr>
+<tr><td style="padding:8px 28px 0;text-align:center;">
+<h1 style="margin:12px 0 8px;font-family:Newsreader,Georgia,serif;font-size:28px;line-height:1.25;color:#103452;">¡Bienvenida, bienvenido!</h1>
+<p style="margin:0 0 20px;font-size:16px;line-height:1.6;color:#33454d;">Escribe este código en CHULLA VIDA para activar tu cuenta y confirmar que <strong>{{ .Email }}</strong> es tuyo.</p>
+</td></tr>
+<tr><td align="center" style="padding:0 28px;">
+<div style="display:inline-block;padding:18px 26px;border-radius:16px;background:#e9f6f5;border:2px dashed #079da5;font-family:'SFMono-Regular',Consolas,'Liberation Mono',monospace;font-size:40px;font-weight:700;letter-spacing:10px;color:#103452;">{{ .Token }}</div>
+<p style="margin:12px 0 0;font-size:14px;color:#5e6658;">Vale una sola vez y vence en 60 minutos.</p>
+</td></tr>
+<tr><td style="padding:24px 28px 8px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#fff7e3;border-radius:14px;">
+<tr><td style="padding:14px 16px;font-size:14px;line-height:1.6;color:#5a4103;">
+<strong>Cuida tu código.</strong> CHULLA VIDA nunca te lo pedirá por teléfono, WhatsApp ni chat. Si no creaste una cuenta, ignora este correo: no pasará nada.
+</td></tr>
+</table>
+</td></tr>
+<tr><td style="padding:16px 28px 28px;text-align:center;font-size:12px;line-height:1.6;color:#64736f;">
+Ecuador, a tu ritmo · <a href="{{ .SiteURL }}" style="color:#0b6f75;">chulla-vida.vercel.app</a><br>
+Recibes este correo porque alguien usó esta dirección para registrarse. Tratamos tus datos según la Ley Orgánica de Protección de Datos Personales; puedes ejercer tus derechos desde «Privacidad» en la página.
+</td></tr>
+</table>
+</td></tr>
+</table>
+</body>
+</html>

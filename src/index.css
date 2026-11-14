@@ -23,3 +23,39 @@
 }
 @font-face{font-family:Newsreader;src:url('@fontsource-variable/newsreader/files/newsreader-latin-wght-normal.woff2') format('woff2');font-style:normal;font-weight:200 800;font-display:swap}
 @font-face{font-family:'Plus Jakarta Sans';src:url('@fontsource-variable/plus-jakarta-sans/files/plus-jakarta-sans-latin-wght-normal.woff2') format('woff2');font-style:normal;font-weight:200 800;font-display:swap}
+
+/* ───────────── Ecuador Vivo · tokens de la paleta del logo 2026 ───────────── */
+:root{
+  --cv-navy:#012960;--cv-navy-2:#0b3c7d;--cv-red:#c61534;--cv-red-ink:#a3102a;--cv-maize:#fed65a;--cv-maize-2:#f3bd2e;--cv-mint:#4cc69f;--cv-mint-ink:#0f6e55;--cv-petrol:#1f575a;--cv-petrol-2:#2a7175;
+  --cv-paper:#fbf6ea;--cv-paper-2:#f4ecd9;--cv-card:#fffdf7;--cv-ink:#10233f;--cv-muted:#4d5d66;--cv-line:#e3dccb;
+  /* Regiones: color de texto (AA sobre papel) y lavado de fondo */
+  --cv-sierra:#9a3f24;--cv-sierra-wash:#f8e6d8;--cv-costa:#0a6a80;--cv-costa-wash:#dcf0f2;
+  --cv-amazonia:#1b6a43;--cv-amazonia-wash:#e0f0e2;--cv-galapagos:#2b4c8c;--cv-galapagos-wash:#e2e9f7;
+  --cv-r-s:8px;--cv-r-m:12px;--cv-r-l:19px;--cv-r-xl:26px;--cv-r-pill:999px;
+  --cv-shadow-1:0 1px 2px #0129600f,0 4px 14px #0129600d;--cv-shadow-2:0 12px 30px #01296024;--cv-shadow-3:0 22px 50px #0129602e;
+  --cv-space-1:4px;--cv-space-2:8px;--cv-space-3:12px;--cv-space-4:16px;--cv-space-5:24px;--cv-space-6:32px;--cv-space-7:48px;--cv-space-8:72px;
+  --cv-text-xs:12px;--cv-text-s:13px;--cv-text-m:15px;--cv-text-l:18px;--cv-text-xl:clamp(26px,3vw,36px);--cv-text-2xl:clamp(32px,4vw,48px);
+  --cv-ease:cubic-bezier(.2,.7,.2,1);--cv-ease-pop:cubic-bezier(.34,1.56,.64,1);--cv-dur-1:.18s;--cv-dur-2:.32s;--cv-dur-3:.6s;
+  /* Banda textil propia: rombos y escalones simples, sin copiar diseños de una comunidad concreta */
+  --cv-textile:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='12' viewBox='0 0 48 12'%3E%3Crect width='48' height='12' fill='%23012960'/%3E%3Cpath d='M12 1l5 5-5 5-5-5z' fill='%23fed65a'/%3E%3Cpath d='M36 1l5 5-5 5-5-5z' fill='%23c61534'/%3E%3Cpath d='M0 6h3M21 6h6M45 6h3' stroke='%234cc69f' stroke-width='2'/%3E%3C/svg%3E");
+}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}
+.cv-textile-edge{position:relative}.cv-textile-edge::before{content:"";position:absolute;left:0;right:0;top:0;height:8px;background:var(--cv-textile) repeat-x center/auto 8px;border-radius:inherit;border-bottom-left-radius:0;border-bottom-right-radius:0;pointer-events:none}
+[data-region-tone=sierra]{--tone:var(--cv-sierra);--tone-wash:var(--cv-sierra-wash)}[data-region-tone=costa]{--tone:var(--cv-costa);--tone-wash:var(--cv-costa-wash)}[data-region-tone=amazonia]{--tone:var(--cv-amazonia);--tone-wash:var(--cv-amazonia-wash)}[data-region-tone=galapagos]{--tone:var(--cv-galapagos);--tone-wash:var(--cv-galapagos-wash)}
+
+/* Movimiento: solo transform/opacity; todo se desactiva con movimiento reducido */
+.cv-reveal-on [data-reveal]:not(.is-revealed){opacity:0;transform:translateY(16px)}
+.cv-reveal-on [data-reveal]{transition:opacity var(--cv-dur-3) var(--cv-ease),transform var(--cv-dur-3) var(--cv-ease);transition-delay:calc(min(var(--i,0),8) * 55ms)}
+@keyframes cv-fade-up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes cv-fade{from{opacity:0}to{opacity:1}}
+@keyframes cv-pulse{0%{transform:scale(1);opacity:.55}70%,100%{transform:scale(1.55);opacity:0}}
+@keyframes cv-heart{0%{transform:scale(1)}30%{transform:scale(1.35)}55%{transform:scale(.9)}100%{transform:scale(1)}}
+@keyframes cv-stamp{0%{opacity:0;transform:scale(1.7) rotate(var(--stamp-rot,-8deg))}55%{opacity:1;transform:scale(.94) rotate(var(--stamp-rot,-8deg))}100%{opacity:1;transform:scale(1) rotate(var(--stamp-rot,-8deg))}}
+@keyframes cv-shimmer{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+.cv-skeleton{position:relative;overflow:hidden;background:#ece4d1;border-radius:var(--cv-r-m)}.cv-skeleton::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,#fffaf0b3,transparent);animation:cv-shimmer 1.4s infinite}
+.cv-skeleton-block{display:grid;gap:12px;padding:24px}.cv-skeleton-block .cv-skeleton{height:14px}.cv-skeleton-block .cv-skeleton:first-child{height:26px;width:55%}.cv-skeleton-block .cv-skeleton:nth-child(3){width:80%}
+.cv-pulse{position:relative;isolation:isolate}.cv-pulse::after{content:"";position:absolute;inset:-3px;border-radius:inherit;border:2px solid var(--cv-maize);animation:cv-pulse 2.8s var(--cv-ease) infinite;pointer-events:none;z-index:-1}
+.mijin-launcher-mark{position:relative}.mijin-launcher-mark::after{content:"";position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 2px var(--cv-mint);animation:cv-pulse 2.8s var(--cv-ease) infinite;pointer-events:none}
+.pg-stamp{animation:cv-stamp .5s var(--cv-ease) both}
+@media (prefers-reduced-motion:reduce){.cv-skeleton::after,.cv-pulse::after,.mijin-launcher-mark::after{animation:none!important;display:none}.cv-reveal-on [data-reveal]:not(.is-revealed){opacity:1;transform:none}}
+@media print{.cv-reveal-on [data-reveal]{opacity:1!important;transform:none!important}}

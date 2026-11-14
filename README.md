@@ -15,7 +15,7 @@ npm install
 npm run dev
 ```
 
-En Windows PowerShell, usa `npm.cmd` si `npm.ps1` está bloqueado. Abre la URL que imprime Vite y recarga la pestaña para ver el código actualizado; esta actualización local todavía no se ha publicado en Vercel.
+En Windows PowerShell, usa `npm.cmd` si `npm.ps1` está bloqueado. Abre la URL que imprime Vite y recarga la pestaña para ver el código actualizado. La versión de producción publicada figura al principio de este documento.
 
 Prueba estos recorridos:
 

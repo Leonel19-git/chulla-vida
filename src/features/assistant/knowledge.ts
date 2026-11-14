@@ -46,7 +46,12 @@ export function answerLocally(question: string, context: LocalContext): Assistan
     const month = monthIndex >= 0 ? monthIndex + 1 : /este mes|ahora|proxim/.test(q) ? new Date().getMonth() + 1 : null;
     const events = month ? getEventsByMonth(month) : [...CULTURAL_EVENTS];
     if (!events.length) return result(`No tengo festividades registradas para ${month ? monthName(month) : 'esa fecha'} en Cultura Viva. Algunas, como la Kasama tsáchila, dependen del calendario ceremonial de cada comunidad y no tienen fecha fija.`);
-    const list = events.slice(0, 6).map(event => `${event.name} (${REGION_LABELS[event.region]}, ${event.localities.join(', ') || event.provinces.join(', ')}): ${event.dateLabel}. ${eventStatusLabel(event, new Date())}.`).join(' ');
+    const list = events.slice(0, 6).map(event => {
+      // La etiqueta de estado ya suele incluir la fecha: no la repetimos ni duplicamos el punto final.
+      const status = eventStatusLabel(event, new Date()).replace(/\.+$/, '');
+      const when = status.includes(event.dateLabel) ? status : `${event.dateLabel.replace(/\.+$/, '')}. ${status}`;
+      return `${event.name} (${REGION_LABELS[event.region]}, ${event.localities.join(', ') || event.provinces.join(', ')}): ${when}.`;
+    }).join(' ');
     return result(`${month ? `En ${monthName(month)}` : 'En Cultura Viva'} tengo: ${list} Las fechas son orientativas salvo que se indique una edición confirmada con fuente oficial; revisa la agenda del organizador antes de viajar y respeta los protocolos de cada comunidad.`);
   }
   if (/verific.*(negocio|emprendimiento|comunidad)|tengo un negocio|registrar mi negocio|soy anfitrion|publicar (mi|una) experiencia/.test(q)) return result('Para verificar tu negocio: crea tu cuenta y confirma el correo, elige tu figura (establecimiento, operador, guía, asociación comunitaria o representante), sube solo los documentos que corresponden a tu actividad en un espacio privado y una persona del equipo los revisa. Puede pedirte correcciones y explica su decisión. El distintivo de Chulla Vida no es un aval del Gobierno; el registro turístico oficial se verifica aparte cuando tu actividad lo requiere. Abre «Anfitriones» para ver qué te pedirían.');

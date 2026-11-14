@@ -1,6 +1,6 @@
 import { LanguageSelector } from './components/chulla/LanguageSelector';
 import { lazy, Suspense, useEffect, useState } from 'react';
-import { ArrowUpRight, Bell, Bookmark, CalendarDays, Check, ChevronDown, CircleHelp, Compass, Heart, Leaf, Map, Menu, MessageCircle, PlayCircle, Store, Sun, UserRound, WifiOff, X } from 'lucide-react';
+import { ArrowUpRight, Bell, Bookmark, CalendarDays, Check, ChevronDown, CircleHelp, Compass, Heart, Leaf, Map, Menu, MessageCircle, PlayCircle, Store, Sun, UserRound, Wallet, WifiOff, X } from 'lucide-react';
 import { MembershipProvider, useMembership } from './context/MembershipContext';
 const MembershipPlans = lazy(() => import('./components/chulla/MembershipPlans').then(m => ({ default: m.MembershipPlans })));
 const PassportView = lazy(() => import('./components/chulla/PassportView').then(m => ({ default: m.PassportView })));
@@ -18,7 +18,7 @@ const RequestsView = lazy(() => import('./components/chulla/RequestsView').then(
 import { BrandIntro } from './components/chulla/BrandIntro';
 import { AnimatedLogo } from './components/chulla/AnimatedLogo';
 const OfflineRoute = lazy(() => import('./components/chulla/OfflineRoute').then(m => ({ default: m.OfflineRoute })));
-import { SocialButtons } from './components/chulla/SocialButtons';
+import { REGION_LABELS } from './domain/catalog';
 import { CatalogProvider } from './features/catalog/CatalogContext';
 import { ConsentProvider } from './features/privacy/ConsentContext';
 import { PrivacyControls } from './features/privacy/PrivacyControls';
@@ -41,13 +41,14 @@ const touristNav = [
   { tab: 'offline' as const, label: 'Ruta sin internet', icon: WifiOff },
   { tab: 'saved' as AppTab, label: 'Mis guardados', icon: Bookmark },
   { tab: 'vouchers' as AppTab, label: 'Mis viajes y pagos', icon: CalendarDays },
+  { tab: 'wallet' as const, label: 'Mi billetera', icon: Wallet },
   { tab: 'raymis' as AppTab, label: 'Cultura Viva', icon: Sun },
   { tab: 'chat' as AppTab, label: 'Comunidad wambra', icon: MessageCircle },
 ];
 const titleByTab: Record<string, string> = { feed: 'Ecuador, a tu manera', saved: 'Mis guardados', vouchers: 'Mis viajes y pagos', raymis: 'Cultura Viva', chat: 'Comunidad wambra', help: 'Preguntas frecuentes', host: 'Espacio de negocios', gad: 'Espacio de negocios' };
 
 function MainContent({ onReplayIntro }: { onReplayIntro: () => void }) {
-  const { t, language, role, setRole, activeTab, setActiveTab, setIsOnboardingOpen, notifications, dismissNotification, savedPlaceIds } = useApp();
+  const { t, language, role, setRole, activeTab, setActiveTab, setIsOnboardingOpen, notifications, dismissNotification, savedPlaceIds, setSelectedRegion } = useApp();
   const { hasAccess, plan, isActive } = useMembership();
   const pt = (source: string) => translatePremium(language, source);
   const [membershipFeature, setMembershipFeature] = useState<'plans' | 'offline' | 'community' | 'premium-passport' | null>(null);
@@ -68,7 +69,7 @@ function MainContent({ onReplayIntro }: { onReplayIntro: () => void }) {
   const traveler = role === 'turista';
   useEffect(() => { const fn = (e: KeyboardEvent) => { if (e.key === 'Escape') { setMobileNav(false); setProfile(false); setNotices(false); } }; window.addEventListener('keydown', fn); return () => window.removeEventListener('keydown', fn); }, []);
   useEffect(() => { setMobileNav(false); setProfile(false); setNotices(false); setTripPlan(false); setOfflineRoute(false); setMembershipFeature(null); setPassport(false); }, [role]);
-  const navTo = (tab: AppTab | 'plan' | 'offline') => { setMobileNav(false); if (tab === 'plan') window.dispatchEvent(new Event('cv3:plan')); else if (tab === 'offline') window.dispatchEvent(new Event('cv3:downloads')); else if (tab === 'chat' && !hasAccess('community')) setMembershipFeature('community'); else { setActiveTab(tab); window.scrollTo({ top: 0, behavior: 'instant' }); } };
+  const navTo = (tab: AppTab | 'plan' | 'offline' | 'wallet') => { setMobileNav(false); if (tab === 'wallet') window.dispatchEvent(new Event('cv3:wallet')); else if (tab === 'plan') window.dispatchEvent(new Event('cv3:plan')); else if (tab === 'offline') window.dispatchEvent(new Event('cv3:downloads')); else if (tab === 'chat' && !hasAccess('community')) setMembershipFeature('community'); else { setActiveTab(tab); window.scrollTo({ top: 0, behavior: 'instant' }); } };
   return <div className="app-shell">
     <a className="skip-link" href="#main-content">{t("Saltar al contenido")}</a>
     {mobileNav && <button className="nav-scrim" onClick={() => setMobileNav(false)} aria-label={t("Cerrar menú")} />}
@@ -85,9 +86,8 @@ function MainContent({ onReplayIntro }: { onReplayIntro: () => void }) {
       <main id="main-content" className="main-content" key={role + activeTab} tabIndex={-1}><Suspense fallback={<p className="vivo-panel-loading" role="status">Cargando…</p>}>
         {traveler ? <>{activeTab === 'feed' && <><Explore onPlan={() => setTripPlan(true)} onIntro={onReplayIntro} onOffline={openOffline} /><MusicPanel /><section className="community-invite"><div><Leaf size={25} /><h2>{t("Viaja bacán.")}<br />{t("Cuida lo nuestro.")}</h2><p>{t("Conecta con la gente del lugar.")}</p></div><button className="button button-secondary" onClick={() => navTo('raymis')}>{t("Conoce la cultura local")}<ArrowUpRight size={17} /></button></section></>}{activeTab === 'saved' && <SavedView />}{activeTab === 'vouchers' && <RequestsView />}{activeTab === 'raymis' && <FestivalsView />}{activeTab === 'chat' && (hasAccess('community') ? <CommunityView /> : <section className="membership-locked"><LockKeyhole size={30} /><h1>{pt('Acceso con suscripción')}</h1><button className="button button-primary" onClick={() => setMembershipFeature('community')}>{pt('Ver planes')}</button></section>)}{activeTab === 'help' && <HelpView />}</> : activeTab === 'help' ? <HelpView /> : <HostPortal />}</Suspense>
       </main>
-      <footer className="app-footer"><div><strong>CHULLA VIDA</strong><span>{t("Ecuador a tu ritmo.")}</span></div><SocialButtons /><div className="footer-links"><button onClick={onReplayIntro}>{t("Ver bienvenida")}</button><button onClick={() => navTo('help')}>{t("Ayuda")}</button><a href="/images/CREDITS.md" target="_blank" rel="noreferrer">{t("Créditos de imágenes")}</a></div></footer>
       {traveler && <nav className="mobile-bottom-nav" aria-label={t("Navegación móvil")}>{[{ tab: 'feed' as AppTab, label: 'Explorar', icon: Compass }, { tab: 'plan' as const, label: 'Mi viaje', icon: Map }, { tab: 'saved' as AppTab, label: 'Guardados', icon: Heart }, { tab: 'vouchers' as AppTab, label: 'Mis viajes', icon: CalendarDays }].map(({ tab, label, icon: Icon }) => <button key={tab} className={activeTab === tab ? 'active' : ''} onClick={() => navTo(tab)} aria-current={activeTab === tab ? 'page' : undefined}><Icon size={20} /><span>{t(label)}</span></button>)}</nav>}
-      <V3Footer />
+      <V3Footer onReplayIntro={onReplayIntro} onHelp={() => navTo('help')} onRegion={id => { setSelectedRegion(REGION_LABELS[id]); if (activeTab !== 'feed') setActiveTab('feed'); }} />
     </div>
     {traveler && <Suspense fallback={null}><OnboardingModal /><PlaceDetails /><BookingDialog />{tripPlan && <TripPlan onClose={() => setTripPlan(false)} />}{offlineRoute && hasAccess('offline') && <OfflineRoute onClose={() => setOfflineRoute(false)} />}{passport && <PassportView onClose={() => setPassport(false)} onChoosePlans={() => { setPassport(false); setMembershipFeature('premium-passport'); }} />}{membershipFeature && <MembershipPlans feature={membershipFeature === 'plans' ? undefined : membershipFeature} onClose={() => setMembershipFeature(null)} onActivated={() => { if (membershipFeature === 'offline') setOfflineRoute(true); else if (membershipFeature === 'community') setActiveTab('chat'); else if (membershipFeature === 'premium-passport') setPassport(true); setMembershipFeature(null); }} />}</Suspense>}
   </div>;

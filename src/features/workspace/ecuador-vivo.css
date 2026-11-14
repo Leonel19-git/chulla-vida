@@ -1,0 +1,63 @@
+/* Carcasa Ecuador Vivo 2026: barra de herramientas agrupada, pie con columnas y paneles. Tokens en src/index.css. */
+.app-shell .main-content{background:radial-gradient(1200px 500px at 100% 0%,#4cc69f14,transparent 60%),radial-gradient(900px 500px at 0% 30%,#fed65a12,transparent 60%),var(--cv-paper)}
+.app-shell .sidebar{background:linear-gradient(180deg,var(--cv-navy) 0%,#062f68 60%,var(--cv-petrol) 130%)}
+.app-shell .sidebar::after{content:"";position:absolute;left:0;right:0;bottom:0;height:8px;background:var(--cv-textile) repeat-x center/auto 8px;pointer-events:none}
+.app-shell .main-navigation>button.active{background:var(--cv-petrol-2)}
+.app-shell .topbar{background:var(--cv-card)}
+
+/* Barra de herramientas */
+.cv-toolbar{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:10px 18px;flex-wrap:nowrap;background:#fffdf7f2;backdrop-filter:blur(8px);border-bottom:1px solid var(--cv-line);padding:8px clamp(16px,3vw,40px)}
+.cv-toolbar::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:3px;background:linear-gradient(90deg,var(--cv-navy) 0 25%,var(--cv-red) 25% 50%,var(--cv-maize) 50% 75%,var(--cv-mint) 75%);opacity:.9}
+.cv-toolbar>.cv-toolbar-tag{margin-right:auto;font-size:11px;letter-spacing:.08em;color:var(--cv-muted);flex-basis:auto}
+.cv-toolbar>.cv-toolbar-tag strong{color:var(--cv-petrol)}
+.cv-toolbar-main{display:flex;align-items:center;gap:6px;flex-wrap:nowrap}
+.cv-toolbar .cv-tool,.cv-toolbar .cv-tool:first-of-type{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 12px;border-radius:var(--cv-r-m);background:transparent;color:var(--cv-navy);font-size:13px;font-weight:600;text-decoration:none;white-space:nowrap;transition:background-color var(--cv-dur-1),color var(--cv-dur-1),transform var(--cv-dur-1) var(--cv-ease)}
+.cv-toolbar .cv-tool:hover{background:var(--cv-paper-2);color:var(--cv-navy);text-decoration:none}
+.cv-toolbar .cv-tool>svg{color:var(--cv-petrol)}
+.cv-toolbar .cv-tool.cv-tool-mijin{background:var(--cv-navy);color:#fff;padding:0 14px 0 8px}
+.cv-toolbar .cv-tool.cv-tool-mijin:hover{background:var(--cv-navy-2);color:#fff}
+.cv-tool-mijin>.cv-pulse{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--cv-red);color:var(--cv-maize)}
+.cv-toolbar .cv-tool[aria-expanded=true]{background:var(--cv-navy);color:#fff}.cv-toolbar .cv-tool[aria-expanded=true] svg{color:var(--cv-maize)}
+.cv-more{position:relative}
+.cv-more-menu{position:absolute;right:0;top:calc(100% + 8px);z-index:60;width:min(300px,calc(100vw - 32px));padding:8px;border-radius:var(--cv-r-l);background:var(--cv-card);border:1px solid var(--cv-line);box-shadow:var(--cv-shadow-3);display:grid;gap:2px;animation:cv-fade-up .2s var(--cv-ease) both}
+.cv-more-menu button,.cv-more-menu button:first-of-type{display:flex;align-items:center;gap:12px;width:100%;min-height:52px;padding:8px 12px;border-radius:var(--cv-r-m);background:transparent;color:var(--cv-navy);text-align:left;font-size:14px}
+.cv-more-menu button:hover,.cv-more-menu button:focus-visible{background:var(--cv-paper-2);color:var(--cv-navy);text-decoration:none}
+.cv-more-menu button svg{color:var(--cv-petrol)}
+.cv-more-menu strong,.cv-more-menu small{display:block}.cv-more-menu small{font-size:12px;color:var(--cv-muted);font-weight:400}
+
+/* Pie con columnas */
+.cv-footer{display:block;margin-top:24px;padding:40px clamp(18px,3vw,48px) 30px;background:var(--cv-navy);color:#dfe8f1;position:relative}
+.cv-footer::before{content:"";position:absolute;left:0;right:0;top:0;height:10px;background:var(--cv-textile) repeat-x center/auto 10px}
+.cv-footer-brand{display:flex;flex-wrap:wrap;align-items:center;gap:14px 24px;padding-bottom:26px;border-bottom:1px solid #ffffff22}
+.cv-footer-brand>strong{font-size:15px;letter-spacing:.12em;color:var(--cv-maize)}
+.cv-footer-brand>p{font-size:14px;color:#dfe8f1;flex:1 1 280px;max-width:52ch}
+.cv-footer-brand .social-buttons a,.cv-footer-brand a{color:var(--cv-navy)}
+.cv-footer-cols{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:26px;padding:28px 0 22px}
+.cv-footer-cols h2{font-size:13px;font-weight:750;color:#fff;margin-bottom:10px}
+.cv-footer-cols ul{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.cv-footer-cols button,.cv-footer-cols a{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0;color:#dfe8f1;font-size:14px;text-align:left;text-decoration:none;line-height:1.35}
+.cv-footer-cols button:hover,.cv-footer-cols a:hover{color:var(--cv-maize);text-decoration:underline;text-underline-offset:4px}
+.cv-footer-cols svg{color:var(--cv-mint)}
+.cv-footer button:focus-visible,.cv-footer a:focus-visible{outline-color:var(--cv-maize)}
+.cv-footer-note{font-size:12px;line-height:1.7;color:#c6d3df;border-top:1px solid #ffffff22;padding-top:18px}
+
+/* Paneles: carga y respaldo */
+.cv-panel-loading{display:grid;gap:12px;max-width:520px}.cv-panel-loading .cv-skeleton{height:16px}.cv-panel-loading .cv-skeleton:first-child{height:28px;width:60%}
+.cv-fallback-panel{display:grid;gap:14px;font-size:15px;line-height:1.7;color:var(--cv-ink)}.cv-fallback-panel>svg{color:var(--cv-petrol)}.cv-fallback-panel .button{min-height:48px;font-size:14px;justify-content:flex-start}
+
+@media (max-width:1180px){.cv-toolbar>.cv-toolbar-tag{display:none}.cv-toolbar{justify-content:center}}
+@media (max-width:1100px){.cv-footer-cols{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:760px){
+  .cv-toolbar{padding:6px 8px;position:relative}
+  .cv-toolbar-main{width:100%;justify-content:space-between;gap:2px}
+  .cv-toolbar .cv-long{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+  .cv-toolbar .cv-tool,.cv-toolbar .cv-tool:first-of-type,.cv-toolbar .cv-tool.cv-tool-mijin{flex-direction:column;gap:3px;min-height:52px;min-width:0;flex:1 1 0;padding:4px 2px;font-size:11px;justify-content:center}
+  .cv-toolbar-main>*{flex:1 1 0;min-width:0}
+  .cv-more>.cv-tool{width:100%}
+  .cv-tool-mijin>.cv-pulse{width:24px;height:24px}
+  .cv-footer{padding-bottom:96px}
+  .cv-footer-cols{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 14px}
+}
+@media (max-width:380px){.cv-footer-cols{grid-template-columns:1fr}}
+.cv-footer-brand .social-demo,.cv-footer-brand .social-demo-label{color:#c6d3df}
+@media (max-width:760px){.cv-toolbar .cv-tool>span:last-child{display:block}.cv-toolbar .cv-tool>span:last-child::first-letter{text-transform:uppercase}}
