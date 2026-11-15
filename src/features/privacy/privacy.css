@@ -22,7 +22,8 @@
 .consent-save:active{transform:translateY(1px)}
 .consent-save:focus-visible,.consent-level:focus-within,.privacy-link:focus-visible,.consent-switch input:focus-visible+span{outline:3px solid var(--cv-maize);outline-offset:2px}
 .privacy-link{background:none;border:0;padding:0;color:var(--cv-navy);text-decoration:underline;text-underline-offset:2px;font:inherit;font-weight:600;cursor:pointer;min-height:24px}
-body:has(.privacy-banner) .mijin-launcher{visibility:hidden}
+/* MIJIN nunca queda tapado: sube por encima del banner mientras esté visible. */
+body:has(.privacy-banner) .mijin-launcher{bottom:calc(var(--cv-consent-h,0px) + 28px)}
 
 /* ── Tarjetas de nivel: mismo tamaño, mismo peso, ninguna destacada por defecto ── */
 .consent-levels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
@@ -80,7 +81,7 @@ body:has(.privacy-banner) .mijin-launcher{visibility:hidden}
 
 .consent-media-blocked p{margin:0 0 10px}
 
-@keyframes cv-consent-rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes cv-consent-rise{from{opacity:.9;transform:translateY(24px)}to{opacity:1;transform:none}}
 @keyframes cv-consent-pop{0%{transform:scale(.6)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
 
 @media (max-width:900px){
@@ -102,3 +103,51 @@ body:has(.privacy-banner) .mijin-launcher{visibility:hidden}
   .consent-banner,.consent-level,.consent-level-check,.consent-switch span,.consent-switch span::after,.privacy-toast,.consent-save{animation:none!important;transition:none!important}
   .consent-level:hover{transform:none}
 }
+
+/* ── Barra compacta (v3.1): ~130 px en escritorio, tres segmentos de igual peso ── */
+.privacy-banner.consent-bar{inset:auto 16px 16px;max-width:1180px;max-height:min(80vh,560px);grid-template-columns:minmax(0,1fr) auto auto;
+  grid-template-areas:"intro seg save" "intro hint details";align-items:center;gap:6px 18px;padding:14px 18px 12px}
+.consent-bar::before{position:absolute;top:0;left:0;right:0;margin:0;height:4px}
+.consent-bar-intro{grid-area:intro;display:flex;gap:12px;align-items:center;min-width:0}
+.consent-bar .consent-banner-badge{width:40px;height:40px;border-radius:12px}
+.consent-bar h2{font-size:17px}
+.consent-bar p{font-size:14px;line-height:1.45;margin-top:2px;max-width:56ch}
+.consent-segments{grid-area:seg;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;border:2px solid var(--cv-navy);border-radius:14px;overflow:hidden;background:#fff;min-width:min(420px,100%)}
+.consent-segment{position:relative;display:flex;align-items:center;justify-content:center;gap:7px;min-height:46px;padding:8px 12px;cursor:pointer;color:var(--cv-navy);font-size:14.5px;border-inline-start:2px solid var(--cv-navy);transition:background .15s,color .15s}
+.consent-segment:first-child{border-inline-start:0}
+.consent-segment input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.consent-segment strong{font-weight:700}
+.consent-segment:hover{background:#e7f3f5}
+.consent-segment.is-selected{background:var(--cv-navy);color:#fff}
+.consent-segment.is-selected svg{color:var(--cv-maize)}
+.consent-segment:focus-within{outline:3px solid var(--cv-maize);outline-offset:-5px}
+.consent-bar .consent-save{grid-area:save;min-height:48px;white-space:nowrap}
+.consent-bar .consent-hint{grid-area:hint;font-size:13px;line-height:1.4;color:var(--cv-muted);font-weight:500;min-height:18px}
+.consent-bar .consent-hint.is-error{color:var(--cv-red);font-weight:700}
+.consent-details{grid-area:details;justify-self:end;font-size:13.5px}
+.consent-details summary{cursor:pointer;color:var(--cv-navy);font-weight:600;text-decoration:underline;text-underline-offset:3px;min-height:32px;display:flex;align-items:center;list-style-position:inside}
+.consent-details[open]{grid-column:1/-1;justify-self:stretch}
+.consent-details dl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:8px 0 2px}
+.consent-details dl>div{padding:10px 12px;border:1px solid var(--cv-line);border-radius:12px;background:#fff}
+.consent-details dt{font-weight:750;color:var(--cv-navy)}
+.consent-details dd{margin:4px 0 0;line-height:1.45;color:var(--cv-ink)}
+@media (max-width:1100px){
+  .privacy-banner.consent-bar{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"intro intro" "seg save" "hint details"}
+}
+@media (max-width:640px){
+  /* Móvil: ~210 px. Sin insignia, segmentos en una fila y «Guardar» junto a los detalles. */
+  .privacy-banner.consent-bar{inset:auto 8px 8px;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"intro intro" "seg seg" "hint hint" "details save";gap:8px 10px;padding:12px 12px 10px;border-radius:16px}
+  .consent-bar .consent-banner-badge{display:none}
+  .consent-bar h2{font-size:16px}
+  .consent-bar p{font-size:13.5px;line-height:1.4}
+  .consent-segments{min-width:0}
+  .consent-segment{gap:5px;padding:6px 4px;font-size:13.5px;min-height:44px;text-align:center}
+  .consent-segment svg{width:15px;height:15px;flex:none}
+  .consent-bar .consent-save{min-height:44px;padding-inline:16px}
+  .consent-bar .consent-hint:empty{display:none}
+  .consent-details{justify-self:start;align-self:center}
+  .consent-details[open]{grid-row:auto}
+  .consent-details dl{grid-template-columns:1fr}
+}
+@media (max-width:370px){.consent-segment svg{display:none}}
+@media (prefers-reduced-motion:reduce){.consent-segment{transition:none}}

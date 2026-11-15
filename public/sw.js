@@ -1,5 +1,5 @@
 /* Public application shell only. Never cache API/auth requests or private data. */
-const PUBLIC_CACHE = 'chulla-vida-public-v3-20261112';
+const PUBLIC_CACHE = 'chulla-vida-public-v3-20261114';
 const SHELL = '/index.html';
 const FALLBACK = '/offline.html';
 const PUBLIC_PATH = /^\/(?:assets\/|images\/|brand\/|catalogos\/|chulla-vida-logo\.png$|manifest\.webmanifest$|offline\.html$|index\.html$)/;
@@ -8,6 +8,15 @@ function publicURL(input) {
   const url = new URL(input, self.location.origin);
   if (url.origin !== self.location.origin || url.search || (url.pathname !== '/' && !PUBLIC_PATH.test(url.pathname))) return null;
   url.hash = '';
+  return url;
+}
+/* Rutas de la SPA (/experiencias/…, /mi-viaje, /legal/…): sin conexión reciben el shell público. Nunca /api ni autenticación. */
+const PRIVATE_PATH = /^\/(?:api|auth|rest|storage|functions)(?:\/|$)/;
+function appRoute(input) {
+  const url = new URL(input, self.location.origin);
+  if (url.origin !== self.location.origin || url.search || PRIVATE_PATH.test(url.pathname)) return null;
+  if (/\.[a-z0-9]{1,8}$/i.test(url.pathname) && !url.pathname.endsWith('.html')) return null;
+  if (!/^\/[a-z0-9\-/]*$/i.test(url.pathname) && url.pathname !== '/index.html') return null;
   return url;
 }
 function dependencies(text, base) {
@@ -29,7 +38,7 @@ async function cachePublicShell(resources = []) {
     if (!url || seen.has(url.href)) continue;
     seen.add(url.href);
     try {
-      const alreadySaved = url.pathname.startsWith('/assets/') ? await cache.match(url.href) : undefined;
+      const alreadySaved = url.pathname.startsWith('/assets/') ? await cache.match(url.href, { ignoreVary: true }) : undefined;
       const response = alreadySaved || await fetch(url.href, { credentials: 'omit', cache: 'no-cache', signal: AbortSignal.timeout(12000) });
       if (!response.ok || response.type === 'opaque' || Number(response.headers.get('content-length') || 0) > 12000000) continue;
       if (/private|no-store/i.test(response.headers.get('cache-control') || '')) continue;
@@ -58,14 +67,14 @@ self.addEventListener('message', event => {
 self.addEventListener('fetch', event => {
   const request = event.request;
   if (request.method !== 'GET' || request.headers.has('authorization')) return;
-  const url = publicURL(request.url);
-  if (!url) return;
   if (request.mode === 'navigate') {
-    if (url.pathname !== '/' && url.pathname !== SHELL) return;
+    const route = appRoute(request.url);
+    if (!route) return;
+    const root = route.pathname === '/' || route.pathname === SHELL;
     event.respondWith((async () => {
       try {
         const response = await fetch(request);
-        if (response.ok && !/private|no-store/i.test(response.headers.get('cache-control') || '')) {
+        if (root && response.ok && !/private|no-store/i.test(response.headers.get('cache-control') || '')) {
           const cache = await caches.open(PUBLIC_CACHE); await cache.put(SHELL, response.clone());
         }
         return response;
@@ -76,9 +85,11 @@ self.addEventListener('fetch', event => {
     })());
     return;
   }
+  const url = publicURL(request.url);
+  if (!url) return;
   event.respondWith((async () => {
     const cache = await caches.open(PUBLIC_CACHE);
-    const saved = await cache.match(request);
+    const saved = await cache.match(request, { ignoreVary: true });
     if (saved) return saved;
     const response = await fetch(request);
     if (response.ok && response.type !== 'opaque' && !/private|no-store/i.test(response.headers.get('cache-control') || '')) await cache.put(request, response.clone());

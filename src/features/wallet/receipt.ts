@@ -1,5 +1,6 @@
 import QRCode from 'qrcode';
 import { TEST_RECEIPT_LABEL, testReceiptText, type ReceiptLine, type WalletRecord } from '../../domain/payments/purchase';
+import { CARD_BRANDS, isCardSummary, maskedNumber } from '../../domain/payments/card';
 
 const escape = (value: string) => value.replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char] as string);
 
@@ -16,14 +17,16 @@ export function receiptLines(records: readonly WalletRecord[]): ReceiptLine[] {
 /** Comprobante descargable (HTML autocontenido). Lleva el rótulo de prueba arriba, en marca de agua y al final. */
 export function receiptHtml(input: { code: string; records: readonly WalletRecord[]; qr: string }): string {
   const first = input.records[0];
-  const body = testReceiptText({ code: input.code, buyerName: first?.buyer.name ?? '', emailMasked: first?.buyer.emailMasked ?? '', documentMasked: first?.buyer.documentMasked ?? null, createdAt: first?.updatedAt ?? new Date().toISOString(), lines: receiptLines(input.records) });
+  const body = testReceiptText({ code: input.code, buyerName: first?.buyer.name ?? '', emailMasked: first?.buyer.emailMasked ?? '', documentMasked: first?.buyer.documentMasked ?? null, createdAt: first?.updatedAt ?? new Date().toISOString(), lines: receiptLines(input.records), card: first?.card ?? null });
+  const card = first?.card && isCardSummary(first.card) ? first.card : null;
   const qr = input.qr.startsWith('data:image/svg+xml') ? input.qr : '';
   return `<!doctype html><html lang="es-EC"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escape(TEST_RECEIPT_LABEL)} · ${escape(input.code)}</title>
 <style>body{font:16px/1.6 system-ui,sans-serif;margin:0;padding:24px;background:#fffdf6;color:#103452}main{max-width:640px;margin:auto;position:relative}
 .label{background:#ffd76a;color:#3d2a00;font-weight:800;padding:12px 16px;border-radius:10px;letter-spacing:.04em;text-align:center}
 .mark{position:fixed;inset:0;display:grid;place-items:center;font-size:56px;font-weight:900;color:rgba(16,52,82,.07);transform:rotate(-24deg);pointer-events:none}
-pre{white-space:pre-wrap;font:inherit}img{width:160px;height:160px}</style></head>
-<body><div class="mark" aria-hidden="true">PRUEBA · SIN VALOR</div><main><p class="label">${escape(TEST_RECEIPT_LABEL)}</p>${qr ? `<img src="${escape(qr)}" alt="Código QR del comprobante de prueba ${escape(input.code)}">` : ''}<pre>${escape(body)}</pre><p class="label">${escape(TEST_RECEIPT_LABEL)}</p></main></body></html>`;
+pre{white-space:pre-wrap;font:inherit}img{width:160px;height:160px}
+.card{display:inline-flex;align-items:center;gap:10px;margin:12px 0 0;padding:8px 14px;border-radius:12px;background:#103452;color:#fff;font-weight:700;letter-spacing:.04em}.card b{font-size:12px;padding:2px 8px;border-radius:6px;background:#fff;color:#103452;text-transform:uppercase}</style></head>
+<body><div class="mark" aria-hidden="true">PRUEBA · SIN VALOR</div><main><p class="label">${escape(TEST_RECEIPT_LABEL)}</p>${qr ? `<img src="${escape(qr)}" alt="Código QR del comprobante de prueba ${escape(input.code)}">` : ''}${card ? `<p class="card"><b>${escape(CARD_BRANDS[card.brand].label)}</b>${escape(maskedNumber(card))} · tarjeta de prueba</p>` : ''}<pre>${escape(body)}</pre><p class="label">${escape(TEST_RECEIPT_LABEL)}</p></main></body></html>`;
 }
 
 export function downloadFile(name: string, content: string, type: string) {

@@ -1,0 +1,100 @@
+import { useState, type ReactNode } from 'react';
+import { ArrowUpRight, CalendarPlus, Check, Copy, HeartHandshake, MapPin, MessageCircleQuestion, PawPrint, Plus, Sparkles, Wallet } from 'lucide-react';
+import { formatExperiencePrice, type Experience, type RegionId } from '../../domain/catalog';
+import { COST_LABELS, evaluateOption, PET_WELFARE_TIPS, petCandidates, petInquiryTemplate, planItinerary, suggestRelaxations, type PetTone, type Relaxation, type RouteOption, type TravelConstraints } from '../../domain/planner';
+
+const usd = (value: number) => `USD ${value.toFixed(value % 1 ? 2 : 0)}`;
+interface Draftish { people: number; date: string; origin: string; stops: string[] }
+interface Actions { onSelect: (id: string) => void; onAdd: (id: string) => void; onRelax: (relaxation: Relaxation) => void }
+
+/** Lo que sabemos y lo que falta del costo, sin inventar montos. */
+export function CostLine({ option, people }: { option: RouteOption; people: number }) {
+  const missing = option.missingCosts.map(kind => COST_LABELS[kind]);
+  return <div className="flex-cost">
+    {option.experienceSubtotal === null
+      ? <p><strong>Precio sin sumar.</strong> {option.experience.price.currency === 'EUR' ? 'Está en euros y no lo convertimos.' : 'La fuente no da un importe.'}</p>
+      : <p><strong>{usd(option.experienceSubtotal)}</strong> de experiencia para {people === 1 ? '1 persona' : `${people} personas`}{option.experience.price.max === null ? ' (precio «desde»)' : ''}.</p>}
+    {missing.length > 0 && <p className="flex-cost-missing">Falta sumar: {missing.join(', ')}.</p>}
+  </div>;
+}
+
+function OptionCard({ experience, draft, actions, children, chip }: { experience: Experience; draft: Draftish; actions: Actions; children?: ReactNode; chip?: { label: string; tone: PetTone } }) {
+  const photo = experience.media[0];
+  const added = draft.stops.includes(experience.id);
+  return <article className="flex-card">
+    <div className="flex-card-media">{photo ? <img src={photo.src} alt={photo.alt} loading="lazy" width={640} height={420} /> : <span className="flex-card-placeholder"><MapPin size={28} aria-hidden="true" /></span>}{chip && <span className={`flex-pet-chip is-${chip.tone}`}><PawPrint size={13} aria-hidden="true" />{chip.label}</span>}</div>
+    <div className="flex-card-body">
+      <h5>{experience.title}</h5>
+      <p>{experience.province} · {experience.duration.label}</p>
+      <strong>{formatExperiencePrice(experience)}</strong>
+      {children}
+      <div className="flex-card-actions">
+        <button type="button" className="flex-link" onClick={() => actions.onSelect(experience.id)}>Revisar ficha<ArrowUpRight size={14} aria-hidden="true" /></button>
+        <button type="button" className="flex-add" aria-label={`Añadir ${experience.title} al borrador`} disabled={added} onClick={() => actions.onAdd(experience.id)}>{added ? <Check size={19} /> : <Plus size={19} />}</button>
+      </div>
+      {photo && <small className="flex-credit">Foto: {photo.credit}</small>}
+    </div>
+  </article>;
+}
+
+function PetAsk({ experience, draft }: { experience: Experience; draft: Draftish }) {
+  const [open, setOpen] = useState(false);
+  const [copied, setCopied] = useState('');
+  const text = petInquiryTemplate(experience, { people: draft.people, date: draft.date || undefined, origin: draft.origin.trim() || undefined });
+  const copy = async () => {
+    try { await navigator.clipboard.writeText(text); setCopied('Consulta copiada. Pégala en el WhatsApp o correo del anfitrión.'); }
+    catch { setCopied('Tu navegador no dejó copiar. Selecciona el texto y cópialo a mano.'); }
+  };
+  return <div className="flex-ask">
+    <button type="button" className="flex-ask-toggle" aria-expanded={open} onClick={() => setOpen(value => !value)}><MessageCircleQuestion size={16} aria-hidden="true" />Preguntar al anfitrión</button>
+    {open && <div className="flex-ask-body"><label>Tu consulta, lista para enviar<textarea className="field" readOnly rows={6} value={text} /></label><button type="button" className="button button-secondary" onClick={() => void copy()}><Copy size={16} aria-hidden="true" />Copiar consulta</button><p role="status">{copied}</p><small>No la enviamos por ti: tú decides a quién escribir.</small></div>}
+  </div>;
+}
+
+function Relaxations({ relaxations, actions }: { relaxations: Relaxation[]; actions: Actions }) {
+  if (!relaxations.length) return null;
+  return <div className="flex-relax" role="group" aria-label="Qué puedes ajustar">
+    <h5><Sparkles size={17} aria-hidden="true" />Prueba con un toque</h5>
+    <ul>{relaxations.map(item => <li key={`${item.kind}-${item.value}`}><button type="button" onClick={() => actions.onRelax(item)}>{item.kind === 'budget' ? <Wallet size={16} aria-hidden="true" /> : item.kind === 'days' ? <CalendarPlus size={16} aria-hidden="true" /> : <MapPin size={16} aria-hidden="true" />}<span><strong>{item.label}</strong><small>{item.detail}</small></span></button></li>)}</ul>
+  </div>;
+}
+
+/** Resultados de Chulla Flex: nunca un callejón sin salida. */
+export function PlannerResults({ constraints, records, draft, region, actions }: { constraints: TravelConstraints; records: Experience[]; draft: Draftish; region: RegionId | ''; actions: Actions }) {
+  const pet = Boolean(constraints.pet);
+  const options = planItinerary(constraints, records).filter(option => option.fitsKnownConstraints).slice(0, 6);
+  const candidates = pet ? petCandidates(constraints, records) : [];
+  const priced = options.filter(option => option.experienceSubtotal !== null);
+  const stuck = pet ? !candidates.some(candidate => candidate.tone !== 'blocked') : !priced.length;
+  const help = stuck ? suggestRelaxations(constraints, records) : null;
+  const evaluate = (experience: Experience) => evaluateOption(experience, constraints);
+  const subtotals = options.map(option => option.experienceSubtotal).filter((value): value is number => value !== null);
+  return <section className="flex-options" aria-live="polite">
+    {region === 'galapagos' && constraints.budgetTotal <= 20 && <p className="flex-warning">Galápagos con USD 20 totales no es viable: vuelos, tasas y traslados van aparte. Abajo tienes alternativas.</p>}
+    {pet ? <>
+      <h4><PawPrint size={22} aria-hidden="true" />Viajar con tu perro, con honestidad</h4>
+      <p>Ninguna ficha tiene todavía una política de mascotas confirmada por su anfitrión. Estas encajan con tu presupuesto y tiempo; la etiqueta dice lo que sabemos de verdad.</p>
+      {candidates.length > 0 && <div className="flex-cards">{candidates.map(candidate => <OptionCard key={candidate.experience.id} experience={candidate.experience} draft={draft} actions={actions} chip={{ label: candidate.label, tone: candidate.tone }}>
+        <p className="flex-pet-reason">{candidate.reason}</p>
+        <CostLine option={evaluate(candidate.experience)} people={draft.people} />
+        {candidate.canAsk && <PetAsk experience={candidate.experience} draft={draft} />}
+      </OptionCard>)}</div>}
+      <div className="flex-tips"><h5><HeartHandshake size={18} aria-hidden="true" />Para que tu perro también la pase bien</h5><ul>{PET_WELFARE_TIPS.map(tip => <li key={tip}>{tip}</li>)}</ul></div>
+    </> : options.length > 0 ? <>
+      <h4>Para empezar tu recorrido</h4>
+      <p className="flex-summary"><strong>{options.length} {options.length === 1 ? 'idea encaja' : 'ideas encajan'}</strong>{subtotals.length > 0 && <> · desde {usd(Math.min(...subtotals))} de experiencia para el grupo</>} · tu presupuesto: {usd(constraints.budgetTotal)}</p>
+      <div className="flex-cards">{options.map(option => <OptionCard key={option.experience.id} experience={option.experience} draft={draft} actions={actions}><CostLine option={option} people={draft.people} /></OptionCard>)}</div>
+    </> : null}
+    {stuck && help && <div className="flex-stuck">
+      <h4>{pet ? 'Afinemos para encontrar más opciones' : options.length ? 'Con precio conocido nada entra aún, pero hay salida' : 'Casi: nada encaja del todo, pero hay salida'}</h4>
+      <p>Con {usd(constraints.budgetTotal)} para {draft.people === 1 ? '1 persona' : `${draft.people} personas`}, {Math.ceil(constraints.maxHours / 24)} {Math.ceil(constraints.maxHours / 24) === 1 ? 'día' : 'días'}{region ? ' y la región elegida' : ''}, no hay fichas con precio conocido que quepan. Esto es lo más cercano y lo que puedes mover.</p>
+      <Relaxations relaxations={help.relaxations} actions={actions} />
+      {help.nearest.length > 0 && <div className="flex-cards">{help.nearest.map(({ option, blockers }) => <OptionCard key={option.experience.id} experience={option.experience} draft={draft} actions={actions}>
+        {blockers.length > 0 && <ul className="flex-blockers">{blockers.map(blocker => <li key={blocker}>{blocker}</li>)}</ul>}
+        <CostLine option={option} people={draft.people} />
+      </OptionCard>)}</div>}
+      {!help.relaxations.length && !help.nearest.length && <p>No tenemos fichas con precio en dólares para comparar en este momento. Revisa el catálogo completo o pregúntale a MIJIN.</p>}
+    </div>}
+    <p className="flex-cost-note">Precios referenciales de la fuente, sin conversión de euros. Transporte, comida, tasas e imprevistos se confirman con cada anfitrión.</p>
+  </section>;
+}

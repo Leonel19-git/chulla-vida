@@ -57,6 +57,11 @@ export function toggleVirtualExploration(state: PassportBookState, destinationId
     : [...state.exploredIds, destinationId].slice(-1000);
   return { ...state, exploredIds };
 }
+/** Marca (sin desmarcar) una ficha como explorada virtualmente: se usa al abrir una ficha. */
+export function markExplored(state: PassportBookState, destinationId: string, allowedIds: readonly string[]): PassportBookState {
+  if (!allowedIds.includes(destinationId) || state.exploredIds.includes(destinationId)) return state;
+  return { ...state, exploredIds: [...state.exploredIds, destinationId].slice(-1000) };
+}
 export function addJournalEntry(state: PassportBookState, input: { title: string; text: string; destinationId?: string | null }, now = new Date(), id = crypto.randomUUID()): PassportBookState {
   if (!input.title.trim() || !input.text.trim() || input.title.length > 100 || input.text.length > 5000 || !Number.isFinite(now.getTime()) || !id || state.journal.some(entry => entry.id === id)) return state;
   return { ...state, journal: [{ id, title: input.title.trim(), text: input.text.trim(), destinationId: input.destinationId || null, createdAt: now.toISOString() }, ...state.journal].slice(0, 200) };

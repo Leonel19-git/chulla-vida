@@ -11,6 +11,7 @@
  */
 import type { Experience } from '../catalog';
 import { isMaskedDocument, type DocumentType } from '../identity/cedula';
+import { cardLabel, isCardSummary, type CardSummary } from './card';
 
 export const WALLET_KEY = 'chullavida:wallet:v1';
 export const WALLET_VERSION = 1;
@@ -94,6 +95,8 @@ export interface WalletRecord {
   trip: string;
   batchId: string | null;
   attempts: number;
+  /** Tarjeta usada en la prueba: SOLO marca y últimos 4. Nunca número completo, vencimiento ni CVV. */
+  card?: CardSummary | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -135,6 +138,7 @@ export function isWalletRecord(value: unknown): value is WalletRecord {
     && Number.isInteger(r.people) && r.people >= 1 && r.people <= 50 && (r.currency === 'USD' || r.currency === 'EUR')
     && centsOrNull(r.unitCents) && centsOrNull(r.totalCents) && text(r.priceNote, 600) && isBuyer(r.buyer) && text(r.trip, 160)
     && (r.batchId === null || text(r.batchId, 80)) && Number.isInteger(r.attempts) && r.attempts >= 0 && r.attempts <= 50
+    && (r.card === undefined || r.card === null || isCardSummary(r.card))
     && typeof r.createdAt === 'string' && Number.isFinite(Date.parse(r.createdAt)) && typeof r.updatedAt === 'string' && Number.isFinite(Date.parse(r.updatedAt))
     && (r.kind === 'request' ? (r.status === 'requested' || r.status === 'cancelled') : r.status.startsWith('test_'));
 }
@@ -190,7 +194,7 @@ export function tripTotals(stops: readonly Experience[], people: number, records
 
 export interface ReceiptLine { title: string; date: string; people: number; unitCents: number | null; totalCents: number | null; currency: string; note: string }
 /** Texto del comprobante. Una compra de prueba SIEMPRE lleva el rótulo en la primera línea y al final. */
-export function testReceiptText(input: { code: string; buyerName: string; emailMasked: string; documentMasked: string | null; createdAt: string; lines: ReceiptLine[] }): string {
+export function testReceiptText(input: { code: string; buyerName: string; emailMasked: string; documentMasked: string | null; createdAt: string; lines: ReceiptLine[]; card?: CardSummary | null }): string {
   const total = input.lines.reduce((sum, line) => sum + (line.totalCents ?? 0), 0);
   return [
     TEST_RECEIPT_LABEL,
@@ -198,6 +202,7 @@ export function testReceiptText(input: { code: string; buyerName: string; emailM
     `Código: ${input.code}`,
     `Fecha de emisión: ${input.createdAt}`,
     `A nombre de: ${input.buyerName}${input.emailMasked ? ` · ${input.emailMasked}` : ''}${input.documentMasked ? ` · Documento ${input.documentMasked}` : ''}`,
+    ...(input.card && isCardSummary(input.card) ? [`Método de pago: ${cardLabel(input.card)} · tarjeta de prueba, sin cobro`] : []),
     '',
     ...input.lines.flatMap(line => [`• ${line.title}`, `  ${line.date || 'Fecha por confirmar'} · ${line.people} ${line.people === 1 ? 'persona' : 'personas'} · ${line.totalCents === null ? 'Cotización pendiente' : `${formatUsd(line.totalCents)} (${line.unitCents === null ? '' : `${formatUsd(line.unitCents)} por persona`})`}`, ...(line.note ? [`  ${line.note}`] : [])]),
     '',

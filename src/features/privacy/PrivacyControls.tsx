@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useId, useState } from 'react';
+import { lazy, Suspense, useEffect, useId, useRef, useState } from 'react';
 import { Check, Lock, Scale, ShieldCheck, SlidersHorizontal } from 'lucide-react';
 import { Dialog } from '../../components/chulla/Dialog';
 import {
@@ -54,31 +54,60 @@ function LevelCards({ selected, onSelect, name }: { selected: ConsentLevel | nul
   </div>;
 }
 
+/**
+ * Banner compacto de primera visita: una barra inferior con texto breve, los tres niveles como segmentos
+ * de igual peso y «Guardar mi elección». Lo que guarda y comparte cada nivel va en un desplegable.
+ * Publica su alto en --cv-consent-h para que el botón de MIJIN se sitúe encima y nunca quede tapado.
+ */
 function ConsentBanner() {
   const { choose, open } = useConsent();
   const [selected, setSelected] = useState<ConsentLevel | null>(null);
   const [hint, setHint] = useState('');
   const titleId = useId();
   const hintId = useId();
+  const ref = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const node = ref.current;
+    const root = document.documentElement;
+    if (!node) return;
+    const publish = () => root.style.setProperty('--cv-consent-h', `${Math.ceil(node.getBoundingClientRect().height)}px`);
+    publish();
+    const observer = typeof ResizeObserver === 'function' ? new ResizeObserver(publish) : null;
+    observer?.observe(node);
+    window.addEventListener('resize', publish);
+    return () => { observer?.disconnect(); window.removeEventListener('resize', publish); root.style.removeProperty('--cv-consent-h'); };
+  }, []);
   const select = (level: ConsentLevel) => { setSelected(level); setHint(''); if (level === 'custom') open(); };
   const save = () => {
     if (!selected) { setHint('Elige uno de los tres niveles para continuar.'); return; }
     if (selected === 'custom') { open(); return; }
     choose(selected, undefined, 'banner');
   };
-  return <section className="privacy-banner consent-banner" role="region" aria-labelledby={titleId}>
-    <div className="consent-banner-intro">
-      <span className="consent-banner-badge" aria-hidden="true"><ShieldCheck size={22} /></span>
+  const chosen = CONSENT_LEVELS.find(level => level.id === selected);
+  return <section ref={ref} className="privacy-banner consent-banner consent-bar" role="region" aria-labelledby={titleId} data-tour="privacy-banner">
+    <div className="consent-bar-intro">
+      <span className="consent-banner-badge" aria-hidden="true"><ShieldCheck size={20} /></span>
       <div>
         <h2 id={titleId}>Tus datos son tuyos</h2>
-        <p>En CHULLA VIDA creemos en tu derecho a la privacidad y a saber qué pasa con tu información. Elige un nivel de acceso: así decides qué guardamos en tu dispositivo y qué se comparte con terceros. No usamos analítica ni publicidad. <button type="button" className="privacy-link" onClick={() => window.dispatchEvent(new Event('cv3:legal'))}>Lee la política de cookies</button>.</p>
+        <p>Elige qué guardamos en tu dispositivo y qué se comparte. Sin analítica ni publicidad. <button type="button" className="privacy-link" onClick={() => window.dispatchEvent(new Event('cv3:legal'))}>Política de cookies</button></p>
       </div>
     </div>
-    <LevelCards selected={selected} onSelect={select} name="consent-banner-level" />
-    <div className="consent-banner-actions">
-      <p id={hintId} className="consent-hint" aria-live="polite">{hint}</p>
-      <button type="button" className="button consent-save" aria-describedby={hintId} onClick={save}>{selected === 'custom' ? 'Elegir mis categorías' : 'Guardar mi elección'}</button>
+    <div className="consent-segments" role="radiogroup" aria-label="Nivel de acceso a tus datos" aria-describedby={hintId}>
+      {CONSENT_LEVELS.map(level => {
+        const Icon = ICONS[level.id];
+        const checked = selected === level.id;
+        return <label key={level.id} className={`consent-segment ${checked ? 'is-selected' : ''}`}>
+          <input type="radio" name="consent-banner-level" value={level.id} checked={checked} onChange={() => select(level.id)} />
+          <Icon size={17} aria-hidden="true" /><strong>{level.title}</strong><span className="sr-only">. {level.tagline}</span>
+        </label>;
+      })}
     </div>
+    <button type="button" className="button consent-save" onClick={save}>{selected === 'custom' ? 'Elegir mis categorías' : 'Guardar mi elección'}</button>
+    <p id={hintId} className={`consent-hint ${hint ? 'is-error' : ''}`} aria-live="polite">{hint || (chosen ? chosen.tagline : '')}</p>
+    <details className="consent-details">
+      <summary>¿Qué incluye cada nivel?</summary>
+      <dl>{CONSENT_LEVELS.map(level => <div key={level.id}><dt>{level.title}</dt><dd>{level.tagline}</dd><dd><b>Se guarda:</b> {level.stores}</dd><dd><b>Se comparte:</b> {level.shares}</dd></div>)}</dl>
+    </details>
   </section>;
 }
 

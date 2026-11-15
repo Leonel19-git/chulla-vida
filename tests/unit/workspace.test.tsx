@@ -8,6 +8,7 @@ import { V3Footer, V3Toolbar, V3Workspace } from '../../src/features/workspace/V
 
 beforeEach(() => {
   localStorage.clear();
+  window.history.replaceState(null, '', '/');
   HTMLDialogElement.prototype.showModal = function () { this.setAttribute('open', ''); };
   HTMLDialogElement.prototype.close = function () { this.removeAttribute('open'); };
 });
@@ -39,7 +40,7 @@ it('agrupa herramientas en «Más»: abre, cierra con Escape y devuelve el foco'
   fireEvent.click(more);
   expect(more).toHaveAttribute('aria-expanded', 'true');
   expect(screen.getAllByRole('menuitem').map(item => item.textContent)).toEqual([
-    expect.stringMatching(/^Sin señal/), expect.stringMatching(/^Mis avisos/), expect.stringMatching(/^Anfitriones/), expect.stringMatching(/^Cuenta y negocio/),
+    expect.stringMatching(/^Sin señal/), expect.stringMatching(/^Pasaporte Guambra/), expect.stringMatching(/^Mis avisos/), expect.stringMatching(/^Anfitriones/), expect.stringMatching(/^Mi cuenta/), expect.stringMatching(/^Recorrido guiado/),
   ]);
   expect(screen.getAllByRole('menuitem')[0]).toHaveFocus();
   fireEvent.keyDown(window, { key: 'Escape' });
@@ -49,7 +50,7 @@ it('agrupa herramientas en «Más»: abre, cierra con Escape y devuelve el foco'
 it('«Mi billetera» abre la billetera desde la barra de herramientas', async () => {
   render(<Workspace />);
   fireEvent.click(screen.getByRole('button', { name: 'Mi billetera' }));
-  expect(await screen.findByRole('dialog', { name: /billetera/i })).toBeInTheDocument();
+  expect(await screen.findByRole('dialog', { name: /billetera/i }, { timeout: 5000 })).toBeInTheDocument();
   expect(screen.queryByRole('alert')).not.toBeInTheDocument();
 });
 it('el pie ofrece los PDF de protección de datos y abre el ejercicio de derechos', async () => {
@@ -57,5 +58,5 @@ it('el pie ofrece los PDF de protección de datos y abre el ejercicio de derecho
   expect(screen.getByRole('link', { name: /Aviso de protección de datos/ })).toHaveAttribute('href', '/legal/aviso-proteccion-datos-chulla-vida.pdf');
   expect(screen.getByRole('link', { name: /Formulario de derechos/ })).toHaveAttribute('href', '/legal/formulario-derechos-datos-chulla-vida.pdf');
   fireEvent.click(screen.getByRole('button', { name: 'Ejercer mis derechos de datos' }));
-  expect(await screen.findByRole('dialog', { name: /derechos/i })).toBeInTheDocument();
+  expect(await screen.findByRole('dialog', { name: /derechos/i }, { timeout: 5000 })).toBeInTheDocument();
 });

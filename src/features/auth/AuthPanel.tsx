@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import type { Session } from '@supabase/supabase-js';
 import { FileCheck2, MailCheck, PlayCircle, Store, UserRound } from 'lucide-react';
+import { TravelerProfile } from '../traveler/TravelerProfile';
 import { getSupabase, supabaseConfiguration } from '../../lib/supabase';
-import { AccessFlow } from './AccessFlow';
+import { AccessFlow, type AccessTab } from './AccessFlow';
 import { demoGateway, supabaseGateway } from './auth-gateway';
 import './auth.css';
 
@@ -15,11 +16,11 @@ const statusLabel: Record<string, string> = { submitted: 'Pendiente de revisión
   requested: 'Consulta registrada', acknowledged: 'Revisada por el equipo', cancelled: 'Cancelada' };
 
 /** Connected accounts are separate from the local role selector used by the prototype. */
-export function AuthPanel({ experienceId }: { experienceId?: string }) {
-  return <AccountPanel key={experienceId ?? 'account'} experienceId={experienceId} />;
+export function AuthPanel({ experienceId, initialTab }: { experienceId?: string; initialTab?: AccessTab }) {
+  return <AccountPanel key={experienceId ?? 'account'} experienceId={experienceId} initialTab={initialTab} />;
 }
 
-function AccountPanel({ experienceId }: { experienceId?: string }) {
+function AccountPanel({ experienceId, initialTab }: { experienceId?: string; initialTab?: AccessTab }) {
   const configuration = supabaseConfiguration();
   const client = getSupabase();
   const gateway = useMemo(() => client ? supabaseGateway(client) : null, [client]);
@@ -43,6 +44,7 @@ function AccountPanel({ experienceId }: { experienceId?: string }) {
   const [reviewNote, setReviewNote] = useState('');
   const [registryReference, setRegistryReference] = useState('');
   const [requestKey, setRequestKey] = useState(() => crypto.randomUUID());
+  const [welcomeName, setWelcomeName] = useState<string | null>(null);
   const sessionUser = useRef<string | null>(null);
 
   useEffect(() => {
@@ -54,6 +56,7 @@ function AccountPanel({ experienceId }: { experienceId?: string }) {
       if (sessionUser.current !== nextId) {
         setApplications([]); setOrganizations([]); setInquiries([]); setDocuments([]); setDocumentLinks({}); setAdmin(false);
         setReviewNote(''); setRegistryReference(''); setMessage(''); setRequestKey(crypto.randomUUID());
+        if (!nextId) setWelcomeName(null);
         sessionUser.current = nextId;
       }
       setSession(nextSession);
@@ -171,13 +174,25 @@ function AccountPanel({ experienceId }: { experienceId?: string }) {
     <details><summary>Qué falta para conectar las cuentas</summary><p>Configurar la URL y la clave pública de Supabase, aplicar las migraciones, cargar las plantillas de correo con código y probar el envío. Las instrucciones están en docs/SUPABASE_SETUP.md del proyecto.</p></details>
   </section>;
 
-  return <section className="auth-panel" aria-busy={busy}><div className="auth-heading"><UserRound size={25} /><h2>{session && !recovering ? 'Tu cuenta conectada' : 'Tu cuenta de CHULLA VIDA'}</h2></div>
-    {(!session || recovering) ? <AccessFlow gateway={gateway} startWithNewPassword={recovering} onRecoveryVerified={() => setRecovering(true)} onPasswordUpdated={() => { setRecovering(false); setNotice('Contraseña actualizada. Tu sesión sigue abierta.'); }} /> : <><p>Sesión de <strong>{session.user.email}</strong>. {admin ? 'Administrador autorizado por el servidor.' : 'Viajero. Representar un negocio requiere revisión.'}</p><div className="auth-actions"><button className="button button-secondary" disabled={busy} onClick={() => setRevision(value => value + 1)}>Actualizar datos</button><button className="button button-secondary" onClick={async () => { setBusy(true); const { error } = await client!.auth.signOut(); setNotice(error ? 'No se pudo cerrar la sesión. Vuelve a intentarlo.' : 'Sesión cerrada.'); setBusy(false); }}>Cerrar sesión</button></div>
+  const signOut = async () => {
+    if (!client) return;
+    setBusy(true);
+    try { const { error } = await client.auth.signOut(); setNotice(error ? 'No se pudo cerrar la sesión. Vuelve a intentarlo.' : 'Sesión cerrada. ¡Vuelve pronto!'); }
+    catch { setNotice('No se pudo cerrar la sesión. Revisa tu conexión.'); }
+    finally { setBusy(false); }
+  };
+  const signedIn = Boolean(session && !recovering);
+  return <section className="auth-panel" aria-busy={busy}><div className="auth-heading"><UserRound size={25} /><h2>{signedIn ? 'Tu cuenta viajera' : 'Entrar / Crear cuenta'}</h2></div>
+    {!signedIn ? <><p className="auth-lead">Con tu cuenta guardas tu perfil, tus compras y los sellos de tu Pasaporte Guambra en cualquier dispositivo. Para crearla solo necesitas tu correo y un <strong>código de 6 números</strong>.</p>
+      <AccessFlow gateway={gateway} initialTab={initialTab} startWithNewPassword={recovering} onSignedUp={displayName => setWelcomeName(displayName)} onRecoveryVerified={() => setRecovering(true)} onPasswordUpdated={() => { setRecovering(false); setNotice('Contraseña actualizada. Tu sesión sigue abierta.'); }} /></> : <>
+      <TravelerProfile key={session!.user.id} client={client!} session={session!} welcomeName={welcomeName} onSignOut={() => void signOut()} busy={busy} />
+      {admin && <p className="auth-limit">Además eres administrador autorizado por el servidor: abajo tienes las solicitudes de negocios para revisar.</p>}
+      <div className="auth-actions"><button className="button button-secondary" disabled={busy} onClick={() => setRevision(value => value + 1)}>Actualizar datos</button></div>
       {experienceId && <form className="auth-form" onSubmit={inquire}><h3>Consultar esta experiencia</h3><p>Tu consulta llegará al equipo de la plataforma. No hay disponibilidad ni operador confirmado para estas fichas.</p><label>Tu pregunta<textarea className="field" maxLength={2000} minLength={1} value={message} onChange={event => setMessage(event.target.value)} required /></label><button className="button button-primary" disabled={busy || !message.trim()}>Registrar consulta</button></form>}
-      <section className="auth-section"><h3><Store size={20} />Representar un negocio o comunidad</h3><form onSubmit={apply} className="auth-form"><label>Nombre de tu organización<input className="field" value={organization} onChange={event => setOrganization(event.target.value)} minLength={2} maxLength={160} required /></label><label>Represento<select className="field" value={kind} onChange={event => setKind(event.target.value)}><option value="business">Un negocio</option><option value="community">Una comunidad</option></select></label><label className="auth-check"><input type="checkbox" checked={treatmentConsent} onChange={event => setTreatmentConsent(event.target.checked)} required /><span>Autorizo el tratamiento de los datos que envío para revisar esta solicitud. No autorizo publicidad y no recibiré verificación automática.</span></label><button className="button button-primary" disabled={busy || !treatmentConsent}>Solicitar revisión</button></form></section>
+      <details className="auth-business" open={applications.length > 0 && !admin ? true : undefined}><summary><Store size={20} aria-hidden="true" />Representar un negocio o comunidad</summary><p>¿Tienes un emprendimiento, guías o una comunidad que recibe visitantes? Pide la revisión y te ayudamos a publicarte.</p><form onSubmit={apply} className="auth-form"><label>Nombre de tu organización<input className="field" value={organization} onChange={event => setOrganization(event.target.value)} minLength={2} maxLength={160} required /></label><label>Represento<select className="field" value={kind} onChange={event => setKind(event.target.value)}><option value="business">Un negocio</option><option value="community">Una comunidad</option></select></label><label className="auth-check"><input type="checkbox" checked={treatmentConsent} onChange={event => setTreatmentConsent(event.target.checked)} required /><span>Autorizo el tratamiento de los datos que envío para revisar esta solicitud. No autorizo publicidad y no recibiré verificación automática.</span></label><button className="button button-primary" disabled={busy || !treatmentConsent}>Solicitar revisión</button></form></details>
       {applications.length > 0 && <section className="auth-section"><h3><FileCheck2 size={20} />{admin ? 'Solicitudes para revisión' : 'Tus solicitudes'}</h3>{applications.map(application => { const org = organizations.find(item => item.id === application.organization_id); return <article className="auth-request" key={application.id}><strong>{org?.name ?? 'Organización'}</strong><span>{statusLabel[application.status] ?? application.status}{org && ` · ${statusLabel[org.verification_status] ?? org.verification_status}`}</span><small>Referencia: {application.id}</small>{documents.filter(document => document.request_id === application.id).map((document, index) => <div className="auth-actions" key={document.id}><button className="button button-secondary" disabled={busy} onClick={() => openDocument(document)}>Preparar acceso privado al documento {index + 1}</button>{documentLinks[document.id] && <a href={documentLinks[document.id]} target="_blank" rel="noreferrer" className="button button-secondary">Abrir documento · vence en 60 s</a>}</div>)}{application.status === 'submitted' && !admin && <label>Adjuntar documento privado (PDF, JPG o PNG; máximo 5 MB)<input type="file" accept="application/pdf,image/jpeg,image/png" disabled={busy} onChange={event => { void upload(application, event.target.files?.[0]); event.target.value = ''; }} /></label>}{admin && application.status === 'submitted' && <div className="auth-actions"><button className="button button-secondary" disabled={busy || reviewNote.trim().length < 5} onClick={() => review(application.id, 'rejected')}>Rechazar con motivo</button><button className="button button-primary" disabled={busy || reviewNote.trim().length < 5} onClick={() => review(application.id, 'approved')}>Registrar aprobación</button></div>}</article>; })}{admin && <div className="auth-form"><label>Motivo de la revisión (mínimo 5 caracteres)<textarea className="field" value={reviewNote} onChange={event => setReviewNote(event.target.value)} minLength={5} maxLength={2000} /></label><label>Referencia oficial comprobada, solo si corresponde<input className="field" value={registryReference} onChange={event => setRegistryReference(event.target.value)} maxLength={1000} /></label><p>Sin referencia oficial se registra únicamente revisión de identidad. Verifica la documentación antes de aprobar.</p></div>}</section>}
       {inquiries.length > 0 && <section className="auth-section"><h3>Consultas registradas</h3>{inquiries.map(inquiry => <article className="auth-request" key={inquiry.id}><strong>{inquiry.experience_id}</strong><p>{inquiry.message}</p><span>{statusLabel[inquiry.status] ?? inquiry.status}</span></article>)}</section>}
     </>}
-    <p role="status" className="auth-notice">{notice}</p><p className="auth-limit">La cuenta conectada no modifica los datos ni permisos de los perfiles locales de demostración. No hay cobros ni reservas comerciales habilitados.</p>
+    <p role="status" className="auth-notice">{notice}</p><p className="auth-limit">Tu cuenta conectada es independiente de los perfiles locales de demostración del prototipo.</p>
   </section>;
 }

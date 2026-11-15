@@ -27,12 +27,12 @@
 /* ───────────── Ecuador Vivo · tokens de la paleta del logo 2026 ───────────── */
 :root{
   --cv-navy:#012960;--cv-navy-2:#0b3c7d;--cv-red:#c61534;--cv-red-ink:#a3102a;--cv-maize:#fed65a;--cv-maize-2:#f3bd2e;--cv-mint:#4cc69f;--cv-mint-ink:#0f6e55;--cv-petrol:#1f575a;--cv-petrol-2:#2a7175;
-  --cv-paper:#fbf6ea;--cv-paper-2:#f4ecd9;--cv-card:#fffdf7;--cv-ink:#10233f;--cv-muted:#4d5d66;--cv-line:#e3dccb;
+  --cv-paper:#fbf6ea;--cv-paper-2:#f4ecd9;--cv-card:#fffdf7;--cv-ink:#10233f;--cv-muted:#3a4a55;--cv-line:#d6ccb5;
   /* Regiones: color de texto (AA sobre papel) y lavado de fondo */
-  --cv-sierra:#9a3f24;--cv-sierra-wash:#f8e6d8;--cv-costa:#0a6a80;--cv-costa-wash:#dcf0f2;
-  --cv-amazonia:#1b6a43;--cv-amazonia-wash:#e0f0e2;--cv-galapagos:#2b4c8c;--cv-galapagos-wash:#e2e9f7;
+  --cv-sierra:#9a3f24;--cv-sierra-wash:#f6dbc6;--cv-costa:#0a6a80;--cv-costa-wash:#ccedf3;
+  --cv-amazonia:#1b6a43;--cv-amazonia-wash:#d1eed7;--cv-galapagos:#2b4c8c;--cv-galapagos-wash:#d5e1fa;
   --cv-r-s:8px;--cv-r-m:12px;--cv-r-l:19px;--cv-r-xl:26px;--cv-r-pill:999px;
-  --cv-shadow-1:0 1px 2px #0129600f,0 4px 14px #0129600d;--cv-shadow-2:0 12px 30px #01296024;--cv-shadow-3:0 22px 50px #0129602e;
+  --cv-shadow-1:0 1px 2px #01296026,0 6px 16px #0129601c;--cv-shadow-2:0 2px 4px #0129601f,0 14px 32px #01296033;--cv-shadow-3:0 4px 8px #01296024,0 24px 54px #01296042;
   --cv-space-1:4px;--cv-space-2:8px;--cv-space-3:12px;--cv-space-4:16px;--cv-space-5:24px;--cv-space-6:32px;--cv-space-7:48px;--cv-space-8:72px;
   --cv-text-xs:12px;--cv-text-s:13px;--cv-text-m:15px;--cv-text-l:18px;--cv-text-xl:clamp(26px,3vw,36px);--cv-text-2xl:clamp(32px,4vw,48px);
   --cv-ease:cubic-bezier(.2,.7,.2,1);--cv-ease-pop:cubic-bezier(.34,1.56,.64,1);--cv-dur-1:.18s;--cv-dur-2:.32s;--cv-dur-3:.6s;
@@ -43,14 +43,16 @@
 .cv-textile-edge{position:relative}.cv-textile-edge::before{content:"";position:absolute;left:0;right:0;top:0;height:8px;background:var(--cv-textile) repeat-x center/auto 8px;border-radius:inherit;border-bottom-left-radius:0;border-bottom-right-radius:0;pointer-events:none}
 [data-region-tone=sierra]{--tone:var(--cv-sierra);--tone-wash:var(--cv-sierra-wash)}[data-region-tone=costa]{--tone:var(--cv-costa);--tone-wash:var(--cv-costa-wash)}[data-region-tone=amazonia]{--tone:var(--cv-amazonia);--tone-wash:var(--cv-amazonia-wash)}[data-region-tone=galapagos]{--tone:var(--cv-galapagos);--tone-wash:var(--cv-galapagos-wash)}
 
-/* Movimiento: solo transform/opacity; todo se desactiva con movimiento reducido */
-.cv-reveal-on [data-reveal]:not(.is-revealed){opacity:0;transform:translateY(16px)}
+/* Movimiento: las entradas usan transform y, como mucho, opacidad desde .88: nada queda «borrado».
+   El contenido nunca depende de una animación para verse: si el observador no dispara, se ve igual. */
+.cv-reveal-on [data-reveal]:not(.is-revealed){opacity:.88;transform:translateY(14px)}
 .cv-reveal-on [data-reveal]{transition:opacity var(--cv-dur-3) var(--cv-ease),transform var(--cv-dur-3) var(--cv-ease);transition-delay:calc(min(var(--i,0),8) * 55ms)}
-@keyframes cv-fade-up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-@keyframes cv-fade{from{opacity:0}to{opacity:1}}
+@keyframes cv-fade-up{from{opacity:.88;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes cv-fade{from{opacity:.88}to{opacity:1}}
+@keyframes cv-settle{from{transform:scale(1.04)}to{transform:none}}
 @keyframes cv-pulse{0%{transform:scale(1);opacity:.55}70%,100%{transform:scale(1.55);opacity:0}}
 @keyframes cv-heart{0%{transform:scale(1)}30%{transform:scale(1.35)}55%{transform:scale(.9)}100%{transform:scale(1)}}
-@keyframes cv-stamp{0%{opacity:0;transform:scale(1.7) rotate(var(--stamp-rot,-8deg))}55%{opacity:1;transform:scale(.94) rotate(var(--stamp-rot,-8deg))}100%{opacity:1;transform:scale(1) rotate(var(--stamp-rot,-8deg))}}
+@keyframes cv-stamp{0%{opacity:.85;transform:scale(1.7) rotate(var(--stamp-rot,-8deg))}55%{opacity:1;transform:scale(.94) rotate(var(--stamp-rot,-8deg))}100%{opacity:1;transform:scale(1) rotate(var(--stamp-rot,-8deg))}}
 @keyframes cv-shimmer{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
 .cv-skeleton{position:relative;overflow:hidden;background:#ece4d1;border-radius:var(--cv-r-m)}.cv-skeleton::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,#fffaf0b3,transparent);animation:cv-shimmer 1.4s infinite}
 .cv-skeleton-block{display:grid;gap:12px;padding:24px}.cv-skeleton-block .cv-skeleton{height:14px}.cv-skeleton-block .cv-skeleton:first-child{height:26px;width:55%}.cv-skeleton-block .cv-skeleton:nth-child(3){width:80%}
@@ -59,3 +61,8 @@
 .pg-stamp{animation:cv-stamp .5s var(--cv-ease) both}
 @media (prefers-reduced-motion:reduce){.cv-skeleton::after,.cv-pulse::after,.mijin-launcher-mark::after{animation:none!important;display:none}.cv-reveal-on [data-reveal]:not(.is-revealed){opacity:1;transform:none}}
 @media print{.cv-reveal-on [data-reveal]{opacity:1!important;transform:none!important}}
+
+/* Pestaña oculta, vista previa o captura: sin pestaña visible, todas las animaciones saltan a su estado final.
+   main.tsx pone .cv-motion-ok en <html> solo mientras la pestaña está a la vista. */
+html:not(.cv-motion-ok) *,html:not(.cv-motion-ok) *::before,html:not(.cv-motion-ok) *::after{animation-delay:0s!important;animation-duration:0s!important;transition-delay:0s!important;transition-duration:0s!important}
+html:not(.cv-motion-ok) .cv-reveal-on [data-reveal]{opacity:1;transform:none}

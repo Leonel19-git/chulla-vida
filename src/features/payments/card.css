@@ -1,0 +1,91 @@
+/* Pago con tarjeta · CHULLA VIDA. Distintivos propios por marca (no son logotipos oficiales). */
+.card-mark { display: inline-flex; align-items: baseline; justify-content: center; gap: 1px; flex: none; border-radius: 6px; font-weight: 900; line-height: 1; letter-spacing: .02em; white-space: nowrap; padding: 4px 7px; font-size: 12px; color: #fff; background: #5d6b66; }
+.card-mark.is-sm { font-size: 10.5px; padding: 4px 6px; min-width: 40px; }
+.card-mark.is-lg { font-size: 15px; padding: 6px 10px; }
+.card-mark i { font-style: normal; font-weight: 600; opacity: .9; }
+.card-mark.is-unknown { color: #5d6b66; background: #e7ece6; padding: 3px 7px; }
+.card-mark.is-visa { background: #1a2f8f; font-style: italic; letter-spacing: .06em; }
+.card-mark.is-mastercard { background: linear-gradient(90deg, #c8102e 0 50%, #f29a1f 50% 100%); text-shadow: 0 1px 1px rgba(0, 0, 0, .35); letter-spacing: 0; }
+.card-mark.is-amex { background: #1f72cd; border: 2px solid #fff; outline: 1px solid #1f72cd; letter-spacing: .12em; }
+.card-mark.is-diners { background: #fff; color: #0a4a8c; border: 2px solid #0a4a8c; font-family: Georgia, serif; font-weight: 700; }
+.card-mark.is-diners i { margin-left: 3px; }
+.card-mark.is-discover { background: #fff; color: #23201f; border: 1px solid #d9d4cf; box-shadow: inset 0 -3px 0 #e86a1b; letter-spacing: .05em; }
+
+.buy-method { display: grid; gap: 10px; border: 0; padding: 0; margin: 0; }
+.buy-method legend { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+.buy-method-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
+.buy-method-option { position: relative; display: flex; align-items: center; gap: 10px; min-height: 56px; padding: 10px 14px; border: 1.5px solid #cfd9d2; border-radius: 14px; background: #fff; cursor: pointer; font-size: 14px; font-weight: 600; color: #19323c; transition: border-color .2s ease, box-shadow .2s ease; }
+.buy-method-option input { width: 20px; height: 20px; accent-color: #079da5; flex: none; margin: 0; }
+.buy-method-option small { display: block; font-weight: 500; font-size: 12px; color: #5d6b66; }
+.buy-method-option:has(input:checked) { border-color: #079da5; box-shadow: 0 0 0 3px rgba(7, 157, 165, .16); background: #f4fbfb; }
+.buy-method-option:has(input:focus-visible) { outline: 3px solid #f2b632; outline-offset: 2px; }
+.buy-method-option.is-soon { cursor: not-allowed; background: #f6f7f5; color: #5d6b66; border-style: dashed; }
+.buy-method-brands { display: flex; flex-wrap: wrap; gap: 6px; }
+.buy-gateway { display: grid; gap: 10px; padding: 14px 16px; border-radius: 14px; background: #eef8f8; border: 1px solid #bfe3e3; }
+.buy-gateway p { margin: 0; }
+
+.card-form { display: grid; gap: 14px; animation: buy-in .35s ease both; }
+.card-scene { width: min(100%, 360px); aspect-ratio: 1.586; margin: 4px auto 6px; perspective: 1100px; position: relative; }
+.card-face { position: absolute; inset: 0; border-radius: 18px; padding: 18px 20px; color: #fff; display: flex; flex-direction: column; justify-content: space-between; backface-visibility: hidden; -webkit-backface-visibility: hidden; transition: transform .6s cubic-bezier(.3, .7, .2, 1), background .4s ease; box-shadow: 0 16px 34px rgba(16, 52, 82, .28); overflow: hidden;
+  background: radial-gradient(circle at 85% 0%, rgba(255, 255, 255, .22), transparent 42%), linear-gradient(135deg, #103452, #0b8f96); }
+.card-face::after { content: ''; position: absolute; inset: auto -30% -60% auto; width: 80%; aspect-ratio: 1; border-radius: 50%; background: rgba(255, 255, 255, .08); pointer-events: none; }
+.card-face.is-visa { background: radial-gradient(circle at 85% 0%, rgba(255, 255, 255, .22), transparent 42%), linear-gradient(135deg, #14246b, #2c4fd1); }
+.card-face.is-mastercard { background: radial-gradient(circle at 85% 0%, rgba(255, 255, 255, .2), transparent 42%), linear-gradient(135deg, #2b1a1a, #8a2a1c 55%, #c66a12); }
+.card-face.is-amex { background: radial-gradient(circle at 85% 0%, rgba(255, 255, 255, .24), transparent 42%), linear-gradient(135deg, #0f4c8a, #3c9ad8); }
+.card-face.is-diners { background: radial-gradient(circle at 85% 0%, rgba(255, 255, 255, .2), transparent 42%), linear-gradient(135deg, #1f2a36, #52677d); }
+.card-face.is-discover { background: radial-gradient(circle at 85% 0%, rgba(255, 255, 255, .2), transparent 42%), linear-gradient(135deg, #3a2a20, #c45a17); }
+.card-back { transform: rotateY(180deg); justify-content: flex-start; gap: 14px; padding: 18px 0; }
+.card-scene.is-flipped .card-front { transform: rotateY(-180deg); }
+.card-scene.is-flipped .card-back { transform: rotateY(0deg); }
+.card-face-top { display: flex; justify-content: space-between; align-items: center; }
+.card-chip { width: 42px; height: 32px; border-radius: 7px; background: linear-gradient(135deg, #f7dc8b, #c99a2e); box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .15); }
+.card-test-tag { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 800; letter-spacing: .1em; padding: 3px 8px; border-radius: 999px; background: #ffd76a; color: #3d2a00; }
+.card-preview-number { margin: 0; font: 600 clamp(17px, 5.2vw, 22px)/1 ui-monospace, 'SFMono-Regular', Consolas, monospace; letter-spacing: .08em; text-shadow: 0 1px 2px rgba(0, 0, 0, .35); white-space: nowrap; overflow: hidden; }
+.card-face-bottom { display: flex; align-items: flex-end; gap: 14px; }
+.card-face-bottom > div { display: grid; gap: 2px; min-width: 0; }
+.card-face-bottom > div:first-child { flex: 1; }
+.card-face-bottom small { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; opacity: .78; }
+.card-face-bottom span { font-size: 13.5px; font-weight: 700; letter-spacing: .06em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card-stripe { display: block; height: 44px; background: #111; margin-top: 6px; }
+.card-sign { margin: 0 20px; display: flex; align-items: center; justify-content: space-between; gap: 10px; height: 40px; padding: 0 12px; border-radius: 6px; background: repeating-linear-gradient(-45deg, #fffdf6 0 6px, #f1ead6 6px 12px); color: #6b5b3a; font-size: 10px; letter-spacing: .08em; }
+.card-sign b { font: 700 18px/1 ui-monospace, Consolas, monospace; color: #103452; background: #fff; padding: 4px 8px; border-radius: 4px; letter-spacing: .2em; }
+.card-back-note { margin: 0 20px; font-size: 11.5px; opacity: .85; }
+
+.card-test-picker { display: grid; gap: 6px; font-size: 14px; font-weight: 600; padding: 12px 14px; border-radius: 14px; background: repeating-linear-gradient(135deg, #fffaf0 0 12px, #fff4d6 12px 24px); border: 1px dashed #e0b84c; }
+.card-test-picker > label { display: inline-flex; align-items: center; gap: 6px; color: #4a3500; }
+.card-field { display: grid; gap: 6px; font-size: 14px; font-weight: 600; min-width: 0; }
+.card-field > label { cursor: pointer; }
+.card-input-box { position: relative; display: flex; align-items: center; }
+.card-input-box .field { padding-right: 64px; }
+.card-input-box .card-mark { position: absolute; right: 10px; pointer-events: none; }
+.card-number-field .field { font: 600 18px/1.2 ui-monospace, Consolas, monospace; letter-spacing: .08em; }
+.card-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.card-row .field { font-variant-numeric: tabular-nums; letter-spacing: .08em; }
+.card-hint { display: flex; align-items: flex-start; gap: 6px; font-size: 12.5px; font-weight: 500; color: #4f5f58; }
+.card-hint svg { flex: none; margin-top: 1px; }
+.card-hint.is-ok { color: #0b6b55; font-weight: 600; }
+.card-hint.is-warning { color: #8a2c11; background: #fdeee9; border-radius: 10px; padding: 8px 10px; font-weight: 600; }
+.card-field-error { font-size: 13px; color: #a1351c; font-weight: 700; }
+.card-form .field[aria-invalid=true] { border-color: #c4542f; box-shadow: 0 0 0 3px rgba(196, 84, 47, .14); }
+.card-safety { display: flex; gap: 8px; align-items: flex-start; margin: 0; font-size: 13px; color: #34514a; background: #eef6f2; border-radius: 12px; padding: 10px 12px; }
+.card-safety svg { flex: none; margin-top: 2px; }
+.card-pay { min-height: 50px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 16px; width: 100%; }
+
+.buy-paid-with { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; white-space: nowrap; margin: 0; padding: 8px 14px; border-radius: 12px; background: #103452; color: #fff; font-weight: 700; letter-spacing: .03em; }
+.buy-paid-with small { font-weight: 500; opacity: .85; letter-spacing: 0; }
+.wallet-card { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 700; color: #103452; background: #eef2f7; border-radius: 999px; padding: 3px 10px 3px 4px; }
+
+@media (max-width: 420px) {
+  .card-face { padding: 14px 16px; border-radius: 14px; }
+  .card-back { padding: 14px 0; }
+  .card-chip { width: 34px; height: 26px; }
+  .card-row { gap: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .card-face, .card-form, .buy-method-option { transition: none !important; animation: none !important; }
+  /* Sin giro: el reverso aparece en su lugar. */
+  .card-scene.is-flipped .card-front { transform: none; visibility: hidden; }
+  .card-scene.is-flipped .card-back { transform: none; }
+  .card-back { transform: none; visibility: hidden; }
+  .card-scene.is-flipped .card-back { visibility: visible; }
+}

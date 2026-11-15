@@ -96,8 +96,8 @@
 .offline-route button:focus-visible,.offline-route summary:focus-visible{outline:3px solid #c3324c;outline-offset:4px}
 .offline-stop-detail{animation:route-stop-in .24s ease-out}
 .offline-route.is-offline-view .offline-connection{background:#f8e8dc;padding:6px 9px;border-radius:5px}
-@keyframes regional-landscape-in{from{opacity:.65}to{opacity:1}}
-@keyframes route-stop-in{from{opacity:.75;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+@keyframes regional-landscape-in{from{opacity:.9;transform:scale(1.02)}to{opacity:1;transform:none}}
+@keyframes route-stop-in{from{opacity:.9;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:600px){
 .offline-route{padding:18px}
 .offline-route-title{margin-top:17px}

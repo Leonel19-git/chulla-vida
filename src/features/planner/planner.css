@@ -22,3 +22,45 @@
 .flex-wallet-actions .text-button{display:inline-flex;align-items:center;gap:5px;min-height:44px;text-decoration:underline;text-underline-offset:4px}
 @media(max-width:420px){.flex-wallet dl{grid-template-columns:1fr}.flex-wallet-actions .button{flex:1 1 100%;justify-content:center}}
 @media(prefers-reduced-motion:reduce){.flex-stops .flex-buy{transition:none}}
+
+/* Resultados visuales: tarjetas con foto real, totales y salidas cuando nada encaja. */
+.flex-options>h4{display:flex;gap:9px;align-items:center}
+.flex-summary{font-size:14px;margin:-8px 0 16px;color:#103452}
+.flex-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;margin-block:12px 18px}
+.flex-options .flex-card{display:flex;flex-direction:column;gap:0;padding:0;border:1px solid #d9e0d2;border-radius:16px;overflow:hidden;background:#fffdf6;box-shadow:0 6px 18px rgba(16,52,82,.07)}
+.flex-card-media{position:relative;aspect-ratio:16/10;background:#dfe8e0}
+.flex-card-media img{display:block;width:100%;height:100%;object-fit:cover}
+.flex-card-placeholder{display:grid;place-items:center;height:100%;color:#00747c}
+.flex-pet-chip{position:absolute;left:10px;bottom:10px;display:inline-flex;gap:5px;align-items:center;font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px;background:#fffdf6;color:#103452;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+.flex-pet-chip.is-ok{background:#d8f2e6;color:#0b5c48}.flex-pet-chip.is-ask{background:#ffd76a;color:#3d2a00}.flex-pet-chip.is-unknown{background:#eef1ee;color:#33433c}.flex-pet-chip.is-blocked{background:#7a1f1f;color:#fff}
+.flex-card-body{display:flex;flex-direction:column;gap:4px;padding:14px 16px 12px;min-width:0;flex:1}
+.flex-options .flex-card-body p{font-size:13px}
+.flex-card-actions{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:auto;padding-top:8px}
+.flex-options .flex-link{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:#00747c;min-height:44px;padding-inline:2px}
+.flex-options .flex-add{width:44px;height:44px}
+.flex-credit{font-size:10px!important;color:#6a776f!important}
+.flex-cost{background:#eef4ec;border-radius:10px;padding:8px 10px;margin-top:6px}
+.flex-options .flex-cost p{font-size:13px;color:#103452;margin:0}
+.flex-options .flex-cost strong{display:inline;font-size:14px;margin:0;color:#103452}
+.flex-options .flex-cost-missing{color:#85452e!important;margin-top:4px!important}
+.flex-options .flex-pet-reason{color:#33433c}
+.flex-ask{margin-top:6px}
+.flex-ask-toggle{display:inline-flex;gap:6px;align-items:center;min-height:44px;font-size:13px;font-weight:700;color:#103452;text-decoration:underline;text-underline-offset:4px}
+.flex-ask-body{display:grid;gap:8px}.flex-ask-body label{display:grid;gap:6px;font-size:12px}.flex-ask-body textarea{font-size:14px;width:100%;resize:vertical}
+.flex-ask-body .button{display:inline-flex;gap:6px;align-items:center;justify-self:start}
+.flex-tips{background:#e5eee0;border-radius:14px;padding:14px 18px}.flex-tips h5{display:flex;gap:8px;align-items:center;font-size:15px}.flex-tips ul{margin:8px 0 0;padding-left:20px;font-size:13px;line-height:1.7}
+.flex-stuck{margin-top:8px;padding:18px;border-radius:16px;background:#f4e9d6}
+.flex-stuck>h4{font:500 24px/1.2 Newsreader,serif;margin-bottom:8px}.flex-stuck>p{font-size:14px;line-height:1.7}
+.flex-relax h5{display:flex;gap:8px;align-items:center;font-size:15px;margin:14px 0 8px}
+.flex-relax ul{list-style:none;padding:0;margin:0;display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}
+.flex-relax button{display:flex;gap:10px;align-items:flex-start;text-align:left;width:100%;min-height:44px;padding:12px 14px;border-radius:12px;background:#103452;color:#fffdf6;transition:background .2s ease,transform .2s ease}
+.flex-relax button:hover{background:#00747c;transform:translateY(-1px)}
+.flex-relax button:focus-visible,.flex-ask-toggle:focus-visible,.flex-link:focus-visible{outline:3px solid #f2b632;outline-offset:2px}
+.flex-relax button span{display:grid;gap:2px}.flex-relax button strong{font-size:14px}.flex-relax button small{font-size:12px;line-height:1.5;color:#d6e6e8}
+.flex-blockers{margin:6px 0 0;padding-left:18px;font-size:12px;color:#85452e;line-height:1.6}
+.flex-cost-note{font-size:12px!important;color:#53665e;margin-top:6px}
+.flex-draft>.flex-trip-download{margin-top:17px;width:100%;display:inline-flex;gap:8px;justify-content:center;align-items:center}
+.flex-draft>.flex-trip-download+.button{margin-top:10px}
+@media(max-width:420px){.flex-cards{grid-template-columns:1fr}.flex-relax ul{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.flex-relax button{transition:none}.flex-relax button:hover{transform:none}}
+.flex-options .flex-card>.flex-card-media{flex:none}.flex-options .flex-card>.flex-card-body{flex:1}

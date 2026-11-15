@@ -42,3 +42,34 @@ Las verificaciones anteriores del prototipo también pasan: 76 aserciones de dom
 - [ ] Rechazar medios: ausencia de solicitudes Spotify; permitir, abrir y revocar.
 
 El control de navegador se detuvo al no poder comprobar la URL de Chrome. No se usó una captura ni una revisión visual como evidencia en esta entrega. No se certifica preparación de producción.
+
+
+## Recorrido real 3.2 (15-11-2026)
+
+Entorno: `npm run build` + `npx vite preview --port 4791`. Chromium headless con `--use-fake-ui-for-media-stream --use-fake-device-for-media-stream` y `acceptDownloads`. La CSP de `vercel.json` se inyectó en cada documento con `context.route`. Script: `qa-walk.mjs` en el directorio temporal de la sesión.
+
+| Paso | 1366×800 | 390×844 |
+|---|---|---|
+| Primera visita: video `chulla-vida-intro.webm` reproduciéndose | OK | OK |
+| Banner de privacidad → Equilibrado → se oculta (alto) | OK (116 px) | OK (224 px) |
+| Bienvenida: viajero, intereses, origen y presupuesto | OK | OK |
+| Tour completo con foco en el globo (12 pasos) | OK | OK |
+| Buscar «Quilotoa» → ficha (URL `/experiencias/gen-02-quilotoa-shalala`) | OK | OK |
+| «Descargar ficha» → `.html` de 28 KB, abierto sin red: título, foto incrustada, precio, sin `<script>` | OK | OK |
+| Comprar → 4242 4242 4242 4242 → comprobante «Visa •••• 4242»; sin PAN, vencimiento ni CVV en almacenamiento | OK | OK |
+| Billetera con la compra y la tarjeta enmascarada | OK | OK |
+| Pasaporte, Sierra: «Quilotoa Shalalá · Comprado · por visitar» | OK | OK |
+| Mi viaje con perro: sin callejón; presupuesto tomado de la bienvenida | OK | OK |
+| MIJIN: el micrófono no se cuelga («Reintentar»); por texto responde fiestas de noviembre | OK | OK |
+| Abrir `/experiencias/gen-02-quilotoa-shalala` directo → ficha; Atrás la cierra | OK | OK |
+| Cabecera «Entrar / Crear cuenta» → requisitos de contraseña | OK | OK |
+| Sin desplazamiento horizontal, sin contenido semitransparente | OK | OK |
+| Consola y CSP: 0 errores, 0 violaciones | OK | OK |
+
+`npm run check`: lint sin errores, build, typecheck de api, **63 archivos y 565 pruebas aprobadas**, y verificaciones de dominio y catálogo aprobadas.
+
+Este recorrido no cubre:
+
+- La voz con un micrófono y un servicio de reconocimiento reales.
+- Cuentas reales en Supabase: no se enviaron correos.
+- Cobros reales con PayPhone, porque no hay credenciales.

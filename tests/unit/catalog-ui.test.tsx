@@ -14,7 +14,7 @@ beforeEach(() => {
   HTMLDialogElement.prototype.showModal = function () { this.setAttribute('open', ''); };
   HTMLDialogElement.prototype.close = function () { this.removeAttribute('open'); };
 });
-afterEach(() => { cleanup(); vi.restoreAllMocks(); });
+afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 function Catalog() {
   return <AppProvider><CatalogProvider><RegionControls /><CatalogExplorer onPlan={vi.fn()} onDownloads={vi.fn()} onDemo={vi.fn()} /><CatalogDetail onDownload={vi.fn()} onAsk={vi.fn()} onInquiry={vi.fn()} /></CatalogProvider></AppProvider>;
 }
@@ -83,5 +83,53 @@ describe('portada Ecuador Vivo', () => {
     const bars = screen.getByRole('list', { name: 'Fichas por región' });
     expect(bars.textContent).toContain(`${experiences.filter(item => item.localizedRegion === 'amazonia').length} fichas`);
     expect(screen.getAllByText(/modo prueba, sin cobro/).length).toBeGreaterThan(0);
+  });
+});
+
+const mockMotion = (reduce: boolean) => vi.stubGlobal('matchMedia', (query: string) => ({ matches: reduce && query.includes('reduce'), media: query, onchange: null, addListener: vi.fn(), removeListener: vi.fn(), addEventListener: vi.fn(), removeEventListener: vi.fn(), dispatchEvent: vi.fn() }) as MediaQueryList);
+function CatalogWithDownload({ onDownload }: { onDownload: (experience: unknown) => Promise<string | void> }) {
+  return <AppProvider><CatalogProvider><CatalogExplorer onPlan={vi.fn()} onDownloads={vi.fn()} onDemo={vi.fn()} /><CatalogDetail onDownload={onDownload} onAsk={vi.fn()} onInquiry={vi.fn()} /></CatalogProvider></AppProvider>;
+}
+describe('integración de la portada y la ficha', () => {
+  it('«Descargar ficha» muestra el resultado real de la descarga (archivo y sin señal)', async () => {
+    const user = userEvent.setup();
+    const onDownload = vi.fn().mockResolvedValue('Listo: se descargó chulla-vida-saraguro.html y la ficha quedó guardada para usarla sin señal.');
+    render(<CatalogWithDownload onDownload={onDownload} />);
+    await user.type(screen.getByRole('textbox', { name: 'Buscar experiencias' }), 'Saraguro');
+    await user.click(screen.getByRole('button', { name: /Conocer Saraguro/i }));
+    await user.click(screen.getByRole('button', { name: 'Descargar ficha' }));
+    expect(onDownload).toHaveBeenCalledWith(expect.objectContaining({ id: 'gen-01-saraguro-ancestral' }));
+    expect(await screen.findByText(/se descargó chulla-vida-saraguro\.html/)).toBeInTheDocument();
+  });
+  it('si la descarga falla explica el motivo en vez de fingir que se guardó', async () => {
+    const user = userEvent.setup();
+    const onDownload = vi.fn().mockRejectedValue(new Error('Esta ficha no se puede descargar. Vuelve al catálogo y reintenta.'));
+    render(<CatalogWithDownload onDownload={onDownload} />);
+    await user.type(screen.getByRole('textbox', { name: 'Buscar experiencias' }), 'Saraguro');
+    await user.click(screen.getByRole('button', { name: /Conocer Saraguro/i }));
+    await user.click(screen.getByRole('button', { name: 'Descargar ficha' }));
+    expect(await screen.findByText(/no se puede descargar/)).toBeInTheDocument();
+    expect(screen.queryByText(/quedó guardada/)).not.toBeInTheDocument();
+  });
+  it('marca para el recorrido las regiones, la búsqueda, las tarjetas, sin señal, pasaporte y anfitriones', () => {
+    render(<Catalog />);
+    for (const id of ['regions', 'search', 'cards', 'offline', 'passport', 'host']) expect(document.querySelector(`[data-tour="${id}"]`)).not.toBeNull();
+  });
+  it('el hero no carga el video si hay movimiento reducido (queda la foto)', () => {
+    mockMotion(true);
+    render(<Catalog />);
+    expect(document.querySelector('.vivo-hero-video')).toBeNull();
+    expect(document.querySelector('.vivo-hero-photo')).not.toBeNull();
+  });
+  it('sin movimiento reducido el video del hero espera a la carga, va silenciado y se puede pausar', () => {
+    mockMotion(false);
+    render(<Catalog />);
+    const video = document.querySelector<HTMLVideoElement>('.vivo-hero-video')!;
+    expect(video).not.toBeNull();
+    expect(video.muted).toBe(true);
+    expect(video.getAttribute('preload')).toBe('none');
+    expect(video.getAttribute('poster')).toBe('/video/chulla-vida-hero-poster.webp');
+    // Todavía sin src: el archivo de video no forma parte de la carga inicial.
+    expect(video.getAttribute('src')).toBeNull();
   });
 });

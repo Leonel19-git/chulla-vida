@@ -2,12 +2,13 @@ import { useEffect, useId, useRef, useState, type FormEvent, type ReactNode } fr
 import { ArrowLeft, Check, Eye, EyeOff, KeyRound, LogIn, Mail, MailCheck, RefreshCw, ShieldCheck, Sparkles, UserPlus, X } from 'lucide-react';
 import {
   DEMO_CODE, LEGAL_IS_DRAFT, MAX_LOCAL_ATTEMPTS, MAX_RESENDS, OTP_LENGTH, PASSWORD_MAX, PASSWORD_MIN, RESEND_COOLDOWN_SECONDS, TERMS_LABEL,
-  isEmail, isStrongPassword, passwordRules, translateAuthError, type AuthAction,
+  PASSWORD_HINT, isEmail, isStrongPassword, passwordRules, translateAuthError, type AuthAction,
 } from './auth-flow';
 import type { AuthGateway, CodePurpose, GatewayResult } from './auth-gateway';
 import { OtpInput } from './OtpInput';
 
-type Tab = 'login' | 'signup' | 'recovery';
+export type AccessTab = 'login' | 'signup' | 'recovery';
+type Tab = AccessTab;
 type Step = { kind: 'form' } | { kind: 'code'; purpose: CodePurpose } | { kind: 'new-password' } | { kind: 'done'; title: string; text: string };
 type Notice = { tone: 'info' | 'error' | 'success'; text: string } | null;
 
@@ -17,6 +18,10 @@ export interface AccessFlowProps {
   startWithNewPassword?: boolean;
   onRecoveryVerified?: () => void;
   onPasswordUpdated?: () => void;
+  /** Pestaña inicial (por ejemplo «Crear cuenta» si la persona tocó ese botón). */
+  initialTab?: AccessTab;
+  /** Se llama cuando el registro termina con sesión abierta (código correcto o confirmación desactivada). */
+  onSignedUp?: (displayName: string) => void;
 }
 
 function useCountdown() {
@@ -38,9 +43,9 @@ const codeCopy: Record<CodePurpose, { title: string; lead: string }> = {
   recovery: { title: 'Te enviamos un código para recuperar tu acceso', lead: 'Si el correo tiene una cuenta, te llegó un código. Después eliges una contraseña nueva.' },
 };
 
-export function AccessFlow({ gateway, startWithNewPassword, onRecoveryVerified, onPasswordUpdated }: AccessFlowProps) {
+export function AccessFlow({ gateway, startWithNewPassword, onRecoveryVerified, onPasswordUpdated, initialTab = 'login', onSignedUp }: AccessFlowProps) {
   const ids = useId();
-  const [tab, setTab] = useState<Tab>('login');
+  const [tab, setTab] = useState<Tab>(initialTab);
   const [step, setStep] = useState<Step>(startWithNewPassword ? { kind: 'new-password' } : { kind: 'form' });
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<Notice>(null);
@@ -92,7 +97,7 @@ export function AccessFlow({ gateway, startWithNewPassword, onRecoveryVerified, 
       if (!strong) { setNotice({ tone: 'error', text: 'La contraseña todavía no cumple todas las reglas de la lista.' }); return; }
       if (!terms) { setNotice({ tone: 'error', text: 'Para crear la cuenta necesitas aceptar los Términos y la Política de privacidad.' }); return; }
       void run('signup', () => gateway.signUp({ email, password, displayName: name, marketing }), result => {
-        if (result.signedIn) { void gateway.recordMarketingChoice(marketing); setPassword(''); return; }
+        if (result.signedIn) { void gateway.recordMarketingChoice(marketing); setPassword(''); onSignedUp?.(name.trim()); return; }
         toCode('signup', 'Si este correo ya tenía cuenta no llegará un código: en ese caso entra o recupera tu acceso.');
       });
     } else if (tab === 'recovery') {
@@ -130,6 +135,7 @@ export function AccessFlow({ gateway, startWithNewPassword, onRecoveryVerified, 
             text: 'Esto fue una demostración: no se creó ninguna cuenta, no se envió ningún correo y tu contraseña no se guardó. Cuando el servidor esté conectado, este mismo paso abrirá tu sesión de verdad.' });
           return;
         }
+        if (purpose === 'signup') onSignedUp?.(name.trim());
         setNotice({ tone: 'success', text: purpose === 'signup' ? '¡Listo! Tu correo quedó confirmado y tu cuenta está activa.' : 'Sesión iniciada con tu código.' });
       } finally { inFlight.current = false; setBusy(false); }
     })();
@@ -167,6 +173,7 @@ export function AccessFlow({ gateway, startWithNewPassword, onRecoveryVerified, 
     </div>
     {withRules && <ul id={`${ids}-rules`} className="auth-rules" aria-label="Reglas de la contraseña">{rules.map(rule => <li key={rule.id} className={rule.ok ? 'is-ok' : ''}>
       <span aria-hidden="true">{rule.ok ? <Check size={14} /> : <X size={14} />}</span>{rule.label}<span className="sr-only">{rule.ok ? ': cumplida' : ': pendiente'}</span></li>)}</ul>}
+    {withRules && <p className="auth-fine auth-password-hint">{PASSWORD_HINT}</p>}
   </div>;
 
   let body: ReactNode;

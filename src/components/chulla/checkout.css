@@ -130,9 +130,9 @@
 .checkout-receipt > small { border-top: 1px solid #dbd4bf; display: block; padding-top: 15px; color: var(--muted); font-size: 10px; line-height: 1.8; }
 .checkout-success-actions { display: grid; gap: 10px; margin-top: 23px; }
 .checkout-success-actions .button { min-height: 43px; font-size: 11px; }
-@keyframes checkout-step-in { from { opacity: .65; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes checkout-step-in { from { opacity: .9; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes checkout-spin { to { transform: rotate(360deg); } }
-@keyframes checkout-stamp-in { from { transform: scale(.8); opacity: .6; } to { transform: scale(1); opacity: 1; } }
+@keyframes checkout-stamp-in { from { transform: scale(.8); opacity: .9; } to { transform: scale(1); opacity: 1; } }
 @keyframes checkout-check-draw { from { stroke-dashoffset: 45; } to { stroke-dashoffset: 0; } }
 @media (max-width: 700px) {
   .checkout-layout { grid-template-columns: minmax(0, 1fr); gap: 23px; padding: 22px; }

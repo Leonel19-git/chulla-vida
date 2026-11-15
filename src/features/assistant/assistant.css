@@ -34,3 +34,12 @@
 @media(prefers-reduced-motion:reduce){.mijin-voice-notice{animation:none}}
 /* The decorative rings overflow the stage; clip (not hidden) so focusing the orb can never scroll the stage sideways. */
 .mijin-stage{overflow:clip}
+.mijin-permission-hint{max-width:42ch;margin:6px auto 0;padding:12px 16px;border-radius:12px;background:#efb22c;color:#1c2a1f;font-weight:650;line-height:1.5}
+.phase-permission .mijin-orbit.orbit-one,.phase-starting .mijin-orbit.orbit-one{animation:mijin-listen 2.4s ease-out infinite}
+.mijin-live{max-width:44ch;min-height:1.6em;margin:10px auto 0;font-size:17px;font-weight:600;color:#e4ffef;overflow-wrap:anywhere}
+.mijin-voice-problem{max-width:48ch;margin:14px auto 0;padding:14px 16px;border-radius:14px;background:#fffdf8;color:#28372d;text-align:left;font-size:15px;line-height:1.55;border-left:5px solid #efb22c}
+.mijin-voice-problem>p{margin:0 0 8px;font-weight:600}.mijin-voice-problem ol{margin:0 0 12px;padding-left:22px;list-style:decimal}.mijin-voice-problem li+li{margin-top:4px}
+.mijin-voice-problem>div{display:flex;flex-wrap:wrap;gap:10px}.mijin-voice-problem .mijin-retry{display:inline-flex;align-items:center;gap:8px;min-height:44px}
+.mijin-voice-problem .mijin-control{color:#103452;border-color:#10345240;background:transparent;font-size:13px}
+.mijin-voice-name{display:block;margin-top:6px;font-size:12px;color:#52614f}
+@media(prefers-reduced-motion:reduce){.phase-permission .mijin-orbit,.phase-starting .mijin-orbit{animation:none}}

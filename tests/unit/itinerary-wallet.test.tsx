@@ -43,8 +43,9 @@ async function finishCheckout() {
   fireEvent.change(top().getByLabelText(/Número de cédula/), { target: { value: CEDULA } });
   fireEvent.click(top().getByRole('button', { name: /^Continuar/ }));
   fireEvent.click(top().getByRole('checkbox'));
-  fireEvent.click(top().getByRole('button', { name: /Ir al pago de prueba/ }));
-  fireEvent.click(await top().findByRole('button', { name: /Aprobar pago de prueba/ }));
+  fireEvent.click(top().getByRole('button', { name: /Elegir método de pago/ }));
+  fireEvent.change(await top().findByLabelText('Usar una tarjeta de prueba'), { target: { value: '4242424242424242' } });
+  fireEvent.click(top().getByRole('button', { name: /^Pagar .* prueba$/ }));
   await screen.findByRole('heading', { name: 'Comprobante' });
 }
 const renderPlanner = () => render(<AppProvider><PlannerDialog onClose={vi.fn()} onSelect={vi.fn()} /></AppProvider>);

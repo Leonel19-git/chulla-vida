@@ -6,6 +6,8 @@ import { getSupabase } from '../../lib/supabase';
 import { loadBookingData, type ConnectedBooking } from '../payments/api';
 import { removeRecord, updateRecord, useWallet, WALLET_OPEN } from './store';
 import { downloadReceipt } from './receipt';
+import { cardLabel } from '../../domain/payments/card';
+import { CardBrandMark } from '../payments/CardBrandMark';
 import './wallet.css';
 
 const BOOKING_LABELS: Record<string, string> = { draft: 'Borrador', requested: 'Esperando al anfitrión', awaiting_merchant_confirmation: 'En revisión del anfitrión', confirmed: 'Confirmada por el anfitrión', awaiting_payment: 'Lista para pagar', paid: 'Pagada · verificada por el servidor', completed: 'Visita completada', expired: 'Vencida', cancelled: 'Cancelada', refunded: 'Reembolsada', payment_failed: 'Pago sin completar' };
@@ -47,7 +49,7 @@ export function WalletPanel({ onClose, onOpenExperience, experienceId, title = '
 
   return <Dialog title={title} onClose={onClose} wide>
     <div className="wallet-panel">
-      <header className="wallet-hero"><span className="wallet-hero-icon" aria-hidden="true"><Wallet size={30} /></span><div><h3>Todo tu viaje, en un solo lugar.</h3><p>Compras, solicitudes y comprobantes. No es una cuenta de dinero: aquí no se recarga saldo ni se guardan tarjetas.</p></div></header>
+      <header className="wallet-hero"><span className="wallet-hero-icon" aria-hidden="true"><Wallet size={30} /></span><div><h3>Todo tu viaje, en un solo lugar.</h3><p>Compras, solicitudes y comprobantes. No es una cuenta de dinero: aquí no se recarga saldo. De tu tarjeta solo guardamos la marca y los últimos 4 dígitos.</p></div></header>
       <ul className="wallet-stats" aria-label="Resumen de tu billetera">
         <li><span>Compras de prueba</span><strong>{approved.length}</strong></li>
         <li><span>Solicitudes</span><strong>{requests.length}</strong></li>
@@ -60,7 +62,7 @@ export function WalletPanel({ onClose, onOpenExperience, experienceId, title = '
         <ul className="wallet-records">{items.map(record => <li key={record.id} data-status={record.status}>
           <div className="wallet-record-top"><h5>{record.title}</h5><strong>{record.totalCents === null ? 'Cotización pendiente' : formatUsd(record.totalCents)}</strong></div>
           <p className="wallet-record-meta"><span><CalendarDays size={15} aria-hidden="true" />{day(record.date)}</span><span><Users size={15} aria-hidden="true" />{record.people} {record.people === 1 ? 'persona' : 'personas'}</span><span>{record.province}</span></p>
-          <p className="wallet-chip-row"><span className={`wallet-chip is-${record.status}`}>{STATUS_TEXT[record.status]}</span>{record.kind === 'test_purchase' && <span className="wallet-chip is-test"><FlaskConical size={13} aria-hidden="true" />Prueba · sin valor</span>}<span className="wallet-code">{record.code}</span></p>
+          <p className="wallet-chip-row"><span className={`wallet-chip is-${record.status}`}>{STATUS_TEXT[record.status]}</span>{record.kind === 'test_purchase' && <span className="wallet-chip is-test"><FlaskConical size={13} aria-hidden="true" />Prueba · sin valor</span>}{record.card && <span className="wallet-card"><CardBrandMark brand={record.card.brand} size="sm" />{cardLabel(record.card)}</span>}<span className="wallet-code">{record.code}</span></p>
           <p className="wallet-record-note">{record.priceNote}{record.buyer.documentMasked ? ` · Documento ${record.buyer.documentMasked}` : ''}{record.attempts > 1 ? ` · ${record.attempts} intentos de pago de prueba` : ''}</p>
           <div className="wallet-actions">
             {record.status === 'test_approved' && <button type="button" className="button button-secondary" onClick={() => receipt(record)}><Download size={16} />Comprobante de prueba</button>}

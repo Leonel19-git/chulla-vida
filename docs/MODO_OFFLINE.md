@@ -74,3 +74,24 @@ Ocho pruebas verifican almacenamiento y lectura, moneda EUR, idempotencia, borra
 6. Volver a conectar y descargar de nuevo de forma explícita. Revisar conflictos de versión; una descarga previa no se actualiza en silencio.
 
 Pendiente de evidencia por dispositivo: instalación, recarga en modo avión, recursos de carga diferida, espacio limitado y comportamiento de desalojo. No se afirma cobertura GPS, mapas de carretera ni sincronización privada offline.
+
+## 3.1 · Descargas reales, enlaces profundos y planificador (14-11-2026)
+
+### Archivo al dispositivo
+`downloadExperienceFile(experience)` (en `src/features/offline/experienceFile.ts`, también exportado desde `index.ts`) hace dos cosas:
+1. Baja `chulla-vida-<slug>.html`: documento autónomo (sin scripts, CSP `default-src 'none'`), foto local `-640.webp` incrustada en base64 con su crédito y licencia, descripción, qué incluye / no incluye, precio con su rótulo referencial y aviso, cómo llegar si hay datos, programa, avisos históricos, política de mascotas tal como está en la fuente, emergencias **911 (ECU 911)**, fecha de descarga y QR hacia la ficha online (`https://chulla-vida.vercel.app/experiencias/<id>`). Se abre sin internet y se imprime como PDF.
+2. Guarda la ficha en la biblioteca IndexedDB. Si eso falla, el archivo igual se descarga y el mensaje lo dice.
+
+Devuelve `{ fileName, savedOffline, message }`; el mensaje normal es «Listo: se descargó chulla-vida-<slug>.html y la ficha quedó guardada para usarla sin señal».
+
+En «Sin señal» (`DownloadsPanel`), **Descargar mi viaje** baja `chulla-vida-mi-viaje.html` con el itinerario de «Mi viaje» (borrador local) y todas las fichas guardadas; cada ficha guardada tiene además «Bajar archivo». El planificador ofrece «Descargar mi viaje (HTML)» junto al borrador en texto.
+
+Todo texto se escapa; solo se incrustan fotos propias bajo `/images/` validadas como `data:image/(webp|jpeg|png);base64`, y solo SVG de QR sin scripts, eventos ni enlaces.
+
+### Enlaces profundos
+`src/features/routing/` (`useUrlRouting`, `pathForExperience`, `parsePath`): History API sin router. Rutas: `/experiencias/<id|slug>`, `/cultura-viva`, `/pasaporte`, `/mi-viaje`, `/billetera`, `/mijin`, `/sin-senal`, `/cuenta`, `/anfitriones`, `/privacidad`, `/legal/<slug>` (emite `cv3:legal` con `detail.slug`), `/reservas`, `/avisos`, `/derechos-de-datos`. Al cerrar se reemplaza la entrada por `/` (Atrás no reabre); «Atrás» cierra panel o ficha y emite `cv3:home`. `/cuenta` y `/reservas` conservan `?query#hash` de Supabase y PayPhone.
+
+### Service worker
+Navegaciones de la SPA (cualquier ruta sin extensión, sin parámetros, fuera de `/api`, `/auth`, `/rest`, `/storage`, `/functions`) van red primero y, sin red, reciben el shell guardado. Solo la raíz actualiza el shell. Los recursos públicos se buscan con `ignoreVary` (el servidor de preview envía `Vary: Origin`, que impedía abrir sin conexión). Caché `chulla-vida-public-v3-20261114`.
+
+Comprobado con Playwright (Chromium headless) sobre `vite build` + `vite preview`: tras una visita, en modo sin red, `/experiencias/gen-02-quilotoa-shalala` abre la app con la ficha descargada; la caché no contiene `/api` ni `/auth`.

@@ -1,20 +1,28 @@
 /** Browser speech helpers for MIJIN: recognition errors, Spanish voice choice and chunked synthesis. No network of its own. */
 export const RECOGNITION_LANG = 'es-EC';
 export const RECOGNITION_FALLBACK_LANG = 'es-ES';
+/** Order tried when the engine rejects a variant or never starts: Ecuador, Spain, US Spanish. */
+export const RECOGNITION_LANGS = [RECOGNITION_LANG, RECOGNITION_FALLBACK_LANG, 'es-US'] as const;
 /** Safety net in case the browser never fires the silence end. */
 export const MAX_LISTEN_MS = 15000;
+/** If neither `start` nor `audiostart` arrives in this time after `start()`, the engine is considered silent. */
+export const START_WATCHDOG_MS = 2500;
+/** After asking the engine to stop, wait this long for `end` before closing the turn ourselves. */
+export const END_GRACE_MS = 1500;
 export const VOICE_NOTICE_KEY = 'chullavida:mijin-voice-notice';
 export type SpeechRate = 0.85 | 1 | 1.2;
 export const speechRates: { value: SpeechRate; label: string }[] = [{ value: 0.85, label: 'Pausada' }, { value: 1, label: 'Normal' }, { value: 1.2, label: 'Ágil' }];
 
-/** Preference order: Ecuador, Latin America, Mexico, US Spanish, Spain, then any Spanish voice. */
-const PREFERRED = ['es-ec', 'es-419', 'es-mx', 'es-us', 'es-es'];
+/** Preference order: Ecuador, US Spanish, Mexico, Latin America, Spain, then any Spanish voice. */
+const PREFERRED = ['es-ec', 'es-us', 'es-mx', 'es-419', 'es-es'];
+/** Within one variant, natural/online engines («Google español», «… Online (Natural)») sound better than the old local ones. */
+const quality = (name: string) => /natural|online|google/i.test(name) ? 0 : /microsoft|helena|laura|pablo|sabina|raul|paulina|monica|jorge/i.test(name) ? 1 : 2;
 export interface VoiceLike { lang: string; name: string; localService?: boolean; default?: boolean }
 export function pickSpanishVoice<T extends VoiceLike>(voices: readonly T[]): T | null {
   const spanish = voices.filter(voice => voice.lang.replace('_', '-').toLowerCase().startsWith('es'));
   if (!spanish.length) return null;
   const rank = (voice: T) => { const index = PREFERRED.indexOf(voice.lang.replace('_', '-').toLowerCase()); return index === -1 ? PREFERRED.length : index; };
-  return [...spanish].sort((a, b) => rank(a) - rank(b) || Number(Boolean(b.localService)) - Number(Boolean(a.localService)))[0] ?? null;
+  return [...spanish].sort((a, b) => rank(a) - rank(b) || quality(a.name) - quality(b.name) || Number(Boolean(b.localService)) - Number(Boolean(a.localService)))[0] ?? null;
 }
 
 /** Splits long answers into sentence-sized pieces: some engines stop reading after ~15 s of a single utterance. */
@@ -69,12 +77,13 @@ export function classifyRecognitionError(code: string): RecognitionIssue {
 export const recognitionMessages: Record<RecognitionIssue, string> = {
   blocked: 'El micrófono está bloqueado para esta página. Toca el candado junto a la dirección web, permite «Micrófono» y vuelve a tocar el botón. También puedes escribirme abajo.',
   network: 'El reconocimiento de voz de tu navegador necesita internet y no logró conectarse. Revisa tu conexión o escríbeme abajo.',
-  'no-speech': 'No te escuché. Toca el micrófono de nuevo y habla cerca del teléfono.',
+  'no-speech': 'No te escuché. ¿Hablamos de nuevo? Toca «Reintentar» y habla cerca del micrófono.',
   'no-microphone': 'No encontré un micrófono en este dispositivo. Conecta uno o escríbeme abajo; te respondo igual.',
   language: 'Tu navegador no reconoce voz en español. Escríbeme abajo y te respondo igual.',
   aborted: 'Micrófono apagado.',
   other: 'No pude reconocer la voz esta vez. Toca el micrófono para intentar de nuevo o escríbeme abajo.',
 };
+export const engineSilentMessage = 'El reconocimiento de voz del navegador no respondió; escríbeme abajo o toca «Reintentar».';
 export const unsupportedVoiceMessage = 'Tu navegador (por ejemplo Firefox o un Safari antiguo) no ofrece reconocimiento de voz. Escríbeme abajo: te respondo igual y puedo leer la respuesta en voz alta.';
 
 export function readVoiceNoticeSeen(): boolean {

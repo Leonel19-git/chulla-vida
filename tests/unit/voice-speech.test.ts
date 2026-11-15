@@ -11,6 +11,11 @@ describe('voz de MIJIN: utilidades del navegador', () => {
     expect(pickSpanishVoice([voice('es-AR')])?.lang).toBe('es-AR');
     expect(pickSpanishVoice([voice('en-GB'), voice('pt-BR')])).toBeNull();
   });
+  it('prefiere es-US sobre es-MX y, dentro de una variante, la voz natural sobre la local antigua', () => {
+    expect(pickSpanishVoice([{ lang: 'es-MX', name: 'Microsoft Sabina' }, { lang: 'es-US', name: 'Google español de Estados Unidos' }])?.lang).toBe('es-US');
+    expect(pickSpanishVoice([{ lang: 'es-ES', name: 'Microsoft Helena - Spanish (Spain)', localService: true }, { lang: 'es-ES', name: 'Google español', localService: false }])?.name).toBe('Google español');
+    expect(pickSpanishVoice([{ lang: 'es-ES', name: 'Voz genérica', localService: true }, { lang: 'es-ES', name: 'Microsoft Laura - Spanish (Spain)', localService: true }])?.name).toMatch(/Laura/);
+  });
   it('trocea respuestas largas por frases sin perder texto', () => {
     const text = 'Saraguro Ancestral: desde $45 por persona. '.repeat(12) + 'Confirma con el anfitrión antes de viajar.';
     const chunks = chunkSpeech(text, 120);

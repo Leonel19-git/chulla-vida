@@ -22,7 +22,11 @@ export interface AuthGateway {
 const redirect = () => `${location.origin}${location.pathname}#cuenta`;
 const toError = (error: unknown): AuthErrorLike | null => {
   if (!error) return null;
-  if (typeof error === 'object') { const value = error as AuthErrorLike; return { code: value.code, status: value.status, message: value.message, name: value.name }; }
+  if (typeof error === 'object') {
+    const value = error as AuthErrorLike;
+    const reasons = Array.isArray(value.reasons) ? value.reasons.filter((reason): reason is string => typeof reason === 'string').slice(0, 5) : undefined;
+    return { code: value.code, status: value.status, message: value.message, name: value.name, ...(reasons ? { reasons } : {}) };
+  }
   return { message: String(error) };
 };
 async function guard(run: () => Promise<GatewayResult>): Promise<GatewayResult> {

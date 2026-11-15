@@ -61,3 +61,16 @@
 @media (max-width:380px){.cv-footer-cols{grid-template-columns:1fr}}
 .cv-footer-brand .social-demo,.cv-footer-brand .social-demo-label{color:#c6d3df}
 @media (max-width:760px){.cv-toolbar .cv-tool>span:last-child{display:block}.cv-toolbar .cv-tool>span:last-child::first-letter{text-transform:uppercase}}
+/* Botón de cuenta en la cabecera: siempre visible */
+.cv-account-button{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:8px 16px;border-radius:999px;border:0;background:var(--cv-red,#c61534);color:#fff;font-weight:750;font-size:14px;white-space:nowrap;box-shadow:0 6px 16px #c6153433}
+.cv-account-button:hover{background:var(--cv-red-ink,#a3102a)}
+.cv-account-button:focus-visible{outline:3px solid var(--cv-navy,#012960);outline-offset:3px}
+.cv-account-button.is-signed{background:#fff;color:var(--cv-navy,#012960);border:1.5px solid var(--cv-line,#d6ccb5);box-shadow:none;padding:5px 14px 5px 5px}
+.cv-account-initial{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;background:var(--cv-navy,#012960);color:var(--cv-maize,#fed65a);font-weight:800}
+.cv-account-short{display:none}
+@media (max-width:900px){.cv-account-long{display:none}.cv-account-short{display:inline}.cv-account-button{padding:8px 12px;font-size:13px}.cv-account-button.is-signed .cv-account-label{display:none}.cv-account-button.is-signed{padding:4px}}
+/* La cabecera gana el botón de cuenta: el saludo cede espacio antes que las acciones. */
+@media (max-width:1500px){.topbar-greeting,.topbar-divider{display:none}}
+@media (max-width:1280px){.header-intro>span{display:none}.header-intro{padding:7px;min-width:44px;min-height:44px}}
+/* En móvil estrecho el botón «Entrar» pisaba el nombre de la marca: el nombre cede (la marca ya está en el hero y la intro). */
+@media (max-width:430px){.topbar .topbar-left .mobile-brand-name{display:none}}

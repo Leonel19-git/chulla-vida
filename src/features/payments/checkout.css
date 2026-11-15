@@ -97,8 +97,9 @@
 .cedula-card-meta { font-size: 12.5px; color: #3f5650; }
 .cedula-honesty { margin: 0; font-size: 12px; color: #5d6b66; }
 
-@keyframes buy-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-@keyframes buy-pop { from { opacity: 0; transform: scale(.4); } to { opacity: 1; transform: scale(1); } }
+/* Sin partir de opacity:0: en pestañas en segundo plano o capturas nada se queda a medio aparecer. */
+@keyframes buy-in { from { transform: translateY(8px); } to { transform: none; } }
+@keyframes buy-pop { from { transform: scale(.4); } to { transform: scale(1); } }
 @keyframes buy-ring { to { box-shadow: 0 0 0 18px rgba(47, 196, 160, 0); } }
 @keyframes buy-shake { 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
 @media (max-width: 560px) {

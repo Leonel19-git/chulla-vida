@@ -92,9 +92,9 @@ Protocolo contrastado con fuentes oficiales: [Botón PayPhone](https://docs.payp
 
 ## Comprar en todo: checkout en pasos y modo prueba sin cobro (14-11-2026)
 
-Cada ficha puede llevar `BuyButton({ experience, variant: 'card' | 'detail' })` (`src/features/payments/BuyButton.tsx`). Abre un checkout en cinco pasos: fecha y personas → datos del comprador (nombre, correo, cédula o pasaporte) → resumen (precio en moneda original, incluye/no incluye, cancelación, papel de CHULLA VIDA «por definir jurídicamente», aceptación) → pago → comprobante.
+Cada ficha puede llevar `BuyButton({ experience, variant: 'card' | 'detail' })` (`src/features/payments/BuyButton.tsx`). Abre un checkout en cinco pasos: fecha y personas → datos del comprador (nombre, correo, cédula o pasaporte) → resumen (precio en moneda original, incluye/no incluye, cancelación, papel de CHULLA VIDA «por definir jurídicamente», aceptación) → método de pago → comprobante.
 
-- **Hoy no hay cobro real.** No hay credenciales de PayPhone ni de Supabase. El paso de pago consulta `/api/payments/config`; si `enabled:false`, o si la ficha no está habilitada por el servidor (las 51 fichas tienen `bookingEnabled:false`), la compra termina en **modo prueba sin cobro**: rótulo visible en todos los pasos, botones «Aprobar / Rechazar pago de prueba» y reintento.
+- **Hoy no hay cobro real.** No hay credenciales de PayPhone ni de Supabase. El paso de pago consulta `/api/payments/config`; si `enabled:false`, o si la ficha no está habilitada por el servidor (las 51 fichas tienen `bookingEnabled:false`), la compra termina en **modo prueba sin cobro**: rótulo visible en todos los pasos y pago con una **tarjeta de prueba** (ver la sección siguiente); el resultado lo decide el número de prueba y se puede reintentar.
 - Si el servidor activa PayPhone **y** la oferta está habilitada, el checkout no simula nada: envía a «Reservas y pagos» (`cv3:payments`), donde sigue el flujo conectado descrito arriba (solicitud → confirmación del anfitrión → PayPhone → verificación por API). Un regreso de la pasarela nunca se muestra como éxito.
 - **Precios:** se muestran en la moneda de la fuente y rotulados como referenciales o propuestos. Rango → el usuario elige un valor dentro del rango; «desde» → se fija el mínimo; tarifa por grupo → opción por tamaño de grupo con las personas fijadas; opciones por persona de la fuente → se elige una. EUR o sin precio comparable → **«Solicitar cotización»** (no se convierte moneda).
 - **Comprobante:** HTML descargable con código `PRB-XXXXXX` y QR (librería `qrcode`, SVG). Lleva «COMPRA DE PRUEBA — SIN VALOR» arriba, en marca de agua y al final; dice «NO SE COBRÓ NADA» y que no es factura ni reserva. El QR solo codifica el rótulo y el código.
@@ -104,3 +104,26 @@ Cada ficha puede llevar `BuyButton({ experience, variant: 'card' | 'detail' })` 
 ### Documento del comprador en servidor (migración `202611140001_buyer_identity.sql`)
 
 Preparada para cuando exista Supabase; el navegador todavía no la llama. Tabla `buyer_identity_documents` (una fila por usuario): `last4`, tipo, `format_valid`, `identity_verified` forzado a `false`, y una huella SHA-256 con sal aleatoria por fila. **No guarda el número completo.** La huella no es cifrado fuerte (el espacio de cédulas es pequeño), por eso la columna y la sal no son legibles por `authenticated`; solo `service_role` compara con `buyer_document_matches`. Escritura únicamente con `set_buyer_document(tipo, valor)`, que valida el formato en SQL (`is_valid_cedula`, misma regla que el navegador) y usa `auth.uid()`. Probado con PGlite en `tests/unit/cedula-rls.test.ts`.
+
+## Método de pago y tarjeta de prueba (14-11-2026)
+
+El paso «Método de pago» (`Checkout.tsx`) ofrece **Tarjeta de crédito o débito**; «Transferencia bancaria» y «DeUna» aparecen como *próximamente* (deshabilitadas: no existen todavía).
+
+- **Con PayPhone activo** (`/api/payments/config` → `enabled:true`) **y** oferta habilitada por el servidor: no hay ningún campo de tarjeta propio. La tarjeta se escribe solo en la página alojada de PayPhone, desde «Reservas y pagos» (flujo descrito arriba). Si PayPhone devuelve `cardBrand`/`lastDigits`, `checkProviderConfirmation` ya los conserva para el comprobante real.
+- **En modo prueba** (caso actual: sin credenciales) se muestra `CardForm.tsx`: vista previa de la tarjeta que gira al escribir el CVV (sin giro con `prefers-reduced-motion`), número con espacios por marca, detección en vivo de Visa, Mastercard, American Express, Diners Club y Discover con distintivos propios (`CardBrandMark.tsx`, solo tipografía y color, sin logotipos oficiales), Luhn, vencimiento MM/AA no vencido, CVV de 3 o 4 dígitos (Amex) y titular.
+- **Solo tarjetas de prueba públicas** (`TEST_CARDS` en `src/domain/payments/card.ts`), con el desplegable «Usar una tarjeta de prueba» que rellena el formulario:
+
+| Número | Marca | Resultado simulado |
+| --- | --- | --- |
+| 4242 4242 4242 4242 | Visa | Aprobada |
+| 5555 5555 5555 4444 | Mastercard | Aprobada |
+| 3782 822463 10005 | American Express | Aprobada |
+| 3056 930902 5904 | Diners Club | Aprobada |
+| 6011 1111 1111 1117 | Discover | Aprobada |
+| 4000 0000 0000 0002 | Visa | Rechazada por el emisor |
+| 4000 0000 0000 9995 | Visa | Rechazada por fondos insuficientes |
+
+  Un número que pasa Luhn pero no está en la lista **no se procesa**: se muestra «En modo prueba solo aceptamos tarjetas de prueba. No escribas tu tarjeta real hasta que activemos la pasarela segura.» y el formulario borra número, vencimiento y CVV.
+- **Qué se guarda:** número completo, vencimiento y CVV viven solo en el estado local de `CardForm` y se borran al confirmar. Nunca van a `localStorage`, `sessionStorage`, IndexedDB, red ni consola. Al confirmar solo sale `CardSummary = { brand, last4 }`; `isCardSummary` exige exactamente esos dos campos y la billetera rechaza registros con datos de tarjeta de más. Los campos usan `autocomplete="off"` y el CVV es de tipo contraseña.
+- **Dónde se ve:** aviso de rechazo («Pago de prueba rechazado · Visa •••• 0002»), comprobante en pantalla, HTML descargable («Método de pago: Visa •••• 4242 · tarjeta de prueba, sin cobro» y distintivo) y billetera.
+- **Pruebas:** `tests/unit/card-validation.test.ts` (marca, Luhn, formato, vencimiento, CVV, rechazo de tarjeta real, resumen mínimo) y `tests/unit/card-checkout.test.tsx` (UI, giro, rechazo de tarjeta real, ausencia de PAN/CVV/vencimiento en almacenamiento, IndexedDB con `fake-indexeddb`, red y consola, billetera con marca y últimos 4, y que con PayPhone activo no hay campos propios).

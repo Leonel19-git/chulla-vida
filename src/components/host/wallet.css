@@ -70,4 +70,4 @@
 .wallet-dialog{padding:22px}
 .wallet-dialog>div{flex-direction:column-reverse}}
 @media(prefers-reduced-motion:no-preference){.wallet-available{animation:wallet-in .4s ease-out both}
-@keyframes wallet-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}}
+@keyframes wallet-in{from{opacity:.9;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}}

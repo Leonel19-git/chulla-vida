@@ -30,3 +30,4 @@
 .welcome-actions .button{min-height:44px;display:inline-flex;align-items:center;gap:6px}
 @media(max-width:760px){.welcome-paths{grid-template-columns:1fr}.welcome-path{min-height:0}}
 @media(prefers-reduced-motion:reduce){.welcome-path{transition:none}.welcome-path:hover{transform:none}}
+.welcome-tour-link{margin-top:14px;font-size:14px;text-align:center}

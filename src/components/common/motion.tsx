@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, type RefObject } from 'react';
 export function prefersReducedMotion(): boolean {
   try { return typeof window.matchMedia !== 'function' || window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return true; }
 }
-const canAnimate = () => typeof window !== 'undefined' && typeof window.IntersectionObserver === 'function' && !prefersReducedMotion();
+const canAnimate = () => typeof window !== 'undefined' && typeof window.IntersectionObserver === 'function' && !prefersReducedMotion() && document.visibilityState !== 'hidden';
 
 /**
  * Entrada escalonada al hacer scroll: los hijos con `data-reveal` aparecen cuando entran en pantalla.
@@ -27,7 +27,11 @@ export function useReveal<T extends HTMLElement>(ref: RefObject<T | null>) {
       watch(node);
     }))) : null;
     mo?.observe(root, { childList: true, subtree: true });
-    return () => { io.disconnect(); mo?.disconnect(); root.classList.remove('cv-reveal-on'); };
+    // Red de seguridad: si el observador no dispara (pestaña oculta, captura, navegador raro), todo se muestra igual.
+    const safety = window.setTimeout(() => root.querySelectorAll<HTMLElement>('[data-reveal]:not(.is-revealed)').forEach(node => node.classList.add('is-revealed')), 2500);
+    const onHidden = () => { if (document.visibilityState === 'hidden') root.querySelectorAll<HTMLElement>('[data-reveal]:not(.is-revealed)').forEach(node => node.classList.add('is-revealed')); };
+    document.addEventListener('visibilitychange', onHidden);
+    return () => { window.clearTimeout(safety); document.removeEventListener('visibilitychange', onHidden); io.disconnect(); mo?.disconnect(); root.classList.remove('cv-reveal-on'); };
   }, [ref]);
 }
 
@@ -51,7 +55,9 @@ export function CountUp({ value, duration = 900 }: { value: number; duration?: n
       frame = requestAnimationFrame(tick);
     }, { threshold: 0.4 });
     io.observe(node);
-    return () => { io.disconnect(); cancelAnimationFrame(frame); };
+    // Si nunca entra en pantalla con la pestaña visible (captura, pestaña oculta), muestra el valor real.
+    const safety = window.setTimeout(() => { if (!frame) { io.disconnect(); setShown(value); } }, 4000);
+    return () => { io.disconnect(); cancelAnimationFrame(frame); window.clearTimeout(safety); };
   }, [value, duration]);
   return <span ref={ref} className="cv-count"><span aria-hidden="true">{shown}</span><span className="sr-only">{value}</span></span>;
 }

@@ -1,0 +1,44 @@
+/* Intro de marca con video (BrandIntro). Sustituye el escenario anterior de .brand-intro-room. */
+.brand-intro.cv-intro{background:#011a40;color:#fffaf0;overflow:hidden}
+.brand-intro.cv-intro::backdrop{background:#011a40}
+.cv-intro[open]{display:block}
+.cv-intro-screen{position:absolute;inset:0;overflow:hidden;background:#012960 url('/video/chulla-vida-intro-poster.webp') center/cover no-repeat}
+.cv-intro-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.cv-intro-shade{position:absolute;inset:0;background:linear-gradient(90deg,#01142f00 45%,#01142fb8 100%),linear-gradient(0deg,#01142f8c 0,#01142f00 40%);pointer-events:none}
+.cv-intro-top{position:absolute;z-index:3;top:max(18px,env(safe-area-inset-top));left:20px;right:20px;display:flex;justify-content:space-between;align-items:center;gap:12px;pointer-events:none}
+.cv-intro-top>*{pointer-events:auto}
+.cv-intro .language-control-intro{position:relative;left:auto;top:auto}
+.cv-intro-skip{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:10px 18px;border-radius:999px;border:1.5px solid #ffffffb3;background:#01142f80;color:#fff;font-weight:700;font-size:14px;backdrop-filter:blur(6px)}
+.cv-intro-skip:hover{background:#01142fcc;border-color:#fff}
+.cv-intro-panel{position:absolute;z-index:2;right:clamp(16px,3vw,44px);bottom:clamp(20px,5vh,48px);width:min(430px,calc(100vw - 32px));display:grid;gap:16px;padding:22px 24px 18px;border-radius:24px;background:#011a40e6;border:1px solid #ffffff2e;box-shadow:0 24px 60px #000a,0 2px 0 #fed65a inset}
+.cv-intro-logo{width:118px;padding:6px;border-radius:20px;background:#fff;box-shadow:0 8px 24px #0006}
+.cv-intro-logo .animated-logo{display:block;width:100%;height:auto}
+.cv-intro-copy h1{font:600 clamp(30px,2.7vw,40px)/1.06 Newsreader,Georgia,serif;letter-spacing:-.02em;color:#fffaf0;max-width:14ch}
+.cv-intro-copy p{margin-top:10px;font-size:15px;line-height:1.55;color:#e4ebf5;max-width:36ch}
+.cv-intro-copy .intro-language-lexicon,.cv-intro-copy .intro-language-scope{font-size:12px;color:#fed65a}
+.cv-intro-actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.cv-intro-enter{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:12px 28px;border-radius:16px;border:0;background:#fed65a;color:#012960;font-weight:800;font-size:17px;box-shadow:0 10px 26px #fed65a40}
+.cv-intro-enter:hover{background:#ffe17e}
+.cv-intro-enter:focus-visible,.cv-intro-skip:focus-visible,.cv-intro-play:focus-visible,.cv-intro-credit a:focus-visible{outline:3px solid #fed65a;outline-offset:3px}
+.cv-intro-play{display:inline-flex;align-items:center;gap:7px;min-height:44px;padding:9px 14px;border-radius:12px;border:1.5px solid #ffffff59;background:transparent;color:#fff;font-weight:600;font-size:14px}
+.cv-intro-play:hover{border-color:#fff;background:#ffffff14}
+.cv-intro-note{font-size:12.5px;line-height:1.45;color:#cdd8e6}
+.cv-intro-credit{font-size:11.5px;color:#b9c6d8}.cv-intro-credit a{color:#fff;text-underline-offset:3px}
+/* Cuando el video muestra su propio cierre con logo y lema, el panel se queda solo con los botones. */
+.cv-intro.is-outro .cv-intro-logo,.cv-intro.is-outro .cv-intro-copy,.cv-intro.is-outro .cv-intro-note{display:none}
+.cv-intro.is-outro .cv-intro-panel{background:#011a40b3}
+@media (max-width:760px),(orientation:portrait){
+  .brand-intro.cv-intro{overflow-y:auto;background:#011a40 linear-gradient(180deg,#012960,#011a40)}
+  .cv-intro-screen{position:relative;inset:auto;width:100%;aspect-ratio:16/9;margin-top:calc(max(18px,env(safe-area-inset-top)) + 58px);box-shadow:0 18px 40px #0008}
+  .cv-intro-shade{display:none}
+  .cv-intro-top{left:12px;right:12px;top:max(12px,env(safe-area-inset-top))}
+  .cv-intro-panel{position:relative;right:auto;bottom:auto;width:auto;margin:18px 16px 24px;padding:20px 18px 16px;background:#ffffff0d;box-shadow:0 2px 0 #fed65a inset}
+  .cv-intro.is-outro .cv-intro-logo,.cv-intro.is-outro .cv-intro-copy{display:revert}
+  .cv-intro.is-outro .cv-intro-panel{background:#ffffff0d}
+  .cv-intro-logo{width:96px}
+  .cv-intro-copy h1{font-size:31px}
+  .cv-intro-enter{flex:1 1 100%}
+  .cv-intro-play{flex:1 1 100%;justify-content:center}
+}
+@media (max-width:380px){.cv-intro-skip{padding:10px 14px;font-size:13px}.cv-intro-copy h1{font-size:28px}}
+@media (prefers-reduced-motion:reduce){.brand-intro.cv-intro{transition:none}}

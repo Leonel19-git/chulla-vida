@@ -120,7 +120,7 @@ describe('registro con código de 6 dígitos', () => {
     expect(codeBoxes()[0]).toHaveValue('');
     pasteCode('Tu código: 482-913');
     await waitFor(() => expect(mocks.auth.verifyOtp).toHaveBeenLastCalledWith({ email: 'viajera@example.com', token: '482913', type: 'signup' }));
-    expect(await screen.findByRole('heading', { name: 'Tu cuenta conectada' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Tu cuenta viajera' })).toBeInTheDocument();
     expect(mocks.rpc).toHaveBeenCalledWith('record_consent', expect.objectContaining({ p_category: 'email_marketing', p_granted: true, p_method: 'signup' }));
   });
 
@@ -214,7 +214,7 @@ describe('acceso y recuperación', () => {
     await user.click(screen.getByRole('button', { name: 'Guardar contraseña' }));
     expect(mocks.auth.updateUser).toHaveBeenCalledWith({ password: STRONG });
     expect(await screen.findByText(/Contraseña actualizada/)).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Tu cuenta conectada' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Tu cuenta viajera' })).toBeInTheDocument();
   });
 
   it('retira los datos privados de A al entrar B aunque la nueva carga falle', async () => {

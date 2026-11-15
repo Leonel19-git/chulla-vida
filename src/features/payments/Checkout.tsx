@@ -1,18 +1,24 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
-import { ArrowLeft, ArrowRight, BadgeCheck, CalendarDays, CheckCircle2, CircleX, Download, FlaskConical, ReceiptText, RefreshCw, ShieldCheck, Users, Wallet } from 'lucide-react';
+import { ArrowLeft, ArrowRight, CalendarDays, CheckCircle2, CircleX, CreditCard, Download, FlaskConical, Landmark, Lock, ReceiptText, ShieldCheck, Smartphone, Users, Wallet } from 'lucide-react';
 import { Dialog } from '../../components/chulla/Dialog';
 import type { Experience } from '../../domain/catalog';
 import { choiceLabel, clampChoice, formatUsd, isEmail, isRange, lineTotalCents, maskEmail, purchasePlan, testCode, TEST_RECEIPT_LABEL, type PriceChoice, type WalletRecord } from '../../domain/payments/purchase';
 import { CedulaField, documentValidity, type DocumentValue } from './CedulaField';
 import { getPaymentConfiguration, type PaymentConfiguration } from './api';
+import { CARD_BRANDS, cardLabel, type CardBrand, type CardSummary } from '../../domain/payments/card';
+import { CardForm, type CardPayment } from './CardForm';
+import { CardBrandMark } from './CardBrandMark';
+import './card.css';
 import { openWallet, upsertRecords } from '../wallet/store';
 import { downloadReceipt, receiptQr } from '../wallet/receipt';
 import './checkout.css';
 
-/* Checkout en pasos. Hoy cierra en MODO PRUEBA SIN COBRO; el cobro real solo existe en el
-   flujo PayPhone de «Reservas y pagos», cuando el servidor lo habilita para una oferta verificada. */
+/* Checkout en pasos. Hoy cierra en MODO PRUEBA SIN COBRO con una tarjeta de prueba; el cobro real solo
+   existe en el flujo PayPhone de «Reservas y pagos», cuando el servidor lo habilita para una oferta
+   verificada, y allí la tarjeta se escribe únicamente en la pasarela alojada de PayPhone. */
 
-const STEPS = ['Fecha y personas', 'Tus datos', 'Resumen', 'Pago', 'Comprobante'] as const;
+const STEPS = ['Fecha y personas', 'Tus datos', 'Resumen', 'Método de pago', 'Comprobante'] as const;
+const BRAND_ORDER = Object.keys(CARD_BRANDS) as CardBrand[];
 const PRICE_TYPE: Record<Experience['price']['type'], string> = { referential: 'Precio referencial de la fuente', proposed: 'Precio propuesto, por validar', verified_offer: 'Oferta verificada' };
 const tomorrow = () => { const value = new Date(Date.now() + 86400000); return `${value.getFullYear()}-${String(value.getMonth() + 1).padStart(2, '0')}-${String(value.getDate()).padStart(2, '0')}`; };
 const serverEnabled = (experience: Experience) => (experience as { bookingEnabled: boolean }).bookingEnabled === true;
@@ -47,7 +53,8 @@ export function Checkout({ experiences, quoteExperiences = [], defaults, onClose
   const [accepted, setAccepted] = useState(false);
   const [error, setError] = useState('');
   const [config, setConfig] = useState<PaymentConfiguration | null>();
-  const [rejected, setRejected] = useState(false);
+  const [rejected, setRejected] = useState<{ card: CardSummary; reason: string } | null>(null);
+  const [paidWith, setPaidWith] = useState<CardSummary | null>(null);
   const [busy, setBusy] = useState(false);
   const [saved, setSaved] = useState<WalletRecord[]>([]);
   const [qr, setQr] = useState('');
@@ -85,28 +92,30 @@ export function Checkout({ experiences, quoteExperiences = [], defaults, onClose
     if (step === 2 && !accepted) return setError('Para seguir, acepta las condiciones de la compra de prueba.');
     setStep(value => Math.min(value + 1, 3));
   }
-  function records(status: 'test_approved' | 'test_rejected'): WalletRecord[] {
+  function records(status: 'test_approved' | 'test_rejected', card: CardSummary): WalletRecord[] {
     const now = new Date().toISOString();
     const buyer = { name: name.trim().slice(0, 120), emailMasked: maskEmail(email), documentType: identity.type, documentMasked: docState.masked || null };
     const purchases = lines.map((line, index): WalletRecord => {
       const choice = line.choices.find(item => item.id === line.choiceId) ?? line.choices[0];
       const unit = lineUnit(line); const count = linePeople(line);
-      return { id: ids.current[index], code: code, kind: 'test_purchase', status, mode: 'test', experienceId: line.experience.id, title: line.experience.title, province: line.experience.province, date, people: count, currency: 'USD', unitCents: unit, totalCents: lineTotalCents(unit, count), priceNote: `${PRICE_TYPE[line.experience.price.type]} · ${choice.label}${isRange(choice) ? ` · elegiste ${formatUsd(unit)} dentro del rango` : ''}`.slice(0, 600), buyer, trip, batchId: batchId.current, attempts: attempts.current, createdAt: now, updatedAt: now };
+      return { id: ids.current[index], code: code, kind: 'test_purchase', status, mode: 'test', experienceId: line.experience.id, title: line.experience.title, province: line.experience.province, date, people: count, currency: 'USD', unitCents: unit, totalCents: lineTotalCents(unit, count), priceNote: `${PRICE_TYPE[line.experience.price.type]} · ${choice.label}${isRange(choice) ? ` · elegiste ${formatUsd(unit)} dentro del rango` : ''}`.slice(0, 600), buyer, trip, batchId: batchId.current, attempts: attempts.current, card: { brand: card.brand, last4: card.last4 }, createdAt: now, updatedAt: now };
     });
     const requests = status === 'test_approved' ? quoteExperiences.map((experience, index): WalletRecord => ({ id: quoteIds.current[index], code: code, kind: 'request', status: 'requested', mode: 'test', experienceId: experience.id, title: experience.title, province: experience.province, date, people, currency: experience.price.currency, unitCents: null, totalCents: null, priceNote: `Sin precio comparable: ${experience.price.originalLabel}`.slice(0, 600), buyer, trip, batchId: batchId.current, attempts: 0, createdAt: now, updatedAt: now })) : [];
     return [...purchases, ...requests];
   }
-  async function settle(approve: boolean) {
+  /** Solo recibe marca + últimos 4: el número completo, el vencimiento y el CVV se quedaron en CardForm. */
+  async function settle({ summary, outcome, reason }: CardPayment) {
     if (busy) return;
+    const approve = outcome === 'approved';
     setBusy(true); setError(''); attempts.current += 1;
     try {
-      const values = records(approve ? 'test_approved' : 'test_rejected');
+      const values = records(approve ? 'test_approved' : 'test_rejected', summary);
       const persisted = upsertRecords(values);
       if (!persisted) setStorageNotice('Tu navegador no permitió guardar la billetera: la verás solo mientras esta página siga abierta.');
       if (approve) {
-        setSaved(values); setRejected(false); setStep(4);
+        setSaved(values); setRejected(null); setPaidWith(summary); setStep(4);
         try { setQr(await receiptQr(code)); } catch { setQr(''); }
-      } else setRejected(true);
+      } else setRejected({ card: summary, reason: reason || 'El banco rechazó la tarjeta (simulado).' });
     } catch { setError('No se pudo registrar la prueba. Vuelve a intentarlo.'); }
     finally { setBusy(false); }
   }
@@ -114,7 +123,7 @@ export function Checkout({ experiences, quoteExperiences = [], defaults, onClose
 
   return <Dialog title={single ? `Comprar · ${lines[0]?.experience.title ?? ''}` : 'Comprar todo mi viaje'} onClose={onClose} wide>
     <div className="buy-checkout">
-      <p className="buy-test-ribbon" role="note"><FlaskConical size={18} aria-hidden="true" /><span><strong>Modo prueba sin cobro.</strong> Puedes recorrer toda la compra; no se pide tarjeta y no se cobra nada.</span></p>
+      <p className="buy-test-ribbon" role="note"><FlaskConical size={18} aria-hidden="true" /><span><strong>Modo prueba sin cobro.</strong> Recorre toda la compra y paga con una tarjeta de prueba: no se cobra nada.</span></p>
       <ol className="buy-steps" aria-label="Pasos de la compra">{STEPS.map((label, index) => <li key={label} aria-current={index === step ? 'step' : undefined} data-done={index < step || undefined}><span>{index < step ? <CheckCircle2 size={16} /> : index + 1}</span>{label}</li>)}</ol>
       <h3 ref={heading} tabIndex={-1} className="buy-step-title">{STEPS[step]}</h3>
 
@@ -157,26 +166,37 @@ export function Checkout({ experiences, quoteExperiences = [], defaults, onClose
         <p className="buy-error" role="alert">{error}</p>
         <div className="buy-actions">
           {step > 0 ? <button type="button" className="button button-secondary" onClick={() => { setError(''); setStep(value => value - 1); }}><ArrowLeft size={16} />Atrás</button> : <span />}
-          <button type="submit" className="button button-primary">{step === 2 ? 'Ir al pago de prueba' : 'Continuar'}<ArrowRight size={16} /></button>
+          <button type="submit" className="button button-primary">{step === 2 ? 'Elegir método de pago' : 'Continuar'}<ArrowRight size={16} /></button>
         </div>
       </form>}
 
       {step === 3 && <section className="buy-pay" aria-busy={busy}>
-        <p className="buy-pay-total">Total: <strong>{formatUsd(total)}</strong> <span>· prueba, sin cobro</span></p>
+        <p className="buy-pay-total">Total: <strong>{formatUsd(total)}</strong> <span>· {realAvailable ? 'se cobra en la pasarela segura' : 'prueba, sin cobro'}</span></p>
+        <fieldset className="buy-method">
+          <legend>¿Cómo quieres pagar?</legend>
+          <div className="buy-method-options">
+            <label className="buy-method-option"><input type="radio" name="buy-method" value="card" checked readOnly /><CreditCard size={20} aria-hidden="true" /><span>Tarjeta de crédito o débito<small>Visa, Mastercard, Amex, Diners, Discover</small></span></label>
+            <label className="buy-method-option is-soon"><input type="radio" name="buy-method" value="transfer" disabled /><Landmark size={20} aria-hidden="true" /><span>Transferencia bancaria<small>Próximamente</small></span></label>
+            <label className="buy-method-option is-soon"><input type="radio" name="buy-method" value="deuna" disabled /><Smartphone size={20} aria-hidden="true" /><span>DeUna<small>Próximamente</small></span></label>
+          </div>
+          <div className="buy-method-brands" role="list" aria-label="Marcas aceptadas">{BRAND_ORDER.map(brand => <span key={brand} role="listitem"><CardBrandMark brand={brand} size="sm" /></span>)}</div>
+        </fieldset>
         {config === undefined ? <p className="buy-hint" role="status">Consultando si la pasarela está activa…</p>
-          : realAvailable ? <div className="buy-real"><p>La pasarela PayPhone está activa y esta oferta está habilitada por el servidor. El cobro real se hace en «Reservas y pagos», después de que el anfitrión confirme tu fecha.</p><button className="button button-secondary" onClick={() => { onClose(); window.dispatchEvent(new Event('cv3:payments')); }}>Ir a Reservas y pagos</button></div>
-            : <p className="buy-hint">{config?.enabled ? 'La pasarela está lista, pero esta ficha todavía no tiene una oferta verificada por el servidor.' : 'Los cobros con tarjeta todavía no están activados.'} Por eso esta compra se completa como prueba: elige qué resultado quieres ver.</p>}
-        {rejected && <div className="buy-rejected" role="alert"><CircleX size={22} aria-hidden="true" /><div><strong>Pago de prueba rechazado.</strong><p>No se cobró nada. Así se vería un rechazo del banco: puedes reintentar cuando quieras.</p></div></div>}
+          : realAvailable ? <div className="buy-gateway"><p><Lock size={16} aria-hidden="true" /> <strong>La pasarela PayPhone está activa</strong> y esta oferta está habilitada por el servidor. Tu tarjeta se escribe solo en la página segura de PayPhone, nunca en CHULLA VIDA.</p><p>El cobro se hace en «Reservas y pagos», después de que el anfitrión confirme tu fecha.</p><button type="button" className="button button-primary" onClick={() => { onClose(); window.dispatchEvent(new Event('cv3:payments')); }}>Ir a Reservas y pagos</button></div>
+            : <>
+              <p className="buy-hint">{config?.enabled ? 'La pasarela está lista, pero esta ficha todavía no tiene una oferta verificada por el servidor.' : 'Los cobros con tarjeta todavía no están activados.'} Por eso pagas con una tarjeta de prueba: elige una de la lista y mira cómo se aprueba o se rechaza.</p>
+              {rejected && <div className="buy-rejected" role="alert"><CircleX size={22} aria-hidden="true" /><div><strong>Pago de prueba rechazado · {cardLabel(rejected.card)}</strong><p>{rejected.reason} No se cobró nada. Prueba con otra tarjeta de prueba cuando quieras.</p></div></div>}
+              <CardForm amountLabel={formatUsd(total)} defaultHolder={name} busy={busy} onPay={payment => void settle(payment)} />
+            </>}
         <p className="buy-error" role="alert">{error}</p>
         <div className="buy-actions">
-          <button type="button" className="button button-secondary" disabled={busy} onClick={() => { setRejected(false); setStep(2); }}><ArrowLeft size={16} />Atrás</button>
-          <button type="button" className="button button-secondary" disabled={busy} onClick={() => void settle(false)}>{rejected ? <><RefreshCw size={16} />Rechazar otra vez</> : <><CircleX size={16} />Rechazar pago de prueba</>}</button>
-          <button type="button" className="button button-primary" disabled={busy} onClick={() => void settle(true)}>{rejected ? <><RefreshCw size={16} />Reintentar y aprobar</> : <><BadgeCheck size={16} />Aprobar pago de prueba</>}</button>
+          <button type="button" className="button button-secondary" disabled={busy} onClick={() => { setRejected(null); setStep(2); }}><ArrowLeft size={16} />Atrás</button>
         </div>
       </section>}
 
       {step === 4 && <section className="buy-done">
         <div className="buy-done-head"><span className="buy-burst" aria-hidden="true"><CheckCircle2 size={34} /></span><div><p className="buy-done-label">{TEST_RECEIPT_LABEL}</p><h4>¡Listo! Tu compra de prueba quedó en tu billetera.</h4><p>Código <strong>{code}</strong> · {formatUsd(total)} · no se cobró nada.</p></div></div>
+        {paidWith && <p className="buy-paid-with"><CardBrandMark brand={paidWith.brand} />{cardLabel(paidWith)}<small>tarjeta de prueba · aprobada</small></p>}
         {qr && <img className="buy-qr" src={qr} alt={`Código QR del comprobante de prueba ${code}`} width={148} height={148} />}
         {quoteExperiences.length > 0 && <p className="buy-hint">{quoteExperiences.length} {quoteExperiences.length === 1 ? 'parada quedó' : 'paradas quedaron'} como solicitud de cotización.</p>}
         {storageNotice && <p className="buy-hint" role="status">{storageNotice}</p>}

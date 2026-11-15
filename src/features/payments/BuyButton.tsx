@@ -28,7 +28,7 @@ export function BuyButton({ experience, variant = 'card' }: { experience: Experi
     <button type="button" className={`buy-button ${quote ? 'is-quote' : ''}`} onClick={click} aria-label={variant === 'card' ? `${label}: ${experience.title}` : undefined} aria-haspopup="dialog">
       {quote ? <MessageSquareQuote size={17} aria-hidden="true" /> : <ShoppingBag size={17} aria-hidden="true" />}{label}
     </button>
-    {variant === 'detail' && <small className="buy-button-note">{quote ? 'Precio en otra moneda o sin precio comparable: te ayudamos a pedir cotización.' : `Modo prueba sin cobro hasta activar la pasarela · precio ${experience.price.type === 'proposed' ? 'propuesto' : 'referencial'} de la fuente`}</small>}
+    {variant === 'detail' && <small className="buy-button-note">{quote ? 'Precio en otra moneda o sin precio comparable: te ayudamos a pedir cotización.' : `Modo prueba: pagas con una tarjeta de prueba, sin cobro, hasta activar la pasarela · precio ${experience.price.type === 'proposed' ? 'propuesto' : 'referencial'} de la fuente`}</small>}
     {status !== 'none' && <small className="buy-owned"><BadgeCheck size={14} aria-hidden="true" />{STOP_STATUS_TEXT[status]} en tu billetera</small>}
     {open && <Suspense fallback={null}>
       {open === 'wallet' ? <WalletPanel onClose={close} />

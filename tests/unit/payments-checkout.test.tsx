@@ -36,6 +36,11 @@ async function openCheckout(experience: Experience, variant: 'card' | 'detail' =
   fireEvent.click(screen.getByRole('button', { name: variant === 'card' ? `Comprar: ${experience.title}` : /Comprar experiencia/ }));
   await screen.findByRole('heading', { name: 'Fecha y personas' }, { timeout: 5000 });
 }
+async function payWith(number: string) {
+  const picker = await screen.findByLabelText('Usar una tarjeta de prueba');
+  fireEvent.change(picker, { target: { value: number } });
+  fireEvent.click(screen.getByRole('button', { name: /^Pagar .* prueba$/ }));
+}
 function fillBuyer(cedula = CEDULA) {
   fireEvent.change(screen.getByLabelText('Nombre y apellido'), { target: { value: 'Ana Pérez' } });
   fireEvent.change(screen.getByLabelText('Correo'), { target: { value: 'ana.perez@correo.ec' } });
@@ -68,22 +73,29 @@ describe('comprar en modo prueba sin cobro', () => {
     expect(screen.getByRole('heading', { name: 'Resumen' })).toBeInTheDocument(); ribbon();
     expect(screen.getByText(/por definir jurídicamente/)).toBeInTheDocument();
     expect(screen.getByText(/moneda original: USD/)).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: /Ir al pago de prueba/ }));
+    fireEvent.click(screen.getByRole('button', { name: /Elegir método de pago/ }));
     expect(screen.getByRole('alert')).toHaveTextContent(/acepta las condiciones/);
     fireEvent.click(screen.getByRole('checkbox'));
-    fireEvent.click(screen.getByRole('button', { name: /Ir al pago de prueba/ }));
+    fireEvent.click(screen.getByRole('button', { name: /Elegir método de pago/ }));
 
+    expect(await screen.findByRole('heading', { name: 'Método de pago' })).toBeInTheDocument();
     expect(await screen.findByText(/cobros con tarjeta todavía no están activados/)).toBeInTheDocument(); ribbon();
-    fireEvent.click(screen.getByRole('button', { name: /Rechazar pago de prueba/ }));
-    expect(await screen.findByText('Pago de prueba rechazado.')).toBeInTheDocument();
-    expect(wallet()).toMatchObject([{ status: 'test_rejected', attempts: 1, totalCents: 9000 }]);
-    fireEvent.click(screen.getByRole('button', { name: /Reintentar y aprobar/ }));
+    expect(screen.getByRole('radio', { name: /Tarjeta de crédito o débito/ })).toBeChecked();
+    expect(screen.getByRole('radio', { name: /Transferencia bancaria/ })).toBeDisabled();
+    expect(screen.getByRole('radio', { name: /DeUna/ })).toBeDisabled();
+    await payWith('4000000000000002');
+    expect(await screen.findByText('Pago de prueba rechazado · Visa •••• 0002')).toBeInTheDocument();
+    expect(wallet()).toMatchObject([{ status: 'test_rejected', attempts: 1, totalCents: 9000, card: { brand: 'visa', last4: '0002' } }]);
+    expect(screen.getByLabelText('Número de la tarjeta')).toHaveValue('');
+    await payWith('4242424242424242');
 
     expect(await screen.findByRole('heading', { name: 'Comprobante' })).toBeInTheDocument(); ribbon();
     expect(screen.getAllByText(TEST_RECEIPT_LABEL).length).toBeGreaterThan(0);
     const records = wallet();
     expect(records).toHaveLength(1);
-    expect(records[0]).toMatchObject({ status: 'test_approved', attempts: 2, mode: 'test', people: 2, date: futureDate, buyer: { documentMasked: `******${CEDULA.slice(-4)}`, documentType: 'cedula' } });
+    expect(records[0]).toMatchObject({ status: 'test_approved', attempts: 2, mode: 'test', people: 2, date: futureDate, card: { brand: 'visa', last4: '4242' }, buyer: { documentMasked: `******${CEDULA.slice(-4)}`, documentType: 'cedula' } });
+    expect(screen.getByText('Visa •••• 4242')).toBeInTheDocument();
+    expect(localStorage.getItem(WALLET_KEY)).not.toContain('4242424242424242');
     expect(localStorage.getItem(WALLET_KEY)).not.toContain(CEDULA);
     expect(localStorage.getItem(WALLET_KEY)).not.toContain('ana.perez@correo.ec');
     await waitFor(() => expect(screen.getByAltText(/Código QR del comprobante de prueba/)).toBeInTheDocument());
@@ -95,6 +107,8 @@ describe('comprar en modo prueba sin cobro', () => {
     expect(html).toContain(records[0].code);
     expect(html).not.toContain(CEDULA);
     expect(html).toContain('NO SE COBRÓ NADA');
+    expect(html).toContain('Método de pago: Visa •••• 4242 · tarjeta de prueba, sin cobro');
+    expect(html).not.toContain('4242424242424242');
     expect(screen.getByText('Compra de prueba en tu billetera')).toBeInTheDocument();
   });
 
@@ -105,8 +119,8 @@ describe('comprar en modo prueba sin cobro', () => {
     const all = () => Object.keys(localStorage).map(key => localStorage.getItem(key)).join('|') + Object.keys(sessionStorage).map(key => sessionStorage.getItem(key)).join('|');
     expect(all()).not.toContain(CEDULA);
     fireEvent.click(screen.getByRole('checkbox'));
-    fireEvent.click(screen.getByRole('button', { name: /Ir al pago de prueba/ }));
-    fireEvent.click(await screen.findByRole('button', { name: /Aprobar pago de prueba/ }));
+    fireEvent.click(screen.getByRole('button', { name: /Elegir método de pago/ }));
+    await payWith('5555555555554444');
     await screen.findByRole('heading', { name: 'Comprobante' });
     expect(all()).not.toContain(CEDULA);
     expect(all()).toContain(CEDULA.slice(-4));
@@ -145,8 +159,9 @@ describe('comprar en modo prueba sin cobro', () => {
     fireEvent.change(screen.getByLabelText(/Fecha/), { target: { value: futureDate } }); next();
     fillBuyer(); next();
     fireEvent.click(screen.getByRole('checkbox'));
-    fireEvent.click(screen.getByRole('button', { name: /Ir al pago de prueba/ }));
+    fireEvent.click(screen.getByRole('button', { name: /Elegir método de pago/ }));
     expect(await screen.findByText(/todavía no tiene una oferta verificada por el servidor/)).toBeInTheDocument();
+    expect(screen.getByLabelText('Número de la tarjeta')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /Ir a Reservas y pagos/ })).not.toBeInTheDocument();
   });
 });

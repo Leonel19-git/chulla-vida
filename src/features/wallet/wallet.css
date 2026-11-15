@@ -48,7 +48,7 @@
 .wallet-link { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; text-decoration: underline; text-underline-offset: 4px; }
 .wallet-footnote { font-size: 12px; color: #5d6b66; margin-top: 16px; }
 .wallet-notice { font-weight: 600; min-height: 1em; }
-@keyframes wallet-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes wallet-in { from { transform: translateY(6px); } to { transform: none; } }
 @keyframes wallet-glow { from { transform: scale(.9); opacity: .7; } to { transform: scale(1.15); opacity: 1; } }
 @media (max-width: 560px) { .wallet-panel { padding: 16px; } .wallet-hero { padding: 14px; } .wallet-actions .button { flex: 1 1 100%; justify-content: center; } .wallet-stats { grid-template-columns: 1fr 1fr; } }
 @media (prefers-reduced-motion: reduce) { .wallet-hero::after, .wallet-stats li, .wallet-records > li { animation: none !important; } }

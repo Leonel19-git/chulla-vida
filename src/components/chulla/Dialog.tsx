@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
@@ -16,8 +17,9 @@ export function Dialog({ title, onClose, children, wide = false }: { title: stri
     document.body.style.overflow = 'hidden';
     return () => { dialog?.close(); document.body.style.overflow = old; previous?.focus(); };
   }, []);
-  return <dialog ref={ref} className={`cv-dialog ${wide ? 'cv-dialog-wide' : ''}`} aria-labelledby={titleId} onCancel={() => closeRef.current()} onClick={e => { if (e.target === e.currentTarget) closeRef.current(); }}>
+  /* Portal a <body>: un diálogo abierto desde otro (p. ej. Comprar dentro de la ficha) no hereda estilos del contenedor. */
+  return createPortal(<dialog ref={ref} className={`cv-dialog ${wide ? 'cv-dialog-wide' : ''}`} aria-labelledby={titleId} onCancel={() => closeRef.current()} onClick={e => { if (e.target === e.currentTarget) closeRef.current(); }}>
     <div className="dialog-top"><h2 id={titleId}>{title}</h2><button className="icon-button" aria-label={t('Cerrar ventana')} onClick={onClose}><X size={20} /></button></div>
     {children}
-  </dialog>;
+  </dialog>, document.body);
 }
