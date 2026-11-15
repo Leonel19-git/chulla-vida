@@ -10,18 +10,14 @@
 - Vercel (producción y vista previa): `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SERVICE_ROLE_KEY` (solo servidor).
 - La contraseña de la base está en `.env.local` (ignorado por git), variable `SUPABASE_DB_PASSWORD`.
 
-### Pendiente para que lleguen los correos con código
+### Correo con código (Brevo, 14-11-2026)
 
-El plan gratis usa el correo de prueba de Supabase: solo envía a miembros de la organización, con un límite muy bajo por hora, y no permite cambiar plantillas. Para que cualquier persona reciba el código hay que configurar un SMTP propio (por ejemplo Resend, Brevo o el correo del dominio) en Authentication → Emails → SMTP Settings. Después, descomentar las secciones `[auth.email.template.*]` de `supabase/config.toml` y ejecutar `npx supabase config push` para subir las plantillas de `supabase/templates/`, que muestran el código `{{ .Token }}`.
-
-Mientras tanto, el correo por defecto de Supabase envía un enlace de confirmación en lugar del código; la app acepta ambos.
-
-
-**Actualización de reservas y tarjeta:** el directorio `supabase/migrations/` contiene ahora el esquema normalizado completo y migraciones posteriores para checkout y revisión de reembolsos. Aplica **todos los archivos, en orden de nombre**, en un proyecto de pruebas nuevo; no te limites a las dos migraciones históricas mencionadas más abajo. Las nuevas pruebas SQL usan ese conjunto completo. No se aplicaron cambios a una base alojada en esta sesión.
-
-La base conserva una vinculación de entorno de pagos; las reservas nuevas la heredan y el servidor exige coincidencia con su configuración. Un proyecto de pruebas debe marcarse explícitamente como `sandbox` desde administración, separado de producción. Las variables `PAYMENTS_*` y PayPhone son únicamente de servidor. Sigue [PAGOS_ECUADOR.md](PAGOS_ECUADOR.md) antes de habilitar cualquier cobro.
-
-Estado: **preparado y probado localmente; no conectado a un proyecto Supabase real**. La configuración pública vacía desactiva las cuentas y consultas conectadas. El selector de perfiles del prototipo sigue siendo una demostración del navegador y no concede permisos en Supabase.
+- SMTP propio activo: Brevo (`smtp-relay.brevo.com:587`), remitente verificado con nombre «CHULLA VIDA». Login, clave y remitente se leen de `.env.local` (`BREVO_SMTP_LOGIN`, `BREVO_SMTP_KEY`, `BREVO_SENDER_EMAIL`) mediante `env()` en `supabase/config.toml`; ninguna clave está en git.
+- Plantillas de `supabase/templates/` subidas: confirmación, acceso, recuperación y cambio de correo, todas con el código `{{ .Token }}` de 6 dígitos.
+- Límite: 30 correos por hora en Supabase; Brevo gratis permite 300 al día.
+- Para volver a subir la configuración: cargar esas tres variables en el entorno y ejecutar `npx supabase config push --yes`.
+- La clave SMTP de Brevo vence el 14-11-2027 y caduca antes si pasa 90 días sin uso.
+- El remitente es un correo gratuito (Gmail): algunos mensajes pueden llegar a spam. Con un dominio propio autenticado (DKIM/DMARC) mejora la entrega.
 
 ## Configuración
 
