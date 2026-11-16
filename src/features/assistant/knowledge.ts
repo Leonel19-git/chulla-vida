@@ -123,7 +123,7 @@ export function answerLocally(question: string, context: LocalContext): Assistan
       const events = getEventsByMonth(month);
       if (!events.length) return result(`No tengo fiestas registradas para ${monthName(month)}. Algunas, como la Kasama tsáchila, dependen del calendario de cada comunidad.`, { actions: [{ label: 'Ver Cultura Viva', target: 'culture' }] });
       const names = events.slice(0, 3).map(event => `${event.name} (${REGION_LABELS[event.region]})`);
-      const list = names.length > 1 ? `${names.slice(0, -1).join(', ')} y ${names.at(-1)}` : names[0];
+      const list = names.length > 1 ? `${names.slice(0, -1).join(', ')} y ${names[names.length - 1]}` : names[0];
       const details = events.slice(0, 6).map(event => {
         const status = eventStatusLabel(event, now).replace(/\.+$/, '');
         const when = status.includes(event.dateLabel) ? status : `${event.dateLabel.replace(/\.+$/, '')}. ${status}`;
