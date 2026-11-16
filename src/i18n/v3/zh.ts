@@ -1,3 +1,4 @@
+import { partsFor } from './parts';
 // Interfaz 3.x · chino simplificado. Clave: literal en español; traducción escrita a mano (no automática).
 // Se carga solo cuando eliges este idioma. Nombres propios, catálogo y textos legales no se traducen aquí.
 const dictionary: Record<string, string> = {
@@ -1307,4 +1308,5 @@ const dictionary: Record<string, string> = {
   "Leer el documento completo": "阅读完整文件",
   "Aún tienen campos por completar y no acreditan cumplimiento.": "仍有待填写的字段，不代表已合规。",
 };
-export default dictionary;
+const merged: Record<string, string> = { ...dictionary, ...partsFor('zh') };
+export default merged;

@@ -1,0 +1,82 @@
+/*
+ * CHULLA VIDA · «Álbum del Ecuador» — tokens compartidos (contrato entre equipos).
+ * No renombrar ni cambiar valores sin avisar: todo el sistema visual cuelga de aquí.
+ * Tintas planas de álbum impreso; nada de crema ni serif editorial.
+ */
+@import '@fontsource-variable/archivo/wdth.css';
+
+:root {
+  /* ── Tintas ─────────────────────────────────────────────── */
+  --al-ink: #012960;            /* Azul noche del logo: texto y acción principal */
+  --al-ink-2: #36507e;          /* texto secundario sobre papel (8:1) */
+  --al-paper: #ffffff;          /* papel cuché */
+  --al-paper-2: #f1f5fa;        /* papel interior, fondos de datos */
+  --al-line: #d5deea;           /* filetes */
+  --al-maiz: #ffc83d;           /* portada, resaltes, base del brillo */
+  --al-maiz-ink: #8a5a00;       /* maíz legible sobre papel */
+  --al-rojo: #d11f3a;           /* rojo «Vida»: Fiestas, corazón, sello */
+  --al-sierra: #1d6fe0;         /* Azul cumbre */
+  --al-costa: #0db5ae;          /* Turquesa */
+  --al-costa-ink: #0a7f7a;
+  --al-amazonia: #27b263;       /* Verde selva */
+  --al-amazonia-ink: #177a40;
+  --al-galapagos: #18222d;      /* Lava */
+  --al-galapagos-accent: #3cc8f4; /* cian «patas azules» */
+  --al-ok: #177a40;
+  --al-warn: #8a5a00;
+  --al-danger: #b3142c;
+
+  /* Campo activo (lo redefine [data-region] o [data-field]) */
+  --al-field: var(--al-paper);
+  --al-on-field: var(--al-ink);
+  --al-field-ink: var(--al-ink);     /* color de región legible sobre papel */
+
+  /* ── Tipografía: Archivo Variable (ancho 62–125, peso 100–900) ── */
+  --al-font: 'Archivo Variable', 'Archivo', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --al-display-stretch: 62%;   /* titulares: condensada negra en mayúsculas */
+  --al-display-weight: 900;
+  --al-number-stretch: 75%;    /* números de cromo */
+  --al-label-stretch: 88%;     /* etiquetas y botones */
+  --al-text-stretch: 100%;
+  --al-h1: clamp(3.25rem, 11.5vw, 10.5rem);
+  --al-h2: clamp(2.25rem, 6.2vw, 4.75rem);
+  --al-h3: clamp(1.375rem, 2.6vw, 2rem);
+  --al-body: 1rem;             /* 16 px mínimo: evita zoom en iOS */
+  --al-small: 0.875rem;
+  --al-micro: 0.75rem;
+
+  /* ── Espacio (base 4 px) ── */
+  --al-1: 4px; --al-2: 8px; --al-3: 12px; --al-4: 16px; --al-5: 24px;
+  --al-6: 32px; --al-7: 48px; --al-8: 64px; --al-9: 96px;
+  --al-gutter: clamp(16px, 4vw, 48px);
+  --al-max: 1280px;
+
+  /* ── Forma ── */
+  --al-r-sm: 8px; --al-r-md: 14px; --al-r-lg: 22px; --al-r-pill: 999px;
+  --al-die: clamp(5px, 1.3vw, 9px);       /* borde blanco troquelado del cromo */
+  --al-cromo-ratio: 3 / 4;
+  --al-edge: 0 4px 0 0 rgb(1 41 96 / 0.9); /* canto duro de botón (se hunde al pulsar) */
+  --al-shadow-flat: 0 1px 0 rgb(1 41 96 / 0.08);
+  --al-shadow-lift: 0 1px 0 rgb(1 41 96 / 0.08), 0 14px 28px -14px rgb(1 41 96 / 0.45);
+  --al-shadow-sheet: 0 -8px 40px rgb(1 41 96 / 0.28);
+  --al-halftone: radial-gradient(circle at 1px 1px, rgb(1 41 96 / 0.13) 1px, transparent 1.6px) 0 0 / 8px 8px;
+
+  /* ── Movimiento (nativo del álbum: pegar, despegar, girar, rasgar) ── */
+  --al-ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --al-ease-stick: cubic-bezier(0.2, 1.3, 0.4, 1);
+  --al-t-fast: 140ms; --al-t-base: 220ms; --al-t-flip: 480ms; --al-t-page: 320ms;
+
+  /* ── Capas ── */
+  --al-z-bar: 40; --al-z-tab: 45; --al-z-sheet: 80; --al-z-banner: 120; --al-z-intro: 200;
+}
+
+/* Campos de región: úsalos con data-region en la sección, pestaña o cromo */
+[data-region='sierra']    { --al-field: var(--al-sierra);    --al-on-field: #ffffff;        --al-field-ink: var(--al-sierra); }
+[data-region='costa']     { --al-field: var(--al-costa);     --al-on-field: var(--al-ink);  --al-field-ink: var(--al-costa-ink); }
+[data-region='amazonia']  { --al-field: var(--al-amazonia);  --al-on-field: var(--al-ink);  --al-field-ink: var(--al-amazonia-ink); }
+[data-region='galapagos'] { --al-field: var(--al-galapagos); --al-on-field: #ffffff;        --al-field-ink: var(--al-galapagos); }
+/* Campos de sección que no son región */
+[data-field='portada']  { --al-field: var(--al-maiz);  --al-on-field: var(--al-ink); }
+[data-field='noche']    { --al-field: var(--al-ink);   --al-on-field: #ffffff; }
+[data-field='fiesta']   { --al-field: var(--al-rojo);  --al-on-field: #ffffff; }
+[data-field='papel']    { --al-field: var(--al-paper); --al-on-field: var(--al-ink); }

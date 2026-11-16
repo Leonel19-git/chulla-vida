@@ -51,3 +51,14 @@ Cuando se configure el servicio, el viajero autenticado solicita cupos de oferta
 La referencia de regreso solo abre la consulta: el servidor verifica el resultado con PayPhone. Los intentos conservan referencia e idempotencia para recuperación; un resultado pendiente o incierto requiere consulta antes de reintentar. El resumen descargable de un pago verificado no sustituye una factura ni acredita liquidación al anfitrión. «Revisión y reembolso» registra una solicitud del propietario, sin cancelar automáticamente la visita ni devolver dinero. Membresías, billetera, retiros y checkout anteriores siguen siendo demo local; `pago_demo` no rellena `pagado_en` ni alimenta pagos conectados.
 
 La revisión live muestra los términos públicos aprobados, publicados y vigentes con versión, fecha y contenido ampliable. La aceptación requiere una acción explícita y registro confirmado por el servidor para esa versión; un borrador, una consulta fallida, términos ausentes o cambiados mantienen bloqueado el pago. La mera selección de la casilla no habilita el cobro. Deben aplicarse todas las migraciones antes de validar este recorrido alojado.
+
+## Dirección visual vigente — 16 de noviembre de 2026
+
+El dueño eligió la dirección **«Álbum del Ecuador»** (rediseño completo, sustituye al mundo visual anterior de papel crema, serif y barra lateral). Compromisos de marca que mandan sobre lo descrito arriba cuando haya conflicto:
+
+- CHULLA VIDA es un álbum de cromos: cada lugar es un cromo numerado (01–51), los sobres son sugerencias de MIJIN, «Mi sobre» reúne guardados y Mi viaje, y solo una visita verificada «pega» el cromo con brillo.
+- Tintas planas a página completa (maíz, azul noche, azul cumbre, turquesa, verde selva, lava, rojo) y la familia Archivo Variable; no usar crema, Newsreader ni Plus Jakarta Sans en lo nuevo.
+- Logo 2026 (`public/brand/`) siempre como sticker blanco troquelado. La intro sale solo en la primera visita y **termina con el logo**.
+- Navegación única: barra superior en escritorio y barra inferior de cinco destinos en móvil (Álbum, Fiestas, MIJIN, Mi sobre, Yo). Las pantallas del prototipo antiguo dejan de mostrarse.
+- Se puede ver el álbum sin cuenta; comprar, pagar, pedir información, la billetera y el pasaporte exigen cuenta con correo verificado, y el servidor decide importes y estados de pago.
+- Detalle completo en `.impeccable/album-direction.md`; `DESIGN.md` se reescribe al terminar la obra.

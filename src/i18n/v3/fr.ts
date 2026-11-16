@@ -1,3 +1,4 @@
+import { partsFor } from './parts';
 // Interfaz 3.x · francés. Clave: literal en español; traducción escrita a mano (no automática).
 // Se carga solo cuando eliges este idioma. Nombres propios, catálogo y textos legales no se traducen aquí.
 const dictionary: Record<string, string> = {
@@ -1307,4 +1308,5 @@ const dictionary: Record<string, string> = {
   "Leer el documento completo": "Lire le document complet",
   "Aún tienen campos por completar y no acreditan cumplimiento.": "Il reste des champs à compléter ; ils n’attestent pas la conformité.",
 };
-export default dictionary;
+const merged: Record<string, string> = { ...dictionary, ...partsFor('fr') };
+export default merged;
