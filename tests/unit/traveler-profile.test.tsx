@@ -5,6 +5,7 @@ import userEvent from '@testing-library/user-event';
 import { AuthPanel } from '../../src/features/auth/AuthPanel';
 import { WELCOME_KEY } from '../../src/features/onboarding/WelcomeFlow';
 import { cardLabel, parsePreferences } from '../../src/features/traveler/profile';
+import { roleStore } from '../../src/features/roles/role';
 
 type Row = Record<string, unknown>;
 const mocks = vi.hoisted(() => ({
@@ -56,7 +57,7 @@ vi.mock('../../src/lib/supabase', () => ({
 
 const traveler = { user: { id: 'viajera-1', email: 'amaru@example.com', user_metadata: { display_name: 'Amaru' } } };
 beforeEach(() => {
-  localStorage.clear(); sessionStorage.clear();
+  localStorage.clear(); sessionStorage.clear(); roleStore.reset();
   mocks.session = null; mocks.listener = null; mocks.missingColumns = false; mocks.updates = [];
   mocks.tables = { profiles: [{ id: 'viajera-1', display_name: 'Amaru', home_country: '', home_city: '', travel_preferences: {}, marketing_consent_at: null }] };
   mocks.rpc.mockReset(); mocks.signUp.mockReset(); mocks.verifyOtp.mockReset(); mocks.signOut.mockReset();
@@ -77,8 +78,8 @@ describe('cuenta de viajero conectada', () => {
     expect(screen.getByRole('heading', { name: 'Mis compras y reservas' })).toBeInTheDocument();
     expect(await screen.findByText('Todavía no tienes compras ni reservas.')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Explorar experiencias/ })).toBeInTheDocument();
-    const business = screen.getByText('Representar un negocio o comunidad').closest('details')!;
-    expect(business).not.toHaveAttribute('open');
+    // Viajero: nada de negocios ni anfitriones en su cuenta.
+    expect(screen.queryByText(/Representar un negocio|Registra tu negocio|Solicitar revisión/)).not.toBeInTheDocument();
     const passport = vi.fn(); const wallet = vi.fn();
     window.addEventListener('cv3:passport', passport); window.addEventListener('cv3:wallet', wallet);
     fireEvent.click(screen.getByRole('button', { name: /Mi pasaporte/ }));
@@ -170,7 +171,7 @@ describe('registro que termina en el perfil', () => {
     await user.click(screen.getByRole('checkbox', { name: /Acepto los Términos/ }));
     await user.click(screen.getByRole('button', { name: 'Crear cuenta y recibir código' }));
     await screen.findByRole('heading', { name: 'Te enviamos un código a tu correo' });
-    fireEvent.paste(screen.getAllByLabelText(/Dígito \d de 6/)[0], { clipboardData: { getData: () => '123456' } });
+    fireEvent.paste(screen.getByLabelText(/Código de 6 dígitos/), { clipboardData: { getData: () => '123456' } });
     expect(await screen.findByText('¡Qué bacán tenerte aquí, Amaru!')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Tu cuenta viajera' })).toBeInTheDocument();
     expect(await screen.findByLabelText('Nombre visible')).toHaveValue('Amaru');

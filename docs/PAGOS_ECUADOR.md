@@ -107,7 +107,16 @@ Preparada para cuando exista Supabase; el navegador todavía no la llama. Tabla 
 
 ## Método de pago y tarjeta de prueba (14-11-2026)
 
-El paso «Método de pago» (`Checkout.tsx`) ofrece **Tarjeta de crédito o débito**; «Transferencia bancaria» y «DeUna» aparecen como *próximamente* (deshabilitadas: no existen todavía).
+El paso «Método de pago» (`Checkout.tsx`) ofrece **Tarjeta de crédito o débito** y **Transferencia bancaria** (ver la sección siguiente); «DeUna» aparece como *próximamente* (deshabilitada: todavía no existe).
+
+### Transferencia bancaria con comprobante (16-11-2026, migración `202611160101_transfer_payments.sql`)
+
+- **Cuenta del negocio**: tabla `organization_bank_accounts` (banco, tipo, número, titular, cédula/RUC). Solo la leen y escriben los responsables del negocio (`is_org_manager`); formulario `BankAccountForm.tsx`. Nunca se inventan datos: si el negocio no registró cuenta, el checkout muestra «Datos bancarios de prueba» rotulados y no sube nada.
+- **Viajero**: `start_transfer_payment` (cuenta verificada, fechas inicio/fin, adultos/niños, monto, clave idempotente) crea la transferencia con referencia única `CV-T-XXXXXX`. El comprobante (foto o PDF, ≤ 5 MB, tipo y firma binaria revisados, fotos reducidas a 1600 px en el cliente) se sube al bucket **privado** `payment-receipts` en `<org>/<viajero>/<transferencia>/<archivo>` y se adjunta con `submit_transfer_receipt` → «Comprobante enviado · pendiente de verificación».
+- **Negocio**: `TransferReviewList.tsx` lista los comprobantes (URL firmada de 60 s) y decide con `review_transfer_payment`: «Pago recibido» (`paid`) o «Rechazar» con motivo (el viajero sube otro). Solo un responsable activo del negocio, nunca el propio viajero; cada paso queda en `admin_audit_logs`.
+- **Lectura del comprobante**: el viajero que lo subió y los miembros activos del negocio. Nadie más. Sin update/delete desde el cliente.
+- **Modo prueba local** (sin Supabase, sin sesión, compra de varias paradas o negocio sin cuenta): referencia `PRB-…`, el archivo no sale del navegador y en la billetera solo queda la referencia y el tipo de archivo; la respuesta del anfitrión se simula con botones rotulados.
+- Pruebas: `supabase/tests/transfer-payments.test.ts` (PGlite: RLS, RPC, bucket) y `tests/unit/transfer-payment.test.tsx` (stepper, fechas, flujo completo en prueba y en línea simulado, validación de archivo, panel del negocio).
 
 - **Con PayPhone activo** (`/api/payments/config` → `enabled:true`) **y** oferta habilitada por el servidor: no hay ningún campo de tarjeta propio. La tarjeta se escribe solo en la página alojada de PayPhone, desde «Reservas y pagos» (flujo descrito arriba). Si PayPhone devuelve `cardBrand`/`lastDigits`, `checkProviderConfirmation` ya los conserva para el comprobante real.
 - **En modo prueba** (caso actual: sin credenciales) se muestra `CardForm.tsx`: vista previa de la tarjeta que gira al escribir el CVV (sin giro con `prefers-reduced-motion`), número con espacios por marca, detección en vivo de Visa, Mastercard, American Express, Diners Club y Discover con distintivos propios (`CardBrandMark.tsx`, solo tipografía y color, sin logotipos oficiales), Luhn, vencimiento MM/AA no vencido, CVV de 3 o 4 dígitos (Amex) y titular.

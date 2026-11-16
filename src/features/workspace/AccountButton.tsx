@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { LogIn } from 'lucide-react';
 
+import { useT } from '../../i18n/v3';
 export interface AccountIdentity { name: string; initial: string }
 type SessionLike = { user?: { email?: string | null; user_metadata?: Record<string, unknown> | null } | null } | null;
 
@@ -30,6 +31,7 @@ export function openAccount(tab?: 'signup' | 'login') {
  * con el nombre cuando hay sesión. Carga supabase-js solo si hay sesión guardada o si abres tu cuenta.
  */
 export function AccountButton() {
+  const t = useT();
   const [identity, setIdentity] = useState<AccountIdentity | null>(null);
   useEffect(() => {
     let active = true;
@@ -51,10 +53,10 @@ export function AccountButton() {
     window.addEventListener('cv3:account', onAccount);
     return () => { active = false; unsubscribe?.(); window.removeEventListener('cv3:account', onAccount); };
   }, []);
-  if (identity) return <button type="button" className="cv-account-button is-signed" data-tour="account" onClick={() => openAccount()} aria-label={`Tu cuenta: ${identity.name}`}>
+  if (identity) return <button type="button" className="cv-account-button is-signed" data-tour="account" onClick={() => openAccount()} aria-label={t("Tu cuenta: {name}", { name: identity.name })}>
     <span className="cv-account-initial" aria-hidden="true">{identity.initial}</span><span className="cv-account-label">{identity.name}</span>
   </button>;
-  return <button type="button" className="cv-account-button" data-tour="account" aria-label="Entrar o crear cuenta" onClick={() => openAccount('signup')}>
-    <LogIn size={17} aria-hidden="true" /><span className="cv-account-label cv-account-long" aria-hidden="true">Entrar / Crear cuenta</span><span className="cv-account-label cv-account-short" aria-hidden="true">Entrar</span>
+  return <button type="button" className="cv-account-button" data-tour="account" aria-label={t("Entrar o crear cuenta")} onClick={() => openAccount('signup')}>
+    <LogIn size={17} aria-hidden="true" /><span className="cv-account-label cv-account-long" aria-hidden="true">{t("Entrar / Crear cuenta")}</span><span className="cv-account-label cv-account-short" aria-hidden="true">{t("Entrar")}</span>
   </button>;
 }

@@ -14,6 +14,47 @@ npm run lint
 
 `npm run check` reúne estos pasos. El build tipa el cliente; `typecheck:api` cubre ambos adaptadores de servidor.
 
+## Recorrido 3.4 (16-11-2026)
+
+**`npm run check`:** pasa. 860 pruebas en 80 archivos, build, lint (0 errores, solo avisos ya existentes), tipado de `api/` y verificaciones.
+
+**Navegador:** build servido con `vite preview` (puerto 4517), con la CSP de `vercel.json` inyectada y movimiento reducido. Se probó en Chromium 1440×900, Chromium Pixel 7, WebKit iPhone SE y WebKit iPhone 13. Se recorrieron intro, bienvenida, portada y 13 rutas (`/cultura-viva`, `/pasaporte`, `/mi-viaje`, `/billetera`, `/mijin`, `/sin-senal`, `/cuenta`, `/anfitriones`, `/privacidad`, `/reservas`, `/avisos`, `/derechos-de-datos` y una ficha).
+
+| Resultado | Valor |
+|---|---|
+| Errores de consola | 0 |
+| Violaciones de la CSP | 0 |
+| Desborde horizontal | 0 |
+| Imágenes rotas | 0 |
+| Párrafos visibles de 4 líneas o más (sin desplegar) | 0 |
+
+`tests/e2e/home-compact.spec.ts` y `mobile.spec.ts`, en 4 proyectos: 49 pasan y 3 se omiten (WebKit no crea eventos táctiles sintéticos).
+
+### Lista de cumplimiento
+
+| Pedido del dueño | Estado | Cómo se comprobó |
+|---|---|---|
+| Personas (adultos y niños) y fechas de inicio y fin | ✅ | `transfer-payment.test.tsx` y `integration-32`. Captura de Mi viaje en iPhone 13. |
+| El tutorial vuelve arriba | ✅ | `home-compact.spec.ts`: el recorrido enfoca `#hero-title`. |
+| Crear cuenta al principio | ✅ | En la bienvenida, «Crear cuenta» está visible sin bajar en los 4 dispositivos. |
+| Código en un solo campo con `one-time-code` | ✅ | `OtpInput`: un solo `<input>` numérico de 16 px. Pruebas de auth. ⚠️ No probado con un SMS o correo real en un teléfono. |
+| Pasaporte a tamaño celular | ✅ | Una página por pantalla, también con movimiento reducido. El diálogo pasó de 21 a 1,7 pantallas en iPhone 13. |
+| Cultura Viva: 31 fiestas en cartas que giran, con foto y carrusel | ✅ | `culture-cards.test.tsx`. Capturas en 4 dispositivos. |
+| MIJIN saluda, pregunta, recuerda y responde con relevancia | ✅ | 259 pruebas del asistente, con un banco de 58 preguntas. |
+| Voz de MIJIN: la mejor disponible y con selector | ⚠️ | Ordena las voces por calidad, lee frases enteras sin cortes y tiene el selector «Voz de MIJIN». Su calidad depende de las voces del dispositivo; no se probó con audio real. |
+| Celular: scroll corto y más visual | ✅ | Portada: 5,91 pantallas en iPhone 13, 4,81 en Pixel 7 y 5,04 en escritorio. |
+| PRO diferenciado en el perfil | ✅ | `traveler-pro.test.tsx`. ⚠️ Sin sesión real en el navegador. |
+| El viajero no ve nada de negocio; el negocio ve solo lo suyo | ✅ | `home-compact.spec.ts` (roles) y `roles.test.tsx`. |
+| Transferencia con comprobante y revisión del anfitrión | ✅ | 9 pruebas en PGlite, `transfer-payment.test.tsx` y `host-transfers.test.tsx`. El panel del negocio ya muestra la cuenta bancaria y los comprobantes. |
+| Menos texto en todas partes | ✅ | Auditoría automática: ningún párrafo visible pasa de 3 líneas. Los textos legales y el detalle se despliegan al tocar. |
+| Traducción | ✅ | `i18n-v3.test.tsx` y `verify-i18n.mjs`. |
+| Fotos reales | ✅ | Sin imágenes rotas; créditos en cada foto. |
+| Compra con tarjeta de prueba y billetera | ✅ | `card-checkout.test.tsx`. En el almacenamiento no queda el número completo ni el CVV. |
+| Descargas y rutas URL | ✅ | Las 13 rutas abren su vista. |
+| Video 1080p de la intro, con barra inferior | ✅ | Captura de la intro. |
+| Privacidad por niveles y PDF de la LOPDP | ✅ | `privacy-consent.test.tsx`. Los PDF están en `/privacidad`. |
+| Voz con respaldo local | ✅ | Pruebas de `voice-*`. ⚠️ No se probó con un micrófono real. |
+
 Resultado de esta continuación: **59 pruebas en 13 archivos aprobadas**, build y tipado de API aprobados, verificaciones de dominio/catálogo/legales aprobadas. Lint finaliza correctamente con avisos pendientes del prototipo y de organización de componentes. El detector mecánico de diseño señaló diferencias respecto a la escala anterior de `DESIGN.md`; no constituye una aprobación visual.
 
 ## Cobertura automatizada

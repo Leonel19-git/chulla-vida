@@ -3,6 +3,7 @@ import { BadgeCheck, CircleAlert, IdCard } from 'lucide-react';
 import { maskCedula, validateCedula, validatePassport, type DocumentType } from '../../domain/identity/cedula';
 import './checkout.css';
 
+import { useT } from '../../i18n/v3';
 export interface DocumentValue { type: DocumentType; number: string }
 export interface DocumentValidity { valid: boolean; masked: string; provinceName: string | null }
 
@@ -22,6 +23,7 @@ export function documentValidity(value: DocumentValue): DocumentValidity {
  * y no guarda el número en el navegador: quien lo use debe conservar solo `maskCedula(...)`.
  */
 export function CedulaField({ value, onChange, disabled = false }: { value: DocumentValue; onChange: (value: DocumentValue) => void; disabled?: boolean }) {
+  const t = useT();
   const id = useId();
   const [touched, setTouched] = useState(false);
   const isPassport = value.type === 'passport';
@@ -34,13 +36,13 @@ export function CedulaField({ value, onChange, disabled = false }: { value: Docu
   const state: 'empty' | 'incomplete' | 'invalid' | 'valid' = valid ? 'valid' : !value.number ? 'empty' : incomplete && !touched ? 'incomplete' : 'invalid';
   const setType = (type: DocumentType) => { setTouched(false); onChange({ type, number: '' }); };
   return <fieldset className="cedula-field" data-state={state} disabled={disabled}>
-    <legend>Documento de identidad</legend>
-    <div className="cedula-switch" role="radiogroup" aria-label="Tipo de documento">
-      <label><input type="radio" name={`${id}-type`} checked={!isPassport} onChange={() => setType('cedula')} />Cédula ecuatoriana</label>
-      <label><input type="radio" name={`${id}-type`} checked={isPassport} onChange={() => setType('passport')} />Pasaporte (visitantes)</label>
+    <legend>{t("Documento de identidad")}</legend>
+    <div className="cedula-switch" role="radiogroup" aria-label={t("Tipo de documento")}>
+      <label><input type="radio" name={`${id}-type`} checked={!isPassport} onChange={() => setType('cedula')} />{t("Cédula ecuatoriana")}</label>
+      <label><input type="radio" name={`${id}-type`} checked={isPassport} onChange={() => setType('passport')} />{t("Pasaporte (visitantes)")}</label>
     </div>
     <label className="cedula-input" htmlFor={`${id}-number`}>
-      <span>{isPassport ? 'Número de pasaporte' : 'Número de cédula · 10 dígitos'}</span>
+      <span>{isPassport ? t("Número de pasaporte") : t("Número de cédula · 10 dígitos")}</span>
       <span className="cedula-box">
         <IdCard size={20} aria-hidden="true" />
         <input id={`${id}-number`} className="field" value={value.number} autoComplete="off" spellCheck={false}
@@ -54,14 +56,14 @@ export function CedulaField({ value, onChange, disabled = false }: { value: Docu
     <p id={`${id}-status`} className="cedula-status" role="status" aria-live="polite">
       {state === 'valid' ? <><span className="cedula-check" aria-hidden="true"><BadgeCheck size={20} /></span>
         <span className="cedula-card">
-          <strong className="cedula-card-title">Formato válido</strong>
+          <strong className="cedula-card-title">{t("Formato válido")}</strong>
           <span className="cedula-card-number">{isPassport ? `Pasaporte ${passport?.normalized ?? ''}` : `Cédula ${cedula?.formatted ?? ''}`}</span>
-          <span className="cedula-card-meta">{cedula?.provinceName ? <>Provincia: {cedula.provinceName} · </> : null}se guardará como <span className="cedula-masked">{maskCedula(cedula?.normalized ?? passport?.normalized ?? '')}</span></span>
+          <span className="cedula-card-meta">{cedula?.provinceName ? <>{t("Provincia:")}{' '}{cedula.provinceName} · </> : null}{t("se guardará como")}{' '}<span className="cedula-masked">{maskCedula(cedula?.normalized ?? passport?.normalized ?? '')}</span></span>
         </span></>
         : state === 'invalid' ? <><CircleAlert size={18} aria-hidden="true" /><span>{reason}</span></>
-          : state === 'incomplete' ? <span>Llevas {digits} de 10 dígitos.</span>
-            : <span>{isPassport ? 'Escribe el número tal como aparece en tu pasaporte.' : 'Escribe los 10 números, sin guion.'}</span>}
+          : state === 'incomplete' ? <span>{t("Llevas")}{' '}{digits}{' '}{t("de 10 dígitos.")}</span>
+            : <span>{isPassport ? t("Escribe el número tal como aparece en tu pasaporte.") : t("Escribe los 10 números, sin guion.")}</span>}
     </p>
-    <p id={`${id}-honesty`} className="cedula-honesty">{isPassport ? 'Solo revisamos que tenga letras y números; no consultamos al país emisor.' : 'Comprobamos el dígito verificador; no consultamos el Registro Civil.'} Guardamos solo los últimos 4 caracteres.</p>
+    <p id={`${id}-honesty`} className="cedula-honesty">{isPassport ? t("Solo revisamos que tenga letras y números; no consultamos al país emisor.") : t("Comprobamos el dígito verificador; no consultamos el Registro Civil.")}{' '}{t("Guardamos solo los últimos 4 caracteres.")}</p>
   </fieldset>;
 }

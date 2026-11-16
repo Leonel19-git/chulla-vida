@@ -1,0 +1,95 @@
+/* Cultura Viva: cartas que giran en un carrusel horizontal. Móvil primero (360–430 px). */
+.cvc-page{max-width:1180px;margin-inline:auto;color:var(--cv-ink,#10233f);--cvc-card-w:min(78vw,300px)}
+.cvc-head h1{font:600 clamp(30px,6vw,46px)/1.05 Newsreader,Georgia,serif;margin:0 0 6px}
+.cvc-head p{margin:0;color:var(--cv-muted,#3a4a55);font-size:15px}
+.cvc-offline{margin:12px 0 0;padding:8px 12px;border-radius:var(--cv-r-m,12px);background:var(--cv-paper-2,#f4ecd9);font-size:14px}
+.cvc-section{margin-top:26px}
+.cvc-section h2{display:flex;align-items:center;gap:8px;font:600 clamp(21px,4.4vw,28px)/1.15 Newsreader,Georgia,serif;margin:0 0 10px}
+.cvc-this-month{padding:16px 0 4px;border-radius:var(--cv-r-xl,26px);background:linear-gradient(135deg,var(--cv-maize,#fed65a) 0%,#fff1c2 60%,transparent 100%)}
+.cvc-this-month h2{padding-inline:16px}
+.cvc-this-month h2 svg{color:var(--cv-red,#c61534)}
+
+/* Filtros en chips con desplazamiento lateral. */
+.cvc-filters{display:grid;gap:8px}
+.cvc-chip-row{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 6px;scrollbar-width:none;scroll-snap-type:x proximity}
+.cvc-chip-row::-webkit-scrollbar{display:none}
+.cvc-filter{flex:none;scroll-snap-align:start;min-height:44px;min-width:44px;padding:0 16px;border-radius:var(--cv-r-pill,999px);border:1.5px solid var(--cv-line,#d6ccb5);background:var(--cv-card,#fffdf7);color:var(--cv-ink,#10233f);font:600 14px/1 inherit;cursor:pointer}
+.cvc-filter[aria-pressed=true]{background:var(--tone,var(--cv-navy,#012960));border-color:var(--tone,var(--cv-navy,#012960));color:#fff}
+.cvc-filter:focus-visible,.cvc-arrow:focus-visible,.cvc-face:focus-visible,.cvc-icon-button:focus-visible,.cvc-cta:focus-visible,.cvc-back a:focus-visible,.cvc-related button:focus-visible,.cvc-more summary:focus-visible{outline:3px solid var(--cv-red,#c61534);outline-offset:3px}
+.cvc-count{margin:8px 0 0;font-size:14px;color:var(--cv-muted,#3a4a55)}
+.cvc-empty{padding:24px 0;color:var(--cv-muted,#3a4a55)}
+.cvc-note{margin:6px 0 0;font-size:13px;color:var(--cv-muted,#3a4a55)}
+
+/* Carrusel */
+.cvc-carousel{position:relative}
+.cvc-track{display:flex;gap:14px;margin:0;padding:10px 16px 18px;list-style:none;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scroll-padding-inline:16px;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
+.cvc-item{flex:none;width:var(--cvc-card-w);scroll-snap-align:center}
+.cvc-featured{--cvc-card-w:min(84vw,340px)}
+.cvc-arrows{display:none}
+@media (min-width:768px) and (hover:hover){
+  .cvc-arrows{display:flex;gap:8px;position:absolute;top:-52px;right:16px}
+  .cvc-arrow{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;border:1.5px solid var(--cv-line,#d6ccb5);background:var(--cv-card,#fffdf7);color:var(--cv-ink,#10233f);cursor:pointer}
+  .cvc-arrow:hover{background:var(--cv-paper-2,#f4ecd9)}
+  .cvc-item{scroll-snap-align:start}
+}
+
+/* Carta */
+.cvc-card{perspective:1300px;height:100%}
+.cvc-inner{position:relative;display:grid;aspect-ratio:4/5.6;min-height:400px;transition:transform .6s var(--cv-ease,cubic-bezier(.2,.7,.2,1));transform-style:preserve-3d}
+.cvc-card[data-flipped] .cvc-inner{transform:rotateY(180deg)}
+/* La cara oculta no recibe toques (Safari prueba también las caras traseras). */
+.cvc-card:not([data-flipped]) .cvc-back,.cvc-card[data-flipped] .cvc-front{pointer-events:none}
+/* Safari/iOS ignora backface-visibility en caras con desplazamiento interno y mostraba el reverso en espejo:
+   la cara oculta se esconde también con visibility, a mitad del giro (0,3 s de 0,6 s). */
+.cvc-card:not([data-flipped]) .cvc-back,.cvc-card[data-flipped] .cvc-front{visibility:hidden}
+.cvc-face{grid-area:1/1;position:relative;overflow:hidden;border-radius:var(--cv-r-l,19px);backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:var(--cv-shadow-2,0 14px 32px #01296033);transition:visibility 0s linear .3s}
+.cvc-front{display:block;width:100%;height:100%;padding:0;border:0;background:var(--tone,#012960);color:#fff;text-align:left;cursor:pointer;font:inherit}
+.cvc-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .5s var(--cv-ease,ease)}
+.cvc-front:hover .cvc-photo{transform:scale(1.04)}
+.cvc-shade{position:absolute;inset:0;background:linear-gradient(180deg,#0000 38%,#011a3dcc 78%,#011a3df2 100%)}
+.cvc-art-label{position:absolute;top:10px;left:10px;padding:4px 9px;border-radius:var(--cv-r-pill,999px);background:#ffffffe6;color:var(--cv-ink,#10233f);font-size:12px;font-weight:600}
+.cvc-front-text{position:absolute;inset:auto 0 0 0;display:grid;gap:8px;padding:16px}
+.cvc-chips{display:flex;flex-wrap:wrap;gap:6px}
+.cvc-chip{padding:5px 10px;border-radius:var(--cv-r-pill,999px);background:#ffffff2e;border:1px solid #ffffff59;font-size:12.5px;font-weight:700;backdrop-filter:blur(4px)}
+.cvc-chip-month{background:var(--cv-maize,#fed65a);border-color:var(--cv-maize,#fed65a);color:#10233f}
+.cvc-name{font:600 clamp(24px,6.6vw,30px)/1.08 Newsreader,Georgia,serif;text-wrap:balance;text-shadow:0 1px 8px #0006}
+.cvc-hint{font-size:12.5px;opacity:.9}
+
+.cvc-back{transform:rotateY(180deg);display:flex;flex-direction:column;gap:10px;padding:16px;background:var(--cv-card,#fffdf7);color:var(--cv-ink,#10233f);border-top:6px solid var(--tone,#012960);overflow-y:auto;font-size:14px;line-height:1.4;cursor:pointer}
+.cvc-back>*{cursor:auto}
+.cvc-back-head{display:flex;align-items:start;justify-content:space-between;gap:8px}
+.cvc-back h3{margin:0;font:600 21px/1.15 Newsreader,Georgia,serif}
+.cvc-icon-button{flex:none;display:grid;place-items:center;width:44px;height:44px;border-radius:50%;border:1.5px solid var(--cv-line,#d6ccb5);background:#fff;color:var(--cv-ink,#10233f);cursor:pointer}
+.cvc-facts,.cvc-respect,.cvc-related,.cvc-more ul{margin:0;padding:0;list-style:none}
+.cvc-facts{display:grid;gap:7px}
+.cvc-facts li{display:grid;grid-template-columns:18px 1fr;gap:8px;align-items:start}
+.cvc-facts svg{margin-top:2px;color:var(--tone,#012960)}
+.cvc-facts strong{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--cv-muted,#3a4a55)}
+.cvc-status{display:inline-block;margin-top:3px;padding:1px 7px;border-radius:var(--cv-r-pill,999px);background:var(--tone-wash,#f4ecd9);font-style:normal;font-size:12px;font-weight:700}
+.cvc-respect-title{margin:2px 0 0;font-weight:700;font-size:13px}
+.cvc-respect{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.cvc-respect li{display:grid;justify-items:center;gap:4px;padding:8px 4px;border-radius:var(--cv-r-m,12px);background:var(--tone-wash,#f4ecd9);text-align:center;font-size:12px;font-weight:600;line-height:1.2}
+.cvc-respect svg{color:var(--tone,#012960)}
+.cvc-more summary{min-height:44px;display:flex;align-items:center;cursor:pointer;font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.cvc-more li{position:relative;padding-left:14px;margin-top:5px}
+.cvc-more li::before{content:'';position:absolute;left:2px;top:.55em;width:5px;height:5px;border-radius:50%;background:var(--tone,#012960)}
+.cvc-source{margin:0;font-size:12px;color:var(--cv-muted,#3a4a55)}
+.cvc-source a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+.cvc-cta{margin-top:auto;min-height:44px;border:0;border-radius:var(--cv-r-pill,999px);background:var(--cv-navy,#012960);color:#fff;font:700 14px/1 inherit;cursor:pointer}
+.cvc-cta:hover{background:var(--cv-navy-2,#0b3c7d)}
+.cvc-related{display:grid;gap:6px}
+.cvc-related button{width:100%;min-height:44px;padding:6px 12px;border-radius:var(--cv-r-m,12px);border:1.5px solid var(--cv-line,#d6ccb5);background:#fff;text-align:left;font:600 14px/1.25 inherit;color:var(--cv-ink,#10233f);cursor:pointer}
+.cvc-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* Movimiento reducido: fundido en lugar de giro. */
+@media (prefers-reduced-motion:reduce){
+  .cvc-inner{transition:none;transform:none!important}
+  .cvc-face{backface-visibility:visible;-webkit-backface-visibility:visible;transition:opacity .2s linear,visibility 0s linear .2s}
+  .cvc-card[data-flipped] .cvc-back,.cvc-card:not([data-flipped]) .cvc-front{transition:opacity .2s linear,visibility 0s}
+  .cvc-back{transform:none;opacity:0}
+  .cvc-card[data-flipped] .cvc-back{opacity:1}
+  .cvc-card[data-flipped] .cvc-front{opacity:0}
+  .cvc-photo,.cvc-front:hover .cvc-photo{transition:none;transform:none}
+  .cvc-track{scroll-behavior:auto}
+}
+@media (max-width:359px){.cvc-page{--cvc-card-w:86vw}.cvc-respect li{font-size:11px}}

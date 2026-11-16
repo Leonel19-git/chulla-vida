@@ -39,7 +39,7 @@ export function ConsentProvider({ children }: { children: ReactNode }) {
     setPreferences(next); setEditing(false);
     try {
       localStorage.setItem(CONSENT_KEY, JSON.stringify(next));
-      setNotice(next.method === 'revoke' ? 'Listo: retiramos los permisos opcionales. Spotify y los mapas ya no se cargan.' : `Guardamos tu elección: ${LEVEL_NAME[next.level]}. Puedes cambiarla cuando quieras en «Privacidad y cookies».`);
+      setNotice(next.method === 'revoke' ? 'Listo: retiramos los permisos opcionales. Spotify y los mapas ya no se cargan.' : `Listo: modo ${LEVEL_NAME[next.level]}. Lo cambias en «Privacidad».`);
     } catch { setNotice('Aplicamos tu elección en esta visita. Tu navegador no permite guardarla.'); }
   };
   const update: ConsentApi['update'] = (value, method = 'feature') => save(makeConsent({ media: value.media, personalization: value.personalization, analytics: value.analytics, marketing: value.marketing }, new Date(), method));

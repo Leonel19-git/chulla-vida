@@ -14,7 +14,8 @@ export default defineConfig({
           groups: [
             { name: 'react', test: /node_modules[\/](react|react-dom|scheduler)[\/]/ },
             { name: 'icons', test: /node_modules[\/]lucide-react[\/]/ },
-            { name: 'i18n', test: /src[\/]i18n[\/]/ },
+            // Los diccionarios v3 (en/fr/pt/zh) quedan fuera: se descargan solo al elegir ese idioma.
+            { name: 'i18n', test: /src[\/]i18n[\/](?!v3[\/](en|fr|pt|zh)\.ts)/ },
             { name: 'catalog-data', test: /src[\/](domain[\/]catalog|data)[\/]/ },
           ],
         },

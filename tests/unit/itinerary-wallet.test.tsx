@@ -36,7 +36,7 @@ const planner = () => within(dialogs()[0]);
 const top = () => within(dialogs().at(-1) as HTMLElement);
 const stop = (title: string) => within(planner().getByRole('heading', { name: title, level: 4 }).closest('li') as HTMLElement);
 async function finishCheckout() {
-  await screen.findByRole('heading', { name: 'Fecha y personas' }, { timeout: 5000 });
+  await screen.findByRole('heading', { name: 'Fechas y personas' }, { timeout: 5000 });
   fireEvent.click(top().getByRole('button', { name: /^Continuar/ }));
   fireEvent.change(top().getByLabelText('Nombre y apellido'), { target: { value: 'Luz Quishpe' } });
   fireEvent.change(top().getByLabelText('Correo'), { target: { value: 'luz@correo.ec' } });
@@ -75,7 +75,7 @@ describe('Mi viaje unido a la billetera', () => {
   it('«Comprar todo mi viaje» compra lo comprable y deja el resto como solicitud', async () => {
     renderPlanner();
     fireEvent.click(screen.getByRole('button', { name: /Comprar todo mi viaje/ }));
-    await screen.findByRole('heading', { name: 'Fecha y personas' }, { timeout: 5000 });
+    await screen.findByRole('heading', { name: 'Fechas y personas' }, { timeout: 5000 });
     expect(top().getByRole('heading', { name: saraguro.title, level: 4 })).toBeInTheDocument();
     expect(top().getByText(/Quedan como solicitud \(1\)/)).toBeInTheDocument();
     await finishCheckout();

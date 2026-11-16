@@ -73,3 +73,44 @@ conversión a WebP (640 y 1280 px): son obras derivadas; las CC BY-SA se compart
 a partir de las fotos de esta lista (`gen-02`, `gen-09`, `gen-07`, `costa-01`, `costa-03`, `amz-01`, `amz-10`, `gal-04`, `gal-01`):
 recorte, escalado y movimiento lento, sin texto incrustado. Cada toma de la intro muestra en pantalla su autor y licencia
 (desde `public/video/intro-cues.json`). Detalle: `public/video/CREDITS.md`.
+
+<!-- cultura-viva:inicio -->
+
+## Cultura Viva: fotos de fiestas (Wikimedia Commons)
+
+Generado por `scripts/fetch-culture-images.py` desde `scripts/culture-images.json`. Recorte vertical 4:5
+centrado y conversión a WebP (640 y 1280 px): son obras derivadas; las CC BY-SA se comparten bajo la misma
+licencia. Una foto libre no implica aval del autor ni de las personas o comunidades que aparecen.
+
+- `ano-viejo-640.webp`, `ano-viejo-1280.webp`: «Monigotes (15954812490).jpg» — Agencia de Noticias ANDES. CC BY-SA 2.0 (https://creativecommons.org/licenses/by-sa/2.0). https://commons.wikimedia.org/wiki/File:Monigotes_(15954812490).jpg
+- `artes-vivas-loja-640.webp`, `artes-vivas-loja-1280.webp`: «Children drawing with chalk on a decorated street in Loja during the arts festival.jpg» — Martín Vasco. CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0). https://commons.wikimedia.org/wiki/File:Children_drawing_with_chalk_on_a_decorated_street_in_Loja_during_the_arts_festival.jpg
+- `cantonizacion-isabela-640.webp`, `cantonizacion-isabela-1280.webp`: «Parque Central de Puerto Villamil.jpg» — David C. S.. CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0). https://commons.wikimedia.org/wiki/File:Parque_Central_de_Puerto_Villamil.jpg
+- `carnaval-guaranda-640.webp`, `carnaval-guaranda-1280.webp`: «Carnaval de Guaranda 2019.jpg» — Paulycazaph. CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0). https://commons.wikimedia.org/wiki/File:Carnaval_de_Guaranda_2019.jpg
+- `corpus-christi-pujili-640.webp`, `corpus-christi-pujili-1280.webp`: «Danzantes del Corpus Christi, Pujilí.jpg» — Ministerio de Turismo Ecuador. CC BY-SA 2.0 (https://creativecommons.org/licenses/by-sa/2.0). https://commons.wikimedia.org/wiki/File:Danzantes_del_Corpus_Christi,_Pujil%C3%AD.jpg
+- `dia-difuntos-640.webp`, `dia-difuntos-1280.webp`: «Colada morada with guagua de pan from Cyrano bakery in Quito.jpg» — Taty2007. CC BY 4.0 (https://creativecommons.org/licenses/by/4.0). https://commons.wikimedia.org/wiki/File:Colada_morada_with_guagua_de_pan_from_Cyrano_bakery_in_Quito.jpg
+- `diablada-pillaro-640.webp`, `diablada-pillaro-1280.webp`: «Diablada-ecuador.jpg» — Saldeplata. CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0). https://commons.wikimedia.org/wiki/File:Diablada-ecuador.jpg
+- `fiestas-cuenca-640.webp`: «Ecuador, Cuenca - Plaza del Carmen.jpg» — Maurizio Costanzo. CC BY 2.0 (https://creativecommons.org/licenses/by/2.0). https://commons.wikimedia.org/wiki/File:Ecuador,_Cuenca_-_Plaza_del_Carmen.jpg
+- `fruta-flores-640.webp`, `fruta-flores-1280.webp`: «Desfile de Carnaval, Ambato, Ecuador (6816467590).jpg» — mariaflorine. CC BY 2.0 (https://creativecommons.org/licenses/by/2.0). https://commons.wikimedia.org/wiki/File:Desfile_de_Carnaval,_Ambato,_Ecuador_(6816467590).jpg
+- `fundacion-guayaquil-640.webp`, `fundacion-guayaquil-1280.webp`: «Callecita Barrio Las Peñas, Guayaquil, Ecuador.jpg» — Diegoarielvega. CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0). https://commons.wikimedia.org/wiki/File:Callecita_Barrio_Las_Pe%C3%B1as,_Guayaquil,_Ecuador.jpg
+- `independencia-guayaquil-640.webp`, `independencia-guayaquil-1280.webp`: «Parque Centenario Monumento.jpg» — SantosJD. CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0). https://commons.wikimedia.org/wiki/File:Parque_Centenario_Monumento.jpg
+- `inti-raymi-640.webp`, `inti-raymi-1280.webp`: «Inti Raymi Otavalo Ecuador 1685.jpg» — Arabsalam. CC BY 4.0 (https://creativecommons.org/licenses/by/4.0). https://commons.wikimedia.org/wiki/File:Inti_Raymi_Otavalo_Ecuador_1685.jpg
+- `jesus-gran-poder-640.webp`, `jesus-gran-poder-1280.webp`: «Quito Proc del Jesus del Gran Poder 2010 a.jpg» — Cayambe. CC BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0). https://commons.wikimedia.org/wiki/File:Quito_Proc_del_Jesus_del_Gran_Poder_2010_a.jpg
+- `kapak-raymi-640.webp`, `kapak-raymi-1280.webp`: «Wikis of the Kapak Raymi Ceremony.jpg» — RosaMaria Birdfeather. CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0). https://commons.wikimedia.org/wiki/File:Wikis_of_the_Kapak_Raymi_Ceremony.jpg
+- `kulla-raymi-640.webp`, `kulla-raymi-1280.webp`: «Batea con mazorcas de maíz.jpg» — TupakAmaruIshkay. CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0). https://commons.wikimedia.org/wiki/File:Batea_con_mazorcas_de_ma%C3%ADz.jpg
+- `mama-negra-640.webp`, `mama-negra-1280.webp`: «FIESTA DE LA MAMA NEGRA (38115162706).jpg» — Agencia de Noticias ANDES. CC BY-SA 2.0 (https://creativecommons.org/licenses/by-sa/2.0). https://commons.wikimedia.org/wiki/File:FIESTA_DE_LA_MAMA_NEGRA_(38115162706).jpg
+- `marimba-esmeraldas-640.webp`: «AFROECUATORIANO - La Marimba Esmeraldas.jpg» — Orlando Caiza Tixilema. CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0). https://commons.wikimedia.org/wiki/File:AFROECUATORIANO_-_La_Marimba_Esmeraldas.jpg
+- `pase-nino-viajero-640.webp`: «Cuenca Pase del Niño.jpg» — Surreal Name Given. CC BY 2.0 (https://creativecommons.org/licenses/by/2.0). https://commons.wikimedia.org/wiki/File:Cuenca_Pase_del_Ni%C3%B1o.jpg
+- `pawkar-raymi-640.webp`, `pawkar-raymi-1280.webp`: «Indigenous Pawkar Raymi Festival Guaranda Ecuador 1.jpg» — Joshuaelterreno. CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0). https://commons.wikimedia.org/wiki/File:Indigenous_Pawkar_Raymi_Festival_Guaranda_Ecuador_1.jpg
+- `provincializacion-galapagos-640.webp`, `provincializacion-galapagos-1280.webp`: «Sea lions on town bench in Puerto Baquerizo Moreno, Galapagos Islands.JPG» — MusikAnimal. CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0). https://commons.wikimedia.org/wiki/File:Sea_lions_on_town_bench_in_Puerto_Baquerizo_Moreno,_Galapagos_Islands.JPG
+- `puyo-nacionalidades-640.webp`, `puyo-nacionalidades-1280.webp`: «Puyo Ecuador.jpg» — Kaldari. CC0 (http://creativecommons.org/publicdomain/zero/1.0/deed.en). https://commons.wikimedia.org/wiki/File:Puyo_Ecuador.jpg
+- `rodeo-montuvio-640.webp`: «Rodeos.jpg» — Meri.isa2606. CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0). https://commons.wikimedia.org/wiki/File:Rodeos.jpg
+- `virgen-del-cisne-640.webp`, `virgen-del-cisne-1280.webp`: «Romería de la Virgen de El Cisne 19,20 de agosto 2016 920 (29179469205).jpg» — Ministerio de Turismo Ecuador from Ecuador. CC BY-SA 2.0 (https://creativecommons.org/licenses/by-sa/2.0). https://commons.wikimedia.org/wiki/File:Romer%C3%ADa_de_la_Virgen_de_El_Cisne_19,20_de_agosto_2016_920_(29179469205).jpg
+- `virgen-quinche-640.webp`, `virgen-quinche-1280.webp`: «Santuario de El Quinche, El Quinche, Ecuador, 2015-07-21, DD 08.JPG» — Diego Delso. CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0). https://commons.wikimedia.org/wiki/File:Santuario_de_El_Quinche,_El_Quinche,_Ecuador,_2015-07-21,_DD_08.JPG
+
+Sin foto a propósito (la carta usa una ilustración propia, rotulada):
+
+- `fiesta-chonta`: celebración comunitaria Shuar y Achuar: no se publican fotos sin consentimiento.
+- `kasama`: ceremonia del pueblo Tsáchila: no se publican fotos sin consentimiento de la comunidad.
+- `nino-jista`: celebración comunitaria kichwa amazónica: no se publican fotos sin consentimiento.
+
+<!-- cultura-viva:fin -->

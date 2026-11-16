@@ -1,8 +1,13 @@
 import type { CulturalEvent, EventEdition, RegionId } from '../catalog/types.js';
 import { CULTURAL_EVENT_SEED, CULTURE_CHECKED_AT, CULTURE_SOURCE, LOJA_FESTIVAL_AGENDA_URL } from './data.js';
+import { CULTURAL_EVENT_MORE, CULTURE_MORE_CHECKED_AT } from './data-more.js';
+import { CULTURE_CARDS, CULTURE_SOURCES_CHECKED_AT, RESPECT_LABELS, type CultureCardInfo, type RespectIcon } from './sources.js';
+import { CULTURE_PHOTOS, type CulturePhoto } from './photos.js';
 
 export type { CulturalEvent, EventConfirmation, EventEdition } from '../catalog/types.js';
 export { CULTURE_CHECKED_AT, CULTURE_SOURCE, LOJA_FESTIVAL_AGENDA_URL };
+export { CULTURAL_EVENT_SEED, CULTURAL_EVENT_MORE, CULTURE_MORE_CHECKED_AT, CULTURE_CARDS, CULTURE_SOURCES_CHECKED_AT, RESPECT_LABELS, CULTURE_PHOTOS };
+export type { CultureCardInfo, CulturePhoto, RespectIcon };
 
 function deepFreeze<T>(value: T): T {
   if (value && typeof value === 'object' && !Object.isFrozen(value)) {
@@ -12,8 +17,11 @@ function deepFreeze<T>(value: T): T {
   return value;
 }
 
-/** Contenido semilla de Cultura Viva (sección 5): diez fiestas y tradiciones, con fechas orientativas salvo indicación. */
-export const CULTURAL_EVENTS: readonly CulturalEvent[] = deepFreeze([...CULTURAL_EVENT_SEED]);
+/**
+ * Cultura Viva: las diez fiestas de la especificación (sección 5) más las añadidas tras la investigación
+ * de noviembre de 2026 (`data-more.ts`). Fechas orientativas salvo ediciones fechadas con fuente.
+ */
+export const CULTURAL_EVENTS: readonly CulturalEvent[] = deepFreeze([...CULTURAL_EVENT_SEED, ...CULTURAL_EVENT_MORE]);
 
 const MONTH_NAMES = [
   'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
@@ -240,4 +248,41 @@ export function eventStatus(event: CulturalEvent, today?: Date): { label: string
   const iso = ecuadorToday(today).iso;
   const next = datedEditions(event).find(edition => edition.endDate >= iso);
   return { label: eventStatusLabel(event, today), upcoming: Boolean(next && next.startDate > iso) };
+}
+
+/* ───────── Cartas de Cultura Viva ───────── */
+
+export interface CultureCard {
+  event: CulturalEvent;
+  info: CultureCardInfo;
+  /** Foto real con licencia libre; null → la carta usa una ilustración propia, rotulada. */
+  photo: CulturePhoto | null;
+}
+
+/** Carta lista para mostrar: ficha + datos cortos + foto (si la hay). */
+export function getCultureCard(event: CulturalEvent): CultureCard {
+  const info = CULTURE_CARDS[event.id];
+  if (!info) throw new Error(`Falta la carta de Cultura Viva para ${event.id}`);
+  // Las ceremonias comunitarias nunca muestran foto, aunque alguien la añada al registro.
+  const photo = event.sensitive ? null : CULTURE_PHOTOS[event.id] ?? null;
+  return { event, info, photo };
+}
+
+/** Cartas filtradas por mes (1-12) y región, en el orden del calendario (enero → diciembre). */
+export function getCultureCards(filters: { month?: number | null; region?: RegionId | 'all' } = {}): CultureCard[] {
+  const firstMonth = (event: CulturalEvent) => (event.usualMonths.length ? Math.min(...event.usualMonths) : 13);
+  return CULTURAL_EVENTS.filter(
+    event =>
+      (!filters.region || filters.region === 'all' || event.region === filters.region) &&
+      (!filters.month || event.usualMonths.includes(filters.month)),
+  )
+    .map((event, index) => ({ event, index }))
+    .sort((a, b) => firstMonth(a.event) - firstMonth(b.event) || a.index - b.index)
+    .map(({ event }) => getCultureCard(event));
+}
+
+/** Fiestas del mes en curso (día calendario de Ecuador), para la sección «Este mes». */
+export function getThisMonthCards(now: Date): { month: number; cards: CultureCard[] } {
+  const { month } = ecuadorToday(now);
+  return { month, cards: getCultureCards({ month }) };
 }

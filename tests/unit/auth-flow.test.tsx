@@ -54,24 +54,40 @@ function Harness({ onComplete }: { onComplete: (value: string) => void }) {
   const [value, setValue] = useState('');
   return <><span id="otp-label">Código</span><OtpInput value={value} onChange={setValue} onComplete={onComplete} labelledBy="otp-label" /><output>{value}</output></>;
 }
-describe('casillas del código', () => {
-  it('pegar reparte los dígitos y completa; teclear avanza; borrar retrocede', () => {
-    const onComplete = vi.fn(); render(<Harness onComplete={onComplete} />);
-    const boxes = screen.getAllByLabelText(/Dígito \d de 6/);
-    expect(boxes).toHaveLength(6); expect(screen.getByRole('group', { name: 'Código' })).toBeInTheDocument();
-    fireEvent.change(boxes[0], { target: { value: '4' } });
-    expect(document.activeElement).toBe(boxes[1]);
-    fireEvent.change(boxes[1], { target: { value: '2' } });
-    expect(screen.getByRole('status')).toHaveTextContent('42');
-    fireEvent.keyDown(boxes[2], { key: 'Backspace' });
-    expect(screen.getByRole('status')).toHaveTextContent(/^4$/); expect(document.activeElement).toBe(boxes[1]);
-    fireEvent.paste(boxes[0], { clipboardData: { getData: () => '987 654' } });
-    expect(onComplete).toHaveBeenCalledWith('987654');
-    expect(boxes.map(box => (box as HTMLInputElement).value).join('')).toBe('987654');
+describe('campo único del código (autocompletado de iOS y Android)', () => {
+  it('es UN solo input con one-time-code, teclado numérico y 6 caracteres; se dibujan 6 celdas', () => {
+    render(<Harness onComplete={vi.fn()} />);
+    const input = screen.getByLabelText(/Código de 6 dígitos/);
+    expect(document.querySelectorAll('input')).toHaveLength(1);
+    expect(input).toHaveAttribute('autocomplete', 'one-time-code');
+    expect(input).toHaveAttribute('inputmode', 'numeric');
+    expect(input).toHaveAttribute('pattern', '[0-9]*');
+    expect(input).toHaveAttribute('maxlength', '6');
+    expect(document.querySelectorAll('.otp-cell')).toHaveLength(6);
+    expect(screen.getByLabelText(/^Código Código de 6 dígitos$/)).toBe(input);
   });
-  it('el autocompletado del sistema (todo el código en la primera casilla) también funciona', () => {
+  it('pegar 6 dígitos (aunque vengan con texto) completa; teclear y borrar actualizan las celdas', () => {
     const onComplete = vi.fn(); render(<Harness onComplete={onComplete} />);
-    fireEvent.change(screen.getAllByLabelText(/Dígito \d de 6/)[0], { target: { value: '135790' } });
+    const input = screen.getByLabelText(/Código de 6 dígitos/);
+    fireEvent.change(input, { target: { value: '4' } });
+    fireEvent.change(input, { target: { value: '42' } });
+    expect(screen.getByRole('status')).toHaveTextContent('42');
+    expect([...document.querySelectorAll('.otp-cell')].map(cell => cell.textContent).join('')).toBe('42');
+    fireEvent.change(input, { target: { value: '4' } });
+    expect(screen.getByRole('status')).toHaveTextContent(/^4$/);
+    fireEvent.paste(input, { clipboardData: { getData: () => 'Tu código de CHULLA VIDA es 987 654' } });
+    expect(onComplete).toHaveBeenCalledWith('987654');
+    expect(input).toHaveValue('987654');
+  });
+  it('el autocompletado del sistema entrega el código completo de una vez', () => {
+    const onComplete = vi.fn(); render(<Harness onComplete={onComplete} />);
+    fireEvent.change(screen.getByLabelText(/Código de 6 dígitos/), { target: { value: '135790' } });
     expect(onComplete).toHaveBeenCalledWith('135790');
+  });
+  it('ignora letras', () => {
+    const onComplete = vi.fn(); render(<Harness onComplete={onComplete} />);
+    fireEvent.change(screen.getByLabelText(/Código de 6 dígitos/), { target: { value: 'ab1' } });
+    expect(screen.getByRole('status')).toHaveTextContent(/^1$/);
+    expect(onComplete).not.toHaveBeenCalled();
   });
 });

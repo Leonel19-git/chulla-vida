@@ -25,9 +25,14 @@
 .welcome-dots{display:flex;gap:6px}
 .welcome-dots i{width:8px;height:8px;border-radius:50%;background:#d9d3c3}
 .welcome-dots i.is-on{background:#012960;width:22px;border-radius:5px}
-.welcome-host ol{margin:6px 0 0;padding-left:20px;display:grid;gap:7px;font-size:14.5px;line-height:1.55}
+.welcome-host-steps{list-style:none;margin:6px 0 0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;counter-reset:hs}.welcome-host-steps li{counter-increment:hs;display:grid;justify-items:center;gap:8px;text-align:center;padding:14px 8px;border-radius:14px;background:#f3f7f6;border:1px solid #d8e6e3;font-size:14px;font-weight:650;line-height:1.35;color:#012960}.welcome-host-steps li:before{content:counter(hs);font-size:12px;font-weight:800;color:#0e8aa0}.welcome-host-steps svg{color:#0e8aa0}
 .welcome-actions{flex-wrap:wrap}
 .welcome-actions .button{min-height:44px;display:inline-flex;align-items:center;gap:6px}
 @media(max-width:760px){.welcome-paths{grid-template-columns:1fr}.welcome-path{min-height:0}}
 @media(prefers-reduced-motion:reduce){.welcome-path{transition:none}.welcome-path:hover{transform:none}}
 .welcome-tour-link{margin-top:14px;font-size:14px;text-align:center}
+.welcome-account{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px 16px;padding:16px 18px;border-radius:18px;background:linear-gradient(120deg,#012960,#0b6f75);color:#fff}
+.welcome-account-text{display:grid;gap:2px}.welcome-account-text strong{font-size:18px}.welcome-account-text span{font-size:14px;color:#d6ecef}
+.welcome-account-actions{display:flex;flex-wrap:wrap;gap:8px}.welcome-account-actions .button{min-height:48px;display:inline-flex;align-items:center;gap:8px;font-size:15px}.welcome-account .button-primary{background:#fed65a;color:#012960;border-color:#fed65a}.welcome-account .button-secondary{background:transparent;color:#fff;border-color:#ffffffb3}.welcome-account .button:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.welcome-paths.is-two{grid-template-columns:repeat(2,1fr)}
+@media(max-width:760px){.welcome-paths.is-two{grid-template-columns:1fr}.welcome-path{display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:12px;row-gap:2px;align-items:center;padding:14px 16px}.welcome-path svg{grid-row:span 2}.welcome-host-steps{grid-template-columns:repeat(2,minmax(0,1fr))}.welcome-account-actions{width:100%}.welcome-account-actions .button{flex:1;justify-content:center}}

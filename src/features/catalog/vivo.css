@@ -11,3 +11,5 @@
 .vivo-host-hero:hover,.vivo-host-hero:focus-visible{background:#012960;border-color:#fff}
 .vivo-host-hero:focus-visible{outline:3px solid #fed65a;outline-offset:2px}
 .vivo-card-photo img{background:#eef3f6}
+/* 3.4: «Lo que puedes conocer» como chips que se acomodan, no una lista larga. */
+.vivo-detail-section ul.vivo-detail-chips{display:flex;flex-wrap:wrap;gap:8px;padding:0;list-style:none}.vivo-detail-section ul.vivo-detail-chips li{margin:0;padding:6px 12px;border-radius:999px;background:var(--surface-2,#f1ede4);border:1px solid var(--line,#ddd5c5);font-size:14px;line-height:1.4}.vivo-detail-section ul.vivo-detail-chips li::before{content:none;display:none}

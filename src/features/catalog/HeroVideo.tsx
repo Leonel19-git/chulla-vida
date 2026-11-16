@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Pause, Play } from 'lucide-react';
 import './hero-video.css';
 
+import { useT } from '../../i18n/v3';
 /** Bucle sin textos para el fondo del hero (scripts/make-video-ffmpeg.mjs, fotos reales de Wikimedia Commons). */
 export const HERO_SOURCES = {
   /** H.264 vertical 720×1280 para celular en vertical. */
@@ -29,6 +30,7 @@ function shouldAutoplay() {
  * movimiento reducido o ahorro de datos. Debajo queda siempre la foto del hero.
  */
 export function HeroVideo() {
+  const t = useT();
   const ref = useRef<HTMLVideoElement>(null);
   const [allowed] = useState(shouldAutoplay);
   const [userPaused, setUserPaused] = useState(false);
@@ -104,7 +106,7 @@ export function HeroVideo() {
         <source src={HERO_SOURCES.webm} type='video/webm; codecs="vp9"' onError={() => setFailed(true)} />
       </>}
     </video>
-    {loaded && <button type="button" className="vivo-hero-video-toggle" onClick={() => setUserPaused(value => !value)} aria-label={userPaused ? 'Reproducir el video de fondo' : 'Pausar el video de fondo'}>
+    {loaded && <button type="button" className="vivo-hero-video-toggle" onClick={() => setUserPaused(value => !value)} aria-label={userPaused ? t("Reproducir el video de fondo") : t("Pausar el video de fondo")}>
       {userPaused ? <Play size={16} aria-hidden="true" /> : <Pause size={16} aria-hidden="true" />}
     </button>}
   </>;

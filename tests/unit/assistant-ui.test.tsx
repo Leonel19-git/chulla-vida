@@ -94,8 +94,8 @@ describe('MIJIN se usa hablando, con permiso y subtítulos', () => {
     let loaded = false; synthesis.getVoices.mockImplementation(() => loaded ? voices : []);
     render(<MijinAssistant />); open(); await begin(); phrase('Quiero conocer Saraguro');
     expect(synthesis.speak).not.toHaveBeenCalled();
-    const listener = synthesis.addEventListener.mock.calls.find(call => call[0] === 'voiceschanged')?.[1] as () => void;
-    loaded = true; await act(async () => { listener(); await Promise.resolve(); });
+    const listeners = synthesis.addEventListener.mock.calls.filter(call => call[0] === 'voiceschanged').map(call => call[1] as () => void);
+    loaded = true; await act(async () => { listeners.forEach(listener => listener()); await Promise.resolve(); });
     expect(synthesis.speak).toHaveBeenCalled(); expect(synthesis.speak.mock.calls[0][0].voice?.name).toBe('México');
   });
   it('una frase final recibe respuesta hablada automática sin Enviar; un resultado parcial no consulta', async () => {
@@ -103,9 +103,9 @@ describe('MIJIN se usa hablando, con permiso y subtítulos', () => {
     phrase('Quiero conocer Saraguro');
     expect(synthesis.speak).toHaveBeenCalled();
     expect(spoken()).toMatch(/saraguro/i);
-    expect(spoken()).toContain('$45');
+    expect(spoken()).toContain('45 dólares por persona'); expect(spoken()).not.toContain('$');
     expect(screen.getByRole('button', { name: 'Interrumpir y hablar con MIJIN' })).toBeInTheDocument();
-    expect(screen.getByText(/01_catalogo_14_destinos/)).toBeInTheDocument();
+    expect(screen.getByRole('region', { name: 'Fichas de la respuesta' })).toHaveTextContent(/\$45 por persona/);
     expect(screen.queryByRole('button', { name: 'Enviar' })).not.toBeInTheDocument();
   });
   it('puede interrumpir la lectura y cierra el micrófono y la voz al salir', async () => {
@@ -114,14 +114,14 @@ describe('MIJIN se usa hablando, con permiso y subtítulos', () => {
     const current = FakeRecognition.instances.at(-1)!; fireEvent.click(screen.getByRole('button', { name: 'Cerrar prueba' }));
     expect(current.onresult).toBeNull(); expect(current.onend).toBeNull(); expect(abort).toHaveBeenCalled(); expect(synthesis.cancel).toHaveBeenCalled();
   });
-  it('el acceso desde una ficha abre el panel y permite ir a un resultado canónico', () => {
-    const onOpenExperience = vi.fn(); render(<MijinAssistant onOpenExperience={onOpenExperience} />); fireEvent(window, new Event('cv3:mijin'));
-    fireEvent.click(screen.getByRole('button', { name: 'Quiero conocer Saraguro' })); fireEvent.click(screen.getAllByRole('button', { name: 'Ver ficha' })[0]);
+  it('el acceso desde una ficha abre el panel y permite ir a un resultado canónico', async () => {
+    const onOpenExperience = vi.fn(); render(<MijinAssistant onOpenExperience={onOpenExperience} />); act(() => { fireEvent(window, new Event('cv3:mijin')); });
+    await typeFallback('Quiero conocer Saraguro'); fireEvent.click(screen.getAllByRole('button', { name: 'Ver ficha' })[0]);
     expect(onOpenExperience).toHaveBeenCalledWith(expect.stringContaining('saraguro')); expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
-  it('offline limita las respuestas a las instantáneas descargadas y no activa el micrófono', () => {
+  it('offline limita las respuestas a las instantáneas descargadas y no activa el micrófono', async () => {
     vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(false); render(<MijinAssistant downloadedExperiences={[]} />); open();
-    fireEvent.click(screen.getByRole('button', { name: 'Quiero conocer Saraguro' }));
+    await typeFallback('Quiero conocer Saraguro');
     expect(screen.getByText(/Sin conexión: no hay fichas descargadas/)).toBeInTheDocument(); expect(screen.queryByRole('button', { name: 'Ver ficha' })).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Hablar con MIJIN' }));
     expect(start).not.toHaveBeenCalled(); expect(FakeRecognition.instances).toHaveLength(0);
@@ -141,10 +141,10 @@ describe('MIJIN se usa hablando, con permiso y subtítulos', () => {
     expect(weatherMocks.search).toHaveBeenCalledWith('Baños', { online: true }); expect(weatherMocks.get).toHaveBeenCalledTimes(1);
     expect(synthesis.speak.mock.calls.at(-1)?.[0].text).toContain('Fuente Open-Meteo'); expect(screen.getByText(/Hora del modelo/)).toBeInTheDocument();
   });
-  it('también consulta exclusivamente una ficha descargada cuando hay una disponible', () => {
+  it('también consulta exclusivamente una ficha descargada cuando hay una disponible', async () => {
     vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(false);
     const saraguro = experiences.find(item => item.id.includes('saraguro'))!; render(<MijinAssistant downloadedExperiences={[saraguro]} downloadedAt="2026-11-13" />); open();
-    fireEvent.click(screen.getByRole('button', { name: 'Quiero conocer Saraguro' })); expect(screen.getByText(/Solo uso fichas descargadas/)).toBeInTheDocument();
+    await typeFallback('Quiero conocer Saraguro'); expect(screen.getByText(/Solo uso fichas descargadas/)).toBeInTheDocument();
   });
   it('sin reconocimiento permite abrir la alternativa accesible y consultar sin permisos de audio', async () => {
     vi.stubGlobal('SpeechRecognition', undefined); render(<MijinAssistant />); open();

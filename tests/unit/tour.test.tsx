@@ -73,10 +73,35 @@ describe('recorrido guiado sobre la página real', () => {
     expect(root.inert).toBe(false);
     expect(opener).toHaveFocus();
   });
+  it('al terminar u omitir vuelve suave al principio y enfoca el título principal', () => {
+    const root = mountPage(['regions']);
+    const title = document.createElement('h1');
+    title.id = 'hero-title';
+    title.textContent = 'Un país.';
+    root.prepend(title);
+    const scrollTo = vi.fn();
+    vi.stubGlobal('scrollTo', scrollTo);
+    const { rerender } = render(<GuidedTour onClose={() => {}} steps={steps.slice(0, 1)} />);
+    fireEvent.click(screen.getByRole('button', { name: /Listo, a explorar/ }));
+    rerender(<></>);
+    expect(scrollTo).toHaveBeenCalledWith(expect.objectContaining({ top: 0 }));
+    expect(title).toHaveFocus();
+    expect(root.inert).toBe(false);
+    vi.unstubAllGlobals();
+  });
+  it('el paso de anfitriones solo aparece para invitados', async () => {
+    const { stepsForRole } = await import('../../src/features/onboarding/GuidedTour');
+    const { roleStore } = await import('../../src/features/roles');
+    roleStore.reset();
+    expect(stepsForRole().some(step => step.id === 'host')).toBe(true);
+    roleStore.setWelcomePath('traveler');
+    expect(stepsForRole().some(step => step.id === 'host')).toBe(false);
+    roleStore.reset();
+  });
   it('si la parte no está a la vista lo dice y centra el globo sin foco', () => {
     mountPage([]);
     render(<GuidedTour onClose={() => {}} steps={steps} />);
-    expect(screen.getByText(/no está a la vista en esta pantalla/)).toBeInTheDocument();
+    expect(screen.getByText(/Está en el menú/)).toBeInTheDocument();
     expect(document.querySelector('.cv-tour-spot')).toBeNull();
     expect(document.querySelector('.cv-tour-dim')).not.toBeNull();
   });

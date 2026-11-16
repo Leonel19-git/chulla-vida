@@ -36,7 +36,7 @@ afterEach(() => { cleanup(); vi.restoreAllMocks(); });
 
 async function toPayment(experience = exp('gen-01-saraguro-ancestral')) {
   render(<AppProvider><Checkout experiences={[experience]} onClose={() => undefined} onViewWallet={() => undefined} /></AppProvider>);
-  fireEvent.change(screen.getByLabelText(/Fecha/), { target: { value: '2099-05-02' } });
+  fireEvent.change(screen.getByLabelText('Inicio'), { target: { value: '2099-05-02' } });
   fireEvent.click(screen.getByRole('button', { name: /^Continuar/ }));
   fireEvent.change(screen.getByLabelText('Nombre y apellido'), { target: { value: 'Ana Pérez' } });
   fireEvent.change(screen.getByLabelText('Correo'), { target: { value: 'ana.perez@correo.ec' } });

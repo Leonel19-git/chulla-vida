@@ -29,7 +29,7 @@ describe('CHULLA VIDA 3.2 · integración', () => {
     render(<AppProvider><PlannerDialog onClose={vi.fn()} onSelect={vi.fn()} /></AppProvider>);
     expect(screen.getByLabelText('Salgo desde')).toHaveValue('Cuenca');
     expect(screen.getByLabelText(/Presupuesto de todo el grupo/)).toHaveValue(120);
-    expect(screen.getByLabelText('Personas')).toHaveValue(3);
+    expect(screen.getByLabelText(/^Adultos/)).toHaveValue('3');
     expect(screen.getByLabelText(/Viajo con mi perro/)).toBeChecked();
   });
 

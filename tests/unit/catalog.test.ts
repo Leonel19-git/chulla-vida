@@ -137,12 +137,12 @@ describe('Amazonía aportada por el usuario sin confundir precios ni ubicaciones
 });
 
 describe('Cultura Viva sin fechas comerciales inventadas', () => {
-  it('presenta diez referencias y mantiene Kasama en Costa y Loja en Sierra', () => {
-    expect(culturalEvents).toHaveLength(10);
+  it('presenta 30+ referencias y mantiene Kasama en Costa y Loja en Sierra', () => {
+    expect(culturalEvents.length).toBeGreaterThanOrEqual(30);
     expect(filterCulturalEvents({ query: 'kasama', region: 'costa' })).toHaveLength(1);
     expect(filterCulturalEvents({ query: 'artes vivas', region: 'sierra' })).toHaveLength(1);
     expect(filterCulturalEvents({ month: 6 }).length).toBeGreaterThan(0);
-    expect(culturalEvents.filter(event => event.category === 'raymi').map(event => event.id)).toEqual(['inti-raymi']);
+    expect(culturalEvents.filter(event => event.category === 'raymi').map(event => event.id).sort()).toEqual(['inti-raymi', 'kapak-raymi', 'kulla-raymi', 'pawkar-raymi']);
   });
   it('un mes habitual nunca se muestra como próxima edición confirmada', () => {
     const undatedEvents = culturalEvents.filter(event => !event.editions.some(edition => edition.confirmation === 'confirmed_official'));

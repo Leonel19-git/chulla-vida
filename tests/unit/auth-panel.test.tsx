@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { AuthPanel } from '../../src/features/auth/AuthPanel';
+import { roleStore } from '../../src/features/roles/role';
 
 type Listener = (event: string, session: unknown) => void;
 const mocks = vi.hoisted(() => ({
@@ -41,14 +42,15 @@ vi.mock('../../src/lib/supabase', () => ({
 const STRONG = 'Montaña-Verde-2026';
 const expiredOrInvalid = { code: 'otp_expired', status: 403, message: 'Token has expired or is invalid', name: 'AuthApiError' };
 beforeEach(() => {
+  localStorage.clear(); roleStore.reset();
   mocks.configured = true; mocks.session = null; mocks.failedLoad = false; mocks.listener = null;
   Object.values(mocks.auth).forEach(fn => fn.mockReset()); mocks.rpc.mockReset(); mocks.rpc.mockResolvedValue({ data: 'id', error: null });
 });
 afterEach(() => { cleanup(); vi.useRealTimers(); vi.unstubAllGlobals(); });
 
-function codeBoxes() { return screen.getAllByLabelText(/Dígito \d de 6/); }
+function codeInput() { return screen.getByLabelText(/Código de 6 dígitos/); }
 function pasteCode(code: string) {
-  fireEvent.paste(codeBoxes()[0], { clipboardData: { getData: () => code } });
+  fireEvent.paste(codeInput(), { clipboardData: { getData: () => code } });
 }
 async function fillSignup(user: ReturnType<typeof userEvent.setup>, options: { terms?: boolean } = {}) {
   await user.click(screen.getByRole('button', { name: 'Crear cuenta' }));
@@ -66,7 +68,7 @@ describe('cuenta sin servidor: explicación y recorrido de demostración', () =>
     expect(screen.queryByLabelText('Correo electrónico')).not.toBeInTheDocument();
     expect(screen.queryByText('Solicitar revisión')).not.toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Ver recorrido de demostración' }));
-    expect(screen.getByText(/nada sale de tu navegador/)).toBeInTheDocument();
+    expect(screen.getByText(/no se crean cuentas ni se envían correos/)).toBeInTheDocument();
     await fillSignup(user);
     await user.click(screen.getByRole('button', { name: 'Crear cuenta y recibir código' }));
     expect(await screen.findByRole('heading', { name: 'Te enviamos un código a tu correo' })).toBeInTheDocument();
@@ -101,8 +103,8 @@ describe('registro con código de 6 dígitos', () => {
       options: expect.objectContaining({ data: expect.objectContaining({ terms_version: expect.stringMatching(/^terms-/), privacy_version: expect.stringMatching(/^privacy-/), marketing_opt_in: false }) }) }));
     expect(await screen.findByRole('heading', { name: 'Te enviamos un código a tu correo' })).toBeInTheDocument();
     expect(screen.queryByText('123456')).not.toBeInTheDocument();
-    for (const box of codeBoxes()) { expect(box).toHaveAttribute('inputmode', 'numeric'); }
-    expect(codeBoxes()[0]).toHaveAttribute('autocomplete', 'one-time-code');
+    expect(codeInput()).toHaveAttribute('inputmode', 'numeric'); expect(codeInput()).toHaveAttribute('maxlength', '6'); expect(codeInput()).toHaveAttribute('pattern', '[0-9]*');
+    expect(codeInput()).toHaveAttribute('autocomplete', 'one-time-code'); expect(document.querySelectorAll('input[autocomplete="one-time-code"]')).toHaveLength(1);
   });
 
   it('código incorrecto muestra error; el correcto llama a verifyOtp(signup), abre sesión y registra el consentimiento de marketing', async () => {
@@ -117,7 +119,7 @@ describe('registro con código de 6 dígitos', () => {
     pasteCode('111 111');
     expect(await screen.findByRole('alert')).toHaveTextContent('Ese código no coincide');
     expect(mocks.auth.verifyOtp).toHaveBeenLastCalledWith({ email: 'viajera@example.com', token: '111111', type: 'signup' });
-    expect(codeBoxes()[0]).toHaveValue('');
+    expect(codeInput()).toHaveValue('');
     pasteCode('Tu código: 482-913');
     await waitFor(() => expect(mocks.auth.verifyOtp).toHaveBeenLastCalledWith({ email: 'viajera@example.com', token: '482913', type: 'signup' }));
     expect(await screen.findByRole('heading', { name: 'Tu cuenta viajera' })).toBeInTheDocument();
@@ -138,11 +140,11 @@ describe('registro con código de 6 dígitos', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent('Demasiados intentos en poco tiempo');
     mocks.auth.verifyOtp.mockResolvedValue({ data: { session: null }, error: expiredOrInvalid });
     for (let attempt = 0; attempt < 4; attempt += 1) {
-      await waitFor(() => expect(codeBoxes()[0]).toBeEnabled());
+      await waitFor(() => expect(codeInput()).toBeEnabled());
       pasteCode('333333'); await waitFor(() => expect(mocks.auth.verifyOtp).toHaveBeenCalledTimes(attempt + 2));
     }
     await waitFor(() => expect(screen.getByRole('alert')).toHaveTextContent('Demasiados intentos con este código'));
-    await waitFor(() => expect(codeBoxes()[0]).toBeEnabled());
+    await waitFor(() => expect(codeInput()).toBeEnabled());
     pasteCode('444444');
     expect(mocks.auth.verifyOtp).toHaveBeenCalledTimes(5);
   });

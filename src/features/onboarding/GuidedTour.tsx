@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { createPortal } from 'react-dom';
 import { ArrowLeft, ArrowRight, Check, X } from 'lucide-react';
+import { roleStore } from '../roles';
 import './tour.css';
 
+import { useT, msg } from '../../i18n/v3';
 export const TOUR_EVENT = 'cv3:tour';
 export const TOUR_KEY = 'chullavida:v3:tour';
 
@@ -16,18 +18,18 @@ export interface TourStep {
 
 /** Recorrido por las partes reales de la página. Cada paso apunta a un elemento marcado con data-tour. */
 export const TOUR_STEPS: TourStep[] = [
-  { id: 'regions', title: 'Elige tu región', text: 'Sierra, Costa, Amazonía o Galápagos: toca una y te llevamos directo a sus fichas.', targets: ['[data-tour="regions"]', '.cv-hero-regions'] },
-  { id: 'search', title: 'Busca y filtra', text: 'Escribe un lugar, una provincia o una actividad. En «Filtros» eliges provincia, presupuesto, días y si viajas con mascota.', targets: ['[data-tour="search"]', '.vivo-searchbar'] },
-  { id: 'card', title: 'Así es cada ficha', text: 'Foto real con su crédito (o una ilustración rotulada), el precio referencial que propone la fuente y el corazón para guardarla en tu viaje.', targets: ['[data-tour="cards"] .vivo-card', '.vivo-card'] },
-  { id: 'buy', title: 'Comprar', text: 'Abre el checkout por pasos: datos, cédula y pago con tarjeta. Mientras la pasarela no esté activa, todo es modo prueba y no se cobra nada.', targets: ['[data-tour="cards"] .vivo-card .buy-button', '.vivo-card .buy-button', '[aria-label^="Comprar"]'] },
-  { id: 'mijin', title: 'Habla con MIJIN', text: 'Tu pana de aventuras. Pregúntale por voz o por escrito: fichas, fiestas, clima y cómo llegar. El micrófono solo se enciende cuando lo tocas.', targets: ['[data-tour="mijin"]', '[aria-label="Habla con MIJIN"]', '.mijin-launcher'] },
-  { id: 'plan', title: 'Mi viaje', text: 'Junta paradas, ordénalas y mira tu presupuesto total. Lo que falta confirmar se queda a la vista.', targets: ['[data-tour="plan"]', '[aria-label="Mi viaje"]'] },
-  { id: 'wallet', title: 'Mi billetera', text: 'Tus compras de prueba, comprobantes y lo que llevas gastado, todo en un solo lugar.', targets: ['[data-tour="wallet"]', '[aria-label="Mi billetera"]'] },
-  { id: 'offline', title: 'Sin señal', text: 'Descarga fichas a tu dispositivo para leerlas sin internet en el páramo o en el río.', targets: ['[data-tour="offline"]', '[data-tour="more"]'] },
-  { id: 'passport', title: 'Pasaporte Guambra', text: 'Colecciona historias. El sello verificado llega cuando el anfitrión confirma tu visita; abrir una ficha no cuenta.', targets: ['[data-tour="passport"]', '.passport-nav'] },
-  { id: 'account', title: 'Entrar o crear cuenta', text: 'Con tu correo y un código de 6 dígitos guardas tu perfil, tus compras y tus sellos en cualquier dispositivo.', targets: ['[data-tour="account"]'] },
-  { id: 'host', title: 'Anfitriones', text: '¿Tienes un emprendimiento, guías o una comunidad? Aquí empiezas a publicar tu experiencia, con revisión humana.', targets: ['[data-tour="host"]', '.vivo-host-hero', '.business-switch'] },
-  { id: 'privacy', title: 'Tu privacidad', text: 'Tú decides qué guardamos y qué se comparte. Cambia tu nivel o ejerce tus derechos de datos cuando quieras.', targets: ['[data-tour="privacy-banner"]', '[data-tour="privacy"]'] },
+  { id: 'regions', title: msg('Elige tu región'), text: msg('Toca una región y ves sus fichas.'), targets: ['[data-tour="regions"]', '.cv-hero-regions'] },
+  { id: 'search', title: msg('Busca y filtra'), text: msg('Busca un lugar o abre «Filtros».'), targets: ['[data-tour="search"]', '.vivo-searchbar'] },
+  { id: 'card', title: msg('Así es cada ficha'), text: msg('Desliza para ver más. Toca la foto para abrir la ficha; el corazón la guarda.'), targets: ['[data-tour="cards"] .vivo-card', '.vivo-card'] },
+  { id: 'buy', title: msg('Comprar'), text: msg('Compra en pocos pasos. Hoy es modo prueba: no se cobra nada.'), targets: ['[data-tour="cards"] .vivo-card .buy-button', '.vivo-card .buy-button', '[aria-label^="Comprar"]'] },
+  { id: 'mijin', title: msg('Habla con MIJIN'), text: msg('Tu pana de aventuras, por voz o por escrito. El micrófono solo se enciende si lo tocas.'), targets: ['[data-tour="mijin"]', '[aria-label="Habla con MIJIN"]', '.mijin-launcher'] },
+  { id: 'plan', title: msg('Mi viaje'), text: msg('Junta paradas y mira tu presupuesto.'), targets: ['[data-tour="plan"]', '[aria-label="Mi viaje"]'] },
+  { id: 'wallet', title: msg('Mi billetera'), text: msg('Tus compras de prueba y comprobantes.'), targets: ['[data-tour="wallet"]', '[aria-label="Mi billetera"]'] },
+  { id: 'offline', title: msg('Sin señal'), text: msg('Descarga fichas para leerlas sin internet.'), targets: ['[data-tour="offline"]', '[data-tour="more"]'] },
+  { id: 'passport', title: msg('Pasaporte Guambra'), text: msg('Colecciona sellos. El verificado llega cuando el anfitrión confirma tu visita.'), targets: ['[data-tour="passport"]', '.passport-nav'] },
+  { id: 'account', title: msg('Entrar o crear cuenta'), text: msg('Entra con tu correo y un código de 6 dígitos.'), targets: ['[data-tour="account"]'] },
+  { id: 'host', title: msg('Soy anfitrión'), text: msg('¿Tienes un emprendimiento o una comunidad? Desde aquí pides publicar tu experiencia.'), targets: ['[data-tour="host"]'] },
+  { id: 'privacy', title: msg('Tu privacidad'), text: msg('Tú decides qué se guarda. Cámbialo cuando quieras.'), targets: ['[data-tour="privacy-banner"]', '[data-tour="privacy"]'] },
 ];
 
 function isShown(element: Element) {
@@ -45,6 +47,22 @@ export function findTourTarget(step: TourStep, root: ParentNode = document): HTM
 }
 const reduced = () => { try { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch { return true; } };
 
+/** Al terminar u omitir el recorrido: vuelve suave al principio de la página y enfoca el título principal. */
+export function returnToTop() {
+  try { window.scrollTo({ top: 0, behavior: reduced() ? 'instant' : 'smooth' }); } catch { /* entorno sin desplazamiento */ }
+  const title = document.getElementById('hero-title') ?? document.querySelector<HTMLElement>('main h1');
+  if (!title) return;
+  if (!title.hasAttribute('tabindex')) title.setAttribute('tabindex', '-1');
+  title.focus({ preventScroll: true });
+}
+
+/** Pasos según el rol: el de anfitriones solo se enseña a invitados (los viajeros no ven nada de negocio). */
+export function stepsForRole(steps: TourStep[] = TOUR_STEPS): TourStep[] {
+  let role = 'guest';
+  try { role = roleStore.get().role; } catch { /* sin roles: invitado */ }
+  return steps.filter(step => step.id !== 'host' || role === 'guest');
+}
+
 interface Box { top: number; left: number; width: number; height: number }
 const PAD = 8;
 
@@ -57,16 +75,18 @@ export function TourGate() {
     return () => window.removeEventListener(TOUR_EVENT, show);
   }, []);
   if (!open) return null;
-  return <GuidedTour onClose={() => setOpen(false)} />;
+  return <GuidedTour steps={stepsForRole()} onClose={() => setOpen(false)} />;
 }
 
 export function GuidedTour({ onClose, steps = TOUR_STEPS }: { onClose: () => void; steps?: TourStep[] }) {
+  const t = useT();
   const [index, setIndex] = useState(0);
   const [box, setBox] = useState<Box | null>(null);
   const [bubble, setBubble] = useState<{ top: number; left: number; placement: 'below' | 'above' | 'dock' }>({ top: 0, left: 0, placement: 'dock' });
   const bubbleRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const previousFocus = useRef<HTMLElement | null>(null);
+  const backToTop = useRef(false);
   const titleId = useId();
   const textId = useId();
   const step = steps[index];
@@ -74,6 +94,7 @@ export function GuidedTour({ onClose, steps = TOUR_STEPS }: { onClose: () => voi
 
   const finish = useCallback((completed: boolean) => {
     try { localStorage.setItem(TOUR_KEY, completed ? 'done' : 'skipped'); } catch { /* sin almacenamiento */ }
+    backToTop.current = true;
     onClose();
   }, [onClose]);
 
@@ -85,6 +106,7 @@ export function GuidedTour({ onClose, steps = TOUR_STEPS }: { onClose: () => voi
     if (root) root.inert = true;
     return () => {
       if (root) root.inert = wasInert;
+      if (backToTop.current) { returnToTop(); return; }
       const back = previousFocus.current;
       if (back?.isConnected) back.focus({ preventScroll: true });
     };
@@ -145,22 +167,22 @@ export function GuidedTour({ onClose, steps = TOUR_STEPS }: { onClose: () => voi
     {box ? <div className="cv-tour-spot" aria-hidden="true" style={{ top: box.top, left: box.left, width: box.width, height: box.height }} /> : <div className="cv-tour-dim" aria-hidden="true" />}
     <div ref={bubbleRef} className={`cv-tour-bubble is-${bubble.placement}`} role="dialog" aria-modal="true" aria-labelledby={titleId} aria-describedby={textId} style={{ top: bubble.top, left: bubble.left }}>
       <div className="cv-tour-head">
-        <p className="cv-tour-count" aria-live="polite">Paso {index + 1} de {steps.length}</p>
-        <button type="button" className="cv-tour-close" onClick={() => finish(false)} aria-label="Cerrar el recorrido"><X size={18} /></button>
+        <p className="cv-tour-count" aria-live="polite">{t("Paso {n} de {total}", { n: index + 1, total: steps.length })}</p>
+        <button type="button" className="cv-tour-close" onClick={() => finish(false)} aria-label={t("Cerrar el recorrido")}><X size={18} /></button>
       </div>
-      <h2 id={titleId} ref={titleRef} tabIndex={-1}>{step.title}</h2>
-      <p id={textId}>{step.text}{!box && <span className="cv-tour-missing"> Esta parte no está a la vista en esta pantalla; la encuentras en el menú o al volver a «Explorar».</span>}</p>
+      <h2 id={titleId} ref={titleRef} tabIndex={-1}>{t(step.title)}</h2>
+      <p id={textId}>{t(step.text)}{!box && <span className="cv-tour-missing">{' '}{t("Está en el menú.")}</span>}</p>
       <div className="cv-tour-progress" aria-hidden="true">{steps.map((item, i) => <i key={item.id} className={i === index ? 'is-on' : i < index ? 'is-done' : ''} />)}</div>
       <div className="cv-tour-actions">
-        <button type="button" className="cv-tour-skip" onClick={() => finish(false)}>Saltar recorrido</button>
+        <button type="button" className="cv-tour-skip" onClick={() => finish(false)}>{t("Saltar recorrido")}</button>
         <span>
-          {index > 0 && <button type="button" className="cv-tour-back" onClick={() => go(-1)}><ArrowLeft size={16} />Atrás</button>}
+          {index > 0 && <button type="button" className="cv-tour-back" onClick={() => go(-1)}><ArrowLeft size={16} />{t("Atrás")}</button>}
           {last
-            ? <button type="button" className="cv-tour-next" onClick={() => finish(true)}><Check size={16} />¡Listo, a explorar!</button>
-            : <button type="button" className="cv-tour-next" onClick={() => go(1)}>Siguiente<ArrowRight size={16} /></button>}
+            ? <button type="button" className="cv-tour-next" onClick={() => finish(true)}><Check size={16} />{t("¡Listo, a explorar!")}</button>
+            : <button type="button" className="cv-tour-next" onClick={() => go(1)}>{t("Siguiente")}<ArrowRight size={16} /></button>}
         </span>
       </div>
-      <p className="cv-tour-keys">Usa las flechas ← → para moverte y Esc para salir.</p>
+      <p className="cv-tour-keys">{t("Usa las flechas ← → para moverte y Esc para salir.")}</p>
     </div>
   </div>, document.body);
 }

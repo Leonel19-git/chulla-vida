@@ -1,6 +1,7 @@
 import { getExperienceById } from '../catalog';
 import {
   CULTURAL_EVENTS,
+  CULTURAL_EVENT_SEED,
   CULTURE_SOURCE,
   LOJA_FESTIVAL_AGENDA_URL,
   eventStatus,
@@ -16,6 +17,10 @@ import {
 /** Mediodía de Ecuador continental (UTC−5) del día indicado. */
 const noon = (isoDay: string) => new Date(`${isoDay}T17:00:00Z`);
 const ids = (events: readonly { id: string }[]) => events.map(event => event.id);
+/** Las pruebas de calendario fijan el contenido semilla; las fiestas añadidas se prueban aparte. */
+const SEED_IDS = new Set(CULTURAL_EVENT_SEED.map(event => event.id));
+const seedIds = (events: readonly { id: string }[]) => ids(events).filter(id => SEED_IDS.has(id));
+const seedUpcoming = <T extends { event: { id: string } }>(items: readonly T[]) => items.filter(item => SEED_IDS.has(item.event.id));
 const byId = (id: string) => {
   const found = getEventById(id);
   if (!found) throw new Error(`No existe ${id}`);
@@ -23,14 +28,17 @@ const byId = (id: string) => {
 };
 
 describe('contenido semilla de Cultura Viva', () => {
-  it('trae las diez fiestas de la sección 5, cada una en su región', () => {
-    expect(CULTURAL_EVENTS).toHaveLength(10);
-    expect(new Set(ids(CULTURAL_EVENTS)).size).toBe(10);
-    expect(new Set(CULTURAL_EVENTS.map(event => event.slug)).size).toBe(10);
-    expect(ids(getEventsByRegion('sierra'))).toEqual(['inti-raymi', 'mama-negra', 'fruta-flores', 'diablada-pillaro', 'artes-vivas-loja']);
-    expect(ids(getEventsByRegion('costa'))).toEqual(['rodeo-montuvio', 'san-pedro-san-pablo', 'kasama']);
-    expect(ids(getEventsByRegion('amazonia'))).toEqual(['fiesta-chonta']);
-    expect(ids(getEventsByRegion('galapagos'))).toEqual(['provincializacion-galapagos']);
+  it('trae las diez fiestas de la sección 5 primero, cada una en su región', () => {
+    expect(CULTURAL_EVENT_SEED).toHaveLength(10);
+    expect(CULTURAL_EVENTS.slice(0, 10)).toEqual(CULTURAL_EVENT_SEED);
+    expect(new Set(ids(CULTURAL_EVENTS)).size).toBe(CULTURAL_EVENTS.length);
+    expect(new Set(CULTURAL_EVENTS.map(event => event.slug)).size).toBe(CULTURAL_EVENTS.length);
+    const seedIds = new Set(ids(CULTURAL_EVENT_SEED));
+    const seedOf = (region: Parameters<typeof getEventsByRegion>[0]) => ids(getEventsByRegion(region)).filter(id => seedIds.has(id));
+    expect(seedOf('sierra')).toEqual(['inti-raymi', 'mama-negra', 'fruta-flores', 'diablada-pillaro', 'artes-vivas-loja']);
+    expect(seedOf('costa')).toEqual(['rodeo-montuvio', 'san-pedro-san-pablo', 'kasama']);
+    expect(seedOf('amazonia')).toEqual(['fiesta-chonta']);
+    expect(seedOf('galapagos')).toEqual(['provincializacion-galapagos']);
   });
 
   it('Loja está en la Sierra y Kasama en la Costa', () => {
@@ -51,8 +59,8 @@ describe('contenido semilla de Cultura Viva', () => {
     expect(filterCulturalEvents({ query: 'artes vivas', region: 'costa' })).toEqual([]);
   });
 
-  it('reserva la categoría «raymi» para el Inti Raymi', () => {
-    expect(ids(CULTURAL_EVENTS.filter(event => event.category === 'raymi'))).toEqual(['inti-raymi']);
+  it('reserva la categoría «raymi» para los cuatro raymis', () => {
+    expect(ids(CULTURAL_EVENTS.filter(event => event.category === 'raymi'))).toEqual(['inti-raymi', 'pawkar-raymi', 'kulla-raymi', 'kapak-raymi']);
     expect(byId('inti-raymi')).toMatchObject({ localities: ['Otavalo', 'Cotacachi', 'Ingapirca'], usualMonths: [6] });
     expect(byId('inti-raymi').description).toMatch(/diferencias locales/);
   });
@@ -116,15 +124,16 @@ describe('contenido semilla de Cultura Viva', () => {
     expect(chonta.community).toMatch(/Shuar y Achuar/);
     expect(chonta.description).toMatch(/No es un espectáculo/);
     expect(chonta.dateLabel).toMatch(/referencia estacional: abril o mayo/);
-    expect(CULTURAL_EVENTS.filter(event => event.sensitive).map(event => event.id)).toEqual(['kasama', 'fiesta-chonta']);
+    expect(CULTURAL_EVENTS.filter(event => event.sensitive).map(event => event.id)).toEqual(['kasama', 'fiesta-chonta', 'nino-jista']);
   });
 
   it('cada ficha trae sus propios protocolos de respeto, incluido el consentimiento para fotografiar', () => {
+    const seedIdsAll = new Set(ids(CULTURAL_EVENT_SEED));
     const seen = new Set<string>();
     for (const event of CULTURAL_EVENTS) {
       expect(event.protocols.length).toBeGreaterThanOrEqual(3);
       expect(event.description.length).toBeGreaterThan(80);
-      expect(event.lastCheckedAt).toBe('2026-11-12');
+      expect(event.lastCheckedAt).toBe(seedIdsAll.has(event.id) ? '2026-11-12' : '2026-11-15');
       const joined = event.protocols.join(' | ');
       expect(seen.has(joined)).toBe(false);
       seen.add(joined);
@@ -164,12 +173,16 @@ describe('contenido semilla de Cultura Viva', () => {
 
 describe('getEventsByMonth', () => {
   it('devuelve las fiestas del mes habitual', () => {
-    expect(ids(getEventsByMonth(6))).toEqual(['inti-raymi', 'san-pedro-san-pablo']);
+    expect(seedIds(getEventsByMonth(6))).toEqual(['inti-raymi', 'san-pedro-san-pablo']);
     expect(ids(getEventsByMonth(1))).toEqual(['diablada-pillaro']);
-    expect(ids(getEventsByMonth(2))).toEqual(['fruta-flores', 'provincializacion-galapagos']);
-    expect(ids(getEventsByMonth(11))).toEqual(['mama-negra', 'artes-vivas-loja']);
-    expect(ids(getEventsByMonth(4))).toEqual(['fiesta-chonta']);
-    expect(getEventsByMonth(7)).toEqual([]);
+    expect(seedIds(getEventsByMonth(2))).toEqual(['fruta-flores', 'provincializacion-galapagos']);
+    expect(seedIds(getEventsByMonth(11))).toEqual(['mama-negra', 'artes-vivas-loja']);
+    expect(seedIds(getEventsByMonth(4))).toEqual(['fiesta-chonta']);
+    expect(seedIds(getEventsByMonth(7))).toEqual([]);
+    // Fiestas añadidas.
+    expect(ids(getEventsByMonth(7))).toEqual(['fundacion-guayaquil']);
+    expect(ids(getEventsByMonth(9))).toEqual(expect.arrayContaining(['yamor', 'kulla-raymi', 'virgen-del-cisne', 'maiz-sangolqui']));
+    expect(ids(getEventsByMonth(12))).toEqual(expect.arrayContaining(['pase-nino-viajero', 'ano-viejo', 'kapak-raymi']));
   });
 
   it('Kasama no aparece en ningún mes y un mes inválido no devuelve nada', () => {
@@ -216,7 +229,7 @@ describe('getUpcomingEvents', () => {
 
   it('las fechas orientativas nunca se presentan como confirmadas', () => {
     const upcoming = getUpcomingEvents(noon('2026-11-13'));
-    expect(upcoming.map(item => [item.event.id, item.status, item.year, item.month])).toEqual([
+    expect(seedUpcoming(upcoming).map(item => [item.event.id, item.status, item.year, item.month])).toEqual([
       ['artes-vivas-loja', 'in_progress', 2026, 11],
       ['mama-negra', 'orientative', 2026, 11],
       ['diablada-pillaro', 'orientative', 2027, 1],
@@ -243,16 +256,23 @@ describe('getUpcomingEvents', () => {
   });
 
   it('respeta la ventana de meses pedida', () => {
-    expect(getUpcomingEvents(noon('2026-11-13'), { monthsAhead: 0 }).map(item => item.event.id)).toEqual(['artes-vivas-loja', 'mama-negra']);
-    expect(getUpcomingEvents(noon('2026-07-10'), { monthsAhead: 1 })).toEqual([]);
-    expect(getUpcomingEvents(noon('2026-07-10'), { monthsAhead: 2 }).map(item => [item.event.id, item.status])).toEqual([['mama-negra', 'orientative']]);
-    expect(getUpcomingEvents(noon('2026-07-10'), { monthsAhead: 4 }).map(item => item.event.id)).toEqual(['mama-negra', 'rodeo-montuvio', 'artes-vivas-loja']);
+    expect(seedUpcoming(getUpcomingEvents(noon('2026-11-13'), { monthsAhead: 0 })).map(item => item.event.id)).toEqual(['artes-vivas-loja', 'mama-negra']);
+    expect(seedUpcoming(getUpcomingEvents(noon('2026-07-10'), { monthsAhead: 1 }))).toEqual([]);
+    expect(seedUpcoming(getUpcomingEvents(noon('2026-07-10'), { monthsAhead: 2 })).map(item => [item.event.id, item.status])).toEqual([['mama-negra', 'orientative']]);
+    expect(seedUpcoming(getUpcomingEvents(noon('2026-07-10'), { monthsAhead: 4 })).map(item => item.event.id)).toEqual(['mama-negra', 'rodeo-montuvio', 'artes-vivas-loja']);
+    // Ninguna fiesta queda fuera de la ventana pedida.
+    for (const item of getUpcomingEvents(noon('2026-07-10'), { monthsAhead: 1 })) {
+      expect([7, 8]).toContain(item.month);
+      expect(item.status).toBe('orientative');
+    }
   });
 
   it('usa el día calendario de Ecuador, no el de UTC', () => {
     // 31 de diciembre de 2026, 20:00 en Ecuador = 1 de enero de 2027 en UTC.
     const lateDecember = getUpcomingEvents(new Date('2027-01-01T01:00:00Z'), { monthsAhead: 0 });
-    expect(lateDecember).toEqual([]);
+    expect(seedUpcoming(lateDecember)).toEqual([]);
+    expect(lateDecember.map(item => [item.year, item.month])).toEqual(lateDecember.map(() => [2026, 12]));
+    expect(lateDecember.map(item => item.event.id)).toContain('ano-viejo');
     const january = getUpcomingEvents(new Date('2027-01-01T06:00:00Z'), { monthsAhead: 0 });
     expect(january.map(item => [item.event.id, item.year, item.month])).toEqual([['diablada-pillaro', 2027, 1]]);
   });
@@ -330,7 +350,7 @@ describe('utilidades y compatibilidad', () => {
   it('filtra por región, mes y texto sin tildes', () => {
     expect(ids(filterCulturalEvents({ query: 'pillaro' }))).toEqual(['diablada-pillaro']);
     expect(ids(filterCulturalEvents({ query: 'tsachila', region: 'costa' }))).toEqual(['kasama']);
-    expect(ids(filterCulturalEvents({ region: 'all', month: 10 }))).toEqual(['rodeo-montuvio']);
-    expect(filterCulturalEvents()).toHaveLength(10);
+    expect(ids(filterCulturalEvents({ region: 'all', month: 10 }))).toEqual(['rodeo-montuvio', 'independencia-guayaquil']);
+    expect(filterCulturalEvents()).toHaveLength(CULTURAL_EVENTS.length);
   });
 });

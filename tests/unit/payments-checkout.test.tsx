@@ -34,7 +34,7 @@ const next = () => fireEvent.click(screen.getByRole('button', { name: /^Continua
 async function openCheckout(experience: Experience, variant: 'card' | 'detail' = 'card') {
   render(<AppProvider><BuyButton experience={experience} variant={variant} /></AppProvider>);
   fireEvent.click(screen.getByRole('button', { name: variant === 'card' ? `Comprar: ${experience.title}` : /Comprar experiencia/ }));
-  await screen.findByRole('heading', { name: 'Fecha y personas' }, { timeout: 5000 });
+  await screen.findByRole('heading', { name: 'Fechas y personas' }, { timeout: 5000 });
 }
 async function payWith(number: string) {
   const picker = await screen.findByLabelText('Usar una tarjeta de prueba');
@@ -54,9 +54,12 @@ describe('comprar en modo prueba sin cobro', () => {
     ribbon();
     next();
     expect(screen.getByRole('alert')).toHaveTextContent('Elige una fecha a partir de mañana.');
-    fireEvent.change(screen.getByLabelText(/Fecha/), { target: { value: futureDate } });
-    fireEvent.change(screen.getByLabelText('Personas'), { target: { value: '2' } });
-    expect(screen.getByText(formatUsd(9000))).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText('Inicio'), { target: { value: futureDate } });
+    expect(screen.getByLabelText('Fin')).toHaveValue('2099-03-15');
+    expect(screen.getByText('2 días / 1 noche')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Añadir adultos' }));
+    expect(screen.getByLabelText(/^Adultos/)).toHaveValue('2');
+    expect(screen.getAllByText(formatUsd(9000)).length).toBeGreaterThan(0);
     next();
 
     expect(screen.getByRole('heading', { name: 'Tus datos' })).toBeInTheDocument(); ribbon();
@@ -81,7 +84,7 @@ describe('comprar en modo prueba sin cobro', () => {
     expect(await screen.findByRole('heading', { name: 'Método de pago' })).toBeInTheDocument();
     expect(await screen.findByText(/cobros con tarjeta todavía no están activados/)).toBeInTheDocument(); ribbon();
     expect(screen.getByRole('radio', { name: /Tarjeta de crédito o débito/ })).toBeChecked();
-    expect(screen.getByRole('radio', { name: /Transferencia bancaria/ })).toBeDisabled();
+    expect(screen.getByRole('radio', { name: /Transferencia bancaria/ })).not.toBeDisabled();
     expect(screen.getByRole('radio', { name: /DeUna/ })).toBeDisabled();
     await payWith('4000000000000002');
     expect(await screen.findByText('Pago de prueba rechazado · Visa •••• 0002')).toBeInTheDocument();
@@ -93,7 +96,7 @@ describe('comprar en modo prueba sin cobro', () => {
     expect(screen.getAllByText(TEST_RECEIPT_LABEL).length).toBeGreaterThan(0);
     const records = wallet();
     expect(records).toHaveLength(1);
-    expect(records[0]).toMatchObject({ status: 'test_approved', attempts: 2, mode: 'test', people: 2, date: futureDate, card: { brand: 'visa', last4: '4242' }, buyer: { documentMasked: `******${CEDULA.slice(-4)}`, documentType: 'cedula' } });
+    expect(records[0]).toMatchObject({ status: 'test_approved', attempts: 2, mode: 'test', people: 2, date: futureDate, endDate: '2099-03-15', method: 'card', card: { brand: 'visa', last4: '4242' }, buyer: { documentMasked: `******${CEDULA.slice(-4)}`, documentType: 'cedula' } });
     expect(screen.getByText('Visa •••• 4242')).toBeInTheDocument();
     expect(localStorage.getItem(WALLET_KEY)).not.toContain('4242424242424242');
     expect(localStorage.getItem(WALLET_KEY)).not.toContain(CEDULA);
@@ -114,7 +117,7 @@ describe('comprar en modo prueba sin cobro', () => {
 
   it('nunca guarda la cédula completa en el navegador en ningún paso', async () => {
     await openCheckout(exp('gen-02-quilotoa-shalala'), 'detail');
-    fireEvent.change(screen.getByLabelText(/Fecha/), { target: { value: futureDate } }); next();
+    fireEvent.change(screen.getByLabelText('Inicio'), { target: { value: futureDate } }); next();
     fillBuyer(); next();
     const all = () => Object.keys(localStorage).map(key => localStorage.getItem(key)).join('|') + Object.keys(sessionStorage).map(key => sessionStorage.getItem(key)).join('|');
     expect(all()).not.toContain(CEDULA);
@@ -135,7 +138,7 @@ describe('comprar en modo prueba sin cobro', () => {
     await openCheckout(exp('gal-09-isabela-en-4-dias-tierra-firme'));
     fireEvent.change(screen.getByLabelText('Opción de la fuente'), { target: { value: 'grupo-4' } });
     expect(screen.getByText(/grupo de 4 personas/)).toBeInTheDocument();
-    expect(screen.getByText(formatUsd(91500 * 4))).toBeInTheDocument();
+    expect(screen.getAllByText(formatUsd(91500 * 4)).length).toBeGreaterThan(0);
   });
 
   it('una ficha en EUR pide cotización y la guarda como solicitud, sin importe', async () => {
@@ -156,7 +159,7 @@ describe('comprar en modo prueba sin cobro', () => {
   it('con la pasarela activa, una ficha no habilitada por el servidor sigue en modo prueba', async () => {
     mocks.config.mockResolvedValue({ enabled: true, provider: 'payphone', environment: 'sandbox' });
     await openCheckout(exp('gen-01-saraguro-ancestral'));
-    fireEvent.change(screen.getByLabelText(/Fecha/), { target: { value: futureDate } }); next();
+    fireEvent.change(screen.getByLabelText('Inicio'), { target: { value: futureDate } }); next();
     fillBuyer(); next();
     fireEvent.click(screen.getByRole('checkbox'));
     fireEvent.click(screen.getByRole('button', { name: /Elegir método de pago/ }));

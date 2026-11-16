@@ -1,5 +1,5 @@
-import { lazy, Suspense, useEffect, useId, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react';
-import { Compass, Store, Bell, BookOpen, CircleHelp, CreditCard, Download, FilePenLine, FileText, Image as ImageIcon, Map, Mic, MoreHorizontal, PlayCircle, ShieldCheck, UserRound, Wallet } from 'lucide-react';
+import { lazy, Suspense, useEffect, useId, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react';
+import { ChevronDown, Compass, Store, Bell, BookOpen, CircleHelp, CreditCard, Download, FilePenLine, FileText, Image as ImageIcon, Map, Mic, MoreHorizontal, PlayCircle, ShieldCheck, UserRound, Wallet } from 'lucide-react';
 import { REGION_LABELS, type RegionId } from '../../domain/catalog';
 import { SocialButtons } from '../../components/chulla/SocialButtons';
 import { useApp } from '../../context/AppContext';
@@ -14,6 +14,7 @@ import './ecuador-vivo.css';
 import { ToolBoundary } from './ToolBoundary';
 import { paymentReference } from '../payments/reference';
 
+import { useT, msg } from '../../i18n/v3';
 const PlannerDialog = lazy(() => import('../planner/PlannerDialog').then(module => ({ default: module.PlannerDialog })));
 const LegalCenter = lazy(() => import('../legal/LegalCenter').then(module => ({ default: module.LegalCenter })));
 const AuthPanel = lazy(() => import('../auth/AuthPanel').then(module => ({ default: module.AuthPanel })));
@@ -50,16 +51,16 @@ function isAuthReturn() {
     || hash.get('type') === 'recovery' || new URLSearchParams(window.location.search).has('code');
 }
 const MORE_TOOLS = [
-  { name: 'downloads', label: 'Sin señal', hint: 'Fichas para leer sin internet', icon: Download },
-  { name: 'passport', label: 'Pasaporte Guambra', hint: 'Tus sellos e historias', icon: BookOpen },
-  { name: 'alerts', label: 'Mis avisos', hint: 'Elige qué te llega y cuándo', icon: Bell },
-  { name: 'host', label: 'Anfitriones', hint: 'Publica tu experiencia', icon: Store },
-  { name: 'account', label: 'Mi cuenta', hint: 'Entra o crea tu cuenta de viajero', icon: UserRound },
-  { name: 'tour', label: 'Recorrido guiado', hint: 'Te mostramos cada parte de la página', icon: Compass },
+  { name: 'downloads', label: msg('Sin señal'), hint: msg('Fichas sin internet'), icon: Download },
+  { name: 'passport', label: msg('Pasaporte Guambra'), hint: msg('Tus sellos'), icon: BookOpen },
+  { name: 'alerts', label: msg('Mis avisos'), hint: msg('Qué te llega y cuándo'), icon: Bell },
+  { name: 'account', label: msg('Mi cuenta'), hint: msg('Entra o crea tu cuenta'), icon: UserRound },
+  { name: 'tour', label: msg('Recorrido guiado'), hint: msg('Te mostramos la página'), icon: Compass },
 ] as const;
 
 /** Barra de herramientas: lo más usado a la vista y el resto en «Más». En móvil, iconos con etiqueta corta. */
 export function V3Toolbar() {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const menuId = useId();
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -80,16 +81,16 @@ export function V3Toolbar() {
     const next = event.key === 'Home' ? 0 : event.key === 'End' ? items.length - 1 : (current + (event.key === 'ArrowDown' ? 1 : items.length - 1)) % items.length;
     items[next]?.focus();
   };
-  return <nav className="v3-toolbar vivo-toolbar cv-toolbar" aria-label="Herramientas de CHULLA VIDA">
-    <span className="cv-toolbar-tag">ECUADOR <strong>A TU RITMO</strong></span>
+  return <nav className="v3-toolbar vivo-toolbar cv-toolbar" aria-label={t("Herramientas de CHULLA VIDA")}>
+    <span className="cv-toolbar-tag">ECUADOR <strong>{t("A TU RITMO")}</strong></span>
     <div className="cv-toolbar-main">
-      <button className="cv-tool cv-tool-mijin" data-tour="mijin" aria-label="Habla con MIJIN" onClick={() => signal('mijin')}><span className="cv-pulse"><Mic size={16} /></span><span><span className="cv-long">Habla con </span>MIJIN</span></button>
-      <button className="cv-tool" data-tour="plan" onClick={() => signal('plan')}><Map size={16} /><span>Mi viaje</span></button>
-      <button className="cv-tool" data-tour="wallet" aria-label="Mi billetera" onClick={() => signal('wallet')}><Wallet size={16} /><span><span className="cv-long">Mi </span>billetera</span></button>
-      <button className="cv-tool" aria-label="Reservas y pagos" onClick={() => signal('payments')}><CreditCard size={16} /><span>Reservas<span className="cv-long"> y pagos</span></span></button>
+      <button className="cv-tool cv-tool-mijin" data-tour="mijin" aria-label={t("Habla con MIJIN")} onClick={() => signal('mijin')}><span className="cv-pulse"><Mic size={16} /></span><span><span className="cv-long">{t("Habla con MIJIN")}</span><span className="cv-short" aria-hidden="true">MIJIN</span></span></button>
+      <button className="cv-tool" data-tour="plan" onClick={() => signal('plan')}><Map size={16} /><span>{t("Mi viaje")}</span></button>
+      <button className="cv-tool" data-tour="wallet" aria-label={t("Mi billetera")} onClick={() => signal('wallet')}><Wallet size={16} /><span><span className="cv-long">{t("Mi billetera")}</span><span className="cv-short" aria-hidden="true">{t("Billetera")}</span></span></button>
+      <button className="cv-tool" aria-label={t("Reservas y pagos")} onClick={() => signal('payments')}><CreditCard size={16} /><span><span className="cv-long">{t("Reservas y pagos")}</span><span className="cv-short" aria-hidden="true">{t("Reservas")}</span></span></button>
       <div className="cv-more" ref={wrapRef} data-tour="more">
-        <button ref={buttonRef} className="cv-tool" aria-label="Más herramientas" aria-haspopup="menu" aria-expanded={open} aria-controls={menuId} onClick={() => setOpen(value => !value)}><MoreHorizontal size={16} /><span>Más</span></button>
-        {open && <div className="cv-more-menu" id={menuId} role="menu" aria-label="Más herramientas" onKeyDown={onMenuKey}>{MORE_TOOLS.map(({ name, label, hint, icon: Icon }) => <button key={name} role="menuitem" onClick={() => { setOpen(false); signal(name); }}><Icon size={18} /><span><strong>{label}</strong><small>{hint}</small></span></button>)}</div>}
+        <button ref={buttonRef} className="cv-tool" aria-label={t("Más herramientas")} aria-haspopup="menu" aria-expanded={open} aria-controls={menuId} onClick={() => setOpen(value => !value)}><MoreHorizontal size={16} /><span>{t("Más")}</span></button>
+        {open && <div className="cv-more-menu" id={menuId} role="menu" aria-label={t("Más herramientas")} onKeyDown={onMenuKey}>{MORE_TOOLS.map(({ name, label, hint, icon: Icon }) => <button key={name} role="menuitem" onClick={() => { setOpen(false); signal(name); }}><Icon size={18} /><span><strong>{t(label)}</strong><small>{t(hint)}</small></span></button>)}</div>}
       </div>
     </div>
   </nav>;
@@ -98,6 +99,7 @@ export function V3Workspace() {
   return <ToolBoundary><WorkspaceContent /></ToolBoundary>;
 }
 function WorkspaceContent() {
+  const t = useT();
   const { places, setBookingPlace, setRole } = useApp();
   const { select, records } = useCatalog();
   const { open: openPrivacy } = useConsent();
@@ -122,38 +124,52 @@ function WorkspaceContent() {
     });
     return () => { handlers.forEach(({ name, handle }) => window.removeEventListener(`cv3:${name}`, handle)); window.removeEventListener('hashchange', openAccount); };
   }, []);
-  const loading = <div className="vivo-panel-loading cv-panel-loading" role="status"><span className="cv-skeleton" /><span className="cv-skeleton" /><span>Preparando tu espacio…</span></div>;
+  const loading = <div className="vivo-panel-loading cv-panel-loading" role="status"><span className="cv-skeleton" /><span className="cv-skeleton" /><span>{t("Preparando tu espacio…")}</span></div>;
   return <>
     <Suspense fallback={null}><UrlRouting panel={panel} closePanel={() => setPanel('')} /></Suspense>
     <CatalogDetail onDownload={async experience => { const message = await downloadExperience(experience); await refreshLibrary(); return message; }} onAsk={() => signal('mijin')} onInquiry={id => { setInquiry(id); setPanel('account'); }} />
     {panel === 'plan' && <Suspense fallback={loading}><PlannerDialog onClose={() => setPanel('')} onSelect={id => { setPanel(''); select(id); }} /></Suspense>}
     {panel === 'legal' && <Suspense fallback={loading}><LegalCenter onClose={() => setPanel('')} onPrivacy={openPrivacy} /></Suspense>}
-    {panel === 'account' && <Dialog title="Tu cuenta en CHULLA VIDA" onClose={() => setPanel('')} wide><div className="dialog-content"><Suspense fallback={loading}><AuthPanel experienceId={inquiry} initialTab={inquiry ? undefined : accountTab} /></Suspense></div></Dialog>}
-    {panel === 'editorial' && <Dialog title="Estudio de contenido" onClose={() => setPanel('')} wide><div className="dialog-content"><Suspense fallback={loading}><EditorialPanel onPublished={() => window.dispatchEvent(new Event('cv3:catalog-updated'))} /></Suspense></div></Dialog>}
-    {panel === 'alerts' && <Dialog title="Tus avisos, a tu manera" onClose={() => setPanel('')} wide><div className="dialog-content"><Suspense fallback={loading}><NotificationCenter /></Suspense></div></Dialog>}
+    {panel === 'account' && <Dialog title={t("Tu cuenta en CHULLA VIDA")} onClose={() => setPanel('')} wide><div className="dialog-content"><Suspense fallback={loading}><AuthPanel experienceId={inquiry} initialTab={inquiry ? undefined : accountTab} /></Suspense></div></Dialog>}
+    {panel === 'editorial' && <Dialog title={t("Estudio de contenido")} onClose={() => setPanel('')} wide><div className="dialog-content"><Suspense fallback={loading}><EditorialPanel onPublished={() => window.dispatchEvent(new Event('cv3:catalog-updated'))} /></Suspense></div></Dialog>}
+    {panel === 'alerts' && <Dialog title={t("Tus avisos, a tu manera")} onClose={() => setPanel('')} wide><div className="dialog-content"><Suspense fallback={loading}><NotificationCenter /></Suspense></div></Dialog>}
     {panel === 'host' && <Suspense fallback={loading}><HostHub onClose={() => setPanel('')} /></Suspense>}
     {panel === 'wallet' && <Suspense fallback={loading}><WalletPanel onClose={() => setPanel('')} onOpenExperience={id => { setPanel(''); select(id); }} /></Suspense>}
     {panel === 'privacy-rights' && <Suspense fallback={loading}><RightsRequestForm onClose={() => setPanel('')} /></Suspense>}
     <Suspense fallback={null}><WelcomeGate /></Suspense>
     <Suspense fallback={null}><TourGate /></Suspense>
-    {panel === 'payments' && <Dialog title="Reservas y pagos" onClose={() => setPanel('')} wide><div className="dialog-content"><Suspense fallback={loading}><PaymentsPanel reference={paymentReference(window.location.search)} onAccount={() => { setInquiry(undefined); setPanel('account'); }} onDemo={() => { const place = places[0]; if (place) { setPanel(''); setRole('turista'); setBookingPlace(place); } }} /></Suspense></div></Dialog>}
+    {panel === 'payments' && <Dialog title={t("Reservas y pagos")} onClose={() => setPanel('')} wide><div className="dialog-content"><Suspense fallback={loading}><PaymentsPanel reference={paymentReference(window.location.search)} onAccount={() => { setInquiry(undefined); setPanel('account'); }} onDemo={() => { const place = places[0]; if (place) { setPanel(''); setRole('turista'); setBookingPlace(place); } }} /></Suspense></div></Dialog>}
     {panel === 'downloads' && <Suspense fallback={loading}><DownloadsPanel onClose={() => setPanel('')} onOpenExperience={id => { setPanel(''); select(id); }} onChanged={refreshLibrary} /></Suspense>}
     <Suspense fallback={null}><MijinAssistant publicExperiences={records} onOpenExperience={id => { setPanel(''); select(id); }} downloadedExperiences={library.experiences} downloadedAt={library.downloadedAt} onOpenPrivacy={openPrivacy} /></Suspense>
   </>;
 }
-/** Pie con columnas: explorar, viajar, anfitriones, legal y privacidad, ayuda. */
-export function V3Footer({ onReplayIntro, onHelp, onRegion }: { onReplayIntro?: () => void; onHelp?: () => void; onRegion?: (region: RegionId) => void } = {}) {
+/** Grupo del pie: en el celular se pliega (solo el título a la vista); en pantallas anchas empieza abierto. */
+function FooterGroup({ title, children }: { title: string; children: ReactNode }) {
+  const [open, setOpen] = useState(() => { try { return !window.matchMedia('(max-width: 760px)').matches; } catch { return true; } });
+  return <details className="cv-footer-group" open={open} onToggle={event => setOpen((event.currentTarget as HTMLDetailsElement).open)}><summary><h2>{title}</h2><ChevronDown size={16} aria-hidden="true" /></summary><ul>{children}</ul></details>;
+}
+export type FooterMode = 'guest' | 'traveler' | 'business';
+/**
+ * Pie compacto. Viajero e invitado: explorar, viajar, legal y ayuda; el invitado ve además un único acceso
+ * discreto «Soy anfitrión». Negocio: legal, ayuda y la edición de contenido, sin herramientas de viajero.
+ */
+export function V3Footer({ onReplayIntro, onHelp, onRegion, onHost, mode = 'guest' }: { onReplayIntro?: () => void; onHelp?: () => void; onRegion?: (region: RegionId) => void; onHost?: () => void; mode?: FooterMode } = {}) {
+  const t = useT();
   const { open } = useConsent();
   const region = (id: RegionId) => () => { onRegion?.(id); document.getElementById('experiencias')?.scrollIntoView({ block: 'start' }); };
-  return <footer className="v3-footer vivo-footer cv-footer" aria-label="Pie de página">
-    <div className="cv-footer-brand"><strong>CHULLA VIDA</strong><p>Turismo joven, sostenible y consciente en las cuatro regiones del Ecuador.</p><SocialButtons /></div>
-    <nav className="cv-footer-cols" aria-label="Enlaces del sitio">
-      <section><h2>Explora</h2><ul>{(['sierra', 'costa', 'amazonia', 'galapagos'] as RegionId[]).map(id => <li key={id}><button onClick={region(id)}>{REGION_LABELS[id]}</button></li>)}<li><button onClick={() => signal('culture')}>Cultura Viva</button></li></ul></section>
-      <section><h2>Viaja</h2><ul><li><button onClick={() => signal('plan')}><Map size={15} />Mi viaje</button></li><li><button onClick={() => signal('wallet')}><Wallet size={15} />Mi billetera</button></li><li><button onClick={() => signal('payments')}><CreditCard size={15} />Reservas y pagos</button></li><li><button onClick={() => signal('downloads')}><Download size={15} />Fichas sin señal</button></li><li><button onClick={() => signal('passport')}><BookOpen size={15} />Pasaporte Guambra</button></li></ul></section>
-      <section><h2>Anfitriones</h2><ul><li><button onClick={() => signal('host')}><Store size={15} />Publica tu experiencia</button></li><li><button onClick={() => signal('account')}><UserRound size={15} />Mi cuenta (viajeros y negocios)</button></li><li><button onClick={() => signal('editorial')}><FilePenLine size={15} />Editar contenido</button></li></ul></section>
-      <section><h2>Legal y privacidad</h2><ul><li><button onClick={() => signal('legal')}><ShieldCheck size={15} />Términos y privacidad</button></li><li><button onClick={open} data-tour="privacy"><ShieldCheck size={15} />Privacidad y cookies</button></li><li><button onClick={() => signal('privacy-rights')}>Ejercer mis derechos de datos</button></li><li><a href={LEGAL_PDF_NOTICE} download><FileText size={15} />Aviso de protección de datos (PDF)</a></li><li><a href={LEGAL_PDF_RIGHTS} download><Download size={15} />Formulario de derechos (PDF)</a></li></ul></section>
-      <section><h2>Ayuda</h2><ul><li><button onClick={() => signal('mijin')}><Mic size={15} />Habla con MIJIN</button></li>{onHelp && <li><button onClick={onHelp}><CircleHelp size={15} />Preguntas frecuentes</button></li>}<li><button onClick={() => signal('alerts')}><Bell size={15} />Preferencias de avisos</button></li><li><button onClick={() => signal('welcome')}><Compass size={15} />Volver a ver tutorial</button></li><li><button onClick={() => signal('tour')}><Compass size={15} />Recorrido guiado por la página</button></li>{onReplayIntro && <li><button onClick={onReplayIntro}><PlayCircle size={15} />Ver bienvenida</button></li>}<li><a href="/images/CREDITS.md" target="_blank" rel="noreferrer"><ImageIcon size={15} />Créditos de imágenes</a></li></ul></section>
+  const business = mode === 'business';
+  return <footer className="v3-footer vivo-footer cv-footer cv-footer-compact" aria-label={t("Pie de página")}>
+    <div className="cv-footer-brand"><strong>CHULLA VIDA</strong><p>{t("Turismo joven y consciente en Ecuador.")}</p><SocialButtons /></div>
+    <nav className="cv-footer-cols" aria-label={t("Enlaces del sitio")}>
+      {!business && <FooterGroup title={t("Explora")}>{(['sierra', 'costa', 'amazonia', 'galapagos'] as RegionId[]).map(id => <li key={id}><button onClick={region(id)}>{REGION_LABELS[id]}</button></li>)}<li><button onClick={() => signal('culture')}>{t("Cultura Viva")}</button></li></FooterGroup>}
+      {!business && <FooterGroup title={t("Viaja")}><li><button onClick={() => signal('plan')}><Map size={15} />{t("Mi viaje")}</button></li><li><button onClick={() => signal('wallet')}><Wallet size={15} />{t("Mi billetera")}</button></li><li><button onClick={() => signal('payments')}><CreditCard size={15} />{t("Reservas y pagos")}</button></li><li><button onClick={() => signal('downloads')}><Download size={15} />{t("Fichas sin señal")}</button></li><li><button onClick={() => signal('passport')}><BookOpen size={15} />{t("Pasaporte Guambra")}</button></li></FooterGroup>}
+      {business && <FooterGroup title={t("Tu negocio")}><li><button onClick={() => signal('host')}><Store size={15} />{t("Solicitud de anfitrión")}</button></li><li><button onClick={() => signal('editorial')}><FilePenLine size={15} />{t("Editar contenido")}</button></li><li><button onClick={() => signal('account')}><UserRound size={15} />{t("Mi cuenta")}</button></li></FooterGroup>}
+      <FooterGroup title={t("Legal y privacidad")}><li><button onClick={() => signal('legal')}><ShieldCheck size={15} />{t("Términos y privacidad")}</button></li><li><button onClick={open} data-tour="privacy"><ShieldCheck size={15} />{t("Privacidad y cookies")}</button></li><li><button onClick={() => signal('privacy-rights')}>{t("Ejercer mis derechos de datos")}</button></li><li><a href={LEGAL_PDF_NOTICE} download><FileText size={15} />{t("Aviso de protección de datos (PDF)")}</a></li><li><a href={LEGAL_PDF_RIGHTS} download><Download size={15} />{t("Formulario de derechos (PDF)")}</a></li></FooterGroup>
+      <FooterGroup title={t("Ayuda")}><li><button onClick={() => signal('mijin')}><Mic size={15} />{t("Habla con MIJIN")}</button></li>{onHelp && <li><button onClick={onHelp}><CircleHelp size={15} />{t("Preguntas frecuentes")}</button></li>}<li><button onClick={() => signal('alerts')}><Bell size={15} />{t("Preferencias de avisos")}</button></li><li><button onClick={() => signal('welcome')}><Compass size={15} />{t("Ver la bienvenida")}</button></li><li><button onClick={() => signal('tour')}><Compass size={15} />{t("Recorrido guiado")}</button></li>{onReplayIntro && <li><button onClick={onReplayIntro}><PlayCircle size={15} />{t("Ver la intro")}</button></li>}<li><a href="/images/CREDITS.md" target="_blank" rel="noreferrer"><ImageIcon size={15} />{t("Créditos de imágenes")}</a></li></FooterGroup>
     </nav>
-    <p className="cv-footer-note">Información de origen · Precios referenciales · Viajes con respeto. Mientras los pagos no estén activos, toda compra es de prueba y no cobra nada.</p>
+    <div className="cv-footer-bottom">
+      <p className="cv-footer-note">{t("Precios referenciales · compras de prueba, sin cobro.")}</p>
+      {mode === 'guest' && <button className="cv-footer-host" data-tour="host" onClick={() => (onHost ? onHost() : signal('host'))}><Store size={15} aria-hidden="true" />{t("Soy anfitrión")}</button>}
+    </div>
   </footer>;
 }

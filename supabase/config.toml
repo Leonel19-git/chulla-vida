@@ -251,19 +251,19 @@ sender_name = "CHULLA VIDA"
 
 
 [auth.email.template.confirmation]
-subject = "Tu código para activar CHULLA VIDA"
+subject = "Tu código de CHULLA VIDA es {{ .Token }}"
 content_path = "./supabase/templates/confirm-signup.html"
 
 [auth.email.template.magic_link]
-subject = "Tu código para entrar a CHULLA VIDA"
+subject = "Tu código de CHULLA VIDA es {{ .Token }}"
 content_path = "./supabase/templates/magic-link.html"
 
 [auth.email.template.recovery]
-subject = "Tu código para cambiar la contraseña de CHULLA VIDA"
+subject = "Tu código de CHULLA VIDA es {{ .Token }}"
 content_path = "./supabase/templates/recovery.html"
 
 [auth.email.template.email_change]
-subject = "Confirma tu nuevo correo en CHULLA VIDA"
+subject = "Tu código de CHULLA VIDA es {{ .Token }}"
 content_path = "./supabase/templates/email-change.html"
 
 # Uncomment to customize email template

@@ -155,3 +155,4 @@ body:has(.privacy-banner) .mijin-launcher{bottom:calc(var(--cv-consent-h,0px) + 
    En móvil se apoya encima de la barra inferior y de la barra de inicio. */
 .privacy-toast{width:max-content}
 @media (max-width:700px){.privacy-toast{bottom:calc(80px + env(safe-area-inset-bottom))}}
+.consent-banner p .privacy-link{display:inline;min-height:0!important;padding:0!important;vertical-align:baseline;line-height:inherit}

@@ -11,13 +11,13 @@ export async function receiptQr(code: string): Promise<string> {
 }
 
 export function receiptLines(records: readonly WalletRecord[]): ReceiptLine[] {
-  return records.map(record => ({ title: record.title, date: record.date, people: record.people, unitCents: record.unitCents, totalCents: record.totalCents, currency: record.currency, note: record.kind === 'request' ? 'Solicitud de cotización: sin precio comparable, no incluida en el total.' : record.priceNote }));
+  return records.map(record => ({ title: record.title, date: record.date, ...(record.endDate ? { endDate: record.endDate } : {}), people: record.people, unitCents: record.unitCents, totalCents: record.totalCents, currency: record.currency, note: record.kind === 'request' ? 'Solicitud de cotización: sin precio comparable, no incluida en el total.' : record.priceNote }));
 }
 
 /** Comprobante descargable (HTML autocontenido). Lleva el rótulo de prueba arriba, en marca de agua y al final. */
 export function receiptHtml(input: { code: string; records: readonly WalletRecord[]; qr: string }): string {
   const first = input.records[0];
-  const body = testReceiptText({ code: input.code, buyerName: first?.buyer.name ?? '', emailMasked: first?.buyer.emailMasked ?? '', documentMasked: first?.buyer.documentMasked ?? null, createdAt: first?.updatedAt ?? new Date().toISOString(), lines: receiptLines(input.records), card: first?.card ?? null });
+  const body = testReceiptText({ code: input.code, buyerName: first?.buyer.name ?? '', emailMasked: first?.buyer.emailMasked ?? '', documentMasked: first?.buyer.documentMasked ?? null, createdAt: first?.updatedAt ?? new Date().toISOString(), lines: receiptLines(input.records), card: first?.card ?? null, transfer: first?.method === 'transfer' && first.transfer ? { reference: first.transfer.reference, verified: first.status === 'test_approved' } : null });
   const card = first?.card && isCardSummary(first.card) ? first.card : null;
   const qr = input.qr.startsWith('data:image/svg+xml') ? input.qr : '';
   return `<!doctype html><html lang="es-EC"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escape(TEST_RECEIPT_LABEL)} · ${escape(input.code)}</title>

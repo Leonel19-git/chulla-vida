@@ -47,10 +47,13 @@
 
 @media (max-width:1180px){.cv-toolbar>.cv-toolbar-tag{display:none}.cv-toolbar{justify-content:center}}
 @media (max-width:1100px){.cv-footer-cols{grid-template-columns:repeat(3,minmax(0,1fr))}}
+/* Etiqueta corta del botón: solo en celular (la larga queda para pantallas anchas). */
+.cv-toolbar .cv-short{display:none}
 @media (max-width:760px){
   .cv-toolbar{padding:6px 8px;position:relative}
   .cv-toolbar-main{width:100%;justify-content:space-between;gap:2px}
   .cv-toolbar .cv-long{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+  .cv-toolbar .cv-short{display:inline}
   .cv-toolbar .cv-tool,.cv-toolbar .cv-tool:first-of-type,.cv-toolbar .cv-tool.cv-tool-mijin{flex-direction:column;gap:3px;min-height:52px;min-width:0;flex:1 1 0;padding:4px 2px;font-size:11px;justify-content:center}
   .cv-toolbar-main>*{flex:1 1 0;min-width:0}
   .cv-more>.cv-tool{width:100%}

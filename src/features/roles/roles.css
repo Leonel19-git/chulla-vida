@@ -1,0 +1,5 @@
+.role-switch{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;margin:0 0 16px;border-radius:999px;background:var(--surface-muted,#eef1ec);border:1px solid var(--line,#d8ddd4)}
+.role-switch button{display:flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:8px 12px;border:0;border-radius:999px;background:transparent;color:var(--ink,#19323c);font:600 14px/1.2 'Plus Jakarta Sans',system-ui,sans-serif;cursor:pointer;transition:background-color .18s,color .18s}
+.role-switch button[aria-checked="true"]{background:var(--navy,#103452);color:#fff}
+.role-switch button:focus-visible{outline:3px solid #079da5;outline-offset:2px}
+@media(prefers-reduced-motion:reduce){.role-switch button{transition:none}}

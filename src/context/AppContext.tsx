@@ -5,6 +5,7 @@ import type {
 } from '../types';
 import { translations } from '../i18n/translations';
 import { translate, languageMetadata } from '../i18n/ui';
+import { setV3Language } from '../i18n/v3';
 import { INITIAL_PLACES, INITIAL_RAYMIS, INITIAL_CHAT_MESSAGES, INITIAL_PARTNER_DISCOUNTS } from '../data/mockData';
 import {
   readStoredValue, writeStoredValue, isRole, isLanguage, isPreferences, isPlaceArray,
@@ -88,6 +89,8 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [role, setRoleState] = useState<Role>(() => readStoredValue('role', 'turista', isRole));
   const [language, setLanguage] = useState<Language>(() => readStoredValue('language', 'es', isLanguage));
+  // La interfaz 3.x lee el idioma desde src/i18n/v3 (también fuera de este proveedor).
+  setV3Language(language, true);
   const [places, setPlaces] = useState<Place[]>(() => {
     const saved = readStoredValue('places', INITIAL_PLACES, isPlaceArray);
     const ids = new Set(saved.map(place => place.id));
@@ -121,7 +124,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
 
   useEffect(() => { writeStoredValue('role', role); }, [role]);
-  useEffect(() => { writeStoredValue('language', language); if (typeof document !== 'undefined') document.documentElement.lang = languageMetadata[language].tag; }, [language]);
+  useEffect(() => { writeStoredValue('language', language); setV3Language(language); if (typeof document !== 'undefined') document.documentElement.lang = languageMetadata[language].tag; }, [language]);
   useEffect(() => { writeStoredValue('places', places); }, [places]);
   useEffect(() => { writeStoredValue('raymis', raymis); }, [raymis]);
   useEffect(() => { writeStoredValue('reservations', reservations); }, [reservations]);

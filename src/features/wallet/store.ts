@@ -30,9 +30,9 @@ export function upsertRecords(records: WalletRecord[]): boolean {
   const current = readWallet().records.filter(item => !records.some(record => record.id === item.id));
   return write({ version: 1, records: [...records, ...current].slice(0, WALLET_LIMIT) });
 }
-export function updateRecord(id: string, patch: Partial<Pick<WalletRecord, 'status' | 'attempts'>>): boolean {
+export function updateRecord(id: string, patch: Partial<Pick<WalletRecord, 'status' | 'attempts' | 'transfer'>>): boolean {
   const state = readWallet();
-  const records = state.records.map(record => record.id === id ? { ...record, ...patch, updatedAt: new Date().toISOString() } : record);
+  const records = state.records.map(record => { if (record.id !== id) return record; const next = { ...record, ...patch, updatedAt: new Date().toISOString() }; return isWalletRecord(next) ? next : record; });
   return write({ version: 1, records });
 }
 export function removeRecord(id: string): boolean {

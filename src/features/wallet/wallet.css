@@ -52,3 +52,14 @@
 @keyframes wallet-glow { from { transform: scale(.9); opacity: .7; } to { transform: scale(1.15); opacity: 1; } }
 @media (max-width: 560px) { .wallet-panel { padding: 16px; } .wallet-hero { padding: 14px; } .wallet-actions .button { flex: 1 1 100%; justify-content: center; } .wallet-stats { grid-template-columns: 1fr 1fr; } }
 @media (prefers-reduced-motion: reduce) { .wallet-hero::after, .wallet-stats li, .wallet-records > li { animation: none !important; } }
+
+/* 3.3 · Método de pago, transferencia y detalle plegable. */
+.wallet-method { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; background: #eef2f0; color: #19323c; }
+.wallet-method.is-wait { background: #fff4cf; color: #4a3500; }
+.wallet-method.is-ok { background: #e3f4ec; color: #0b6b55; }
+.wallet-method.is-bad { background: #fdeee9; color: #7d2a14; }
+.wallet-records > li[data-status=test_transfer_review] { border-left-color: #f2b632; }
+.wallet-records > li[data-status=test_transfer_rejected] { border-left-color: #d0603e; }
+.wallet-more summary { cursor: pointer; min-height: 44px; display: flex; align-items: center; font-size: 13px; font-weight: 600; color: #0b6f7c; }
+.wallet-simulate { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 6px; border-radius: 12px; border: 1px dashed #f2b632; background: #fffaf0; }
+.wallet-simulate small { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; color: #6b5100; }

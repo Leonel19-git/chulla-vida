@@ -35,3 +35,35 @@
 .pg-test-stamp input{width:100%;min-height:44px;font-size:16px;letter-spacing:.08em;text-transform:uppercase}
 .pg-test-stamp h4{display:flex;gap:8px;align-items:center}
 @media(prefers-reduced-motion:reduce){.pg-stamp-new{animation:none!important;outline:3px solid #efb22c;outline-offset:3px}}
+/* Celular: una página por pantalla, se pasa de hoja deslizando. */
+@media(max-width:600px){
+.pg-book-one{margin-inline:10px 4px;padding:6px 6px 8px 9px;touch-action:pan-y}
+.pg-book-one .pg-book-spine{width:12px;left:-10px;font-size:0}
+.pg-one-side{display:block;min-height:0}
+.pg-one-side[data-side="0"]>.pg-page:nth-of-type(2),.pg-one-side[data-side="1"]>.pg-page:nth-of-type(1){display:none}
+.pg-one-side>.pg-page{border:0!important;min-height:min(70vh,560px)}
+.pg-one-side.pg-spread-cover>.pg-cover-spread{display:block;min-height:0}
+.pg-one-side[data-side="0"] .pg-cover-note,.pg-one-side[data-side="1"] .pg-cover{display:none}
+.pg-one-side .pg-cover{margin-right:0;transform:none;min-height:min(72vh,540px)}
+.pg-one-side .pg-cover-note{min-height:min(60vh,460px)}
+.pg-slide-next{animation:pg-slide-next .32s cubic-bezier(.2,.8,.2,1) both}
+.pg-slide-previous{animation:pg-slide-previous .32s cubic-bezier(.2,.8,.2,1) both}
+.pg-tabs{flex-wrap:nowrap;scroll-snap-type:x proximity;margin-inline:-16px;padding-inline:16px;scrollbar-width:none}
+.pg-tabs::-webkit-scrollbar{display:none}
+.pg-tabs button{min-height:44px;scroll-snap-align:start}
+.pg-pagination-sticky{position:sticky;bottom:0;z-index:6;margin:16px -16px 0;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:#fffdf5f2;border-top:1px solid #d7c9a8;box-shadow:0 -8px 18px -14px #10345266}
+.pg-pagination-sticky .button{min-width:48px;min-height:48px;justify-content:center}
+.pg-stamps{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.pg-stamps .pg-stamp{min-height:146px;padding:16px 10px;transform:rotate(-3deg)}
+.pg-stamps .pg-stamp:nth-child(2n){transform:rotate(3deg)}.pg-stamps .pg-stamp:nth-child(3n){transform:rotate(-1deg)}
+.pg-stamps .pg-stamp strong{font-size:14px}
+.pg-stamps .pg-stamp small,.pg-stamps .pg-stamp .pg-stamp-label{font-size:12.5px}
+.pg-stamps .pg-stamp-ink svg{width:32px;height:32px}
+.pg-map-links{grid-template-columns:1fr 1fr}
+.pg-map-links button{min-height:48px;font-size:14px}
+.pg-destination>div>button{min-height:44px}
+}
+@keyframes pg-slide-next{from{opacity:.2;transform:translateX(28px)}to{opacity:1;transform:none}}
+@keyframes pg-slide-previous{from{opacity:.2;transform:translateX(-28px)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){.pg-slide-next,.pg-slide-previous{animation:none}}/* 3.4: «N ideas más de…» es un objetivo táctil de 44 px. */
+.pg-passport details>summary{min-height:44px;display:flex;align-items:center;cursor:pointer}

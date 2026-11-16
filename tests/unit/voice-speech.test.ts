@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, expect, it, vi } from 'vitest';
-import { chunkSpeech, classifyRecognitionError, loadVoices, markVoiceNoticeSeen, pickSpanishVoice, readVoiceNoticeSeen, recognitionMessages } from '../../src/features/assistant/speech';
+import { chunkSpeech, classifyRecognitionError, loadBestVoices, loadVoices, markVoiceNoticeSeen, pickSpanishVoice, readVoiceNoticeSeen, recognitionMessages } from '../../src/features/assistant/speech';
 
 describe('voz de MIJIN: utilidades del navegador', () => {
   it('prefiere es-EC, luego es-419, es-MX, es-US, es-ES y nunca otra lengua', () => {
@@ -14,7 +14,8 @@ describe('voz de MIJIN: utilidades del navegador', () => {
   it('prefiere es-US sobre es-MX y, dentro de una variante, la voz natural sobre la local antigua', () => {
     expect(pickSpanishVoice([{ lang: 'es-MX', name: 'Microsoft Sabina' }, { lang: 'es-US', name: 'Google español de Estados Unidos' }])?.lang).toBe('es-US');
     expect(pickSpanishVoice([{ lang: 'es-ES', name: 'Microsoft Helena - Spanish (Spain)', localService: true }, { lang: 'es-ES', name: 'Google español', localService: false }])?.name).toBe('Google español');
-    expect(pickSpanishVoice([{ lang: 'es-ES', name: 'Voz genérica', localService: true }, { lang: 'es-ES', name: 'Microsoft Laura - Spanish (Spain)', localService: true }])?.name).toMatch(/Laura/);
+    expect(pickSpanishVoice([{ lang: 'es-ES', name: 'Microsoft Laura - Spanish (Spain)', localService: true }, { lang: 'es-ES', name: 'Voz genérica', localService: true }])?.name).toBe('Voz genérica');
+    expect(pickSpanishVoice([{ lang: 'es-ES', name: 'Microsoft Laura - Spanish (Spain)', localService: true }])?.name).toMatch(/Laura/);
   });
   it('trocea respuestas largas por frases sin perder texto', () => {
     const text = 'Saraguro Ancestral: desde $45 por persona. '.repeat(12) + 'Confirma con el anfitrión antes de viajar.';
@@ -31,6 +32,25 @@ describe('voz de MIJIN: utilidades del navegador', () => {
     const synth = { getVoices: vi.fn(() => [] as SpeechSynthesisVoice[]), addEventListener: (_: 'voiceschanged', listener: () => void) => { listeners.push(listener); }, removeEventListener: vi.fn() };
     const pending = loadVoices(synth, 1000); vi.advanceTimersByTime(1000);
     await expect(pending).resolves.toEqual([]);
+    vi.useRealTimers();
+  });
+  it('si solo hay voces de Windows, prefiere Laura (OneCore) a Helena (SAPI 5)', () => {
+    const windows = [{ name: 'Microsoft Helena - Spanish (Spain)', lang: 'es-ES' }, { name: 'Microsoft Laura - Spanish (Spain)', lang: 'es-ES' }, { name: 'Microsoft Pablo - Spanish (Spain)', lang: 'es-ES' }];
+    expect(pickSpanishVoice(windows)?.name).toBe('Microsoft Laura - Spanish (Spain)');
+  });
+  it('no arranca con una voz robótica si Chrome o Edge todavía están cargando una mejor', async () => {
+    vi.useFakeTimers();
+    const listeners: (() => void)[] = [];
+    let list = [{ name: 'Microsoft Helena - Spanish (Spain)', lang: 'es-ES' }] as SpeechSynthesisVoice[];
+    const synth = { getVoices: vi.fn(() => list), addEventListener: (_: 'voiceschanged', listener: () => void) => { listeners.push(listener); }, removeEventListener: vi.fn() };
+    const pending = loadBestVoices(synth, 1500);
+    list = [...list, { name: 'Google español de Estados Unidos', lang: 'es-US' } as SpeechSynthesisVoice];
+    listeners.forEach(listener => listener());
+    const voices = await pending;
+    expect(pickSpanishVoice(voices)?.name).toBe('Google español de Estados Unidos');
+    list = [{ name: 'Microsoft Helena - Spanish (Spain)', lang: 'es-ES' }] as SpeechSynthesisVoice[];
+    const alone = loadBestVoices(synth, 1500); vi.advanceTimersByTime(1500);
+    expect((await alone).map(voice => voice.name)).toEqual(['Microsoft Helena - Spanish (Spain)']);
     vi.useRealTimers();
   });
   it('clasifica cada error de SpeechRecognition con un mensaje útil', () => {

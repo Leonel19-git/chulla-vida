@@ -40,7 +40,7 @@ it('agrupa herramientas en «Más»: abre, cierra con Escape y devuelve el foco'
   fireEvent.click(more);
   expect(more).toHaveAttribute('aria-expanded', 'true');
   expect(screen.getAllByRole('menuitem').map(item => item.textContent)).toEqual([
-    expect.stringMatching(/^Sin señal/), expect.stringMatching(/^Pasaporte Guambra/), expect.stringMatching(/^Mis avisos/), expect.stringMatching(/^Anfitriones/), expect.stringMatching(/^Mi cuenta/), expect.stringMatching(/^Recorrido guiado/),
+    expect.stringMatching(/^Sin señal/), expect.stringMatching(/^Pasaporte Guambra/), expect.stringMatching(/^Mis avisos/), expect.stringMatching(/^Mi cuenta/), expect.stringMatching(/^Recorrido guiado/),
   ]);
   expect(screen.getAllByRole('menuitem')[0]).toHaveFocus();
   fireEvent.keyDown(window, { key: 'Escape' });

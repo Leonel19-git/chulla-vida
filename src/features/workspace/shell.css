@@ -1,0 +1,83 @@
+/* ───────────── Carcasa compacta (CHULLA VIDA 3.4) ─────────────
+   Se importa la última desde App.tsx. Cabecera fija y pequeña, cuenta a la vista, barra inferior de 5 destinos
+   con zona segura, barra de herramientas solo en pantallas anchas y pie plegable en el celular.
+   Sin velos semitransparentes ni desenfoques; animaciones solo con transform. */
+
+/* Cabecera: fondo sólido y fija arriba también en el celular. */
+.app-shell .topbar.cv-topbar{position:sticky;top:0;z-index:40;background:#fffdf7;backdrop-filter:none;-webkit-backdrop-filter:none}
+.app-shell .topbar .mobile-brand-name{border:0;background:none;padding:0;color:var(--cv-navy,#012960);cursor:pointer;font-weight:800;letter-spacing:.04em}
+.app-shell .cv-account-button{box-shadow:none}
+/* Con la cabecera fija, la barra de herramientas queda justo debajo. */
+.app-shell .cv-toolbar.cv-toolbar{top:80px;background:#fffdf7;backdrop-filter:none;-webkit-backdrop-filter:none}
+
+/* Plegable de música en la portada */
+.cv-music-fold>.music-section{margin:0 12px 12px;padding-top:0;border:0}
+
+/* Aviso «Panel de prueba» del modo negocio */
+.app-shell.is-business .main-content>.cv-note-chip{margin:0 0 16px}
+
+/* ── Pie compacto ── */
+.cv-footer-compact .cv-footer-brand p{margin:4px 0 10px;font-size:14px}
+.cv-footer-group>summary{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;list-style:none;cursor:pointer}
+.cv-footer-group>summary::-webkit-details-marker{display:none}
+.cv-footer-group>summary h2{margin:0}
+.cv-footer-group>summary>svg{flex:none;transition:transform var(--cv-dur-1,.18s)}
+.cv-footer-group[open]>summary>svg{transform:rotate(180deg)}
+.cv-footer-group>ul{list-style:none;margin:0;padding:0}
+.cv-footer-bottom{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px 16px;margin-top:16px}
+.cv-footer-bottom .cv-footer-note{margin:0}
+.cv-footer .cv-footer-host{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 6px;font-size:14px;font-weight:650;color:#fff;text-decoration:underline;text-underline-offset:3px;background:none;border:0;cursor:pointer}
+@media (min-width:701px){.cv-footer-group>summary{pointer-events:none}.cv-footer-group>summary>svg{display:none}}
+
+@media (max-width:700px){
+  /* Cabecera de una línea: menú, marca, cuenta e idioma. Avisos e intro quedan en el menú y el pie. */
+  .app-shell .topbar.topbar{min-height:60px}
+  .app-shell .topbar .topbar-title,.app-shell .topbar .notification-button{display:none}
+  .app-shell .topbar .mobile-brand-name{display:block;font-size:13px;min-height:44px}
+  .app-shell .cv-account-button{min-height:44px;padding:0 14px;font-size:14px}
+
+  /* La barra de herramientas se reemplaza por la barra inferior. */
+  .app-shell .cv-toolbar.cv-toolbar{display:none}
+
+  /* Barra inferior: 5 destinos, MIJIN al centro, zona segura del iPhone. */
+  .app-shell .cv-bottom-nav.mobile-bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:45;padding:0 max(4px,env(safe-area-inset-left)) env(safe-area-inset-bottom) max(4px,env(safe-area-inset-right));display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr));align-items:end;gap:0;background:#fffdf7;border-top:1px solid var(--cv-line,#d6ccb5);box-shadow:0 -4px 16px #0129601a}
+  .app-shell .cv-bottom-nav button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-width:0;min-height:56px;padding:4px 2px;font-size:12px;font-weight:650;color:#3a4a55;background:none;border:0}
+  .app-shell .cv-bottom-nav button.active{color:var(--cv-navy,#012960)}
+  .app-shell .cv-bottom-nav button.active svg{color:var(--cv-red,#c61534)}
+  .app-shell .cv-bottom-nav button>span:last-child{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .app-shell .cv-bottom-nav .cv-bottom-mijin-mark{display:grid;place-items:center;width:46px;height:46px;margin-top:-18px;border-radius:50%;background:var(--cv-navy,#012960);color:#fff;border:3px solid #fffdf7;box-shadow:var(--cv-shadow-2)}
+  .app-shell .cv-bottom-nav .cv-bottom-mijin{color:var(--cv-navy,#012960)}
+  .app-shell.is-traveler .app-workspace{padding-bottom:calc(64px + env(safe-area-inset-bottom))}
+  .app-shell.is-business .app-workspace{padding-bottom:env(safe-area-inset-bottom)}
+  /* MIJIN ya está en la barra: el botón flotante se retira en el celular para no tapar contenido. */
+  .app-shell.is-traveler~.mijin-launcher,.app-shell.is-traveler~* .mijin-launcher,body:has(.cv-bottom-nav) .mijin-launcher.mijin-launcher{display:none}
+
+  /* Pie: grupos plegados, todo en una columna corta. La barra inferior ya reserva su alto en .app-workspace. */
+  .cv-footer.cv-footer-compact{padding:24px 16px 20px}
+  .cv-footer-compact .cv-footer-brand{gap:8px 14px;padding-bottom:14px}
+  .cv-footer-compact .cv-footer-brand>p{display:none}
+  .cv-footer-compact .cv-footer-bottom{flex-wrap:nowrap;margin-top:10px}
+  .cv-footer-compact .cv-footer-bottom .cv-footer-note{flex:1;min-width:0;padding-top:0;border:0;line-height:1.4}
+  .cv-footer-compact .cv-footer-host{flex:none}
+  .cv-footer-compact .cv-footer-cols{padding:6px 0 0}
+  /* 3.4: dos columnas de grupos plegados (antes una): el pie ocupa la mitad de alto. */
+  .cv-footer-compact .cv-footer-cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 16px;align-items:start}
+  .cv-footer-compact .cv-footer-group{border-top:1px solid #ffffff33}
+  .cv-footer-compact .cv-footer-group>ul{padding:0 0 8px}
+  .cv-footer-compact .cv-footer-group li>*{min-height:44px;display:flex;align-items:center;gap:8px}
+
+  /* Menú lateral más corto. */
+  .app-shell .sidebar .main-navigation button{min-height:44px}
+}
+
+@media (prefers-reduced-motion:reduce){.cv-footer-group>summary>svg{transition:none}}
+.cv-footer .cv-footer-host:hover{color:var(--cv-maize,#fed65a)}
+
+/* Aviso de privacidad y avisos breves: encima de la barra inferior, sin taparla. */
+@media (max-width:700px){
+  body:has(.cv-bottom-nav) .privacy-banner.privacy-banner{bottom:calc(64px + 8px + env(safe-area-inset-bottom));max-height:calc(100dvh - 160px);overflow-y:auto}
+  body:has(.cv-bottom-nav) .privacy-toast{bottom:calc(64px + 8px + env(safe-area-inset-bottom))}
+}
+/* Idiomas: aviso breve de contenido que se queda en español. */
+.cv-lang-note{display:inline-flex;align-items:center;gap:4px;margin:0 0 10px;padding:4px 10px;border-radius:999px;background:#eef4fb;color:#012960;font-size:13px;font-weight:600;line-height:1.3}
+.cv-lang-note span{font-weight:800;letter-spacing:.04em}

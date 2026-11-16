@@ -70,6 +70,19 @@ node scripts/verify-wallet.mjs
 node scripts/verify-i18n.mjs
 ```
 
+Todo junto: `npm run check` (lint, build, tipado de `api/`, 860 pruebas de Vitest y verificaciones).
+
+### Cómo probar la 3.4 en 5 minutos
+
+1. `npm run build` y `npx vite preview --port 4517`. Abre el celular emulado del navegador (iPhone o Pixel).
+2. Primera visita: intro con video → elige **Privado** en cookies → la bienvenida muestra **Crear cuenta** arriba.
+3. Portada: carruseles por región, **Cultura Viva** (31 cartas que giran) y el pie plegado en dos columnas.
+4. **Mi viaje** (`/mi-viaje`): fechas de inicio y fin, adultos y niños con + y −.
+5. **Comprar** en una ficha: tarjeta de prueba `4242 4242 4242 4242`, cualquier fecha futura y CVV. Nada se cobra.
+6. **MIJIN** (`/mijin`): saluda, pregunta de dónde sales y recuerda lo que dices. En «Voz de MIJIN» eliges la voz y la escuchas.
+7. **Pasaporte** (`/pasaporte`): en el celular, una página por pantalla; desliza o usa las flechas.
+8. Pruebas de navegador: `E2E_BASE_URL=http://localhost:4517 npx playwright test tests/e2e/home-compact.spec.ts tests/e2e/mobile.spec.ts`.
+
 Las comprobaciones cubren reglas de reservas y llegadas, recomendaciones, almacenamiento, membresías y vencimientos, permisos del prototipo, comisión del 10%, saldo retenido, retiros repetidos y composición de traducciones. La cobertura de traducción no certifica su corrección lingüística.
 
 ## Perfiles

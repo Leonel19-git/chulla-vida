@@ -1,0 +1,241 @@
+/* ───────────── Portada compacta (CHULLA VIDA 3.4) ─────────────
+   Menos texto y más visual: carruseles con scroll-snap, tarjetas cortas y detalle al tocar.
+   Se carga después de vivo*.css y home.css; los selectores llevan .cv-compact para ganar sin !important.
+   Movimiento solo con transform y respetando prefers-reduced-motion. Nada semitransparente sobre el texto. */
+
+/* Cabeceras de sección: título y un dato corto en la misma línea. */
+.cv-section-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px 14px;flex-wrap:wrap;margin:0 0 12px}
+.cv-section-head h1,.cv-section-head h2{display:flex;align-items:center;gap:8px;margin:0;font:500 clamp(24px,3vw,32px)/1.12 Newsreader,Georgia,serif;letter-spacing:-.02em;color:var(--cv-navy,#012960)}
+.cv-section-head h2 svg{color:var(--cv-red,#c61534);flex:none}
+.cv-section-head p{margin:0;font-size:14px;line-height:1.4;color:var(--cv-muted,#3a4a55)}
+.cv-head-link{display:inline-flex;align-items:center;gap:4px;min-height:44px;padding:0 4px;font-weight:700;font-size:14px;color:var(--cv-navy,#012960)}
+.cv-compact .cv-home-block{margin:0 0 32px}
+@media (max-width:600px){.cv-compact .cv-home-block{margin-bottom:24px}.cv-compact .cv-discovery{margin-bottom:24px}}
+
+/* ── Carrusel ── */
+.cv-rail{position:relative;min-width:0;max-width:100%}
+.cv-rail-track{list-style:none;margin:0;padding:4px 2px 14px;display:flex;gap:12px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;overscroll-behavior-x:contain;scroll-padding-inline:2px;scrollbar-width:none;-webkit-overflow-scrolling:touch;--rail-w:66%}
+.cv-rail-track::-webkit-scrollbar{display:none}
+/* Ancho fijo por tarjeta (no el de la foto): la siguiente asoma por el lado para invitar a deslizar. */
+.cv-rail-track>li{flex:0 0 var(--rail-w);max-width:300px;scroll-snap-align:start;min-width:0;display:flex}
+.cv-rail-track>li>*{flex:1;min-width:0}
+.cv-rail-track:focus-visible{outline:3px solid var(--cv-petrol-2,#2a7175);outline-offset:2px;border-radius:12px}
+@media (min-width:600px){.cv-rail-track{--rail-w:calc((100% - 24px)/3)}}
+@media (min-width:1000px){.cv-rail-track{--rail-w:calc((100% - 36px)/4)}.cv-rail-track>li{max-width:none}}
+/* Flechas: solo con ratón. En táctil se desliza con el dedo. */
+.cv-rail-arrow{display:none}
+@media (hover:hover) and (pointer:fine) and (min-width:700px){
+  .cv-rail-arrow{position:absolute;top:calc(50% - 30px);z-index:3;display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--cv-card,#fffdf7);color:var(--cv-navy,#012960);border:1px solid var(--cv-line,#d6ccb5);box-shadow:var(--cv-shadow-2);transition:transform var(--cv-dur-1,.18s) var(--cv-ease,ease)}
+  .cv-rail-arrow:hover{transform:scale(1.06)}
+  .cv-rail-arrow.is-prev{left:-14px}
+  .cv-rail-arrow.is-next{right:-14px}
+}
+
+/* ── Tarjeta compacta ── */
+.cv-compact .vivo-card.cv-card{position:relative;height:100%;border-radius:16px;box-shadow:var(--cv-shadow-1)}
+.cv-compact .cv-card .vivo-card-photo{position:relative;aspect-ratio:16/10;height:auto;min-height:0}
+.cv-compact .cv-card .vivo-region{font-size:12px;padding:4px 9px;gap:5px}
+.cv-card-art{position:absolute;left:10px;bottom:10px;z-index:2;padding:3px 8px;border-radius:999px;background:#fffdf7;color:#10233f;font-size:12px;font-weight:650}
+.cv-compact .cv-card .vivo-card-body{padding:10px 12px 12px;gap:4px}
+.cv-compact .cv-card .vivo-card-location{margin:0;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cv-compact .cv-card h3{margin:0;font-size:16px;line-height:1.25}
+.cv-compact .cv-card h3>button{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-align:left;font:inherit;font-weight:650;color:var(--cv-ink,#10233f);padding:2px 0;min-height:44px;min-width:44px}
+.cv-compact .cv-card .vivo-card-facts{gap:4px 12px;font-size:13px;color:var(--cv-muted,#3a4a55);padding:2px 0 0;margin:0;flex-wrap:wrap}
+.cv-compact .cv-card .vivo-card-facts span{white-space:nowrap;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.cv-card-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:auto;padding-top:8px;border-top:1px solid var(--cv-line,#d6ccb5)}
+.cv-card-price small{display:block;font-size:12px;font-weight:600;color:var(--cv-muted,#3a4a55)}
+.cv-card-price{min-width:0;font-size:14px;line-height:1.25;color:var(--cv-navy,#012960);font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cv-card-foot .buy-button-wrap{flex:none;display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+.cv-card-foot .buy-button{min-height:44px;padding:0 12px;font-size:14px;white-space:nowrap}
+.cv-card-foot .buy-owned{font-size:12px}
+
+/* En los carruseles por región la región ya está en el título: la provincia pasa a la foto y el nombre ocupa una línea. */
+.cv-region-rail .cv-card .vivo-card-photo .vivo-region{display:none}
+.cv-region-rail .cv-card .vivo-card-location{position:absolute;top:10px;left:10px;z-index:2;max-width:calc(100% - 70px);display:flex;align-items:center;gap:4px;padding:4px 9px;border-radius:999px;background:#fffdf7;color:#10233f;font-weight:650;box-shadow:var(--cv-shadow-1)}
+@media (max-width:600px){
+  .cv-region-rail .cv-card h3>button{display:block;width:100%;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;line-height:40px}
+  .cv-region-rail .cv-card .vivo-card-photo{aspect-ratio:16/9}
+  .cv-region-rail .cv-card .vivo-card-body{padding:8px 12px 10px;gap:2px}
+  .cv-region-rail .cv-card .cv-card-foot{padding-top:6px}
+}
+
+/* Resultados filtrados: en el celular, fila horizontal (foto a la izquierda) para ver más en menos alto. */
+.cv-compact .cv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+@media (max-width:599px){
+  .cv-compact .cv-grid{grid-template-columns:1fr;gap:10px}
+  .cv-compact .cv-grid .vivo-card.cv-card{flex-direction:row}
+  .cv-compact .cv-grid .cv-card .vivo-card-photo{flex:0 0 34%;aspect-ratio:auto;min-height:150px}
+  .cv-compact .cv-grid .cv-card .vivo-card-photo .vivo-region{display:none}
+  .cv-compact .cv-grid .cv-card .vivo-card-body{min-width:0;flex:1}
+  .cv-compact .cv-grid .cv-card .cv-card-foot{flex-wrap:wrap}
+}
+
+/* ── Héroe compacto ── */
+.cv-compact .cv-hero .vivo-hero-copy>p{margin-bottom:18px}
+.cv-compact .cv-hero .vivo-hero-place{margin-top:18px}
+.cv-compact .cv-hero .vivo-hero-place a{color:inherit;text-decoration:underline}
+.cv-compact .cv-hero h1:focus{outline:none}
+.cv-compact .cv-hero h1:focus-visible{outline:3px solid var(--cv-maize,#fed65a);outline-offset:4px;border-radius:6px}
+/* Botones sobre la foto: fondo sólido, sin velos ni desenfoque. */
+.cv-compact .cv-hero .vivo-voice-hero{background:#012960;border-color:#fffdf7;backdrop-filter:none;-webkit-backdrop-filter:none;border-radius:12px;padding:4px 14px 4px 6px}
+.cv-compact .cv-hero-regions button{background:#fffdf7}
+@media (max-width:760px){
+  .cv-compact .cv-hero{min-height:0;padding:22px 16px 16px;border-radius:18px}
+  .cv-compact .cv-hero h1{font-size:clamp(32px,9.4vw,42px);line-height:1.02;margin-bottom:8px}
+  .cv-compact .cv-hero .vivo-hero-copy>p{font-size:16px;margin-bottom:14px}
+  .cv-compact .cv-hero .vivo-hero-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .cv-compact .cv-hero .vivo-hero-actions>*{min-height:48px;width:100%;padding:0 10px;font-size:15px;justify-content:center}
+  .cv-compact .cv-hero .vivo-hero-place{margin-top:12px;font-size:12px;flex-wrap:wrap}
+  .cv-compact .cv-hero .vivo-hero-place small{font-size:12px}
+  .cv-compact .cv-hero-regions{margin-top:14px;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+  .cv-compact .cv-hero-regions button{flex-direction:column;justify-content:center;gap:2px;min-height:56px;padding:5px 2px;text-align:center;border-left-width:1px;border-top:4px solid var(--tone)}
+  .cv-compact .cv-hero-regions button>span{display:flex;flex-direction:column;align-items:center}
+  .cv-compact .cv-hero-regions strong{font-size:12px;line-height:1.2}
+  .cv-compact .cv-hero-regions small{font-size:12px}
+}
+
+/* ── Accesos rápidos: tres chips en una fila deslizable ── */
+.cv-compact .cv-quick{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:14px 0 24px;background:none;border:0;border-radius:0}
+.cv-compact .cv-quick>button{display:flex;align-items:center;gap:10px;min-height:56px;padding:10px 12px;border-radius:14px;background:var(--cv-card,#fffdf7);border:1px solid var(--cv-line,#d6ccb5);color:var(--cv-navy,#012960);text-align:left;box-shadow:var(--cv-shadow-1)}
+.cv-compact .cv-quick>button svg{flex:none;color:var(--cv-red,#c61534)}
+.cv-compact .cv-quick strong{font-size:15px}
+.cv-compact .cv-quick small{font-size:12px;margin:0;color:var(--cv-muted,#3a4a55)}
+@media (max-width:600px){
+  .cv-compact .cv-quick{gap:6px;margin:12px 0 20px}
+  .cv-compact .cv-quick>button{flex-direction:column;justify-content:center;gap:4px;padding:8px 4px;text-align:center}
+  .cv-compact .cv-quick strong{font-size:13px;line-height:1.2}
+  .cv-compact .cv-quick small{display:none}
+}
+
+/* ── Catálogo ── */
+.cv-compact .cv-discovery{margin-bottom:28px}
+.cv-compact .vivo-searchbar{margin:0 0 10px}
+/* Celular: búsqueda, filtros (icono) y orden en una sola fila. */
+@media (max-width:600px){
+  .cv-compact .vivo-searchbar{flex-wrap:nowrap;gap:6px}
+  .cv-compact .vivo-searchbar>label:first-child{flex:1 1 auto;min-height:48px;padding:0 12px;gap:8px}
+  .cv-compact .vivo-searchbar input{height:46px}
+  .cv-compact .vivo-searchbar>button{flex:none;justify-content:center;width:48px;min-height:48px;padding:0}
+  .cv-compact .vivo-searchbar .vivo-sort{flex:0 0 120px}
+  .cv-compact .vivo-searchbar .vivo-sort select{width:100%;min-height:48px;padding:0 6px;font-size:16px}
+  .cv-narrow-sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+}
+.cv-region-chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:2px 2px 10px;margin:0 0 6px}
+.cv-region-chips::-webkit-scrollbar{display:none}
+.cv-region-chips button{flex:none;display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 14px;border-radius:999px;border:1.5px solid var(--cv-line,#d6ccb5);background:var(--cv-card,#fffdf7);color:var(--cv-ink,#10233f);font-weight:650;font-size:14px}
+.cv-region-chips button svg{color:var(--tone,var(--cv-navy,#012960))}
+.cv-region-chips button[aria-pressed=true]{background:var(--cv-navy,#012960);border-color:var(--cv-navy,#012960);color:#fff}
+.cv-region-chips button[aria-pressed=true] svg{color:var(--cv-maize,#fed65a)}
+.cv-region-rails{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+.cv-region-rail{min-width:0}
+.cv-rail-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 4px}
+.cv-rail-head h3{display:flex;align-items:center;gap:8px;margin:0;font-size:18px;color:var(--tone,var(--cv-navy,#012960))}
+.cv-rail-head h3 small{display:inline-grid;place-items:center;min-width:26px;height:22px;padding:0 7px;border-radius:999px;background:var(--tone-wash,#eee);color:var(--cv-ink,#10233f);font-size:12px;font-weight:700}
+.cv-rail-head button{display:inline-flex;align-items:center;gap:4px;min-height:44px;padding:0 4px;font-weight:700;font-size:14px;color:var(--cv-navy,#012960)}
+.cv-compact .vivo-results{margin:4px 0 12px}
+
+/* Chip de aviso con detalle desplegable */
+.cv-note-chip{margin:16px 0 0;font-size:14px;color:var(--cv-ink,#10233f)}
+.cv-note-chip>summary{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border-radius:999px;background:var(--cv-paper-2,#f4ecd9);border:1px solid var(--cv-line,#d6ccb5);font-weight:650;cursor:pointer;list-style:none}
+.cv-note-chip>summary::-webkit-details-marker{display:none}
+.cv-note-chip>summary svg{color:var(--cv-petrol,#1f575a)}
+.cv-note-body{margin-top:8px;padding:12px 14px;border-radius:12px;background:var(--cv-card,#fffdf7);border:1px solid var(--cv-line,#d6ccb5);max-width:62ch}
+.cv-note-body p{margin:0 0 6px;line-height:1.55}
+.cv-note-body p:last-child{margin:0}
+
+/* ── Cómo funciona ── */
+.cv-how-rail .cv-rail-track{--rail-w:62%}
+@media (min-width:600px){.cv-how-rail .cv-rail-track{--rail-w:calc((100% - 36px)/4)}}
+.cv-how-step{position:relative;display:flex;flex-direction:column;gap:4px;padding:12px;border-radius:16px;background:var(--cv-card,#fffdf7);border:1px solid var(--cv-line,#d6ccb5)}
+.cv-how-step .cv-step-art{max-height:46px;margin:0 0 2px}
+.cv-how-step h3{display:flex;align-items:center;gap:6px;margin:0;font-size:16px;line-height:1.25;color:var(--cv-navy,#012960)}
+.cv-how-step>p{margin:0;font-size:14px;line-height:1.4;color:var(--cv-muted,#3a4a55)}
+.cv-more-line{margin-top:auto;font-size:14px}
+.cv-more-line>summary{display:inline-flex;align-items:center;gap:4px;min-height:44px;font-weight:650;color:var(--cv-petrol,#1f575a);cursor:pointer;list-style:none}
+.cv-more-line>summary::-webkit-details-marker{display:none}
+.cv-more-line[open]>summary svg{transform:rotate(180deg)}
+.cv-more-line>p{margin:0;line-height:1.5;color:var(--cv-ink,#10233f)}
+
+/* ── Cultura Viva (respaldo del carrusel) ── */
+.cv-compact .cv-culture-band{padding:0;background:none;border:0;box-shadow:none;color:var(--cv-ink,#10233f)}
+.cv-compact .cv-culture-band::before{display:none}
+.cv-culture-rail .cv-rail-track{--rail-w:46%}
+@media (min-width:600px){.cv-culture-rail .cv-rail-track{--rail-w:calc((100% - 48px)/5)}}
+.cv-culture-card{display:flex;flex-direction:column;align-items:flex-start;gap:6px;width:100%;height:100%;padding:12px;border-radius:16px;text-align:left;background:var(--tone-wash,#f4ecd9);border:1px solid var(--cv-line,#d6ccb5);border-top:5px solid var(--tone,var(--cv-red,#c61534));color:var(--cv-ink,#10233f)}
+.cv-culture-card .cv-culture-date{display:flex;align-items:baseline;gap:6px}
+.cv-culture-card .cv-culture-date strong{font:600 22px/1 Newsreader,Georgia,serif;text-transform:capitalize;color:var(--tone,var(--cv-navy,#012960))}
+.cv-culture-card .cv-culture-date small{font-size:12px;color:var(--cv-muted,#3a4a55)}
+.cv-culture-name{font-weight:700;font-size:15px;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.cv-culture-meta{font-size:13px;color:var(--cv-muted,#3a4a55)}
+.cv-culture-card .cv-culture-status{margin-top:auto;font-size:12px;font-weight:650;padding:2px 8px;border-radius:999px;background:#fffdf7;color:var(--cv-ink,#10233f)}
+
+/* Carrusel del frente de cultura dentro de la portada: cartas más bajas, chips sólidos sin desenfoque. */
+.cv-compact .cv-culture-band .cvc-carousel{--cvc-card-w:min(64vw,250px)}
+.cv-compact .cv-culture-band .cvc-track{padding:6px 2px 14px;scroll-padding-inline:2px}
+.cv-compact .cv-culture-band .cvc-item{scroll-snap-align:start}
+.cv-compact .cv-culture-band .cvc-inner{aspect-ratio:auto;min-height:0;height:310px}
+.cv-compact .cv-culture-band .cvc-chip{background:#10233f;border-color:#10233f;color:#fff;backdrop-filter:none;-webkit-backdrop-filter:none}
+@media (min-width:760px){.cv-compact .cv-culture-band .cvc-carousel{--cvc-card-w:260px}.cv-compact .cv-culture-band .cvc-inner{height:360px}}
+
+/* ── Créditos del héroe: una línea; el detalle al tocar ── */
+.cv-compact .cv-hero .cv-hero-place{display:flex;align-items:center;gap:4px 10px;flex-wrap:wrap}
+.cv-compact .cv-hero .cv-hero-place>span{display:inline-flex;align-items:center;gap:5px}
+.cv-hero-credit>summary{display:inline-flex;align-items:center;min-height:44px;padding:0 4px;text-decoration:underline;cursor:pointer;list-style:none}
+.cv-hero-credit>summary::-webkit-details-marker{display:none}
+.cv-hero-credit>p{margin:0 0 4px;padding:6px 10px;border-radius:10px;background:#10233f;color:#fff;font-size:12px;line-height:1.4}
+.cv-hero-credit a{color:#fff}
+
+/* ── Pasaporte compacto ── */
+.cv-compact .cv-passport-compact{display:grid;grid-template-columns:auto minmax(0,1fr);align-items:center;gap:14px;padding:16px;border-radius:18px;background:var(--cv-navy,#012960);color:#fff}
+.cv-compact .cv-passport-compact h2{margin:0 0 2px;font:500 24px/1.1 Newsreader,Georgia,serif;color:#fff}
+.cv-compact .cv-passport-compact p{margin:0 0 10px;font-size:14px;line-height:1.4;color:#e8eef6}
+.cv-compact .cv-passport-compact .button{min-height:44px}
+.cv-compact .cv-passport-compact .cv-passport-stamps{display:grid;grid-template-columns:repeat(2,52px);gap:6px;padding:0;margin:0;min-height:0}
+.cv-compact .cv-passport-compact .cv-passport-stamps span{display:grid;place-items:center;width:52px;height:52px;padding:2px;border-radius:50%;border:2px dashed var(--cv-maize,#fed65a);background:#0b3c7d;color:#fff;animation:none;opacity:1}
+.cv-compact .cv-passport-compact .cv-passport-stamps strong{font-size:8px;line-height:1;letter-spacing:.02em;text-transform:uppercase}
+@media (max-width:600px){
+  .cv-compact .cv-passport-compact{padding:12px 14px;gap:12px}
+  .cv-compact .cv-passport-compact .cv-passport-stamps{grid-template-columns:repeat(2,44px);gap:4px}
+  .cv-compact .cv-passport-compact .cv-passport-stamps span{width:44px;height:44px}
+  .cv-compact .cv-passport-compact .cv-passport-stamps strong{display:none}
+  .cv-compact .cv-passport-compact p{margin-bottom:8px}
+  .cv-compact .cv-section-head{margin-bottom:8px}
+}
+@media (min-width:760px){.cv-compact .cv-passport-compact .cv-passport-stamps{grid-template-columns:repeat(4,64px)}.cv-compact .cv-passport-compact .cv-passport-stamps span{width:64px;height:64px}.cv-compact .cv-passport-compact .cv-passport-stamps strong{font-size:10px}}
+
+/* ── Confianza: cuatro chips, el texto al tocar ── */
+.cv-compact .cv-trust{padding:0;background:none;border:0}
+.cv-trust-chips{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+@media (min-width:900px){.cv-trust-chips{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.cv-trust-chips details{height:100%;border-radius:14px;background:var(--cv-card,#fffdf7);border:1px solid var(--cv-line,#d6ccb5)}
+.cv-trust-chips summary{display:flex;align-items:center;gap:8px;min-height:52px;padding:8px 10px;font-weight:650;font-size:14px;line-height:1.2;color:var(--cv-navy,#012960);cursor:pointer;list-style:none}
+.cv-trust-chips summary::-webkit-details-marker{display:none}
+.cv-trust-chips summary>svg:first-child{flex:none;color:var(--cv-mint-ink,#0f6e55)}
+.cv-trust-chips summary>span{flex:1;min-width:0}
+.cv-trust-chips summary>svg:last-child{flex:none;transition:transform var(--cv-dur-1,.18s)}
+.cv-trust-chips details[open] summary>svg:last-child{transform:rotate(180deg)}
+.cv-trust-chips details>p{margin:0;padding:0 10px 10px;font-size:14px;line-height:1.5;color:var(--cv-ink,#10233f)}
+
+/* ── Plegables (datos personales, música): dos en una fila; el abierto ocupa todo el ancho ── */
+.cv-fold-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0 0 24px;align-items:start}
+.cv-fold-pair>.cv-fold{margin:0}
+.cv-fold-pair>.cv-fold[open]{grid-column:1/-1}
+.cv-fold{margin:0 0 24px;border-radius:16px;background:var(--cv-card,#fffdf7);border:1px solid var(--cv-line,#d6ccb5)}
+.cv-fold>summary{display:flex;align-items:center;gap:10px;min-height:56px;padding:0 16px;font-weight:700;font-size:15px;color:var(--cv-navy,#012960);cursor:pointer;list-style:none}
+.cv-fold>summary::-webkit-details-marker{display:none}
+.cv-fold>summary>span{flex:1}
+.cv-fold>summary>svg:last-child{transition:transform var(--cv-dur-1,.18s)}
+.cv-fold[open]>summary>svg:last-child{transform:rotate(180deg)}
+.cv-fold>:not(summary){margin:0 12px 12px}
+.cv-privacy-fallback h2{font-size:20px}
+.cv-privacy-actions{display:flex;flex-wrap:wrap;gap:8px}
+
+.cv-discovery-foot{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px 12px;margin-top:14px}
+.cv-discovery-foot .cv-note-chip{margin:0}
+.cv-compact .vivo-demo{display:flex;margin:0;padding:0;background:none;border:0}
+.cv-compact .vivo-demo button{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 12px;font-size:14px;color:var(--cv-muted,#3a4a55);text-decoration:underline}
+
+@media (prefers-reduced-motion:reduce){
+  .cv-rail-track{scroll-behavior:auto}
+  .cv-rail-arrow,.cv-trust-chips summary>svg:last-child,.cv-fold>summary>svg:last-child{transition:none}
+}

@@ -22,3 +22,12 @@ Fuentes primarias consultadas el 23 de octubre de 2026:
 El PDF antiguo del Ministerio devolvió timeout durante esta revisión. Se verificaron los recursos de SEIBE y el libro de Amawtay Wasi, cuya sección de variación dialectal confirma que no se debe llamar regionalmente validada a una sola base común.
 
 No se inventan diferencias entre Sierra y Amazonía. Una traducción ausente vuelve a español y nunca expone la clave técnica. `node scripts/verify-i18n.mjs` verifica cambios reales en ambas opciones Kichwa, etiquetas críticas de los seis idiomas alternativos, conservación de variables, todas las claves offline y de cobros/retiros. Esta prueba verifica cobertura y composición; no certifica corrección lingüística.
+
+## Interfaz 3.x (`src/i18n/v3`)
+
+- `useT()` devuelve `t('Literal en español', { variables })`. El idioma sale del selector de siempre (AppContext lo sincroniza con `setV3Language` y actualiza `document.documentElement.lang`).
+- `en.ts`, `fr.ts`, `pt.ts` y `zh.ts` son diccionarios escritos a mano, con el literal español como clave. Se descargan solo al elegir ese idioma; en español no se baja nada.
+- `tr()` traduce fuera de un componente (efectos y auxiliares). `msg()` marca literales de listas fijas que luego pasan por `t()`.
+- Kichwa usa la base editorial de `kichwa.ts`; si no hay equivalencia, se queda en español y se mantiene el aviso de borrador.
+- Las fichas, las fiestas, las respuestas de MIJIN y los documentos legales se quedan en español. `SpanishContentNote` muestra el aviso «Contenido en español» en otros idiomas.
+- `tests/unit/i18n-v3.test.tsx` busca cada `t()`, `tr()` y `msg()` de los archivos que usan `src/i18n/v3` y falla si alguna clave no tiene traducción en en/fr/pt/zh o si cambian las variables.

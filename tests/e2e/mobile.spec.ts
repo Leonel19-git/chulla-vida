@@ -26,7 +26,7 @@ test.describe('portada en móvil', () => {
 
     // Cabecera: cada control mide al menos 44 × 44 y nada se sale por la derecha.
     const topbar = page.locator('header.topbar');
-    for (const name of ['Abrir menú', 'Entrar o crear cuenta', 'Cambiar perfil de demostración']) {
+    for (const name of ['Abrir menú', 'Entrar o crear cuenta']) {
       const control = topbar.getByRole('button', { name, exact: false }).first();
       await expect(control).toBeVisible();
       await expectTouchTarget(control);
@@ -36,8 +36,8 @@ test.describe('portada en móvil', () => {
     const language = topbar.getByRole('combobox', { name: 'Idioma' });
     expect(await fontSize(language)).toBeGreaterThanOrEqual(16);
 
-    // Botón flotante de MIJIN: táctil y dentro de la pantalla.
-    const launcher = page.getByRole('button', { name: 'Habla con MIJIN, tu pana de aventuras' });
+    // MIJIN vive en la barra inferior en el celular: táctil y dentro de la pantalla.
+    const launcher = page.getByRole('navigation', { name: 'Navegación móvil' }).getByRole('button', { name: 'Habla con MIJIN' });
     await expect(launcher).toBeVisible();
     await expectTouchTarget(launcher);
     await expectInsideViewport(page, launcher);
@@ -53,17 +53,18 @@ test.describe('portada en móvil', () => {
     expect(errors).toEqual([]);
   });
 
-  test('el aviso de privacidad no deja a MIJIN tapando sus botones', async ({ page }) => {
+  test('el aviso de privacidad no tapa la barra inferior ni corta sus opciones', async ({ page }) => {
     await skipOnboarding(page);
     await page.goto('/');
     const banner = page.locator('.consent-banner');
     await expect(banner).toBeVisible();
-    const launcher = page.getByRole('button', { name: 'Habla con MIJIN, tu pana de aventuras' });
-    await expect(launcher).toBeVisible();
+    // En el celular MIJIN está en la barra inferior (el botón flotante se retira): el aviso no la tapa.
+    const mijin = page.getByRole('navigation', { name: 'Navegación móvil' }).getByRole('button', { name: 'Habla con MIJIN' });
+    await expect(mijin).toBeVisible();
     await page.waitForTimeout(400);
-    const a = await box(launcher);
+    const a = await box(mijin);
     const b = await box(banner);
-    expect(a.y + a.height, 'MIJIN queda encima del aviso, sin superponerse').toBeLessThanOrEqual(b.y + 1);
+    expect(a.y >= b.y + b.height - 1 || a.y + a.height <= b.y + 1, 'el aviso y la barra no se superponen').toBe(true);
     // Las tres opciones caben sin cortar el texto.
     for (const level of ['Privado', 'Equilibrado', 'Personalizado']) {
       const label = banner.locator('.consent-segment strong', { hasText: level });
@@ -76,7 +77,7 @@ test.describe('portada en móvil', () => {
 test.describe('ficha y compra', () => {
   test('abre una ficha en un diálogo que cabe en la pantalla y se cierra', async ({ page }) => {
     await openApp(page);
-    await page.getByRole('button', { name: 'Ver ficha y cómo llegar' }).first().click();
+    await page.getByRole('button', { name: /^Conocer / }).first().click();
     const dialog = page.locator('dialog[open]');
     await expect(dialog).toBeVisible();
     await expectInsideViewport(page, dialog);
@@ -94,7 +95,7 @@ test.describe('ficha y compra', () => {
     await expect(dialog.getByText('Modo prueba sin cobro.')).toBeVisible();
     await expectInsideViewport(page, dialog);
 
-    await dialog.getByLabel(/Fecha/).fill('2099-05-02');
+    await dialog.getByLabel('Inicio').fill('2099-05-02');
     await dialog.getByRole('button', { name: /^Continuar/ }).click();
     const name = dialog.getByLabel('Nombre y apellido');
     expect(await fontSize(name)).toBeGreaterThanOrEqual(16);
@@ -126,7 +127,7 @@ test.describe('ficha y compra', () => {
 test.describe('MIJIN y cuenta', () => {
   test('abre MIJIN, escribe una pregunta y recibe respuesta', async ({ page }) => {
     await openApp(page);
-    await page.getByRole('button', { name: 'Habla con MIJIN, tu pana de aventuras' }).click();
+    await page.getByRole('navigation', { name: 'Navegación móvil' }).getByRole('button', { name: 'Habla con MIJIN' }).click();
     const dialog = page.locator('dialog[open]');
     await expect(dialog).toBeVisible();
     await expectInsideViewport(page, dialog);
@@ -157,8 +158,8 @@ test.describe('MIJIN y cuenta', () => {
 test.describe('pasaporte con gestos', () => {
   test('deslizar a la izquierda pasa a la página siguiente', async ({ page, browserName }) => {
     await openApp(page);
-    await page.getByRole('button', { name: 'Más herramientas' }).click();
-    await page.getByRole('menuitem', { name: /Pasaporte/ }).click();
+    // En el celular el pasaporte está en los accesos rápidos de la portada (y en el menú).
+    await page.locator('[data-tour="passport"]').first().click();
     const dialog = page.locator('dialog[open]');
     await expect(dialog.getByRole('heading', { name: 'Pasaporte Guambra', level: 2 }).first()).toBeVisible();
     await expectInsideViewport(page, dialog);
@@ -178,6 +179,7 @@ test.describe('pasaporte con gestos', () => {
       return true;
     });
     test.skip(!swiped, `Este motor (${browserName}) no permite crear eventos táctiles sintéticos`);
-    await expect(dialog.locator('.pg-tabs').getByRole('button', { name: 'Mi perfil y mi Ecuador' })).toHaveAttribute('aria-current', 'page');
+    // En celular el libro muestra una cara por pantalla: el gesto pasa de la portada (1 de 16) a la cara 2.
+    await expect(dialog.getByText(/^2 de 16/).first()).toBeVisible();
   });
 });

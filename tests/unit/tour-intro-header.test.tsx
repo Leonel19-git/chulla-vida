@@ -101,10 +101,11 @@ describe('botón de cuenta en la cabecera', () => {
 });
 
 describe('nada queda «borrado»', () => {
-  it('las entradas animadas parten de opacidad ≥ 0,85 y se apagan con la pestaña oculta', () => {
+  it('las entradas animadas solo se desplazan (opacidad completa) y se apagan con la pestaña oculta', () => {
     const css = readFileSync('src/index.css', 'utf8');
-    expect(css).toMatch(/\.cv-reveal-on \[data-reveal\]:not\(\.is-revealed\)\{opacity:\.88;/);
-    expect(css).toMatch(/@keyframes cv-fade-up\{from\{opacity:\.88/);
+    expect(css).toMatch(/\.cv-reveal-on \[data-reveal\]:not\(\.is-revealed\)\{transform:translateY\(14px\)\}/);
+    expect(css).toMatch(/@keyframes cv-fade-up\{from\{transform:translateY\(10px\)\}/);
+    expect(css).not.toMatch(/\.cv-reveal-on \[data-reveal\]:not\(\.is-revealed\)\{opacity:\.[0-8]/);
     expect(css).toMatch(/html:not\(\.cv-motion-ok\) \*/);
     expect(readFileSync('src/main.tsx', 'utf8')).toContain("classList.toggle('cv-motion-ok'");
     for (const file of ['src/components/chulla/brand-motion.css', 'src/components/host/wallet.css', 'src/components/chulla/offline-route.css', 'src/features/catalog/vivo-2026.css']) {

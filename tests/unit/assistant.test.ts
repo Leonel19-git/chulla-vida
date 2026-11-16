@@ -24,7 +24,8 @@ describe('MIJIN usa contexto público y responde con límites honestos', () => {
   it('no inventa clima, acceso con mascotas ni reservas actuales', () => {
     expect(answerLocally('clima de Quito', { catalog: experiences, online: true }).text).toContain('No tengo el clima actualizado');
     expect(answerLocally('voy con mi perro', { catalog: experiences, online: true }).cards).toHaveLength(0);
-    expect(answerLocally('pagar reserva', { catalog: experiences, online: true }).text).toContain('no tienen compra');
+    expect(answerLocally('pagar reserva', { catalog: experiences, online: true }).text).toMatch(/ninguna ficha está habilitada/);
+    expect(answerLocally('¿Puedo reservar?', { catalog: experiences, online: true }).text).toContain('no tienen compra');
     expect(answerLocally('Galápagos con $20', { catalog: experiences, online: true }).text).toContain('no se considera viable');
   });
   it('no usa datos privados ni sigue instrucciones inyectadas en la pregunta', () => {

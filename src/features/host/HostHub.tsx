@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { BadgeCheck, ClipboardList, ExternalLink, FileLock2, ShieldCheck, UserRound } from 'lucide-react';
 import { Dialog } from '../../components/chulla/Dialog';
 import { supabaseConfiguration } from '../../lib/supabase';
+import { roleStore } from '../roles/role';
 import './host-hub.css';
 
 export type HostFigure = 'establecimiento' | 'operador' | 'guia' | 'asociacion' | 'representante' | 'otro';
@@ -55,12 +56,12 @@ export function HostHub({ onClose }: { onClose: () => void }) {
 
   return <Dialog title="Anfitriones y comunidades" onClose={onClose} wide>
     <div className="dialog-content host-hub">
-      <p className="host-hub-lead">Publica tus experiencias, recibe solicitudes y cuenta tu historia con tus propias palabras. Pensado también para emprendimientos rurales que no tienen todos los papeles de una empresa grande.</p>
-      <section aria-labelledby="hh-steps"><h3 id="hh-steps"><ClipboardList size={18} />Cómo funciona la verificación</h3><ol className="host-hub-steps">{STEPS.map(step => <li key={step}>{step}</li>)}</ol></section>
-      <section aria-labelledby="hh-badges" className="host-hub-badges"><h3 id="hh-badges"><BadgeCheck size={18} />Dos distintivos, separados</h3>
+      <p className="host-hub-lead">Publica tus experiencias y recibe solicitudes. También para emprendimientos rurales.</p>
+      <details className="host-hub-more"><summary><ClipboardList size={18} />Cómo funciona la verificación · {STEPS.length} pasos</summary><ol className="host-hub-steps">{STEPS.map(step => <li key={step}>{step}</li>)}</ol></details>
+      <details className="host-hub-more host-hub-badges"><summary><BadgeCheck size={18} />Dos distintivos, separados</summary>
         <div><strong><ShieldCheck size={16} />Identidad y documentación revisadas por Chulla Vida</strong><p>Una persona del equipo revisó tu identidad, tu representación y tus documentos. No es un aval del Gobierno.</p></div>
         <div><strong><BadgeCheck size={16} />Registro turístico oficial verificado</strong><p>Solo cuando existe evidencia de tu registro en el portal del Ministerio de Turismo y tu actividad lo requiere.</p></div>
-      </section>
+      </details>
       <section aria-labelledby="hh-figure"><h3 id="hh-figure"><UserRound size={18} />¿Qué te vamos a pedir?</h3>
         <label className="field-label" htmlFor="hh-figure-select">Tu figura</label>
         <select id="hh-figure-select" className="field" value={figure} onChange={event => setFigure(event.target.value as HostFigure)}>{(Object.keys(DOCS_BY_FIGURE) as HostFigure[]).map(key => <option key={key} value={key}>{DOCS_BY_FIGURE[key].label}</option>)}</select>
@@ -69,7 +70,7 @@ export function HostHub({ onClose }: { onClose: () => void }) {
       </section>
       <section aria-labelledby="hh-send" className="host-hub-send"><h3 id="hh-send">Enviar tu solicitud</h3>
         {configured
-          ? <><p>Con tu cuenta conectada, la solicitud y los documentos se guardan en Supabase con acceso privado.</p><button className="button button-primary" onClick={() => { onClose(); window.dispatchEvent(new Event('cv3:account')); }}>Ir a mi cuenta y solicitar revisión</button></>
+          ? <><p>Tu solicitud y tus documentos quedan en un espacio privado.</p><button className="button button-primary" onClick={() => { roleStore.requestHost(); onClose(); window.dispatchEvent(new Event('cv3:account')); }}>Ir a mi cuenta y solicitar revisión</button></>
           : <><p className="host-hub-demo-label">Modo demostración en este dispositivo: el servidor de cuentas aún no está configurado. Nada se envía a nadie y no se suben documentos.</p>
             <label className="field-label" htmlFor="hh-name">Nombre del emprendimiento o comunidad</label>
             <input id="hh-name" className="field" value={name} onChange={event => setName(event.target.value)} maxLength={120} />
@@ -77,7 +78,7 @@ export function HostHub({ onClose }: { onClose: () => void }) {
         <p role="status" className="host-hub-status">{notice}</p>
         {demo.length > 0 && <ul className="host-hub-queue" aria-label="Solicitudes de demostración">{demo.map(item => <li key={item.id}><strong>{item.name}</strong><span>{DOCS_BY_FIGURE[item.figure].label}</span><em>En revisión · demostración</em></li>)}</ul>}
       </section>
-      <p className="host-hub-note">Puedes crear borradores de experiencias aunque no estés verificado; no serán reservables hasta completar la revisión, el precio validado y el convenio de reparto. Acuerdo de referencia: <button className="host-hub-link" onClick={() => { onClose(); window.dispatchEvent(new Event('cv3:legal')); }}>acuerdo para comerciantes y anfitriones (borrador)</button>.</p>
+      <p className="host-hub-note">Puedes crear borradores sin estar verificado; se reservan tras la revisión. Acuerdo: <button className="host-hub-link" onClick={() => { onClose(); window.dispatchEvent(new Event('cv3:legal')); }}>acuerdo para comerciantes y anfitriones (borrador)</button>.</p>
     </div>
   </Dialog>;
 }

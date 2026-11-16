@@ -12,6 +12,8 @@
 import type { Experience } from '../catalog';
 import { isMaskedDocument, type DocumentType } from '../identity/cedula';
 import { cardLabel, isCardSummary, type CardSummary } from './card';
+import { isIsoDate } from './travel';
+import { isTransferReference } from './transfer';
 
 export const WALLET_KEY = 'chullavida:wallet:v1';
 export const WALLET_VERSION = 1;
@@ -71,7 +73,11 @@ export function choiceLabel(choice: PriceChoice): string {
 
 /* ───────────────────────── Billetera de viaje ───────────────────────── */
 
-export type WalletStatus = 'test_pending' | 'test_approved' | 'test_rejected' | 'requested' | 'cancelled';
+export type WalletStatus = 'test_pending' | 'test_approved' | 'test_rejected' | 'test_transfer_review' | 'test_transfer_rejected' | 'requested' | 'cancelled';
+/** Cómo se pagó la prueba. Sin `method` es tarjeta (registros anteriores). */
+export type WalletMethod = 'card' | 'transfer';
+/** Transferencia de prueba: SOLO referencia y tipo de archivo. El archivo nunca sale del navegador ni se guarda. */
+export interface WalletTransfer { reference: string; receiptKind: 'image' | 'pdf' | null; rejectionReason?: string }
 export type WalletKind = 'test_purchase' | 'request';
 export interface WalletBuyer { name: string; emailMasked: string; documentType: DocumentType | null; documentMasked: string | null }
 export interface WalletRecord {
@@ -84,8 +90,14 @@ export interface WalletRecord {
   experienceId: string;
   title: string;
   province: string;
+  /** Fecha de inicio. */
   date: string;
+  /** Fecha de fin (≥ inicio). Ausente en registros anteriores. */
+  endDate?: string;
+  /** Total de personas (adultos + niños). */
   people: number;
+  /** Niños dentro de `people`. */
+  children?: number;
   currency: 'USD' | 'EUR';
   unitCents: number | null;
   totalCents: number | null;
@@ -97,18 +109,22 @@ export interface WalletRecord {
   attempts: number;
   /** Tarjeta usada en la prueba: SOLO marca y últimos 4. Nunca número completo, vencimiento ni CVV. */
   card?: CardSummary | null;
+  method?: WalletMethod;
+  transfer?: WalletTransfer | null;
   createdAt: string;
   updatedAt: string;
 }
 export interface WalletState { version: 1; records: WalletRecord[] }
 export const emptyWallet = (): WalletState => ({ version: 1, records: [] });
 
-const STATUSES: readonly WalletStatus[] = ['test_pending', 'test_approved', 'test_rejected', 'requested', 'cancelled'];
+const STATUSES: readonly WalletStatus[] = ['test_pending', 'test_approved', 'test_rejected', 'test_transfer_review', 'test_transfer_rejected', 'requested', 'cancelled'];
 const KINDS: readonly WalletKind[] = ['test_purchase', 'request'];
 export const STATUS_TEXT: Readonly<Record<WalletStatus, string>> = {
   test_pending: 'Compra de prueba sin terminar',
   test_approved: 'Compra de prueba aprobada · sin cobro',
   test_rejected: 'Pago de prueba rechazado',
+  test_transfer_review: 'Comprobante enviado · pendiente de verificación',
+  test_transfer_rejected: 'Comprobante rechazado · sube otro',
   requested: 'Solicitud guardada · sin enviar todavía',
   cancelled: 'Cancelada por ti',
 };
@@ -121,6 +137,15 @@ export function maskEmail(email: string): string {
 export const isEmail = (value: string) => /^[^\s@]{1,64}@[^\s@]{1,190}\.[^\s@]{2,24}$/.test(value.trim());
 
 const text = (value: unknown, max: number): value is string => typeof value === 'string' && value.length <= max;
+function isTransfer(value: unknown): value is WalletTransfer {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+  const t = value as WalletTransfer;
+  return isTransferReference(t.reference) && (t.receiptKind === null || t.receiptKind === 'image' || t.receiptKind === 'pdf')
+    && (t.rejectionReason === undefined || text(t.rejectionReason, 500))
+    && Object.keys(t).every(key => ['reference', 'receiptKind', 'rejectionReason'].includes(key));
+}
+/** Registro pagado (o en revisión) a efectos de Mi viaje. */
+export const isBoughtStatus = (status: WalletStatus) => status === 'test_approved' || status === 'test_transfer_review';
 const centsOrNull = (value: unknown) => value === null || Number.isSafeInteger(value) && (value as number) >= 0;
 function isBuyer(value: unknown): value is WalletBuyer {
   if (!value || typeof value !== 'object') return false;
@@ -139,6 +164,11 @@ export function isWalletRecord(value: unknown): value is WalletRecord {
     && centsOrNull(r.unitCents) && centsOrNull(r.totalCents) && text(r.priceNote, 600) && isBuyer(r.buyer) && text(r.trip, 160)
     && (r.batchId === null || text(r.batchId, 80)) && Number.isInteger(r.attempts) && r.attempts >= 0 && r.attempts <= 50
     && (r.card === undefined || r.card === null || isCardSummary(r.card))
+    && (r.endDate === undefined || isIsoDate(r.endDate) && r.date !== '' && r.endDate >= r.date)
+    && (r.children === undefined || Number.isInteger(r.children) && r.children >= 0 && r.children < r.people)
+    && (r.method === undefined || r.method === 'card' || r.method === 'transfer')
+    && (r.transfer === undefined || r.transfer === null || isTransfer(r.transfer))
+    && (!r.status.startsWith('test_transfer') || r.method === 'transfer' && isTransfer(r.transfer))
     && typeof r.createdAt === 'string' && Number.isFinite(Date.parse(r.createdAt)) && typeof r.updatedAt === 'string' && Number.isFinite(Date.parse(r.updatedAt))
     && (r.kind === 'request' ? (r.status === 'requested' || r.status === 'cancelled') : r.status.startsWith('test_'));
 }
@@ -158,12 +188,13 @@ export function testCode(random: () => number = Math.random): string {
 }
 
 /** Estado de una parada de Mi viaje según lo que hay en la billetera. */
-export type StopStatus = 'none' | 'test_purchase' | 'paid' | 'request';
-export const STOP_STATUS_TEXT: Readonly<Record<StopStatus, string>> = { none: 'Sin comprar', test_purchase: 'Compra de prueba', paid: 'Pagada', request: 'Solicitud' };
+export type StopStatus = 'none' | 'test_purchase' | 'transfer_review' | 'paid' | 'request';
+export const STOP_STATUS_TEXT: Readonly<Record<StopStatus, string>> = { none: 'Sin comprar', test_purchase: 'Compra de prueba', transfer_review: 'Transferencia en revisión', paid: 'Pagada', request: 'Solicitud' };
 export function stopStatus(experienceId: string, records: readonly WalletRecord[], paidExperienceIds: readonly string[] = []): StopStatus {
   if (paidExperienceIds.includes(experienceId)) return 'paid';
   const own = records.filter(record => record.experienceId === experienceId);
   if (own.some(record => record.status === 'test_approved')) return 'test_purchase';
+  if (own.some(record => record.status === 'test_transfer_review')) return 'transfer_review';
   if (own.some(record => record.status === 'requested')) return 'request';
   return 'none';
 }
@@ -177,8 +208,8 @@ export function tripTotals(stops: readonly Experience[], people: number, records
   const totals: TripTotals = { boughtCents: 0, pendingCents: 0, incomparable: 0, boughtCount: 0, pendingCount: 0 };
   for (const stop of stops) {
     const status = stopStatus(stop.id, records, paidExperienceIds);
-    if (status === 'test_purchase' || status === 'paid') {
-      const record = records.find(item => item.experienceId === stop.id && item.status === 'test_approved');
+    if (status === 'test_purchase' || status === 'transfer_review' || status === 'paid') {
+      const record = records.find(item => item.experienceId === stop.id && isBoughtStatus(item.status));
       totals.boughtCount++;
       if (record?.totalCents != null) totals.boughtCents += record.totalCents;
       continue;
@@ -192,9 +223,9 @@ export function tripTotals(stops: readonly Experience[], people: number, records
   return totals;
 }
 
-export interface ReceiptLine { title: string; date: string; people: number; unitCents: number | null; totalCents: number | null; currency: string; note: string }
+export interface ReceiptLine { title: string; date: string; endDate?: string; people: number; unitCents: number | null; totalCents: number | null; currency: string; note: string }
 /** Texto del comprobante. Una compra de prueba SIEMPRE lleva el rótulo en la primera línea y al final. */
-export function testReceiptText(input: { code: string; buyerName: string; emailMasked: string; documentMasked: string | null; createdAt: string; lines: ReceiptLine[]; card?: CardSummary | null }): string {
+export function testReceiptText(input: { code: string; buyerName: string; emailMasked: string; documentMasked: string | null; createdAt: string; lines: ReceiptLine[]; card?: CardSummary | null; transfer?: { reference: string; verified: boolean } | null }): string {
   const total = input.lines.reduce((sum, line) => sum + (line.totalCents ?? 0), 0);
   return [
     TEST_RECEIPT_LABEL,
@@ -203,8 +234,9 @@ export function testReceiptText(input: { code: string; buyerName: string; emailM
     `Fecha de emisión: ${input.createdAt}`,
     `A nombre de: ${input.buyerName}${input.emailMasked ? ` · ${input.emailMasked}` : ''}${input.documentMasked ? ` · Documento ${input.documentMasked}` : ''}`,
     ...(input.card && isCardSummary(input.card) ? [`Método de pago: ${cardLabel(input.card)} · tarjeta de prueba, sin cobro`] : []),
+    ...(input.transfer ? [`Método de pago: Transferencia bancaria de prueba · referencia ${input.transfer.reference} · ${input.transfer.verified ? 'verificación simulada' : 'comprobante pendiente de verificación'}`] : []),
     '',
-    ...input.lines.flatMap(line => [`• ${line.title}`, `  ${line.date || 'Fecha por confirmar'} · ${line.people} ${line.people === 1 ? 'persona' : 'personas'} · ${line.totalCents === null ? 'Cotización pendiente' : `${formatUsd(line.totalCents)} (${line.unitCents === null ? '' : `${formatUsd(line.unitCents)} por persona`})`}`, ...(line.note ? [`  ${line.note}`] : [])]),
+    ...input.lines.flatMap(line => [`• ${line.title}`, `  ${line.date ? `${line.date}${line.endDate && line.endDate !== line.date ? ` al ${line.endDate}` : ''}` : 'Fecha por confirmar'} · ${line.people} ${line.people === 1 ? 'persona' : 'personas'} · ${line.totalCents === null ? 'Cotización pendiente' : `${formatUsd(line.totalCents)} (${line.unitCents === null ? '' : `${formatUsd(line.unitCents)} por persona`})`}`, ...(line.note ? [`  ${line.note}`] : [])]),
     '',
     `Total de la prueba: ${formatUsd(total)} · NO SE COBRÓ NADA`,
     'Precios referenciales o propuestos por la fuente; no son una tarifa vigente confirmada por un anfitrión.',

@@ -56,7 +56,7 @@ describe('MIJIN pide el micrófono de forma explícita y nunca se queda callado'
     expect(screen.getByText(/Saraguro Ancestral:/i)).toBeInTheDocument();
     const said = synthesis.speak.mock.calls.map(call => call[0] as FakeUtterance);
     expect(said.length).toBeGreaterThan(0); said.forEach(utterance => expect(utterance.voice?.name).toBe('Google español de Estados Unidos'));
-    expect(screen.getByText(/Voz del navegador: Google español de Estados Unidos/)).toBeInTheDocument();
+    expect(screen.getByLabelText('Voz de MIJIN')).toHaveValue('Google español de Estados Unidos'); expect(said.every(utterance => !utterance.text.includes('$'))).toBe(true);
     fireEvent.click(screen.getByRole('button', { name: 'Detener', exact: true })); expect(synthesis.cancel).toHaveBeenCalled();
     // A second turn does not ask getUserMedia again in the same conversation.
     await tapMic(); expect(getUserMedia).toHaveBeenCalledTimes(1); expect(start).toHaveBeenCalledTimes(2);

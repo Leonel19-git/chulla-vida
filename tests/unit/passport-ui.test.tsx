@@ -41,8 +41,15 @@ describe('libro del Pasaporte Guambra', () => {
     fireEvent.touchEnd(book, { changedTouches: [{ clientX: 70, clientY: 110 }] });
     expect(screen.getByRole('heading', { name: 'Costa' })).toBeInTheDocument();
   });
-  it('usa lectura lineal con movimiento reducido y nunca convierte exploración en visita real', async () => {
+  it('en celular con movimiento reducido sigue mostrando una página por pantalla', () => {
     vi.stubGlobal('matchMedia', vi.fn(() => ({ matches: true, addEventListener: vi.fn(), removeEventListener: vi.fn() })));
+    render(<PassportView onClose={mocks.close} onChoosePlans={vi.fn()} />);
+    expect(screen.getByRole('button', { name: 'Vista de lectura' })).toBeInTheDocument();
+    expect(screen.getByRole('region', { name: /Libro interactivo/ })).toBeInTheDocument();
+  });
+  it('usa lectura lineal con movimiento reducido y nunca convierte exploración en visita real', async () => {
+    // Escritorio con movimiento reducido: lista lineal. (En celular sigue el libro de una página por pantalla.)
+    vi.stubGlobal('matchMedia', vi.fn((query: string) => ({ matches: query.includes('reduced-motion'), addEventListener: vi.fn(), removeEventListener: vi.fn() })));
     const user = userEvent.setup();
     render(<PassportView onClose={mocks.close} onChoosePlans={vi.fn()} />);
     expect(screen.getByRole('button', { name: 'Ver como libro' })).toBeInTheDocument();
@@ -55,7 +62,7 @@ describe('libro del Pasaporte Guambra', () => {
     expect(screen.getByText('Exploración virtual actualizada. No acredita una visita al lugar.')).toBeInTheDocument();
   });
   it('permite escribir un recuerdo y exige confirmar su borrado local', async () => {
-    vi.stubGlobal('matchMedia', vi.fn(() => ({ matches: true, addEventListener: vi.fn(), removeEventListener: vi.fn() })));
+    vi.stubGlobal('matchMedia', vi.fn((query: string) => ({ matches: query.includes('reduced-motion'), addEventListener: vi.fn(), removeEventListener: vi.fn() })));
     const user = userEvent.setup();
     render(<PassportView onClose={mocks.close} onChoosePlans={vi.fn()} />);
     await user.type(screen.getByLabelText('Título'), 'Mi recuerdo');
@@ -69,7 +76,7 @@ describe('libro del Pasaporte Guambra', () => {
   });
 
   it('ya no dice que no hay sellos conectados: con sesión muestra las visitas verificadas del servidor', async () => {
-    vi.stubGlobal('matchMedia', vi.fn(() => ({ matches: true, addEventListener: vi.fn(), removeEventListener: vi.fn() })));
+    vi.stubGlobal('matchMedia', vi.fn((query: string) => ({ matches: query.includes('reduced-motion'), addEventListener: vi.fn(), removeEventListener: vi.fn() })));
     const sierra = experiences.filter(record => record.localizedRegion === 'sierra').slice(0, 2);
     mocks.stampRows = [{ id: 'stamp-1', experience_id: sierra[0].id, region_id: 'sierra', stamp_type: 'verified_visit', awarded_at: '2026-11-10T15:00:00Z' }];
     const query = { select: () => query, eq: (column: string, value: string) => { mocks.stampFilters.push([column, value]); return query; }, limit: async () => ({ data: mocks.stampRows, error: null }) };
@@ -84,7 +91,7 @@ describe('libro del Pasaporte Guambra', () => {
   });
 
   it('un anfitrión demo valida el código del comprobante de prueba: sello demo, nunca visita verificada', async () => {
-    vi.stubGlobal('matchMedia', vi.fn(() => ({ matches: true, addEventListener: vi.fn(), removeEventListener: vi.fn() })));
+    vi.stubGlobal('matchMedia', vi.fn((query: string) => ({ matches: query.includes('reduced-motion'), addEventListener: vi.fn(), removeEventListener: vi.fn() })));
     const record = experiences.filter(item => item.localizedRegion === 'sierra')[1];
     const now = '2026-11-14T12:00:00.000Z';
     localStorage.setItem(WALLET_KEY, JSON.stringify({ version: 1, records: [{ id: 'w1', code: 'PRB-ABC234', kind: 'test_purchase', status: 'test_approved', mode: 'test', experienceId: record.id,

@@ -1,0 +1,48 @@
+/* Personas (stepper) y fechas (inicio → fin). Móvil primero; objetivos táctiles ≥ 44 px. */
+.tf-people, .tf-dates { margin: 0; padding: 14px; border: 1px solid #dde7e0; border-radius: 16px; background: #fff; display: grid; gap: 10px; min-width: 0; }
+.tf-people legend, .tf-dates legend { padding: 0 6px; font-weight: 700; font-size: 15px; color: #103452; display: flex; gap: 8px; align-items: baseline; }
+.tf-people legend output { font-weight: 600; font-size: 12px; color: #0b6b55; background: #e3f4ec; border-radius: 999px; padding: 2px 9px; font-variant-numeric: tabular-nums; }
+.tf-dates legend small { font-weight: 500; color: #5d6b66; }
+.tf-counter { display: grid; grid-template-columns: 40px 1fr auto; align-items: center; gap: 10px; min-height: 56px; }
+.tf-counter + .tf-counter { border-top: 1px dashed #dde7e0; padding-top: 10px; }
+.tf-counter-icon { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: #eef8f8; color: #0b6f7c; }
+.tf-counter-label { display: grid; font-weight: 700; font-size: 15px; color: #19323c; line-height: 1.25; }
+.tf-counter-label small { font-weight: 400; font-size: 12px; color: #5d6b66; }
+.tf-counter-controls { display: flex; align-items: center; gap: 6px; }
+.tf-step { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; border: 2px solid #079da5; background: #fff; color: #0b6f7c; cursor: pointer; touch-action: manipulation; transition: background .15s ease, transform .1s ease; }
+.tf-step:hover:not(:disabled) { background: #eef8f8; }
+.tf-step:active:not(:disabled) { transform: scale(.92); }
+.tf-step:disabled { border-color: #cfd9d2; color: #9aa7a1; cursor: not-allowed; }
+.tf-step:focus-visible, .tf-counter-input:focus-visible { outline: 3px solid #f2b632; outline-offset: 2px; }
+.tf-counter-input { width: 52px; height: 48px; text-align: center; font-family: inherit; font-size: 22px; font-weight: 700; line-height: 1; font-variant-numeric: tabular-nums; color: #103452; border: 1px solid #cfd9d2; border-radius: 12px; background: #f8fbf9; }
+.tf-note { margin: 0; font-size: 13px; color: #6b5100; }
+.tf-dates-grid { display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; gap: 8px; }
+.tf-date { display: grid; gap: 6px; font-size: 14px; font-weight: 600; min-width: 0; }
+.tf-date span { display: inline-flex; align-items: center; gap: 6px; }
+.tf-date .field { min-height: 48px; font-size: 16px; width: 100%; min-width: 0; }
+.tf-dates-arrow { color: #079da5; margin-bottom: 15px; }
+.tf-range { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding: 10px 12px; border-radius: 12px; background: #f3f7f4; color: #4f5f58; font-size: 14px; }
+.tf-range[data-ready] { background: linear-gradient(120deg, #e3f4ec, #eef8f8); color: #103452; }
+.tf-range strong { margin-left: auto; font-variant-numeric: tabular-nums; color: #0b6b55; }
+@media (max-width: 420px) {
+  .tf-dates-grid { grid-template-columns: 1fr; }
+  .tf-dates-arrow { display: none; }
+  .tf-counter { grid-template-columns: 36px 1fr auto; gap: 8px; }
+  .tf-counter-icon { width: 36px; height: 36px; }
+  .tf-step { width: 46px; height: 46px; }
+  .tf-counter-input { width: 46px; }
+}
+/* iPhone SE y teléfonos de 320–360 px: sin icono para que − y + quepan dentro de la tarjeta. */
+@media (max-width: 360px) {
+  .tf-people, .tf-dates { padding: 12px 10px; }
+  .tf-counter { grid-template-columns: minmax(0, 1fr) auto; gap: 6px; }
+  .tf-counter-icon { display: none; }
+  .tf-counter-label { min-width: 0; overflow-wrap: anywhere; }
+  .tf-counter-controls { gap: 4px; }
+  .tf-step { width: 44px; height: 44px; }
+  .tf-counter-input { width: 44px; height: 44px; font-size: 20px; }
+}
+@media (prefers-reduced-motion: reduce) { .tf-step { transition: none; } .tf-step:active:not(:disabled) { transform: none; } }
+/* iPhone: el input date nativo no respeta el ancho sin esto y desborda la tarjeta. */
+.tf-date .field { -webkit-appearance: none; appearance: none; display: block; background: #fff; }
+.tf-date .field::-webkit-date-and-time-value { text-align: left; }
