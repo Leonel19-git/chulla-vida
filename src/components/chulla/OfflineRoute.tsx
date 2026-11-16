@@ -7,6 +7,7 @@ import { money } from './content';
 import { RegionalRouteMap } from './RegionalRouteMap';
 import { offlineLocale, translateOffline } from '../../i18n/offline';
 import './offline-route.css';
+import { saveFile, withIosDownloadHint } from '../common/download';
 
 export function OfflineRoute({ onClose }: { onClose: () => void }) {
   const { places, onboarding, setSelectedPlace, setIsOnboardingOpen, language } = useApp();
@@ -50,12 +51,8 @@ export function OfflineRoute({ onClose }: { onClose: () => void }) {
   const download = () => {
     try {
       const html = offlineRouteHtml(route, language);
-      const url = URL.createObjectURL(new Blob([html], { type: 'text/html;charset=utf-8' }));
-      const anchor = document.createElement('a');
-      anchor.href = url; anchor.download = 'mi-ruta-sin-internet-chulla-vida.html';
-      document.body.appendChild(anchor); anchor.click(); anchor.remove();
-      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
-      setNotice('Archivo listo. Ábrelo desde Descargas para ver tu ruta sin internet.');
+      if (!saveFile(html, 'mi-ruta-sin-internet-chulla-vida.html', 'text/html;charset=utf-8')) throw new Error('sin descargas');
+      setNotice(withIosDownloadHint('Archivo listo. Ábrelo desde Descargas para ver tu ruta sin internet.'));
     } catch { setNotice('No se pudo preparar el archivo. Actualiza tu ruta e inténtalo otra vez.'); }
   };
   const update = () => { setTouring(false); setRoute(currentRoute); setIsSaved(false); setActive(0); setNotice('Ruta actualizada con tus gustos. Guárdala para llevarla.'); };

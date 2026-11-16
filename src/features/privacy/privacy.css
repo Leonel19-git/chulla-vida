@@ -6,7 +6,7 @@
 
 /* ── Banner de primera visita ── */
 .privacy-banner.consent-banner{position:fixed;inset:auto 16px 16px;z-index:120;display:grid;gap:14px;max-width:1120px;margin-inline:auto;
-  max-height:min(88vh,720px);overflow:auto;overscroll-behavior:contain;padding:20px 22px;background:var(--cv-paper);color:var(--cv-ink);
+  max-height:min(88vh,720px);max-height:min(88dvh,720px);overflow:auto;overscroll-behavior:contain;padding:20px 22px;background:var(--cv-paper);color:var(--cv-ink);
   border:1px solid var(--cv-line);border-radius:18px;box-shadow:0 18px 50px #01296033,0 2px 0 var(--cv-maize) inset;
   animation:cv-consent-rise .45s cubic-bezier(.2,.8,.2,1) both}
 .consent-banner::before{content:"";position:sticky;top:-20px;display:block;height:5px;margin:-20px -22px 0;border-radius:18px 18px 0 0;
@@ -105,7 +105,7 @@ body:has(.privacy-banner) .mijin-launcher{bottom:calc(var(--cv-consent-h,0px) + 
 }
 
 /* ── Barra compacta (v3.1): ~130 px en escritorio, tres segmentos de igual peso ── */
-.privacy-banner.consent-bar{inset:auto 16px 16px;max-width:1180px;max-height:min(80vh,560px);grid-template-columns:minmax(0,1fr) auto auto;
+.privacy-banner.consent-bar{inset:auto 16px 16px;max-width:1180px;max-height:min(80vh,560px);max-height:min(80dvh,560px);grid-template-columns:minmax(0,1fr) auto auto;
   grid-template-areas:"intro seg save" "intro hint details";align-items:center;gap:6px 18px;padding:14px 18px 12px}
 .consent-bar::before{position:absolute;top:0;left:0;right:0;margin:0;height:4px}
 .consent-bar-intro{grid-area:intro;display:flex;gap:12px;align-items:center;min-width:0}
@@ -151,3 +151,7 @@ body:has(.privacy-banner) .mijin-launcher{bottom:calc(var(--cv-consent-h,0px) + 
 }
 @media (max-width:370px){.consent-segment svg{display:none}}
 @media (prefers-reduced-motion:reduce){.consent-segment{transition:none}}
+/* Aviso breve: con left:50% el ancho automático se quedaba en media pantalla (seis líneas en un iPhone).
+   En móvil se apoya encima de la barra inferior y de la barra de inicio. */
+.privacy-toast{width:max-content}
+@media (max-width:700px){.privacy-toast{bottom:calc(80px + env(safe-area-inset-bottom))}}

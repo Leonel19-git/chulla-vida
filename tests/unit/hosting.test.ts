@@ -13,8 +13,14 @@ it('publica una Content-Security-Policy estricta para scripts y acotada a los se
   const global = configuration.headers.find(rule => rule.source === '/(.*)');
   const csp = global?.headers.find(header => header.key === 'Content-Security-Policy')?.value ?? '';
   const directives = Object.fromEntries(csp.split(';').map(part => part.trim().split(/\s+/)).filter(parts => parts[0]).map(([name, ...values]) => [name, values]));
-  expect(directives['script-src']).toEqual(["'self'"]);
-  expect(csp).not.toMatch(/unsafe-eval/);
+  // 'wasm-unsafe-eval' solo permite compilar WebAssembly (la voz en el dispositivo, onnxruntime-web); nunca eval() de JS.
+  expect(directives['script-src']).toEqual(["'self'", "'wasm-unsafe-eval'"]);
+  expect(csp).not.toMatch(/'unsafe-eval'/);
+  expect(csp).not.toMatch(/script-src[^;]*unsafe-inline/);
+  // El worker de voz es un módulo del mismo origen; el modelo y el motor se sirven desde /models y /ort.
+  expect(directives['worker-src']).toEqual(["'self'"]);
+  expect(directives['media-src']).toEqual(expect.arrayContaining(["'self'"]));
+  expect(directives['default-src']).toEqual(["'self'"]);
   expect(directives['object-src']).toEqual(["'none'"]);
   expect(directives['frame-ancestors']).toEqual(["'self'"]);
   expect(directives['base-uri']).toEqual(["'self'"]);

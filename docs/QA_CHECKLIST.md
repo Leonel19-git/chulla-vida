@@ -73,3 +73,51 @@ Este recorrido no cubre:
 - La voz con un micrófono y un servicio de reconocimiento reales.
 - Cuentas reales en Supabase: no se enviaron correos.
 - Cobros reales con PayPhone, porque no hay credenciales.
+
+## Móvil e iPhone (15-11-2026)
+
+Entorno: `npx playwright test` (configuración `playwright.config.ts`): compila a `node_modules/.cache/e2e-dist` y lo sirve con `vite preview` en el puerto 4317. Proyectos: `chromium-mobile` (Pixel 7, 412×839) y WebKit con `webkit-iphone` (iPhone 13, 390×664), `webkit-iphone-se` (iPhone SE 3.ª gen., 375×667) y `webkit-iphone-pro-max` (iPhone 15 Pro Max, 430×739). Para otra URL: `E2E_BASE_URL=https://… npx playwright test`.
+
+Resultado: **25 aprobadas y 3 omitidas**. Las omitidas son el gesto del pasaporte en WebKit, porque el WebKit de Playwright en Windows no permite crear eventos `Touch` sintéticos. El gesto sí pasa en Chromium.
+
+| Prueba (`tests/e2e/mobile.spec.ts`) | Pixel 7 | iPhone SE | iPhone 13 | 15 Pro Max |
+|---|---|---|---|---|
+| Intro → «Entrar» → privacidad «Privado»; página entera sin desplazamiento horizontal; menú, cuenta y perfil ≥ 44×44 px; selector de idioma a 16 px; MIJIN dentro de la pantalla; el menú lateral abre y cierra | OK | OK | OK | OK |
+| Con el aviso de privacidad abierto, MIJIN queda encima y no lo tapa; «Privado / Equilibrado / Personalizado» caben sin cortarse | OK | OK | OK | OK |
+| Abrir ficha: el diálogo cabe en la pantalla, «Cerrar» ≥ 44 px y, al cerrar, el cuerpo no queda bloqueado | OK | OK | OK | OK |
+| Compra con 4242 4242 4242 4242 → «Comprobante» y «Visa •••• 4242»; `inputmode=numeric`; campos a 16 px; el número completo no queda en localStorage | OK | OK | OK | OK |
+| MIJIN: abrir, escribir «¿Qué fiestas hay en noviembre?» y ver una respuesta que menciona noviembre; campo a 16 px | OK | OK | OK | OK |
+| Cuenta: el diálogo cabe, «Cerrar» ≥ 44 px, correo con `autocomplete=email` a 16 px | OK | OK | OK | OK |
+| Pasaporte: deslizar a la izquierda pasa a «Mi perfil y mi Ecuador» | OK | omitida | omitida | omitida |
+
+Unitarias: `tests/unit/mobile-shell.test.ts` revisa index.html, el manifest, las zonas seguras, `dvh`, los campos a 16 px y el hover táctil. `tests/unit/mobile-download.test.ts` cubre la detección de iOS, el aviso «Guardar en Archivos» y que la URL del archivo se libere un minuto después. Son 13 pruebas aprobadas.
+
+También se revisó con un guion propio de Playwright en WebKit con el iPhone SE: bienvenida, menú «Más», Mi viaje, billetera, pasaporte, «Sin señal», las 12 paradas del recorrido guiado y un barrido de toda la portada. Resultado: 0 errores de consola y ningún contenido con opacidad menor de 0,85. Solo quedan objetivos de menos de 44 px en enlaces dentro de una frase, como «Política de cookies», que WCAG 2.5.8 exceptúa, y en radios o casillas cuyo objetivo real es su etiqueta. En el recorrido guiado, el globo solo tapa lo señalado en el paso 3, porque la ficha es más alta que la pantalla.
+
+Qué cambió:
+
+- **index.html**: `viewport-fit=cover` sin bloquear el zoom. Se añadieron `apple-mobile-web-app-*`, `format-detection` (para que los números no se conviertan en enlaces de teléfono), `color-scheme` y `apple-touch-icon` de 180 px. El **manifest** abre en modo `standalone` con `display_override`.
+- **`src/components/chulla/mobile-ios.css`** (se importa la última en App.tsx):
+  - Zonas seguras en cabecera, menú lateral, barra inferior, barra de herramientas, MIJIN, diálogos y aviso de privacidad.
+  - `100dvh` en diálogos y paneles, y `overscroll-behavior: contain`.
+  - Campos a 16 px en pantallas táctiles, para que Safari no haga zoom.
+  - Cabecera móvil con menos botones: «Ver intro» sigue en el menú lateral y en el pie; «Tengo un negocio» sigue en el perfil. Todos los controles miden 44 px.
+  - MIJIN como círculo de 56 px.
+  - Sin `backdrop-filter` en la barra fija ni en los fondos de diálogo.
+  - Hover pegajoso anulado con `@media (hover:none)`.
+  - `overflow-x: clip` contra desbordes de animación. Antes, los sellos dejaban 13 px de desplazamiento horizontal en el 15 Pro Max.
+  - Textos de 10–11 px de las tarjetas subidos a 12 px.
+- **Privacidad**: «Personalizado» ya no se corta en 375 px. El aviso breve («Guardamos tu elección…») ocupaba media pantalla y seis líneas; ahora usa el ancho disponible y queda sobre la barra inferior.
+- **Recorrido guiado**: en pantallas bajas el globo es más compacto y nunca se sale por abajo.
+- **Descargas en iOS**: `src/components/common/download.ts` (`saveFile`, `withIosDownloadHint`) añade el enlace al documento y libera el Blob después de 60 s. Antes, en tres lugares, se liberaba al instante, y WebKit puede quedarse sin archivo. El pasaporte y la ruta sin internet avisan en iPhone que Safari puede abrir el archivo en una pestaña y cómo guardarlo (Compartir → Guardar en Archivos).
+- **Diálogo**: al cerrar, el foco vuelve sin desplazar la página (`preventScroll`).
+
+Decisión: el formulario de tarjeta **mantiene `autocomplete="off"`**, no `cc-number`. Es solo para tarjetas de prueba, y el autocompletado de Safari podría escribir la tarjeta real de la persona en un formulario de demostración. Ya tiene `inputmode="numeric"`. Cuando haya una pasarela real (PayPhone), su propio formulario debe usar `cc-number`, `cc-exp` y `cc-csc`.
+
+Pendiente honesto:
+
+- [ ] Probar en un iPhone físico: teclado sobre campos fijos, barra de Safari que se encoge, modo app añadido a inicio con muesca y rotación horizontal. La emulación WebKit no lo reproduce.
+- [ ] Gesto del pasaporte en un iPhone real.
+- [ ] Descarga de `.html` en Safari iOS: confirmar si se guarda o abre una pestaña (el aviso dice «puede»).
+- [ ] Menú «Más» (WorkspaceVivo): un toque fuera lo cierra y también activa lo que hay debajo. Conviene una capa que absorba ese toque, como en los menús de la cabecera.
+- [ ] Recorrido guiado (GuidedTour.tsx): con el globo abajo, desplazar lo señalado hacia la parte alta de la pantalla.

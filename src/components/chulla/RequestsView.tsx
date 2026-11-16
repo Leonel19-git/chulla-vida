@@ -4,6 +4,7 @@ import { useApp } from '../../context/AppContext';
 import type { Reservation } from '../../types';
 import { Dialog } from './Dialog';
 import { languageMetadata } from '../../i18n/ui';
+import { saveFile } from '../common/download';
 const statusLabels: Record<string, string> = { pendiente: 'Por confirmar', confirmado: 'Confirmada', pagado: 'Pagada', validado_en_sitio: 'Visita validada', liquidado_al_local: 'Liquidada', completado: 'Completada', cancelado: 'Cancelada' };
 const methods = { tarjeta: 'Tarjeta de prueba', transferencia: 'Transferencia de prueba', deuna: 'Deuna de prueba' };
 export function RequestsView() {
@@ -25,12 +26,7 @@ export function RequestsView() {
             r.pago_demo ? `${t('Simulación')}: ${t(r.pago_demo.estado === 'aprobado' ? 'Aprobado' : 'Pendiente de revisión')} · ${r.pago_demo.referencia}` : t('Sin simulación de pago'),
             t('No acredita un pago ni una reserva real. No se ha cobrado dinero.'),
         ];
-        const url = URL.createObjectURL(new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' }));
-        const anchor = document.createElement('a');
-        anchor.href = url;
-        anchor.download = `${r.codigo_voucher}-demo.txt`;
-        anchor.click();
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        saveFile(lines.join('\n'), `${r.codigo_voucher}-demo.txt`);
     };
     return <section className="trips-payments-view">
     <div className="page-heading"><h1>{t("Tus viajes y pagos")}</h1><p>{t("La escapada, su solicitud y la simulación de pago, en un mismo lugar.")}</p></div>

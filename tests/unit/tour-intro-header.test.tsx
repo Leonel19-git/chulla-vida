@@ -33,7 +33,8 @@ describe('intro con video', () => {
     const onClose = vi.fn();
     render(<AppProvider><BrandIntro onClose={onClose} /></AppProvider>);
     const video = document.querySelector<HTMLVideoElement>('video.cv-intro-video')!;
-    expect(video.getAttribute('src')).toBe(INTRO_VIDEO);
+    // Fuentes: vertical para celular, H.264 1080 y VP9 de respaldo (sin texto incrustado).
+    expect([...video.querySelectorAll('source')].map(source => source.getAttribute('src'))).toContain(INTRO_VIDEO);
     expect(video.getAttribute('poster')).toBe(INTRO_POSTER);
     expect(video.muted).toBe(true);
     expect(video.hasAttribute('playsinline')).toBe(true);
@@ -63,7 +64,7 @@ describe('intro con video', () => {
     expect(document.querySelector('img.cv-intro-video')).toHaveAttribute('src', INTRO_POSTER);
   });
   it('los archivos de video existen, pesan menos de 4 MB y llevan créditos', () => {
-    for (const file of ['public/video/chulla-vida-intro.webm', 'public/video/chulla-vida-hero.webm']) {
+    for (const file of ['public/video/chulla-vida-intro-1080.mp4', 'public/video/chulla-vida-intro-1080.webm', 'public/video/chulla-vida-intro-720x1280.mp4', 'public/video/chulla-vida-hero-1080.mp4', 'public/video/chulla-vida-hero-1080.webm', 'public/video/chulla-vida-hero-720x1280.mp4']) {
       const size = readFileSync(file).length;
       expect(size).toBeGreaterThan(100_000);
       expect(size).toBeLessThan(4 * 1024 * 1024);

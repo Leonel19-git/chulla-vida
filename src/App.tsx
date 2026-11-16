@@ -35,6 +35,7 @@ import './components/chulla/payments-view.css';
 import './components/chulla/finish-theme.css';
 import './components/chulla/youth-ui.css';
 import './components/chulla/polish.css';
+import './components/chulla/mobile-ios.css';
 
 const touristNav = [
   { tab: 'feed' as AppTab, label: 'Explorar Ecuador', icon: Compass },

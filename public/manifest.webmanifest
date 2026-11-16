@@ -4,11 +4,21 @@
   "short_name": "CHULLA VIDA",
   "description": "Explora Ecuador y lleva las fichas de tu viaje en este dispositivo.",
   "lang": "es-EC",
+  "dir": "ltr",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "orientation": "any",
   "background_color": "#fffdf8",
   "theme_color": "#012960",
+  "categories": [
+    "travel",
+    "education"
+  ],
   "icons": [
     {
       "src": "/brand/icon-192.png",

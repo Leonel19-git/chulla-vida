@@ -34,7 +34,7 @@ describe('voz de MIJIN: utilidades del navegador', () => {
     vi.useRealTimers();
   });
   it('clasifica cada error de SpeechRecognition con un mensaje útil', () => {
-    expect(classifyRecognitionError('not-allowed')).toBe('blocked'); expect(classifyRecognitionError('service-not-allowed')).toBe('blocked');
+    expect(classifyRecognitionError('not-allowed')).toBe('blocked'); expect(classifyRecognitionError('service-not-allowed')).toBe('service');
     expect(classifyRecognitionError('network')).toBe('network'); expect(classifyRecognitionError('no-speech')).toBe('no-speech');
     expect(classifyRecognitionError('audio-capture')).toBe('no-microphone'); expect(classifyRecognitionError('language-not-supported')).toBe('language');
     expect(classifyRecognitionError('bad-grammar')).toBe('other');

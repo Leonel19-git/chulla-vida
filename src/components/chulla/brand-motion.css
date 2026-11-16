@@ -42,3 +42,90 @@
 @media(prefers-reduced-motion:reduce){.brand-intro{transition:none}.main-content,.save-button.is-saved>svg,.social-feedback{animation:none}.intro-enter>svg{transition:none}.intro-enter:hover>svg{transform:none}}
 @media(max-width:700px){.intro-scene{height:146px;min-height:146px}.intro-scene>span{bottom:12px;left:18px;font-size:9px}.intro-region-picker{left:18px;right:auto;bottom:43px;gap:6px}.intro-region-picker>button{min-height:38px;padding:7px 10px;font-size:10px;border-radius:10px;gap:5px}.intro-region-picker>button>svg{width:17px;height:17px}.intro-content{min-height:calc(100dvh - 146px);padding-top:24px}.intro-content h1{font-size:35px;line-height:1.08;margin:10px 0}.intro-content>p{font-size:12px;max-width:29ch}.intro-enter{min-height:47px;font-size:13px;margin-top:20px}.intro-content::before{top:30px;right:-50px;width:145px;height:145px}.intro-logo{width:min(207px,25dvh)}}
 @media(max-width:380px){.intro-scene{height:146px;min-height:146px}.intro-content{min-height:calc(100dvh - 146px);padding-top:18px}.intro-logo{width:min(180px,24dvh)}.intro-content h1{font-size:32px}.intro-enter{margin-top:16px}.intro-motion-controls{gap:13px}}
+
+/* ── Intro de marca con video (BrandIntro, 3.2): video a pantalla completa, títulos en HTML y barra inferior compacta ── */
+.brand-intro.cvi{background:#011a40;color:#fffaf0;overflow:hidden;overscroll-behavior:contain}
+.brand-intro.cvi::backdrop{background:#011a40}
+.cvi[open]{display:block}
+.cvi-stage{position:absolute;inset:0;overflow:hidden;background:#011a40 url('/video/chulla-vida-intro-poster.webp') center/cover no-repeat}
+.cvi-stage>picture{display:contents}
+.cvi-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;background:transparent}
+/* Sombras suaves solo donde hay texto: arriba a la izquierda (título) y abajo (barra). El centro queda limpio. */
+.cvi-shade{position:absolute;inset:0;pointer-events:none;background:radial-gradient(120% 70% at 0 0,#01142f99 0,#01142f33 38%,#01142f00 62%),linear-gradient(0deg,#01142fe6 0,#01142fa6 14%,#01142f33 26%,#01142f00 36%)}
+.cvi-top{position:absolute;z-index:3;top:max(16px,env(safe-area-inset-top));right:max(16px,env(safe-area-inset-right));display:flex;gap:10px;align-items:center}
+.cvi .language-control-intro{position:relative;left:auto;right:auto;top:auto}
+.cvi-cue{position:absolute;z-index:2;top:max(28px,calc(env(safe-area-inset-top) + 16px));left:max(clamp(20px,4vw,56px),env(safe-area-inset-left));max-width:min(62vw,760px);color:#fff;text-shadow:0 1px 2px #000000b3,0 2px 18px #00000073;animation:cvi-cue-in .5s cubic-bezier(.2,.7,.2,1) both}
+.cvi-place{font:600 clamp(34px,4.4vw,68px)/1.02 Newsreader,Georgia,serif;letter-spacing:-.02em;margin:0;text-wrap:balance}
+.cvi-chip{display:inline-flex;align-items:center;gap:7px;margin-top:12px;padding:6px 12px;border-radius:999px;background:#011a40b8;border:1px solid #ffffff40;font-size:14px;font-weight:700;letter-spacing:.01em;text-shadow:none;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.cvi-chip>span:first-child{color:#fed65a}
+.cvi-photo-credit{margin-top:8px;font-size:12px;line-height:1.4;color:#f1f4f8}
+.cvi-outro{position:absolute;z-index:2;inset:0 0 140px;display:grid;place-content:center;text-align:center;gap:10px;color:#fffaf0;animation:cvi-cue-in .6s ease-out both}
+.cvi-wordmark{font:600 clamp(40px,6vw,92px)/1 Newsreader,Georgia,serif;letter-spacing:.02em}
+.cvi-outro>p:last-child{font-size:clamp(14px,1.4vw,18px);color:#fed65a;font-weight:700;letter-spacing:.04em}
+@keyframes cvi-cue-in{from{opacity:.88;transform:translateY(8px)}to{opacity:1;transform:none}}
+/* Barra inferior: sin tarjeta opaca; vive sobre el degradado de .cvi-shade. */
+.cvi-bar{position:absolute;z-index:3;left:0;right:0;bottom:0;padding:0 max(clamp(20px,4vw,56px),env(safe-area-inset-right)) max(14px,env(safe-area-inset-bottom)) max(clamp(20px,4vw,56px),env(safe-area-inset-left))}
+.cvi-progress{display:flex;gap:6px;margin-bottom:14px}
+.cvi-progress>span{flex:1;height:3px;border-radius:3px;background:#ffffff40;overflow:hidden}
+.cvi-progress i{display:block;height:100%;background:#fed65a;transform-origin:left center;transition:transform .26s linear}
+.cvi-bar-row{display:flex;align-items:center;justify-content:space-between;gap:20px}
+.cvi-brand{display:flex;align-items:center;gap:14px;min-width:0}
+.cvi-logo{flex:0 0 auto;width:58px;padding:4px;border-radius:14px;background:#fff;box-shadow:0 6px 18px #0005}
+.cvi-logo .animated-logo{display:block;width:100%;height:auto}
+.cvi-copy{min-width:0;text-shadow:0 1px 2px #0009}
+.cvi-copy h1{font:600 clamp(20px,1.7vw,26px)/1.15 Newsreader,Georgia,serif;letter-spacing:-.01em;color:#fffaf0;margin:0}
+.cvi-copy>p{margin-top:3px;font-size:14px;line-height:1.45;color:#e8eef6;max-width:58ch}
+.cvi-copy .intro-language-lexicon,.cvi-copy .intro-language-scope{font-size:12px;color:#fed65a}
+.cvi-actions{display:flex;align-items:center;gap:10px;flex:0 0 auto}
+.cvi-enter{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:48px;padding:10px 26px;border-radius:999px;border:0;background:#fed65a;color:#012960;font-weight:800;font-size:16px;box-shadow:0 8px 22px #0006;cursor:pointer}
+.cvi-enter:hover{background:#ffe17e}
+.cvi-ghost{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;min-width:44px;padding:9px 16px;border-radius:999px;border:1.5px solid #ffffffb3;background:#01142f80;color:#fff;font-weight:700;font-size:14px;cursor:pointer;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.cvi-ghost:hover{background:#01142fcc;border-color:#fff}
+.cvi-enter:focus-visible,.cvi-ghost:focus-visible,.cvi-credit a:focus-visible{outline:3px solid #fed65a;outline-offset:3px}
+.cvi-foot{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:8px;font-size:11.5px;line-height:1.4;color:#d5deea}
+.cvi-note{color:#fff}.cvi-credit a{color:#fff;text-underline-offset:3px}
+.cvi.is-outro .cvi-shade{opacity:.4}
+/* Celular / vertical: barra apilada y baja, título bajo el selector de idioma. */
+@media (max-width:760px),(orientation:portrait) and (max-width:900px){
+  .cvi-cue{top:calc(max(16px,env(safe-area-inset-top)) + 54px);left:max(16px,env(safe-area-inset-left));max-width:calc(100vw - 32px)}
+  .cvi-place{font-size:clamp(30px,8.6vw,40px)}
+  .cvi-chip{font-size:13px;margin-top:10px}
+  .cvi-photo-credit{font-size:11px}
+  .cvi-top{top:max(12px,env(safe-area-inset-top));right:max(12px,env(safe-area-inset-right))}
+  .cvi-shade{background:linear-gradient(180deg,#01142fa6 0,#01142f4d 22%,#01142f00 36%),linear-gradient(0deg,#01142ff0 0,#01142fb3 16%,#01142f33 30%,#01142f00 40%)}
+  .cvi-bar{padding:0 max(16px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
+  .cvi-progress{gap:4px;margin-bottom:12px}
+  .cvi-bar-row{flex-direction:column;align-items:stretch;gap:12px}
+  .cvi-logo{width:46px;border-radius:12px}
+  .cvi-copy h1{font-size:19px}
+  .cvi-copy>p{font-size:12.5px}
+  .cvi-actions{gap:8px}
+  .cvi-enter{flex:1 1 auto;min-height:48px}
+  .cvi-play>span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .cvi-play{padding:0;width:48px;min-height:48px}
+  .cvi-skip{min-height:48px}
+  .cvi-foot{font-size:10.5px;margin-top:8px}
+  .cvi-outro{inset:0 0 190px}
+}
+/* Celulares bajos (iPhone SE y similares): la barra se queda en lo esencial para no tapar la foto. */
+@media (max-width:760px) and (max-height:700px){
+  .cvi-copy>p#intro-description{display:none}
+  .cvi-copy h1{font-size:17px}
+  .cvi-logo{width:40px;padding:3px;border-radius:10px}
+  .cvi-brand{gap:10px}
+  .cvi-place{font-size:28px}
+  .cvi-chip{margin-top:8px;padding:5px 10px;font-size:12px}
+  .cvi-bar-row{gap:10px}
+  .cvi-foot{margin-top:6px}
+}
+@media (max-height:480px) and (orientation:landscape){
+  .cvi-copy>p,.cvi-foot{display:none}
+  .cvi-place{font-size:30px}
+  .cvi-cue{top:max(12px,env(safe-area-inset-top))}
+  .cvi-progress{margin-bottom:8px}
+}
+@media (prefers-reduced-motion:reduce){
+  .brand-intro.cvi{transition:none}
+  .cvi-cue,.cvi-outro{animation:none}
+  .cvi-progress i{transition:none}
+}

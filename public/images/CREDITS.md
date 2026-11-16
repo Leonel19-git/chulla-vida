@@ -66,3 +66,10 @@ conversión a WebP (640 y 1280 px): son obras derivadas; las CC BY-SA se compart
 - `gen-14-mindo-640.webp`, `gen-14-mindo-1280.webp`: «Mindo-Cloud-Forest-02.jpg» — Ayacop. Public domain. https://commons.wikimedia.org/wiki/File:Mindo-Cloud-Forest-02.jpg
 
 <!-- fotos-por-ficha:fin -->
+
+## Videos de la intro y de la portada
+
+`public/video/*.mp4` y `*.webm` (intro: 8 tomas; portada: bucle de 5 tomas) se generan con `scripts/make-video-ffmpeg.mjs`
+a partir de las fotos de esta lista (`gen-02`, `gen-09`, `gen-07`, `costa-01`, `costa-03`, `amz-01`, `amz-10`, `gal-04`, `gal-01`):
+recorte, escalado y movimiento lento, sin texto incrustado. Cada toma de la intro muestra en pantalla su autor y licencia
+(desde `public/video/intro-cues.json`). Detalle: `public/video/CREDITS.md`.

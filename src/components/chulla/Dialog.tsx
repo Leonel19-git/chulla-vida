@@ -15,7 +15,7 @@ export function Dialog({ title, onClose, children, wide = false }: { title: stri
     const old = document.body.style.overflow;
     dialog?.showModal();
     document.body.style.overflow = 'hidden';
-    return () => { dialog?.close(); document.body.style.overflow = old; previous?.focus(); };
+    return () => { dialog?.close(); document.body.style.overflow = old; previous?.focus({ preventScroll: true }); };
   }, []);
   /* Portal a <body>: un diálogo abierto desde otro (p. ej. Comprar dentro de la ficha) no hereda estilos del contenedor. */
   return createPortal(<dialog ref={ref} className={`cv-dialog ${wide ? 'cv-dialog-wide' : ''}`} aria-labelledby={titleId} onCancel={() => closeRef.current()} onClick={e => { if (e.target === e.currentTarget) closeRef.current(); }}>

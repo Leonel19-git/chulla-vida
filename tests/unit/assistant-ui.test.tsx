@@ -61,7 +61,7 @@ describe('MIJIN se usa hablando, con permiso y subtítulos', () => {
     expect(start).toHaveBeenCalledTimes(2); expect(screen.queryByText(/CHULLA VIDA no guarda audio/)).not.toBeInTheDocument();
   });
   it.each([
-    ['not-allowed', /candado/], ['service-not-allowed', /candado/], ['network', /necesita internet/],
+    ['not-allowed', /candado/], ['service-not-allowed', /servicio de reconocimiento de voz de tu navegador no está disponible/], ['network', /necesita internet/],
     ['no-speech', /No te escuché/], ['audio-capture', /No encontré un micrófono/],
   ])('explica el error %s y deja el micrófono apagado', async (error, message) => {
     render(<MijinAssistant />); open(); await begin(); fail(error);

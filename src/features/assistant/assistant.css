@@ -43,3 +43,20 @@
 .mijin-voice-problem .mijin-control{color:#103452;border-color:#10345240;background:transparent;font-size:13px}
 .mijin-voice-name{display:block;margin-top:6px;font-size:12px;color:#52614f}
 @media(prefers-reduced-motion:reduce){.phase-permission .mijin-orbit,.phase-starting .mijin-orbit{animation:none}}
+/* 3.2 · Voz en el dispositivo: nivel real de voz, descarga con progreso, oferta y privacidad. */
+.mijin-stage{--level:0}
+.engine-local.phase-listening .mijin-wave i{animation:none;transform:scaleY(calc(1 + var(--level) * (6 - (var(--bar) - 3) * (var(--bar) - 3) * .55)));transition:transform 60ms linear;opacity:calc(.55 + var(--level))}
+.engine-local.phase-listening .mijin-orb{box-shadow:0 0 0 calc(var(--level) * 22px) #8ce4d140,0 16px 40px #00162b60}
+.mijin-level{width:min(240px,80%);height:8px;margin:12px auto 0;border-radius:6px;background:#ffffff1f;overflow:hidden}.mijin-level>span{display:block;height:100%;width:100%;transform-origin:left;transform:scaleX(var(--level));background:#8ce4d1;border-radius:6px;transition:transform 60ms linear}
+.mijin-done{display:inline-flex;align-items:center;gap:8px;min-height:48px;margin-top:14px;padding:10px 20px;background:#fffdf8;color:#103452;border-radius:24px;font-weight:700;font-size:15px}.mijin-done:focus-visible{outline:3px solid #efb22c;outline-offset:3px}
+.mijin-progress-wrap{max-width:320px;margin:14px auto 0}.mijin-progress{height:10px;border-radius:6px;background:#ffffff26;overflow:hidden}.mijin-progress>span{display:block;height:100%;background:#efb22c;border-radius:6px;transition:width .2s linear}.mijin-progress-wrap small{display:block;margin-top:6px;font-size:13px;color:#e6f5ef;font-variant-numeric:tabular-nums}
+.mijin-voice-offer{max-width:48ch;margin:14px auto 0;padding:14px 16px;border-radius:14px;background:#fffdf8;color:#28372d;text-align:left;font-size:15px;line-height:1.55;border-left:5px solid #079da5}.mijin-voice-offer>p{margin:0 0 10px}.mijin-voice-offer>div{display:flex;flex-wrap:wrap;gap:10px}.mijin-voice-offer .button{display:inline-flex;align-items:center;gap:8px;min-height:44px;font-size:14px}.mijin-voice-offer .mijin-control{color:#103452;border-color:#10345240;background:transparent;font-size:13px}.mijin-offer-reason{font-size:13px;color:#754d22}
+.mijin-voice-problem .button-primary{display:inline-flex;align-items:center;gap:8px;min-height:44px;font-size:14px}.mijin-voice-problem>p.mijin-problem-code{font-weight:500;font-size:13px;color:#52614f;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.mijin-local-privacy{display:flex;align-items:center;justify-content:center;gap:7px;margin:14px auto 0;font-size:13px;color:#c5e2df;max-width:44ch}
+.mijin-engine-switch{display:inline-flex;margin-top:12px;min-height:44px;font-size:13px;color:#e6f5ef;text-decoration:underline;text-underline-offset:4px}
+.mijin-correct{display:inline-flex;align-items:center;gap:6px;min-height:44px;font-size:13px}
+.mijin-stop{border-color:#efb22c99}
+@media(max-width:700px){.mijin-launcher{bottom:calc(85px + env(safe-area-inset-bottom,0px));right:calc(14px + env(safe-area-inset-right,0px))}.mijin-stage h3{font-size:28px}.mijin-voice-offer,.mijin-voice-problem{font-size:14px}.mijin-voice-offer>div>*,.mijin-voice-problem>div>*{flex:1 1 100%;justify-content:center}}
+@media(max-width:380px){.mijin-orb-wrap{width:176px;height:176px}.mijin-orb{width:138px;height:138px}.mijin-stage{padding:22px 12px 18px}.mijin-stage h3{font-size:25px}.mijin-panel{padding:16px 12px}}
+@media(prefers-reduced-motion:reduce){.engine-local.phase-listening .mijin-wave i,.mijin-level>span,.mijin-progress>span{transition:none}}
+.mijin-fallback-note{max-width:48ch;margin:12px auto 0;padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.55;color:#fff4dc;background:#efb22c26;border:1px solid #efb22c66}

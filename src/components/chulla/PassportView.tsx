@@ -15,6 +15,7 @@ import { useWallet } from '../../features/wallet/store';
 import { getSupabase } from '../../lib/supabase';
 import { loadVerifiedStamps } from '../../features/traveler/profile';
 import '../../features/passport/passport-book.css';
+import { saveFile, withIosDownloadHint } from '../common/download';
 
 const regionDetails = {
   sierra: { icon: Mountain, phrase: 'Entre montañas, empieza otra historia.', invitation: 'Haz espacio para escuchar a quienes viven aquí.', challenge: 'Pregunta antes de fotografiar a una persona o una ceremonia.' },
@@ -109,10 +110,8 @@ export function PassportView({ onClose, onChoosePlans }: { onClose: () => void; 
   const markExplored = (id: string) => commit(toggleVirtualExploration(book, id, availableIds), 'Exploración virtual actualizada. No acredita una visita al lugar.');
   const download = () => {
     const html = passportExportHtml(book, records.map(record => ({ id: record.id, title: record.title, region: REGION_LABELS[record.localizedRegion] })), saved);
-    const url = URL.createObjectURL(new Blob([html], { type: 'text/html;charset=utf-8' }));
-    const link = document.createElement('a'); link.href = url; link.download = 'mi-pasaporte-guambra.html'; link.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-    setNotice('Pasaporte descargado con tu diario. El archivo es privado y se puede leer sin internet; cuídalo en dispositivos compartidos.');
+    saveFile(html, 'mi-pasaporte-guambra.html', 'text/html;charset=utf-8');
+    setNotice(withIosDownloadHint('Pasaporte descargado con tu diario. El archivo es privado y se puede leer sin internet; cuídalo en dispositivos compartidos.'));
   };
   const addMemory = (event: FormEvent) => {
     event.preventDefault();

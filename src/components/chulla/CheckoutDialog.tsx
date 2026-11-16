@@ -7,6 +7,7 @@ import { Dialog } from './Dialog';
 import { placeImage, shortTitle } from './content';
 import { languageMetadata } from '../../i18n/ui';
 import './checkout.css';
+import { saveFile } from '../common/download';
 type Method = 'tarjeta' | 'transferencia' | 'deuna';
 type DemoOutcome = 'aprobado' | 'rechazado';
 const methods = [
@@ -128,12 +129,7 @@ export function BookingDialog() {
             `${t('Tu solicitud')}: ${success.codigo_voucher}`, '',
             t('No se realizó ningún cobro. La solicitud sigue pendiente de confirmación del negocio y solo se guarda en este navegador. Este documento no acredita una reserva real ni un pago real.'),
         ].join('\n');
-        const url = URL.createObjectURL(new Blob([text], { type: 'text/plain;charset=utf-8' }));
-        const anchor = document.createElement('a');
-        anchor.href = url;
-        anchor.download = `DEMO-${success.codigo_voucher}.txt`;
-        anchor.click();
-        URL.revokeObjectURL(url);
+        saveFile(text, `DEMO-${success.codigo_voucher}.txt`);
     };
     return <Dialog title={t(success ? 'Tu simulación, lista' : 'Prepara tu próxima escapada')} onClose={close} wide>
     <div className="checkout-demo-banner"><LockKeyhole size={14}/><span>{t("Modo demostración · sin cobros ni datos bancarios reales")}</span></div>

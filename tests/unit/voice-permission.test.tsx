@@ -49,7 +49,7 @@ describe('MIJIN pide el micrófono de forma explícita y nunca se queda callado'
     expect(start).toHaveBeenCalledTimes(1); expect(last().lang).toBe('es-EC'); expect(last().interimResults).toBe(true);
     expect(screen.getAllByText('Encendiendo el micrófono…').length).toBeGreaterThan(0);
     emit(() => last().onstart?.());
-    expect(screen.getByText('Te escucho…')).toBeInTheDocument(); expect(screen.getByText('Habla ahora…')).toBeInTheDocument();
+    expect(screen.getByText('Escuchando…')).toBeInTheDocument(); expect(screen.getByText('Habla ahora…')).toBeInTheDocument();
     emit(() => last().onresult?.({ resultIndex: 0, results: [Object.assign([{ transcript: 'Quiero conocer Sara' }], { isFinal: false })] }));
     expect(screen.getByText('«Quiero conocer Sara»')).toBeInTheDocument(); expect(synthesis.speak).not.toHaveBeenCalled();
     emit(() => last().onresult?.({ resultIndex: 0, results: [Object.assign([{ transcript: 'Quiero conocer Saraguro' }], { isFinal: true })] }));
@@ -57,7 +57,7 @@ describe('MIJIN pide el micrófono de forma explícita y nunca se queda callado'
     const said = synthesis.speak.mock.calls.map(call => call[0] as FakeUtterance);
     expect(said.length).toBeGreaterThan(0); said.forEach(utterance => expect(utterance.voice?.name).toBe('Google español de Estados Unidos'));
     expect(screen.getByText(/Voz del navegador: Google español de Estados Unidos/)).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: /Callar/ })); expect(synthesis.cancel).toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: 'Detener', exact: true })); expect(synthesis.cancel).toHaveBeenCalled();
     // A second turn does not ask getUserMedia again in the same conversation.
     await tapMic(); expect(getUserMedia).toHaveBeenCalledTimes(1); expect(start).toHaveBeenCalledTimes(2);
   });
@@ -108,22 +108,19 @@ describe('MIJIN pide el micrófono de forma explícita y nunca se queda callado'
     expect(screen.getByText('Probemos de nuevo.')).toBeInTheDocument(); expect(screen.getByRole('button', { name: 'Reintentar' })).toBeInTheDocument();
     expect(synthesis.speak).not.toHaveBeenCalled();
   });
-  it('sin evento start en 2,5 s prueba es-ES y es-US y luego explica que el reconocimiento no respondió', async () => {
+  it('sin evento start en 2,5 s no prueba otras variantes: explica que el reconocimiento no respondió', async () => {
     render(<MijinAssistant />); openPanel(); await tapMic();
     expect(last().lang).toBe('es-EC');
     await act(async () => { await vi.advanceTimersByTimeAsync(START_WATCHDOG_MS); });
-    expect(FakeRecognition.instances.map(item => item.lang)).toEqual(['es-EC', 'es-ES']); expect(abort).toHaveBeenCalledTimes(1);
-    await act(async () => { await vi.advanceTimersByTimeAsync(START_WATCHDOG_MS); });
-    expect(last().lang).toBe('es-US');
-    await act(async () => { await vi.advanceTimersByTimeAsync(START_WATCHDOG_MS); });
-    expect(FakeRecognition.instances).toHaveLength(3);
+    expect(FakeRecognition.instances).toHaveLength(1); expect(abort).toHaveBeenCalledTimes(1);
     expect(screen.getByRole('alert')).toHaveTextContent('El reconocimiento de voz del navegador no respondió; escríbeme abajo');
+    expect(screen.getByRole('alert')).toHaveTextContent('Código del navegador: engine-silent');
     expect(screen.getByRole('button', { name: 'Hablar con MIJIN' })).toBeEnabled();
   });
   it('si arranca a tiempo, el vigilante no interrumpe la escucha', async () => {
     render(<MijinAssistant />); openPanel(); await tapMic(); emit(() => last().onaudiostart?.());
     await act(async () => { await vi.advanceTimersByTimeAsync(START_WATCHDOG_MS * 2); });
-    expect(FakeRecognition.instances).toHaveLength(1); expect(abort).not.toHaveBeenCalled(); expect(screen.getByText('Te escucho…')).toBeInTheDocument();
+    expect(FakeRecognition.instances).toHaveLength(1); expect(abort).not.toHaveBeenCalled(); expect(screen.getByText('Escuchando…')).toBeInTheDocument();
   });
   it('si el motor nunca avisa el final tras el tope de escucha, cierra el turno con un mensaje', async () => {
     render(<MijinAssistant />); openPanel(); await tapMic(); emit(() => last().onstart?.());
@@ -171,6 +168,9 @@ describe('utilidades de permiso de micrófono', () => {
     const debug = vi.spyOn(console, 'debug').mockImplementation(() => undefined);
     voiceDebug('start'); expect(debug).not.toHaveBeenCalled();
     (window as unknown as { __mijinVoiceDebug?: boolean }).__mijinVoiceDebug = true; voiceDebug('start', { lang: 'es-EC' });
-    expect(debug).toHaveBeenCalledWith('[MIJIN voz]', 'start', { lang: 'es-EC' });
+    expect(debug).toHaveBeenCalledWith('[MIJIN voz] start', 'lang=es-EC');
+    voiceDebug('error', { code: 'network', message: 'Network down', lang: 'es-EC' });
+    expect(debug).toHaveBeenLastCalledWith('[MIJIN voz] error', 'code=network message="Network down" lang=es-EC');
+    expect(JSON.stringify(debug.mock.calls)).not.toContain('[object Object]');
   });
 });

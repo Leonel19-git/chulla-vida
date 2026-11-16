@@ -13,7 +13,10 @@ export function navigationFromVoice(question: string): VoiceNavigation | null {
   return null;
 }
 export const isWeatherQuestion = (question: string) => /clima|lluev|lluvia|temperatura|pronostico|tiempo hace|tiempo hay/.test(normalizeQuestion(question));
+/** Places people name by voice; also the vocabulary that fixes on-device transcripts (see correctPlaceNames). */
+export const VOICE_PLACES = ['Cuyabeno', 'Saraguro', 'Cotopaxi', 'Quilotoa', 'Mindo', 'Galápagos', 'Chimborazo', 'Montañita', 'Yasuní', 'Ingapirca', 'Vilcabamba', 'Papallacta', 'Podocarpus', 'Esmeraldas', 'Ambato', 'Latacunga', 'Ibarra', 'Tulcán', 'Machala', 'Portoviejo', 'Mompiche', 'Sangay', 'Cayambe', 'Isabela', 'Santa Cruz', 'MIJIN'];
 const cities = ['Baños de Agua Santa', 'Puerto Misahuallí', 'San Cristóbal', 'Puerto Ayora', 'Lago Agrio', 'Nueva Loja', 'Shushufindi', 'Riobamba', 'Guayaquil', 'Cotacachi', 'Archidona', 'Saraguro', 'Otavalo', 'Cuyabeno', 'Misahuallí', 'Nangaritza', 'Cuenca', 'Zamora', 'Macas', 'Manta', 'Quito', 'Salinas', 'Tena', 'Puyo', 'Coca', 'Loja', 'Baños'];
+export const voicePlaceNames = () => [...VOICE_PLACES, ...cities];
 export function weatherLocalityFromVoice(question: string, catalog: Experience[]): string | null {
   const q = normalizeQuestion(question);
   const named = cities.find(city => new RegExp(`(^|[^a-z])${normalizeQuestion(city)}([^a-z]|$)`).test(q));
@@ -33,21 +36,25 @@ const defaultEnvironment = (): MicrophoneEnvironment => ({ mediaDevices: typeof 
  * nothing is recorded or kept. `unavailable` means the browser has no getUserMedia (recognition may still ask on its own).
  */
 export async function requestMicrophone(environment: MicrophoneEnvironment = defaultEnvironment()): Promise<MicrophoneResult> {
+  const { result, stream } = await openMicrophone(environment, { audio: true });
+  stream?.getTracks().forEach(track => { try { track.stop(); } catch { /* already stopped */ } });
+  return result;
+}
+function classifyMediaError(error: unknown, secure: boolean): MicrophoneResult {
+  const name = typeof error === 'object' && error !== null && 'name' in error ? String((error as { name: unknown }).name) : '';
+  if (name === 'NotAllowedError' || name === 'PermissionDeniedError') return 'denied';
+  if (name === 'SecurityError') return secure ? 'denied' : 'insecure';
+  if (name === 'NotFoundError' || name === 'DevicesNotFoundError' || name === 'OverconstrainedError') return 'no-device';
+  if (name === 'NotReadableError' || name === 'TrackStartError' || name === 'AbortError') return 'busy';
+  return 'error';
+}
+/** Opens the microphone and KEEPS the stream (on-device recognition records from it); the caller must stop its tracks. */
+export async function openMicrophone(environment: MicrophoneEnvironment = defaultEnvironment(), constraints: MediaStreamConstraints = { audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true, channelCount: 1 } }): Promise<{ result: MicrophoneResult; stream?: MediaStream }> {
   const { mediaDevices, secure = true } = environment;
-  if (!secure) return 'insecure';
-  if (!mediaDevices?.getUserMedia) return 'unavailable';
-  try {
-    const stream = await mediaDevices.getUserMedia({ audio: true });
-    stream.getTracks().forEach(track => { try { track.stop(); } catch { /* already stopped */ } });
-    return 'granted';
-  } catch (error) {
-    const name = typeof error === 'object' && error !== null && 'name' in error ? String((error as { name: unknown }).name) : '';
-    if (name === 'NotAllowedError' || name === 'PermissionDeniedError') return 'denied';
-    if (name === 'SecurityError') return secure ? 'denied' : 'insecure';
-    if (name === 'NotFoundError' || name === 'DevicesNotFoundError' || name === 'OverconstrainedError') return 'no-device';
-    if (name === 'NotReadableError' || name === 'TrackStartError' || name === 'AbortError') return 'busy';
-    return 'error';
-  }
+  if (!secure) return { result: 'insecure' };
+  if (!mediaDevices?.getUserMedia) return { result: 'unavailable' };
+  try { return { result: 'granted', stream: await mediaDevices.getUserMedia(constraints) }; }
+  catch (error) { return { result: classifyMediaError(error, secure) }; }
 }
 /** Current microphone permission without prompting; `unknown` where the Permissions API does not know «microphone» (Firefox, Safari antiguos). */
 export async function microphonePermission(permissions: Pick<Permissions, 'query'> | undefined = typeof navigator === 'undefined' ? undefined : navigator.permissions): Promise<PermissionState | 'unknown'> {
@@ -70,9 +77,13 @@ export function permissionPromptMessage(userAgent = typeof navigator === 'undefi
 }
 /**
  * Opt-in diagnostics: `window.__mijinVoiceDebug = true` prints recognition and synthesis events with console.debug.
- * Only event names, codes, languages and counts are logged — never what the person said.
+ * Only event names, codes, languages and counts are logged — never what the person said. Everything is printed as
+ * plain text (`error code=network lang=es-EC`) so a copied console line never shows a collapsed «Object».
  */
-export function voiceDebug(event: string, detail: Record<string, string | number | boolean | null> = {}) {
+export function formatVoiceDetail(detail: Record<string, string | number | boolean | null | undefined>): string {
+  return Object.entries(detail).filter(([, value]) => value !== undefined).map(([key, value]) => `${key}=${typeof value === 'string' && /\s/.test(value) ? JSON.stringify(value) : String(value)}`).join(' ');
+}
+export function voiceDebug(event: string, detail: Record<string, string | number | boolean | null | undefined> = {}) {
   if (typeof window === 'undefined' || (window as unknown as { __mijinVoiceDebug?: unknown }).__mijinVoiceDebug !== true) return;
-  console.debug('[MIJIN voz]', event, detail);
+  console.debug(`[MIJIN voz] ${event}`, formatVoiceDetail(detail));
 }

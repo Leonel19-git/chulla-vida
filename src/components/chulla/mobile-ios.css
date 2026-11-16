@@ -1,0 +1,109 @@
+/* ───────────── Capa móvil e iPhone (Safari/WebKit) ─────────────
+   Se importa la última desde App.tsx. Las hojas anteriores fijan tamaños con mucha especificidad,
+   por eso aquí algunos selectores repiten la clase (.topbar.topbar) en vez de usar !important.
+   Probado con Playwright WebKit (iPhone SE 3.ª gen., iPhone 13, iPhone 15 Pro Max) y Chromium (Pixel 7). */
+
+/* Sin desplazamiento horizontal accidental: una animación (sellos, entradas) no puede ensanchar la página.
+   overflow-x:clip no crea contenedor de desplazamiento, así que position:sticky sigue funcionando. */
+.app-shell,.app-workspace{overflow-x:clip}
+.app-workspace{min-height:100vh;min-height:100dvh}
+
+/* Modo app (añadida a inicio) con viewport-fit=cover: la franja de la barra de estado lleva el color de la cabecera. */
+@supports (padding-top:env(safe-area-inset-top)){
+  body::before{content:"";position:fixed;z-index:70;inset:0 0 auto;height:env(safe-area-inset-top);background:#fffdf7;pointer-events:none}
+}
+
+/* Controles de formulario: en iPhone, un campo con letra menor de 16 px obliga a Safari a hacer zoom al enfocarlo. */
+@media (pointer:coarse){
+  .topbar.topbar .language-select select,.language-control-intro .language-select select,
+  .sort-field.sort-field select,.vivo-sort.vivo-sort select,.search-field.search-field>input,
+  .cv-dialog select,.cv-dialog textarea,.cv-dialog input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not(.otp-box){font-size:16px}
+}
+
+@media (max-width:700px){
+  /* Cabecera: menos botones y todos de al menos 44 × 44. «Ver intro» sigue en el menú lateral y en el pie;
+     «Tengo un negocio» sigue en el menú del perfil. */
+  .topbar.topbar{height:auto;min-height:64px;padding:env(safe-area-inset-top) max(12px,env(safe-area-inset-right)) 0 max(12px,env(safe-area-inset-left));gap:6px}
+  .topbar.topbar .topbar-left{gap:6px;flex:0 0 auto}
+  .topbar.topbar .topbar-actions{gap:6px;flex:1 1 auto;justify-content:flex-end}
+  .topbar.topbar .mobile-menu{width:44px;min-width:44px;height:44px;border-radius:12px}
+  .topbar.topbar .header-intro,.topbar.topbar .business-switch{display:none}
+  .topbar.topbar .notification-button,.topbar.topbar .profile-button{width:44px;min-width:44px;height:44px;justify-content:center;padding:0}
+  .topbar.topbar .profile-avatar{width:34px;height:34px}
+  .topbar.topbar .language-select{min-height:44px;padding:0 6px;gap:2px}
+  .topbar.topbar .language-select select{width:104px;min-height:44px;-webkit-appearance:none;appearance:none;background:transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23012960' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 4px center/12px 8px;padding:0 20px 0 4px;color:#012960;font-weight:650}
+  .topbar .header-popover{top:calc(64px + env(safe-area-inset-top));max-height:calc(100dvh - 80px - env(safe-area-inset-top));overflow:auto;overscroll-behavior:contain}
+
+  /* Menú lateral: respeta la muesca y se desplaza por dentro sin arrastrar la página. */
+  .sidebar.sidebar{padding-top:max(12px,env(safe-area-inset-top));padding-bottom:max(20px,env(safe-area-inset-bottom));overscroll-behavior:contain;max-height:100dvh}
+  .sidebar .sidebar-close{width:44px;height:44px}
+
+  /* Barra inferior: deja libre la barra de inicio del iPhone. */
+  .mobile-bottom-nav.mobile-bottom-nav{height:auto;min-height:64px;padding:4px max(6px,env(safe-area-inset-right)) env(safe-area-inset-bottom) max(6px,env(safe-area-inset-left))}
+  .mobile-bottom-nav.mobile-bottom-nav button{font-size:12px;min-height:52px;min-width:64px}
+  .app-workspace.app-workspace{padding-bottom:calc(68px + env(safe-area-inset-bottom))}
+
+  /* Barra de herramientas fija: sin desenfoque (caro en iPhone al desplazar) y bajo la barra de estado. */
+  .cv-toolbar.cv-toolbar{top:env(safe-area-inset-top);backdrop-filter:none;-webkit-backdrop-filter:none;background:#fffdf7}
+  /* Fondo de diálogos a pantalla completa: el desenfoque de toda la página es lo más caro en un iPhone. */
+  dialog.wallet-dialog.wallet-dialog::backdrop,dialog.planner-dialog.planner-dialog::backdrop{backdrop-filter:none;-webkit-backdrop-filter:none}
+
+  /* Botón flotante de MIJIN: círculo de 56 px que no tapa textos ni botones; el nombre sigue en aria-label. */
+  .mijin-launcher.mijin-launcher{right:max(12px,env(safe-area-inset-right));bottom:calc(80px + env(safe-area-inset-bottom));width:56px;height:56px;min-height:56px;padding:0;justify-content:center;border-radius:50%}
+  .mijin-launcher.mijin-launcher>span:not(.mijin-launcher-mark){position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+  .mijin-launcher.mijin-launcher .mijin-launcher-mark{width:44px;height:44px}
+  /* Mientras el aviso de privacidad está abierto, MIJIN espera arriba del aviso y nunca lo cubre. */
+  body:has(.privacy-banner) .mijin-launcher.mijin-launcher{bottom:calc(var(--cv-consent-h,0px) + 16px + env(safe-area-inset-bottom))}
+
+  /* Diálogos: alto real de la pantalla visible (100dvh), muesca y barra de inicio, desplazamiento contenido. */
+  .cv-dialog.cv-dialog{max-height:calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));max-width:calc(100vw - 20px - env(safe-area-inset-left) - env(safe-area-inset-right));overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+  .cv-dialog .dialog-top .icon-button{width:44px;height:44px;min-width:44px;min-height:44px}
+  .cv-dialog .dialog-top h2{overflow-wrap:anywhere}
+
+  /* Textos que el CSS anterior dejaba en 8–11 px dentro de los diálogos: mínimo legible en móvil. */
+  .dialog-content>p{font-size:14px;line-height:1.65}
+  .dialog-content .button{font-size:14px;min-height:44px}
+
+  /* Tarjetas del catálogo y barra de herramientas: datos clave en 12 px como mínimo (antes 10–11 px). */
+  .vivo-card-location span,.vivo-card-price span,.cv-culture-date small{font-size:12px}
+  .cv-toolbar .cv-tool>span{font-size:12px}
+}
+
+/* Pantallas de 375 px o menos (iPhone SE, mini): la cabecera necesita aún menos ancho. */
+@media (max-width:380px){
+  .topbar.topbar .language-select>svg{display:none}
+  .topbar.topbar .language-select select{width:100px}
+  .topbar.topbar .mobile-brand-name{display:none}
+}
+
+/* Diálogo de privacidad y su banner: «Personalizado» ya no se corta; el banner respeta la barra de inicio. */
+@media (max-width:700px){
+  .privacy-banner.consent-bar.consent-bar{inset:auto max(8px,env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));max-height:calc(100dvh - 16px - env(safe-area-inset-top) - env(safe-area-inset-bottom));overflow:auto;overscroll-behavior:contain}
+}
+@media (max-width:430px){
+  .consent-segments .consent-segment svg{display:none}
+  .consent-segments .consent-segment{padding:6px 2px;font-size:14px}
+  .consent-bar .consent-details summary{min-height:44px;display:flex;align-items:center}
+}
+
+/* Enlaces y botones de texto sueltos dentro de diálogos y bienvenida: objetivo táctil de 44 px. */
+@media (pointer:coarse){
+  /* Enlace dentro de una frase: se agranda la zona táctil con relleno vertical, sin mover el texto. */
+  .consent-bar .privacy-link{padding-block:11px}
+  .welcome-tour-link .privacy-link{min-height:44px;display:inline-flex;align-items:center}
+  /* Títulos-botón de las tarjetas, pestañas del pasaporte, sugerencias y acciones de MIJIN: medían 34–42 px. */
+  h3>button:only-child{min-height:44px}
+  .pg-tabs>button,.pg-toolbar .text-button{min-height:44px}
+  .mijin-suggestions button,.mijin-bottom .text-button,.mijin-accessible>summary{min-height:44px}
+  .cv-culture-cta{min-height:44px}
+}
+
+/* Hover pegajoso: en pantallas táctiles el primer toque deja el :hover puesto. Nada se levanta ni se agranda. */
+@media (hover:none){
+  .experience-card:hover,.experience-card:hover .experience-photo img,.photo-link:hover img,.regional-choice:hover,
+  .vivo-card:hover,.vivo-card:hover .vivo-card-photo img,.cv-hero .vivo-primary:hover,.cv-hero-regions button:hover,
+  .welcome-path:hover,.buy-button:hover,.flex-relax button:hover,.consent-level:hover,.data-protection-download:hover,
+  .data-protection-online:hover,.traveler-shortcuts button:hover,.music-section-andina .music-play-button:hover,
+  .mijin-orb:enabled:hover,.hero-button:hover>svg:last-child,.experience-link:hover>svg{transform:none!important}
+  .consent-segment:not(.is-selected):hover{background:#fff}
+}

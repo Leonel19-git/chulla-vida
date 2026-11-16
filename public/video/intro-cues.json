@@ -1,0 +1,119 @@
+{
+  "generatedBy": "scripts/make-video-ffmpeg.mjs",
+  "duration": 22.6,
+  "closingStart": 20.3,
+  "shots": [
+    {
+      "start": 0,
+      "end": 2.8,
+      "place": "Laguna del Quilotoa",
+      "region": "Sierra",
+      "province": "Cotopaxi",
+      "photo": "gen-02-quilotoa-shalala",
+      "credit": {
+        "author": "Ymblanter",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Quilotoa_Laguna_Quilotoa_seen_from_Mirador_Cristal_1.jpg"
+      }
+    },
+    {
+      "start": 2.8,
+      "end": 5.3,
+      "place": "Volcán Cotopaxi",
+      "region": "Sierra",
+      "province": "Cotopaxi",
+      "photo": "gen-09-parque-nacional-cotopaxi",
+      "credit": {
+        "author": "Bernard Gagnon",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Cotopaxi_01.jpg"
+      }
+    },
+    {
+      "start": 5.3,
+      "end": 7.8,
+      "place": "Pailón del Diablo",
+      "region": "Sierra",
+      "province": "Tungurahua",
+      "photo": "gen-07-banos-de-agua-santa",
+      "credit": {
+        "author": "Ronan.js",
+        "license": "CC0",
+        "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+        "source": "https://commons.wikimedia.org/wiki/File:The_base_of_Pail%C3%B3n_del_Diablo.jpg"
+      }
+    },
+    {
+      "start": 7.8,
+      "end": 10.3,
+      "place": "Laguna de Agua Blanca",
+      "region": "Costa",
+      "province": "Manabí",
+      "photo": "costa-01-raices-de-manabi",
+      "credit": {
+        "author": "Delphine Ménard (notafish)",
+        "license": "CC BY-SA 2.0 fr",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/fr/deed.en",
+        "source": "https://commons.wikimedia.org/wiki/File:Ecuador_aguablanca_sulfur_laguna.jpg"
+      }
+    },
+    {
+      "start": 10.3,
+      "end": 12.8,
+      "place": "Playa de Salinas",
+      "region": "Costa",
+      "province": "Santa Elena",
+      "photo": "costa-03-pacifico-activo",
+      "credit": {
+        "author": "Kirk39",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Salinas_panorama_gennaio2010.jpg"
+      }
+    },
+    {
+      "start": 12.8,
+      "end": 15.3,
+      "place": "Laguna Grande de Cuyabeno",
+      "region": "Amazonía",
+      "province": "Sucumbíos",
+      "photo": "amz-01-reserva-cuyabeno",
+      "credit": {
+        "author": "Fährtenleser",
+        "license": "CC BY-SA 4.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Macrolobiumb%C3%A4ume_in_der_Laguna_Grande,_Cuyabeno-Reservat.jpg"
+      }
+    },
+    {
+      "start": 15.3,
+      "end": 17.8,
+      "place": "León Dormido (Kicker Rock)",
+      "region": "Galápagos",
+      "province": "San Cristóbal, Galápagos",
+      "photo": "gal-04-kicker-rock-tour-360",
+      "credit": {
+        "author": "Xxchangwoo0120xx",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Le%C3%B3n_Dormido_(Kicker_Rock).JPG"
+      }
+    },
+    {
+      "start": 17.8,
+      "end": 20.3,
+      "place": "Isla Bartolomé",
+      "region": "Galápagos",
+      "province": "Galápagos",
+      "photo": "gal-01-bartolome-bahia-sullivan",
+      "credit": {
+        "author": "Cayambe",
+        "license": "CC BY-SA 3.0",
+        "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+        "source": "https://commons.wikimedia.org/wiki/File:Bartolom%C3%A9_Island_Pinnacle_Rock.jpg"
+      }
+    }
+  ]
+}
