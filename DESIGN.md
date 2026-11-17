@@ -10,6 +10,8 @@ colors:
   fondo-postales: "#FFE6EC"
   azul-claro: "#BBD7FF"
 typography:
+  localAccent:
+    fontFamily: "Fredoka Local, sans-serif"
   display:
     fontFamily: "Archivo Variable, sans-serif"
   accent:
@@ -51,3 +53,8 @@ Mantener foto, marca, menú completo, contenido y acceso a funciones. Respetar t
 El propietario pidió más carácter sin agregar contenido. `src/features/discovery/expressive.css` amplifica la misma composición: portada de paisaje más grande, velo azul menos opaco, titulares de hasta 88px y entrada breve con movimiento reducido respetado. Los cinco accesos forman una banda continua de color. El catálogo muestra tres fotografías mayores por fila en escritorio y tarjetas horizontales en móvil; las postales son papeles ligeramente inclinados sobre maíz y los cuatro videos forman una escena azul noche con títulos maíz. Menú, acciones, textos, fuentes de datos y Cultura Viva permanecen.
 
 La paleta incorpora tonos saturados de las tintas existentes: azul #70B7FF, turquesa #5BD8C3, rosa #FF91AC y verde #A9DF70; fondos de video #001B3D, velos de paisaje #001D42 y texto claro #D9E8FF. Sombras cálidas de postales #6F4A00 con baja opacidad. No se agregan secciones, cifras ni publicaciones ficticias. La animación afecta solo la entrada de portada; no desplaza datos ni controles durante el uso.
+
+## Voz ecuatoriana y redes reales · 17/11/2026
+Fredoka Variable, alojada localmente, se reserva a los guiños ecuatorianos y nombres de regiones/postales; Archivo, Newsreader y Plus Jakarta mantienen sus funciones. Frases breves: «De una, ñaño. ¡Se arma el plan!», «Achachay… ¡pero qué vista!», «¡Vamos, ve! El mar nos espera.» y «Desconecta un rato, pana.». Todas tienen traducción de interfaz en inglés, francés, portugués y chino. El fondo de la portada de catálogo utiliza velos estáticos claros #D9F3FF, #FFE5EE y #DDF4D5 sobre #FFF9EF, sin afectar formularios ni pagos.
+
+Los botones sociales de demostración se sustituyeron por enlaces reales a Instagram @ecuadortravel y TikTok @ecuador.travel, identificados como inspiración externa, también junto a las postales. Son perfiles de Ecuador Travel, no cuentas de CHULLA VIDA ni publicaciones atribuidas a las fotos. Fuente comprobada: https://onlyin.ecuador.travel/es/2026/07/01/mas-alla-del-mundial-nueva-york-vivio-el-destello-de-la-aventura-ecuatoriana/ . Los enlaces abren otra pestaña con `noopener noreferrer`; no hay embeds, seguimiento ni peticiones a esas redes al cargar la página. Las plataformas externas pueden solicitar iniciar sesión.

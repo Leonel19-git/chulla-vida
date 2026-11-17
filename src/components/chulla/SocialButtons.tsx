@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react';
-import { X } from 'lucide-react';
-
-const networks = ['Instagram', 'Facebook', 'TikTok'];
+import { ArrowUpRight } from 'lucide-react';
+import { TRAVEL_SOCIALS } from '../../features/discovery/social-links';
+import { useT } from '../../i18n/v3';
 
 function NetworkMark({ name }: { name: string }) {
   return <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -10,17 +9,11 @@ function NetworkMark({ name }: { name: string }) {
 }
 
 export function SocialButtons() {
-  const [selected, setSelected] = useState('');
-  useEffect(() => {
-    if (!selected) return;
-    const timer = setTimeout(() => setSelected(''), 3500);
-    return () => clearTimeout(timer);
-  }, [selected]);
+  const t = useT();
   return <div className="social-demo">
-    <div className="social-buttons" role="group" aria-label="Redes de CHULLA VIDA, botones simulados">
-      {networks.map(name => <button key={name} className="social-button" aria-label={`${name} de CHULLA VIDA (simulación)`} onClick={() => setSelected(name)}><NetworkMark name={name} /><span>{name}</span></button>)}
+    <div className="social-buttons" role="group" aria-label={t('Ecuador Travel en redes')}>
+      {TRAVEL_SOCIALS.map(({name,handle,url}) => <a key={name} className="social-button" href={url} target="_blank" rel="noopener noreferrer" aria-label={`${name}: ${handle}`}><NetworkMark name={name} /><span>{name}</span><ArrowUpRight size={14} /></a>)}
     </div>
-    <span className="social-demo-label">Redes sociales · Demostración</span>
-    {selected && <div className="social-feedback" role="status"><NetworkMark name={selected} /><span><strong>{selected}</strong>Botón de demostración de CHULLA VIDA.</span><button className="icon-button" aria-label="Cerrar aviso de red social" onClick={() => setSelected('')}><X size={16} /></button></div>}
+    <span className="social-demo-label">{t('Inspiración externa · Ecuador Travel')}</span>
   </div>;
 }

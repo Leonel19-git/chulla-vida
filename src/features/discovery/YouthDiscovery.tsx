@@ -6,6 +6,7 @@ import { experienceVisual } from '../catalog/experienceArt';
 import { useCatalog } from '../catalog/CatalogContext';
 import { useT, msg } from '../../i18n/v3';
 import { REGION_FILMS } from './films';
+import { SocialButtons } from '../../components/chulla/SocialButtons';
 import './discovery.css';
 const signal = (name: string) => window.dispatchEvent(new Event(`cv3:${name}`));
 const TOOLS = [
@@ -21,7 +22,7 @@ export function QuickStart({ onPlan, onDownloads }: { onPlan: () => void; onDown
   return <section className="cv-start" aria-labelledby="cv-start-title">
     <div className="cv-start-heading"><h2 id="cv-start-title">{t('¿Qué se arma aquí?')}</h2><p>{t('Viaja con tus panas y conecta con anfitriones locales.')}</p></div>
     <div className="cv-start-tools">{TOOLS.map(({icon: Icon, name, hint, event, tone}) => <button key={event} className={`cv-start-tool is-${tone}`} data-tour={event === 'downloads' ? 'offline' : event === 'passport' ? 'passport' : undefined} onClick={() => open(event)}><Icon size={24} aria-hidden="true" /><span><strong>{t(name)}</strong><small>{t(hint)}</small></span><ChevronRight size={18} aria-hidden="true" /></button>)}</div>
-    <a className="cv-start-jump" href="#experiencias">{t('Primero, encuentra tu lugar')}<ArrowDown size={16} /></a>
+    <div className="cv-start-signoff"><p className="cv-local-saying">{t('De una, ñaño. ¡Se arma el plan!')}</p><a className="cv-start-jump" href="#experiencias">{t('Primero, encuentra tu lugar')}<ArrowDown size={16} /></a></div>
   </section>;
 }
 
@@ -55,6 +56,7 @@ export function PhotoStories() {
       </article></li>;
     })}</ul> : <p className="cv-photo-empty">{t('No hay fotos descargadas de esta región. Explora las fichas disponibles.')}</p>}
     <p className="cv-share-notice" role="status">{notice}</p>
+    <div className="cv-social-inspiration"><p className="cv-local-saying">{t('¡Qué bacán estar aquí!')}</p><SocialButtons /></div>
   </section>;
 }
 

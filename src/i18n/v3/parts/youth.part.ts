@@ -1,5 +1,13 @@
 /** Interfaz de descubrimiento; nombres de lugares y créditos permanecen en su idioma. */
 const rows: [string, string, string, string, string][] = [
+  ['De una, ñaño. ¡Se arma el plan!', 'Let’s go, friend. The plan is on!', 'C’est parti, l’ami. Le voyage se prépare !', 'Bora, amigo. O plano está de pé!', '走吧，朋友！旅行计划开始啦！'],
+  ['¡Qué bacán estar aquí!', 'So good to be here!', 'Qu’est-ce qu’on est bien ici !', 'Que bom estar aqui!', '能在这里真好！'],
+  ['Achachay… ¡pero qué vista!', 'Brr… but what a view!', 'Brr… mais quelle vue !', 'Brr… mas que vista!', '好冷呀……但风景太美了！'],
+  ['¡Vamos, ve! El mar nos espera.', 'Come on! The sea is waiting.', 'Allez ! La mer nous attend.', 'Vamos! O mar espera por nós.', '出发吧！大海在等我们。'],
+  ['Desconecta un rato, pana.', 'Take a break, friend.', 'Déconnecte un peu, l’ami.', 'Desconecte um pouco, amigo.', '朋友，放松一会儿吧。'],
+  ['¡Qué bacán este Ecuador!', 'Ecuador is something special!', 'Qu’il est beau, cet Équateur !', 'Que incrível este Equador!', '厄瓜多尔太棒了！'],
+  ['Ecuador Travel en redes', 'Ecuador Travel on social media', 'Ecuador Travel sur les réseaux', 'Ecuador Travel nas redes', 'Ecuador Travel 社交账号'],
+  ['Inspiración externa · Ecuador Travel', 'External inspiration · Ecuador Travel', 'Inspiration externe · Ecuador Travel', 'Inspiração externa · Ecuador Travel', '外部旅行灵感 · Ecuador Travel'],
   ['Arma el plan', 'Make a plan', 'Prépare ton voyage', 'Monte o plano', '规划旅程'],
   ['Fechas, panas y presupuesto', 'Dates, friends and budget', 'Dates, amis et budget', 'Datas, amigos e orçamento', '日期、伙伴与预算'],
   ['Ideas por voz o por texto', 'Ideas by voice or text', 'Des idées à l’oral ou par écrit', 'Ideias por voz ou texto', '语音或文字获取灵感'],

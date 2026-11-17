@@ -19,6 +19,16 @@ beforeEach(() => {
 afterEach(() => { cleanup(); vi.restoreAllMocks(); setV3Language('es'); });
 
 describe('descubrimiento visual conectado al catálogo', () => {
+  it('abre perfiles externos reales, sin simular redes de CHULLA VIDA ni insertar rastreadores', () => {
+    const { container }=render(<PhotoStories />);
+    expect(screen.getByRole('link', {name:'Instagram: @ecuadortravel'})).toHaveAttribute('href','https://www.instagram.com/ecuadortravel/');
+    const tiktok=screen.getByRole('link', {name:'TikTok: @ecuador.travel'});
+    expect(tiktok).toHaveAttribute('href','https://www.tiktok.com/@ecuador.travel');
+    expect(tiktok).toHaveAttribute('rel','noopener noreferrer');
+    expect(screen.getByText('Inspiración externa · Ecuador Travel')).toBeInTheDocument();
+    expect(container.querySelector('iframe')).toBeNull();
+    expect(screen.queryByText(/Demostración/)).not.toBeInTheDocument();
+  });
   it('abre el plan y las descargas por los mismos accesos de la plataforma', async () => {
     const user = userEvent.setup(); const plan=vi.fn(), downloads=vi.fn(), culture=vi.fn();
     window.addEventListener('cv3:culture', culture);

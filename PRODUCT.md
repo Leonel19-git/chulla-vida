@@ -35,6 +35,8 @@ Contrato: `.impeccable/fusion-direction.md`; sistema: DESIGN.md; cierre y QA pre
 
 ## Product Principles
 
+Actualización del 17/11: los botones sociales históricos de demostración fueron reemplazados por los perfiles externos de Ecuador Travel en Instagram y TikTok, confirmados desde su web oficial y rotulados como inspiración externa. No representan cuentas de CHULLA VIDA ni aval comercial. No se insertan reproductores de terceros. La interfaz incorpora frases ecuatorianas traducibles, con Fredoka local como acento.
+
 - Explorar sin cuenta; autorización del servidor para datos privados y operaciones conectadas; herramientas separadas para viajeros y negocios.
 - Fotografía y acciones claras primero; contenido completo accesible en detalles, pestañas y desplegables, sin ocultar funciones.
 - Preservar preferencias, favoritos y recomendaciones al cambiar diseño; distinguir hechos verificados, referencias y pruebas.
