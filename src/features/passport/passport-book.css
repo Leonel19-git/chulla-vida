@@ -217,7 +217,10 @@ textarea.pg-input { resize: vertical; min-height: 96px; }
 /* ── 2 · Mi Ecuador ────────────────────────────────────────────────────────── */
 .pg-body.is-ecuador { gap: 10px; }
 .pg-ecuador { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; align-items: center; }
-.pg-map { display: block; width: 100%; height: auto; max-height: 190px; }
+.pg-map { display: block; width: 100%; height: auto; max-height: 230px; background: #e7f4fc; border-radius: 16px; padding: 10px; }
+.pg-country-base{fill:#d2e8d0}
+.pg-country-border{fill:none;stroke:#012960;stroke-width:2;stroke-linejoin:round}
+.pg-map-label{fill:#012960;font:600 12px 'Plus Jakarta Sans',sans-serif}
 .pg-map-inset { fill: none; stroke: var(--al-ink-2); stroke-width: 1.25; stroke-dasharray: 4 4; }
 .pg-map-base > * { fill: var(--al-paper-2); }
 .pg-map-touched > * { fill: color-mix(in srgb, var(--al-field) 38%, var(--al-paper)); }

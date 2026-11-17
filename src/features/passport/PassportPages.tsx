@@ -1,3 +1,4 @@
+import { ECUADOR_OUTLINE } from './ecuador-outline';
 import { useId, useState, type CSSProperties, type FormEvent, type ReactNode } from 'react';
 import { ArrowDownToLine, ChevronRight, Lock, PenLine, Plus, Stamp, Trash2, UserRound } from 'lucide-react';
 import { CROMO_ESTADO_ORDEN, type CromoEstado } from '../../domain/album';
@@ -160,7 +161,7 @@ function EcuadorMap({ regions }: { regions: RegionSlots[] }) {
     {shape.circles?.map(([cx, cy, rx, ry], index) => <ellipse key={`c${index}`} cx={cx} cy={cy} rx={rx} ry={ry} />)}
   </>;
   return <svg className="pg-map" viewBox="0 0 310 252" role="img" aria-label={t('Mapa esquemático: cada región se llena con lo que llevas y se pinta con lo que pegaste.')}>
-    <rect className="pg-map-inset" x="7" y="96" width="88" height="84" rx="10" />
+    <defs><clipPath id={`${uid}-country`}><path d={ECUADOR_OUTLINE} /></clipPath></defs><path className="pg-country-base" d={ECUADOR_OUTLINE} /><rect className="pg-map-inset" x="7" y="96" width="88" height="84" rx="10" />
     {MAP_SHAPES.map(shape => {
       const summary = regions.find(region => region.region === shape.region);
       const total = summary?.counts.total || 1;
@@ -168,7 +169,7 @@ function EcuadorMap({ regions }: { regions: RegionSlots[] }) {
       const stuck = summary ? summary.counts.pegado / total : 0;
       const [top, bottom] = shapeBounds(shape);
       const level = (fraction: number) => ({ x: 0, y: bottom - (bottom - top) * fraction, width: 310, height: (bottom - top) * fraction + 1 });
-      return <g key={shape.region} data-region={shape.region}>
+      return <g key={shape.region} data-region={shape.region} clipPath={shape.region === 'galapagos' ? undefined : `url(#${uid}-country)`}>
         <clipPath id={`${uid}-${shape.region}-t`}><rect {...level(touched)} /></clipPath>
         <clipPath id={`${uid}-${shape.region}-s`}><rect {...level(stuck)} /></clipPath>
         <g className="pg-map-base">{draw(shape)}</g>
@@ -177,6 +178,7 @@ function EcuadorMap({ regions }: { regions: RegionSlots[] }) {
         <g className="pg-map-line">{draw(shape)}</g>
       </g>;
     })}
+    <path className="pg-country-border" d={ECUADOR_OUTLINE} /><text x="51" y="193" textAnchor="middle" className="pg-map-label">Galápagos</text>
   </svg>;
 }
 function EcuadorPage({ ctx, folio }: { ctx: PageContext; folio: number }) {
