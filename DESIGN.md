@@ -1,65 +1,29 @@
----
-name: CHULLA VIDA · Álbum del Ecuador
-colors:
-  ink: "#012960"
-  paper: "#ffffff"
-  paper-2: "#f1f5fa"
-  maize: "#ffc83d"
-  sierra: "#1d6fe0"
-  costa: "#0db5ae"
-  amazonia: "#27b263"
-  galapagos: "#18222d"
-  red: "#d11f3a"
-typography:
-  family: "Archivo Variable"
-  displayWeight: 900
-  displayStretch: "62%"
-  bodySize: "16px"
----
+# CHULLA VIDA · presentación recuperada
 
-# Álbum del Ecuador
+La instrucción del propietario del 17/11/2026 sustituye la dirección «Álbum del Ecuador» aplicada antes: conservar y mejorar la presentación anterior, sin reemplazar su identidad ni ocultar herramientas.
 
-Dirección elegida por el propietario: un álbum de cromos que se llena con lugares de Ecuador. La portada maíz reúne un titular condensado y un sobre que descubre tres destinos. No hay barra lateral. Las 51 fichas conservan sus datos, fotografías y fuentes.
+## Base visual comprobada
 
-## Fuente de verdad
+GitHub `origin/chulla-vida-3.1`, commit `c0f8bcc` del 16 de noviembre. `origin/main` apunta a una versión anterior del 11 de noviembre, por lo que no se usó para perder las funciones V3. La recuperación incorpora los arreglos posteriores de cuenta, seguridad y servicios.
 
-Tokens en `src/styles/album/tokens.css`; composición y tratamiento compartido en `src/styles/album/platform.css`; portada y cromos en `src/features/album/`. Numeración estable y consecutiva por región en `src/domain/album/index.ts`: Sierra 01–13, Costa 14–20, Amazonía 21–39 y Galápagos 40–51.
+## Portada y catálogo
 
-## Tipografía y jerarquía
+Fotografía grande y video de Ecuador, con «Un país. Mil formas de vivirlo.» y «Cumbres, río, bosque y mar.». Acciones originales Encuentra tu aventura y Habla con MIJIN. Cuatro regiones con filtros reales. No hay portada amarilla con sobre ni texto VOL. 01.
 
-Archivo Variable se sirve desde el propio sitio. Titulares condensados, peso 850–900 y mayúsculas; cuerpo de 16 px, campos de al menos 16 px y etiquetas breves. Los números usan cifras tabulares. Los componentes heredados cargados en diferido reciben el tratamiento del álbum mediante selectores específicos. No introducir serif editorial nueva.
+Tarjetas fotográficas originales: región, guardar, nombre, duración, dificultad, precio y compra. Los cromos permanecen en el pasaporte. Precios y datos mantienen su carácter referencial y sus fuentes.
 
-## Portada y navegación
+## Sistema visual
 
-Cabecera blanca con logo original, Álbum, Fiestas, MIJIN, Mi sobre, idioma y cuenta. En móvil, cinco destinos inferiores y espacio reservado para la zona segura. Los negocios tienen accesos propios: panel, experiencias, cobros, guía y cuenta; el cambio de rol es explícito.
+Fondos claros cálidos, azul del logo, turquesa y acentos maíz/rojo. Newsreader en los titulares y Plus Jakarta Sans en controles y texto, conforme a los archivos de tema originales. Referencia: src/components/chulla/regional-theme.css, finish-theme.css, polish.css; src/features/workspace/shell.css; src/features/catalog/compact.css y vivo-2026.css.
 
-La portada tiene maíz a todo ancho y un abanico de tres cromos. El sobre abre los tres destinos y permite guardarlos o cambiar el sobre. Un cromo reproduce el video local con pausa; con movimiento reducido o ahorro de datos conserva la foto. No presenta estas sugerencias como generadas por una IA remota.
+src/styles/continuity.css contiene únicamente ajustes acotados para acceso de cuenta, ficha y móvil. Los tokens de álbum se conservan para los componentes del pasaporte y negocio; src/styles/album/platform.css ya no dirige la página.
 
-## Componentes
+## Navegación y funciones
 
-- Cromos blancos de proporción aproximada 3:4, fotografía real, número regional, corazón y precio referencial. Al girar muestran resumen, datos, ficha, compra y crédito. La cara oculta es inerte.
-- Regiones en carruseles horizontales; búsqueda y filtros conservan la rejilla de resultados. Los colores distinguen páginas del álbum, sin representar permisos o verificaciones.
-- Diálogos blancos con encabezado condensado y cierre de 44 px. La ficha coloca precio y acción de compra antes del resumen desplegable.
-- Botones azul noche con texto blanco y respuesta de presión; el maíz distingue el acceso a MIJIN en móvil.
-- Fiestas usa rojo de marca, fotografías acreditadas y cartas que giran. Pasaporte y confianza amplían el detalle solo cuando se solicita.
-- Registro y panel de negocio usan campos claramente rotulados, estados de carga, error y recuperación. Una cifra desconocida se muestra como «—», no como éxito o ingreso cero inventado.
+Menú lateral de escritorio y menú desplegable móvil con herramientas de viaje, Cultura Viva, avisos, ayuda y planes. Barra móvil original: Explorar, Mi viaje, MIJIN, Billetera y Cuenta. Roles separados: negocio usa el panel conectado y no los mutadores ficticios del prototipo.
 
-## Movimiento e intro
+Cultura Viva mantiene nombre, cartas y 39 celebraciones. El tutorial apunta a elementos reales de esta presentación. Las compras y los datos privados mantienen la sesión confirmada y la autorización del servidor. No volver a interpretar «mejorar» como permiso para sustituir toda la presentación.
 
-La intro usa videos originales en MP4/WebM, con fotografía de respaldo, reproducción voluntaria si hay movimiento reducido, y cierre con el logo original grande sobre maíz. Girar un cromo tarda 480 ms; con movimiento reducido las caras cambian sin giro. Los videos se pausan al ocultar la pestaña. No se descarga el modelo de voz sin permiso.
+## Intro
 
-## Estado y confianza
-
-Guardar, comprar y visitar son acciones diferentes. Las compras de prueba se rotulan sin valor de cobro; la visita real solo se acredita mediante validación autorizada. El navegador no decide permisos ni importes comerciales. Registro y cédula distinguen formato válido de identidad verificada; solo se guarda un resumen de cuatro dígitos. La cuenta bancaria del negocio la cambia únicamente su propietario.
-
-## Móvil y accesibilidad
-
-Comprobado en Chromium de escritorio, Pixel 7 y WebKit con iPhone 13; sin desborde horizontal en los recorridos revisados. Campos de 16 px, foco visible, navegación por teclado, caras inertes, zonas seguras y movimiento reducido. El tutorial apunta a elementos existentes y vuelve arriba al terminar. No equivale a probar audio o autocompletado en un teléfono físico.
-
-## Figma
-
-Archivo creado: https://www.figma.com/design/S5LD6rUB25BIr2GE2efYaJ . La cuenta Starter alcanzó el límite de llamadas antes de crear los marcos editables; el archivo aún no contiene la réplica del sitio. La implementación y las capturas locales son la referencia comprobada.
-
-## Prioridad del propietario · 17/11/2026
-
-El propósito turístico vuelve al titular del inicio («Descubre el Ecuador que se vive»). El acceso principal encuentra experiencias y el secundario abre **Cultura Viva**, nombre permanente en toda la navegación. El sobre y los cromos se conservan como herramienta secundaria. Mejorar por ajustes acotados, sin reemplazar otra vez la estructura o los nombres del producto.
+Se conserva el video y el cierre con el logo original grande, con pausa, repetición y movimiento reducido. No se sustituye el arte de marca.

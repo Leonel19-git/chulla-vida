@@ -1,3 +1,5 @@
+> Revisión del propietario del 17/11: la dirección visual de este plan quedó sustituida por la recuperación documentada en [RECUPERACION_GITHUB_20261117.md](./RECUPERACION_GITHUB_20261117.md). La ampliación cultural y los servicios pendientes siguen vigentes.
+
 # Plan de continuidad de CHULLA VIDA
 
 ## Objetivo

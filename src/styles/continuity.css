@@ -1,0 +1,11 @@
+/* Ajustes sobre la presentación de GitHub c0f8bcc. No cambia su paleta ni tipografía. */
+html{scroll-padding-top:110px}
+.al-account-required{padding:28px;display:grid;gap:16px;max-width:480px}
+.al-account-required h3{font-size:24px;margin:0}.al-account-required p{font-size:16px;line-height:1.5;margin:0}
+.al-account-required .al-button{min-height:48px;background:#012960;color:white;border:0;border-radius:10px;padding:12px 18px;font-weight:700}
+.al-detail-book{position:sticky;top:0;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:16px;background:var(--paper,#fffdf8);padding:12px 0;border-bottom:1px solid var(--line,#d5deea);margin-bottom:14px}
+.al-detail-book>strong{font-size:23px;font-weight:800}.al-detail-book small{display:block;font-size:12px;font-weight:500}.al-detail-book .buy-button{min-height:44px}
+.al-detail-summary{margin-bottom:16px;border-bottom:1px solid var(--line,#d5deea);padding-bottom:8px}.al-detail-summary>summary{min-height:44px;cursor:pointer;font-weight:700;list-style:revert}
+.cv-dialog .vivo-detail .vivo-detail-lead{font-size:16px;line-height:1.5;margin:12px 0}
+.vivo-detail-tabs{overflow-x:auto;flex-wrap:nowrap}.vivo-detail-tabs>button{min-height:44px;white-space:nowrap}
+@media(max-width:760px){.al-detail-book>strong{font-size:20px}.al-detail-book .buy-button{font-size:13px}.mobile-bottom-nav button{min-width:0}.sidebar-open{overflow-y:auto;overscroll-behavior:contain}.cv-dialog input,.cv-dialog select,.cv-dialog textarea{font-size:16px}}

@@ -22,12 +22,12 @@ export interface TourStep {
 
 /** Recorrido por las partes reales de la página. Cada paso apunta a un elemento marcado con data-tour. */
 export const TOUR_STEPS: TourStep[] = [
-  { id: 'album', title: msg('Descubre el Ecuador que se vive'), text: msg('Conoce el propósito de CHULLA VIDA y encuentra tu próxima experiencia.'), targets: ['[data-tour="album"]'] },
+  { id: 'album', title: msg('Explorar Ecuador'), text: msg('Elige región o provincia.'), targets: ['[data-tour="album"]'] },
   { id: 'regions', title: msg('Elige tu región'), text: msg('Toca una región y mira sus cromos.'), targets: ['[data-tour="regions"]'] },
   { id: 'search', title: msg('Busca un lugar'), text: msg('Escribe un nombre o una provincia.'), targets: ['[data-tour="search"]'] },
   { id: 'filters', title: msg('A tu medida'), text: msg('Filtra por días, presupuesto o dificultad.'), targets: ['[data-tour="filters"]'] },
-  { id: 'card', title: msg('Abre una ficha'), text: msg('Toca el cromo para ver el plan. El corazón lo guarda en tu sobre.'), targets: ['[data-tour="card"]'] },
-  { id: 'plan', title: msg('Mi sobre · Mi viaje'), text: msg('Reúne tus cromos y arma tu viaje con Chulla Flex.'), targets: ['[data-tour="envelope"]', '[data-tour="plan"]'] },
+  { id: 'card', title: msg('Abre una ficha'), text: msg('Toca el corazón de una ficha.'), targets: ['[data-tour="card"]'] },
+  { id: 'plan', title: msg('Mis guardados'), text: msg('Junta paradas y presupuesto.'), targets: ['[data-tour="envelope"]', '[data-tour="plan"]'] },
   { id: 'mijin', title: msg('Habla con MIJIN'), text: msg('Pregunta por voz o texto. Tú enciendes el micrófono.'), targets: ['[data-tour="mijin"]'] },
   { id: 'culture', title: msg('Cultura Viva'), text: msg('Descubre las fechas y los lugares de cada fiesta.'), targets: ['[data-tour="culture"]'] },
   { id: 'passport', title: msg('Pasaporte Guambra'), text: msg('Mira lo que llevas en tu álbum. Solo una visita confirmada pega el cromo.'), targets: ['[data-tour="passport"]'] },

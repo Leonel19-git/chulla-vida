@@ -78,14 +78,14 @@ const STEPS = [
 /** «Cómo funciona» en un carrusel de cuatro pasos. */
 export function HomeIntro(_props: { onRegion?: (region: RegionId) => void }) {
   const t = useT();
-  return <details className="cv-home-block cv-how journey-how">
-    <summary><Compass size={19} aria-hidden="true" /><span>{t("Así funciona CHULLA VIDA")}</span><small>{t("Cuatro pasos")}</small><ChevronDown size={17} aria-hidden="true" /></summary>
+  return <section className="cv-home-block cv-how" aria-labelledby="cv-how-title">
+    <div className="cv-section-head"><h2 id="cv-how-title">{t("Así funciona CHULLA VIDA")}</h2><p>{t("Cuatro pasos")}</p></div>
     <Rail label={t("Pasos de CHULLA VIDA")} className="cv-how-rail">{STEPS.map((step, index) => <li key={step.title} className="cv-how-step">
       {step.art}<span className="cv-step-number" aria-hidden="true">{index + 1}</span>
       <h3><step.icon size={17} aria-hidden="true" />{t(step.title)}</h3><p>{t(step.text)}</p>
       <details className="cv-more-line"><summary>{t("Ver más")}<ChevronDown size={14} aria-hidden="true" /></summary><p>{t(step.more)}</p></details>
     </li>)}</Rail>
-  </details>;
+  </section>;
 }
 
 const TRUST = [

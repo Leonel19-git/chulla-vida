@@ -1,22 +1,19 @@
-import { Cromo } from '../album/Cromo';
-import { AlbumCover } from '../album/AlbumCover';
 import { lazy, Suspense, type ReactNode, useEffect, useId, useRef, useState, type ComponentType, type CSSProperties } from 'react';
 const MoneyFlow = lazy(() => import('../transparency/MoneyFlow').then(module => ({ default: module.MoneyFlow })));
 import { experienceVisual } from './experienceArt';
 import { prefersReducedMotion, useReveal } from '../../components/common/motion';
-import { ArrowRight, ArrowUpRight, Bookmark, ChevronLeft, ChevronRight, Clock3, Compass, Download, Heart, Info, Leaf, MapPin, Mic, Mountain, PawPrint, Search, ShieldCheck, SlidersHorizontal, Stamp, Trees, Waves, X } from 'lucide-react';
+import { ArrowDown, ArrowRight, ArrowUpRight, Bookmark, ChevronLeft, ChevronRight, Clock3, Compass, Download, Heart, Info, Leaf, MapPin, Mic, Mountain, PawPrint, Search, ShieldCheck, SlidersHorizontal, Stamp, Trees, Waves, X } from 'lucide-react';
 import { catalogSourceDownload, catalogSources, filterExperiences, formatExperiencePrice, REGION_LABELS, type Experience, type RegionId } from '../../domain/catalog';
 import { useApp } from '../../context/AppContext';
 import { Dialog } from '../../components/chulla/Dialog';
 import { LocationPanel } from '../location/LocationPanel';
 import { useCatalog } from './CatalogContext';
-import { JourneyHero } from './JourneyHero';
+import { HeroVideo } from './HeroVideo';
 import { NoteChip, Rail } from './Rail';
 import './catalog.css';
 import './vivo.css';
 import './vivo-2026.css';
 import './compact.css';
-import './journey.css';
 
 import { useT } from '../../i18n/v3';
 import { SpanishContentNote } from '../../i18n/v3/SpanishContentNote';
@@ -39,8 +36,23 @@ export function shortDuration(label: string): string {
  * Tarjeta compacta: foto, región, corazón, nombre, dos datos con icono, precio y «Comprar».
  * El resumen, la fuente y los avisos viven en la ficha (se abre al tocar la foto o el nombre).
  */
-export function CatalogCard({ experience }: { experience: Experience; index?: number }) {
-  return <Cromo experience={experience} />;
+export function CatalogCard({ experience, index = 0 }: { experience: Experience; index?: number }) {
+  const t = useT();
+  const visual = experienceVisual(experience);
+  const { saved, toggle, select } = useCatalog();
+  const selected = saved.includes(experience.id);
+  const Icon = icons[experience.localizedRegion];
+  const [priceFull, priceKind] = formatExperiencePrice(experience).replace(' por persona', '').split(' · ');
+  // «Desde» va en la línea pequeña: así la cifra entera cabe en tarjetas de 300 px («Desde US…» se cortaba).
+  // En un rango, «Referencial» se omite aquí (no cabe junto a «Comprar»): lo dicen el chip «Precios referenciales» y la ficha.
+  const priceShort = shortCardPrice(priceFull, '');
+  const isRange = priceShort !== priceFull;
+  const priceAmount = isRange ? priceShort.trim() : priceFull;
+  const priceNote = priceKind === 'referencial' ? 'Referencial' : priceKind === 'propuesta' ? 'Propuesto' : priceKind === 'oferta verificada' ? 'Verificado' : undefined;
+  return <article className="vivo-card cv-card" data-tour="card" data-vivo-region={experience.localizedRegion} data-region-tone={experience.localizedRegion} style={{ '--i': index % 9 } as CSSProperties}>
+    <div className="vivo-card-photo"><button onClick={() => select(experience.id)} aria-label={t("Conocer {title}", { title: experience.title })} title={visual.credit ? t("Foto: {credit}", { credit: visual.credit }) : undefined}><img src={visual.src} srcSet={visual.srcSet} sizes={visual.srcSet ? '(max-width:700px) 80vw, (max-width:1200px) 40vw, 300px' : undefined} alt={visual.alt} loading="lazy" decoding="async" width="640" height="400" /></button><span className="vivo-region"><Icon size={14} aria-hidden="true" />{REGION_LABELS[experience.localizedRegion]}</span><button className={`vivo-save ${selected ? 'is-saved' : ''}`} aria-label={`${selected ? 'Quitar' : 'Guardar'} ${experience.title}`} aria-pressed={selected} onClick={() => toggle(experience.id)}><Heart size={18} fill={selected ? 'currentColor' : 'none'} /></button>{!visual.photo && <span className="cv-card-art">{t("Ilustración")}</span>}</div>
+    <div className="vivo-card-body"><p className="vivo-card-location"><MapPin size={13} aria-hidden="true" />{experience.province}</p><h3><button onClick={() => select(experience.id)}>{experience.title}</button></h3><div className="vivo-card-facts"><span title={experience.duration.label}><Clock3 size={14} aria-hidden="true" />{shortDuration(experience.duration.label)}</span><span><Mountain size={14} aria-hidden="true" />{experience.difficultyLabel}</span></div><div className="cv-card-foot"><strong className="cv-card-price" title={t("Precio por persona. Lo confirma el anfitrión")}>{priceAmount}{(isRange || priceNote) && <small>{isRange ? (priceNote && priceNote !== 'Referencial' ? `${t("Desde")} · ${priceNote}` : t("Desde")) : priceNote}</small>}</strong><Suspense fallback={null}><BuyButton experience={experience} variant="card" /></Suspense></div></div>
+  </article>;
 }
 
 const HomeIntro = lazy(() => import('./HomeStory').then(module => ({ default: module.HomeIntro })));
@@ -98,8 +110,8 @@ export function CatalogExplorer({ onPlan, onDownloads, onDemo }: { onPlan: () =>
   const scrollToList = () => document.getElementById('experiencias')?.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
   const goToRegion = (id: RegionId) => { setSelectedRegion(REGION_LABELS[id]); setProvince(''); setSearchQuery(''); scrollToList(); };
   const chooseRegion = (id: RegionId | 'all') => { setSelectedRegion(id === 'all' ? 'Todas' : REGION_LABELS[id]); setProvince(''); };
-  return <div className="vivo-catalog cv-compact cv-journey" ref={rootRef}>
-    <AlbumCover />
+  return <div className="vivo-catalog cv-compact" ref={rootRef}>
+    <section className="vivo-hero cv-hero" data-tour="album" aria-labelledby="hero-title" data-region-tone={heroRegion ?? undefined}><img key={hero.src} className="vivo-hero-photo" src={hero.src} srcSet={hero.srcSet} sizes="(max-width:760px) 100vw, 80vw" width="1280" height="782" alt={hero.alt} fetchPriority="high" />{!heroRegion && <HeroVideo />}<div className="vivo-hero-shade" /><div className="vivo-hero-copy"><h1 id="hero-title" tabIndex={-1}>{t("Un país.")}<br />{t("Mil formas de")}{' '}<em>{t("vivirlo.")}</em></h1><p>{t("Cumbres, río, bosque y mar.")}</p><div className="vivo-hero-actions"><a className="vivo-primary" href="#experiencias">{t("Encuentra tu aventura")}<ArrowDown size={19} /></a><button className="vivo-voice-hero" onClick={() => window.dispatchEvent(new Event('cv3:mijin'))}><span className="cv-pulse"><Mic size={21} /></span>{t("Habla con MIJIN")}</button></div><div className="vivo-hero-place cv-hero-place"><span><MapPin size={14} aria-hidden="true" />{hero.place}</span>{(hero.credit || !heroRegion) && <details className="cv-hero-credit"><summary>{t("Créditos")}</summary><p>{hero.credit && <>{hero.photo ? t("Foto") : t("Ilustración")}: {hero.credit}</>}{!heroRegion && <>{hero.credit && ' · '}<a href="/video/CREDITS.md" target="_blank" rel="noreferrer">{t("Créditos del video")}</a></>}</p></details>}</div></div><div className="cv-hero-regions" role="group" aria-label={t("Explora por región")} data-tour="regions">{REGION_ORDER.map(id => { const RegionIcon = icons[id]; const count = records.filter(item => item.localizedRegion === id).length; return <button key={id} data-region-tone={id} aria-label={`${REGION_LABELS[id]}, ${count} ${count === 1 ? 'ficha' : 'fichas'}`} aria-pressed={region === id} onMouseEnter={() => setPreview(id)} onMouseLeave={() => setPreview(null)} onFocus={() => setPreview(id)} onBlur={() => setPreview(null)} onClick={() => goToRegion(id)}><RegionIcon size={20} /><span><strong>{REGION_LABELS[id]}</strong><small>{count}</small></span></button>; })}</div></section>
     <nav className="vivo-trip-rail cv-quick" aria-label={t("Prepara tu aventura")}><button onClick={onPlan}><Compass size={22} aria-hidden="true" /><span><strong>{t("Chulla Flex")}</strong><small>{t("Arma tu plan")}</small></span></button><button onClick={onDownloads} data-tour="offline"><Download size={22} aria-hidden="true" /><span><strong>{t("Sin señal")}</strong><small>{t("Fichas offline")}</small></span></button><button onClick={() => window.dispatchEvent(new Event('cv3:passport'))} data-tour="passport"><Stamp size={22} aria-hidden="true" /><span><strong>{t("Pasaporte")}</strong><small>{t("Tus sellos")}</small></span></button></nav>
     <Suspense fallback={<HomeSkeleton />}><HomeIntro onRegion={goToRegion} /></Suspense>
     <section id="experiencias" className="vivo-discovery cv-discovery" aria-labelledby="experience-heading"><div className="cv-section-head"><h2 id="experience-heading">{t("¿Qué historia quieres vivir?")}</h2><p>{online ? t("{length} fichas en 4 regiones", { length: records.length }) : t("{length} fichas guardadas · sin conexión", { length: records.length })}</p></div>

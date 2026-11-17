@@ -59,3 +59,7 @@ El dueño eligió la dirección **«Álbum del Ecuador»** (rediseño completo; 
 ## Corrección del propietario · 17/11/2026
 
 Refinar conservando la identidad; no sustituir de nuevo toda la plataforma. El nombre es **Cultura Viva**, también en navegación móvil y tutorial, no «Fiestas». La página presenta al inicio su objetivo: conectar viajeros con comunidades y anfitriones, respetando cultura y naturaleza. El álbum acompaña el turismo; no sustituye su propósito. Ampliar celebraciones de las cuatro regiones con fuentes y fechas honestas, manteniendo cartas, fotos acreditadas y giro horizontal.
+
+## Instrucción vigente del propietario · recuperación del 17/11/2026
+
+La dirección Álbum del Ecuador quedó revocada para la portada y el catálogo. Recuperar la presentación de GitHub c0f8bcc: foto grande, texto original, menú y herramientas completas. Mejorar sobre esa base conservando identidad y contenido; las correcciones técnicas y de seguridad se mantienen. Los cromos pertenecen al pasaporte y Cultura Viva conserva nombre y 39 celebraciones. DESIGN.md y docs/RECUPERACION_GITHUB_20261117.md documentan la base comprobada.

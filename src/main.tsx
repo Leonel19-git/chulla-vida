@@ -5,7 +5,7 @@ import App from './App.tsx'
 import { registerOfflineSupport } from './features/offline/registration';
 import './components/chulla/regional-theme.css'
 import './styles/album/tokens.css'
-import './styles/album/platform.css'
+import './styles/continuity.css'
 
 /* Las animaciones solo corren con la pestaña a la vista; oculta o en captura, todo se muestra ya terminado. */
 const syncMotion = () => document.documentElement.classList.toggle('cv-motion-ok', document.visibilityState === 'visible');
