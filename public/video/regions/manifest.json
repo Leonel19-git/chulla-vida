@@ -1,0 +1,106 @@
+[
+  {
+    "region": "sierra",
+    "src": "/video/regions/sierra.mp4",
+    "durationSeconds": 8.3,
+    "kind": "photo_montage",
+    "sources": [
+      {
+        "id": "gen-02-quilotoa-shalala",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Quilotoa_Laguna_Quilotoa_seen_from_Mirador_Cristal_1.jpg",
+        "author": "Ymblanter",
+        "license": "CC BY-SA 4.0"
+      },
+      {
+        "id": "gen-09-parque-nacional-cotopaxi",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Cotopaxi_01.jpg",
+        "author": "Bernard Gagnon",
+        "license": "CC BY-SA 3.0"
+      },
+      {
+        "id": "gen-07-banos-de-agua-santa",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:The_base_of_Pail%C3%B3n_del_Diablo.jpg",
+        "author": "Ronan.js",
+        "license": "CC0"
+      }
+    ]
+  },
+  {
+    "region": "costa",
+    "src": "/video/regions/costa.mp4",
+    "durationSeconds": 8.3,
+    "kind": "photo_montage",
+    "sources": [
+      {
+        "id": "costa-07-ola-y-manglar",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:MOMPICHE_ESMERALDAS_ECUADOR.JPG",
+        "author": "Carlos Echanique",
+        "license": "CC BY-SA 4.0"
+      },
+      {
+        "id": "costa-03-pacifico-activo",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Salinas_panorama_gennaio2010.jpg",
+        "author": "Kirk39",
+        "license": "CC BY-SA 3.0"
+      },
+      {
+        "id": "costa-01-raices-de-manabi",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Ecuador_aguablanca_sulfur_laguna.jpg",
+        "author": "Delphine Ménard (notafish)",
+        "license": "CC BY-SA 2.0 fr"
+      }
+    ]
+  },
+  {
+    "region": "amazonia",
+    "src": "/video/regions/amazonia.mp4",
+    "durationSeconds": 8.3,
+    "kind": "photo_montage",
+    "sources": [
+      {
+        "id": "amz-01-reserva-cuyabeno",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Macrolobiumb%C3%A4ume_in_der_Laguna_Grande,_Cuyabeno-Reservat.jpg",
+        "author": "Fährtenleser",
+        "license": "CC BY-SA 4.0"
+      },
+      {
+        "id": "amz-10-laguna-anango",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Dron_de_la_Laguna_A%C3%B1angu.jpg",
+        "author": "Añangu",
+        "license": "CC BY-SA 4.0"
+      },
+      {
+        "id": "amz-12-cascada-hola-vida",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Cascada_Hola_Vida.jpg",
+        "author": "David C. S.",
+        "license": "CC BY-SA 4.0"
+      }
+    ]
+  },
+  {
+    "region": "galapagos",
+    "src": "/video/regions/galapagos.mp4",
+    "durationSeconds": 8.3,
+    "kind": "photo_montage",
+    "sources": [
+      {
+        "id": "gal-01-bartolome-bahia-sullivan",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Bartolom%C3%A9_Island_Pinnacle_Rock.jpg",
+        "author": "Cayambe",
+        "license": "CC BY-SA 3.0"
+      },
+      {
+        "id": "gal-04-kicker-rock-tour-360",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Le%C3%B3n_Dormido_(Kicker_Rock).JPG",
+        "author": "Xxchangwoo0120xx",
+        "license": "CC BY-SA 3.0"
+      },
+      {
+        "id": "gal-08-tintoreras-concha-perla",
+        "sourceUrl": "https://commons.wikimedia.org/wiki/File:Isabela_Island,_Tintoreras,_Gal%C3%A1pagos_Islands,_Ecuador.jpg",
+        "author": "Charles J. Sharp",
+        "license": "CC BY-SA 4.0"
+      }
+    ]
+  }
+]

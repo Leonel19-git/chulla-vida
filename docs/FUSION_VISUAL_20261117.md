@@ -1,0 +1,12 @@
+# Fusión visual · 17/11/2026
+
+Fusión implementada sobre la portada recuperada de GitHub, conservando las herramientas y el contenido existente. Este informe recoge los cambios y las comprobaciones realizadas durante la implementación.
+
+- Cambio: portada fotográfica y «Un país. Mil formas de vivirlo.» conservados, menú completo, cinco destinos móviles e intro con logo original. Se añaden color, Archivo en titulares, Newsreader de acento, Plus Jakarta Sans en cuerpo y cinco accesos iniciales; HomeIntro mantiene cuatro pasos y contenido en desplegable.
+- Datos: catálogo de 51 fichas, 41 con fotos reales y 10 ilustradas; Cultura Viva conserva 39 celebraciones y el pasaporte permanece intacto. Las ocho postales editoriales tienen ubicación, autores, guardado real y compartir nativo o enlace profundo; no representan publicaciones reales de Instagram ni nuevas fotos del catálogo.
+- Licencias y reproducción: cuatro videos locales regionales de 720×1280, 8.29s cada uno, montados con fotografías licenciadas de Wikimedia Commons; 12 tomas en conjunto y CREDITS público. Carga/play explícitos, uno a la vez y pausa fuera de pantalla; offline, postales limitadas a fichas descargadas y videos ocultos.
+- QA en perfiles de navegador: escritorio Chromium 1440px, iPhone WebKit 390px y Pixel 7 412px, sin desborde horizontal de página ni `pageerrors`. Guardar, enlace profundo, play/pausa y Cultura Viva 39 comprobados; tour de 10 pasos completado y regreso al inicio de la página. No sustituye una prueba en teléfonos físicos.
+- Suite final confirmada: 91 archivos y 981 pruebas pasan con `maxWorkers=2` en 90.99s. La ejecución completa original tuvo dos carreras por esperas de carga; se corrigieron las esperas para aguardar el estado real y la repetición completa pasó.
+- `npm run verify` pasa: catálogo 51, wallet 26 aserciones y 3957 comprobaciones de traducción / 147 de pagos. Typecheck de API y build pasan. Análisis de archivos modificados sin errores; CatalogVivo conserva tres avisos previos.
+- Revisión independiente de cierre: disposición **ship**, sin fixes. Se ejecutó con revisor general porque el rol especializado no está registrado; queda documentada esa sustitución.
+- Alcance preservado: seguridad de cuentas, roles, permisos, consentimiento y controles de pagos; continúan las limitaciones comerciales de PRODUCT.md. La fusión extiende la base existente y no autoriza un rediseño total ni retirar herramientas.

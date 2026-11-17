@@ -248,6 +248,6 @@ describe('reservas y pagos conectados', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Reservas y pagos' }));
     const dialog = await screen.findByRole('dialog', { name: 'Reservas y pagos' });
     expect(await within(dialog).findByRole('button', { name: 'Probar pago sin cobro' })).toBeInTheDocument();
-    expect(within(dialog).getByRole('button', { name: 'Entrar en mi cuenta' })).toBeInTheDocument();
+    expect(await within(dialog).findByRole('button', { name: 'Entrar en mi cuenta' }, { timeout: 3000 })).toBeInTheDocument();
   });
 });

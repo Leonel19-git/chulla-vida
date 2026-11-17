@@ -29,7 +29,7 @@ it('carga el panel de avisos real sin pedir permiso al abrirlo', async () => {
 it('abre el planificador integrado y permite exportar el borrador', async () => {
   render(<Workspace />);
   fireEvent.click(screen.getByRole('button', { name: 'Mi viaje' }));
-  expect(await screen.findByRole('dialog', { name: 'Chulla Flex · Arma tu viaje' })).toBeInTheDocument();
+  expect(await screen.findByRole('dialog', { name: 'Chulla Flex · Arma tu viaje' }, { timeout: 3000 })).toBeInTheDocument();
   expect(screen.getByRole('button', { name: 'Exportar mi borrador' })).toBeInTheDocument();
   expect(screen.queryByRole('alert')).not.toBeInTheDocument();
 });
