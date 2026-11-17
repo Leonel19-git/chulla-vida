@@ -15,6 +15,7 @@ import './catalog.css';
 import './vivo.css';
 import './vivo-2026.css';
 import './compact.css';
+import '../discovery/expressive.css';
 
 import { useT } from '../../i18n/v3';
 import { SpanishContentNote } from '../../i18n/v3/SpanishContentNote';

@@ -46,3 +46,8 @@ Accesos con esquinas de 16px, postales de 14px y pantallas de video de 18px; con
 
 ## Do's and Don'ts
 Mantener foto, marca, menú completo, contenido y acceso a funciones. Respetar teclado, movimiento reducido y separación entre viajero y negocio. Conservar controles de cuentas, permisos, consentimiento y pagos de PRODUCT.md; la fusión no autoriza otro rediseño total ni ocultar herramientas.
+
+## Ampliación expresiva · 17/11/2026
+El propietario pidió más carácter sin agregar contenido. `src/features/discovery/expressive.css` amplifica la misma composición: portada de paisaje más grande, velo azul menos opaco, titulares de hasta 88px y entrada breve con movimiento reducido respetado. Los cinco accesos forman una banda continua de color. El catálogo muestra tres fotografías mayores por fila en escritorio y tarjetas horizontales en móvil; las postales son papeles ligeramente inclinados sobre maíz y los cuatro videos forman una escena azul noche con títulos maíz. Menú, acciones, textos, fuentes de datos y Cultura Viva permanecen.
+
+La paleta incorpora tonos saturados de las tintas existentes: azul #70B7FF, turquesa #5BD8C3, rosa #FF91AC y verde #A9DF70; fondos de video #001B3D, velos de paisaje #001D42 y texto claro #D9E8FF. Sombras cálidas de postales #6F4A00 con baja opacidad. No se agregan secciones, cifras ni publicaciones ficticias. La animación afecta solo la entrada de portada; no desplaza datos ni controles durante el uso.
