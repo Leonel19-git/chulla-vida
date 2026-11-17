@@ -93,7 +93,7 @@ describe('Voz de MIJIN: selector, muestra y preferencia', () => {
     synthesis.getVoices.mockImplementation(() => [voices[0]]);
     vi.spyOn(navigator, 'userAgent', 'get').mockReturnValue('Mozilla/5.0 (Windows NT 10.0) Chrome/130');
     render(<MijinAssistant />); open();
-    expect(screen.getByText(/Microsoft Edge: trae voces naturales/)).toBeInTheDocument();
+    expect(screen.getByText(/Puedes probar otro navegador/)).toBeInTheDocument();
     synthesis.getVoices.mockImplementation(() => voices);
   });
 });

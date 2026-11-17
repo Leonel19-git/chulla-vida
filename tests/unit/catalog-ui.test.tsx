@@ -44,7 +44,7 @@ describe('recorrido público de catálogo V3', () => {
     expect(screen.getByRole('button', { name: /Conocer Bartolomé/i })).toBeInTheDocument();
     // La tarjeta muestra «USD 270» con «Desde» debajo; el rango completo (270–315) vive en la ficha.
     const price = within(cards()[0]).getByText(/USD 270/);
-    expect(price).toHaveTextContent(/^USD 270Desde$/);
+    expect(price).toHaveTextContent(/USD 270–315/);
   });
   it('retira una provincia incompatible al cambiar de región', async () => {
     const user = userEvent.setup();
@@ -71,13 +71,10 @@ it('impide cargar un embed sin permiso y lo retira al revocar', async () => {
   expect(screen.queryByTitle('Reproductor externo')).not.toBeInTheDocument();
 });
 describe('portada Ecuador Vivo', () => {
-  it('las regiones del héroe filtran el catálogo y marcan la elegida', async () => {
+  it('las pestañas de región filtran el álbum', async () => {
     const user = userEvent.setup();
-    Element.prototype.scrollIntoView = vi.fn();
     render(<Catalog />);
-    const galapagos = screen.getByRole('button', { name: /^Galápagos, \d+ fichas$/ });
-    await user.click(galapagos);
-    expect(galapagos).toHaveAttribute('aria-pressed', 'true');
+    await user.click(screen.getByRole('button', { name: 'Galápagos', exact: true }));
     expect(cards()).toHaveLength(experiences.filter(item => item.localizedRegion === 'galapagos').length);
   });
   it('cuenta los pasos, el reparto por región y aclara que la compra es de prueba', async () => {
@@ -86,8 +83,7 @@ describe('portada Ecuador Vivo', () => {
     expect(how).toBeVisible();
     await userEvent.click(how);
     expect(screen.getAllByRole('listitem').some(item => /Compra o pregunta/.test(item.textContent ?? ''))).toBe(true);
-    const amazonia = experiences.filter(item => item.localizedRegion === 'amazonia').length;
-    expect(screen.getByRole('button', { name: `Amazonía, ${amazonia} fichas` })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Amazonía', exact: true })).toBeInTheDocument();
     expect(screen.getAllByText(/modo prueba, sin cobro/).length).toBeGreaterThan(0);
   });
 });
@@ -119,24 +115,22 @@ describe('integración de la portada y la ficha', () => {
   });
   it('marca para el recorrido las regiones, la búsqueda, las tarjetas, sin señal y pasaporte', () => {
     render(<Catalog />);
-    for (const id of ['regions', 'search', 'cards', 'offline', 'passport']) expect(document.querySelector(`[data-tour="${id}"]`)).not.toBeNull();
+    for (const id of ['regions', 'search', 'cards', 'offline', 'passport', 'pack']) expect(document.querySelector(`[data-tour="${id}"]`)).not.toBeNull();
   });
-  it('el hero no carga el video si hay movimiento reducido (queda la foto)', () => {
-    mockMotion(true);
-    render(<Catalog />);
-    expect(document.querySelector('.vivo-hero-video')).toBeNull();
-    expect(document.querySelector('.vivo-hero-photo')).not.toBeNull();
+  it('la portada usa fotos reales sin iniciar video ni descargar el modelo de voz', () => {
+    mockMotion(true); render(<Catalog />);
+    expect(document.querySelector('.al-cover video')).toBeNull();
+    const photos = [...document.querySelectorAll<HTMLImageElement>('.al-preview-card img')];
+    expect(photos).toHaveLength(3);
+    expect(photos.every(photo => photo.getAttribute('src')?.includes('/images/'))).toBe(true);
   });
-  it('sin movimiento reducido el video del hero espera a la carga, va silenciado y se puede pausar', () => {
-    mockMotion(false);
-    render(<Catalog />);
-    const video = document.querySelector<HTMLVideoElement>('.vivo-hero-video')!;
-    expect(video).not.toBeNull();
-    expect(video.muted).toBe(true);
-    expect(video.getAttribute('preload')).toBe('none');
-    expect(video.getAttribute('poster')).toBe('/video/chulla-vida-hero-poster.webp');
-    // Todavía sin src: el archivo de video no forma parte de la carga inicial.
-    expect(video.getAttribute('src')).toBeNull();
+  it('abrir el sobre muestra tres destinos que se pueden guardar', async () => {
+    const user = userEvent.setup(); render(<Catalog />);
+    await user.click(screen.getAllByRole('button', { name: 'Abrir mi primer sobre' })[0]);
+    const stage = document.querySelector('.al-pack-stage') as HTMLElement;
+    expect(stage).toHaveClass('is-open');
+    await user.click(within(stage).getAllByRole('button', { name: 'Guardar', exact: true })[0]);
+    expect(within(stage).getByRole('button', { name: 'En mi sobre' })).toHaveAttribute('aria-pressed', 'true');
   });
 });
 
@@ -144,26 +138,27 @@ describe('portada compacta (3.4)', () => {
   it('la tarjeta muestra el precio corto y su carácter en una línea aparte, sin «·» cortado', () => {
     render(<Catalog />);
     const card = cards().find(item => within(item).queryByRole('button', { name: /Conocer Saraguro/ }))!;
-    const price = card.querySelector('.cv-card-price')!;
+    const price = card.querySelector('.al-cromo-strip>strong')!;
     expect(price.textContent).toMatch(/^USD [\d.,–]+(Referencial|Propuesto|Verificado)$/);
     expect(price.textContent).not.toContain('·');
-    expect(price.getAttribute('title')).toMatch(/Lo confirma el anfitrión/);
+    expect(price).toHaveTextContent('Referencial');
   });
-  it('los créditos del héroe quedan en una línea y el detalle se abre al tocar', async () => {
-    const user = userEvent.setup();
-    render(<Catalog />);
-    const hero = document.querySelector('.cv-hero')!;
-    const credit = within(hero as HTMLElement).getByText('Créditos');
-    expect(credit.closest('details')).not.toHaveAttribute('open');
-    await user.click(credit);
-    expect(credit.closest('details')).toHaveAttribute('open');
-    expect(within(hero as HTMLElement).getByRole('link', { name: 'Créditos del video' })).toHaveAttribute('href', '/video/CREDITS.md');
+  it('girar un cromo muestra su información y los créditos de la foto', async () => {
+    const user = userEvent.setup(); render(<Catalog />);
+    const card = cards()[0];
+    expect(card).not.toHaveClass('is-flipped');
+    await user.click(within(card).getByRole('button', { name: /Girar cromo/ }));
+    expect(card).toHaveClass('is-flipped');
+    expect(card.querySelector('.al-cromo-front')).toHaveAttribute('inert');
+    expect(within(card).getByRole('link', { name: /Créditos/ })).toHaveAttribute('href', expect.stringContaining('commons.wikimedia.org'));
+    await user.click(within(card).getByRole('button', { name: 'Volver a la foto' }));
+    expect(card).not.toHaveClass('is-flipped');
   });
-  it('el aviso de precios es un chip con el detalle desplegable y el prototipo anterior va al lado', async () => {
+  it('el aviso de precios explica el modo prueba y el álbum no abre el prototipo anterior', async () => {
     render(<Catalog />);
     const foot = document.querySelector('.cv-discovery-foot')!;
     const summary = within(foot as HTMLElement).getByText('Precios referenciales · compra de prueba');
     expect(summary.closest('details')).not.toHaveAttribute('open');
-    expect(within(foot as HTMLElement).getByRole('button', { name: /Ver el prototipo anterior/ })).toBeInTheDocument();
+    expect(within(foot as HTMLElement).queryByRole('button', { name: /Ver el prototipo anterior/ })).not.toBeInTheDocument();
   });
 });

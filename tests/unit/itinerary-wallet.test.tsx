@@ -12,7 +12,11 @@ import { WalletHost } from '../../src/features/wallet/WalletPanel';
 
 const catalog = vi.hoisted(() => ({ records: [] as Experience[] }));
 vi.mock('../../src/features/catalog/CatalogContext', () => ({ useCatalog: () => ({ records: catalog.records, online: true }) }));
-vi.mock('../../src/lib/supabase', () => ({ getSupabase: () => null }));
+vi.mock('../../src/lib/supabase', () => ({ getSupabase: () => ({ auth: {
+  getUser: async () => ({ data: { user: { id: 'traveler-test', email_confirmed_at: '2026-11-17T00:00:00Z' } }, error: null }),
+  getSession: async () => ({ data: { session: null }, error: null }),
+  onAuthStateChange: () => ({ data: { subscription: { unsubscribe() {} } } }),
+} }) }));
 vi.mock('../../src/features/payments/api', async importOriginal => ({ ...await importOriginal<typeof import('../../src/features/payments/api')>(), getPaymentConfiguration: vi.fn(async () => ({ enabled: false, provider: 'payphone', environment: 'live' })) }));
 
 const CEDULA = (() => { const first = '010203040'; return `${first}${cedulaCheckDigit(first)}`; })();

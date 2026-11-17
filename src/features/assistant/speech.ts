@@ -73,7 +73,7 @@ export function voiceTip(voices: readonly VoiceLike[], platform: VoicePlatform =
   const tier = best ? voiceTier(best.name) : 9;
   if (platform === 'apple') return tier <= 2 ? null : 'Tip: en iPhone ve a Ajustes → Accesibilidad → Contenido leído → Voces → Español y descarga una voz «Mejorada».';
   if (tier < 6) return null;
-  if (platform === 'windows') return /Edg\//.test(userAgent) ? 'Tip: con internet, Edge te da voces naturales (Dalia, Andrea, Paloma).' : 'Tip: abre la página en Microsoft Edge: trae voces naturales en español.';
+  if (platform === 'windows') return /Edg\//.test(userAgent) ? 'Este navegador solo ofrece estas voces. Puedes elegir otra si aparece en la lista.' : 'Puedes probar otro navegador y elegir entre las voces que ofrezca.';
   if (platform === 'android') return 'Tip: en Ajustes → Idioma → Salida de texto a voz, instala la voz de Google en español.';
   return best ? null : 'Tu navegador no trae voces en español. Te respondo en texto.';
 }

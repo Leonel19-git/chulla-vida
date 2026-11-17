@@ -53,9 +53,11 @@ describe('sellos por fuente', () => {
     expect(stamps).toEqual([]);
   });
 
-  it('ignora compras rechazadas o canceladas y solicitudes de cotización', () => {
-    const stamps = collectStamps({ destinations, wallet: [purchase('quilotoa', 'PRB-AAAAAA', 'test_rejected'), { ...purchase('cuyabeno', 'PRB-BBBBBB'), kind: 'request', status: 'requested' }] });
+  it('ignora compras rechazadas, canceladas, sin terminar y solicitudes de cotización; la transferencia en revisión sí aparta', () => {
+    const stamps = collectStamps({ destinations, wallet: [purchase('quilotoa', 'PRB-AAAAAA', 'test_rejected'), { ...purchase('cuyabeno', 'PRB-BBBBBB'), kind: 'request', status: 'requested' },
+      purchase('montanita', 'PRB-CCCCCC', 'test_pending'), purchase('otavalo', 'PRB-DDDDDD', 'test_transfer_rejected'), purchase('tortuga', 'PRB-EEEEEE', 'cancelled')] });
     expect(stamps).toEqual([]);
+    expect(collectStamps({ destinations, wallet: [purchase('tortuga', 'PRB-FFFFFF', 'test_transfer_review')] })[0]).toMatchObject({ source: 'purchased' });
   });
 
   it('progreso por las cuatro regiones', () => {
@@ -81,18 +83,21 @@ describe('validación demo con el código del comprobante de prueba', () => {
     expect(normalizeReceiptCode(' prb abc123 ')).toBe('PRB-ABC123');
     expect(normalizeReceiptCode('prbabc123')).toBe('PRB-ABC123');
     const wallet = [purchase('quilotoa', 'PRB-ABC123')];
-    expect(validateDemoReceipt('hola', wallet, [], regionOf)).toMatchObject({ ok: false, message: expect.stringMatching(/PRB-ABC123/) });
-    expect(validateDemoReceipt('PRB-ZZZZZZ', wallet, [], regionOf)).toMatchObject({ ok: false, message: expect.stringMatching(/No encontramos/) });
+    expect(validateDemoReceipt('hola', wallet, [], regionOf)).toMatchObject({ ok: false, reason: 'format', message: expect.stringMatching(/PRB-ABC123/) });
+    expect(validateDemoReceipt('PRB-ZZZZZZ', wallet, [], regionOf)).toMatchObject({ ok: false, reason: 'not_found', code: 'PRB-ZZZZZZ', message: expect.stringMatching(/No encontramos/) });
     const first = validateDemoReceipt('prb-abc123', wallet, [], regionOf, new Date('2026-11-14T15:00:00Z'));
     expect(first.ok).toBe(true);
     if (!first.ok) return;
+    expect(first.reason).toBe('ok');
     expect(first.added).toEqual([{ code: 'PRB-ABC123', experienceId: 'quilotoa', title: 'Laguna Quilotoa', region: 'sierra', validatedAt: '2026-11-14T15:00:00.000Z', mode: 'demo' }]);
     expect(first.message).toMatch(/No acredita una visita real/);
-    expect(validateDemoReceipt('PRB-ABC123', wallet, first.list, regionOf)).toMatchObject({ ok: false, message: expect.stringMatching(/ya se validó/) });
+    expect(validateDemoReceipt('PRB-ABC123', wallet, first.list, regionOf)).toMatchObject({ ok: false, reason: 'duplicate', message: expect.stringMatching(/ya se validó/) });
     expect(collectStamps({ destinations, demoValidations: first.list, wallet })[0]).toMatchObject({ source: 'demo_validated' });
   });
-  it('rechaza comprobantes rechazados y valida todas las paradas de un mismo comprobante', () => {
-    expect(validateDemoReceipt('PRB-AAAAAA', [purchase('quilotoa', 'PRB-AAAAAA', 'test_rejected')], [], regionOf)).toMatchObject({ ok: false, message: expect.stringMatching(/rechazado/) });
+  it('rechaza comprobantes rechazados o sin aprobar y valida todas las paradas de un mismo comprobante', () => {
+    expect(validateDemoReceipt('PRB-AAAAAA', [purchase('quilotoa', 'PRB-AAAAAA', 'test_rejected')], [], regionOf)).toMatchObject({ ok: false, reason: 'rejected', message: expect.stringMatching(/rechazado/) });
+    expect(validateDemoReceipt('PRB-AAAAAB', [purchase('quilotoa', 'PRB-AAAAAB', 'test_pending')], [], regionOf)).toMatchObject({ ok: false, reason: 'pending', message: expect.stringMatching(/aún no está aprobada/) });
+    expect(validateDemoReceipt('PRB-AAAAAC', [purchase('quilotoa', 'PRB-AAAAAC', 'test_transfer_review')], [], regionOf)).toMatchObject({ ok: true, reason: 'ok' });
     const batch = validateDemoReceipt('PRB-BBBBBB', [purchase('quilotoa', 'PRB-BBBBBB'), purchase('tortuga', 'PRB-BBBBBB')], [], regionOf);
     expect(batch.ok && batch.added.map(item => item.experienceId)).toEqual(['quilotoa', 'tortuga']);
   });

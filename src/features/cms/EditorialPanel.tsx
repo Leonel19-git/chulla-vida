@@ -5,7 +5,7 @@ import { experiences, formatExperiencePrice, type Experience } from '../../domai
 import { applyEditorialFields, editableFields, fieldsFromPublicRecord, makeEditorialDraft, validateEditorialFields, type EditorialFields } from '../../domain/editorial';
 import { commercialReadiness } from '../../domain/legal';
 import { getSupabase, supabaseConfiguration } from '../../lib/supabase';
-import { loadConnectedDraft, readLocalEditorialDrafts, saveConnectedDraft, saveLocalEditorialDraft } from './api';
+import { EditorialServiceError, loadConnectedDraft, readLocalEditorialDrafts, saveConnectedDraft, saveLocalEditorialDraft } from './api';
 import './editorial.css';
 
 const splitLines = (text: string) => text.split('\n');
@@ -77,7 +77,7 @@ export function EditorialPanel({ onClose }: EditorialPanelProps) {
       setCloud({ revision: result.draft?.revision ?? 0, catalogUpdatedAt: result.catalogUpdatedAt, status: result.draft?.status ?? 'Sin borrador conectado' });
       const history = await client!.from('editorial_audit').select('id,action,note,created_at').eq('experience_id', selectedId).order('created_at', { ascending: false }).limit(8);
       if (epoch === accountEpoch.current) { setAudit(history.error ? [] : history.data ?? []); setNotice('Revisión cargada. Guardar en el servidor conserva un borrador privado; no publica.'); }
-    } catch (error) { if (epoch === accountEpoch.current) setNotice(error instanceof Error ? error.message : 'No se pudo cargar la revisión.'); }
+    } catch (error) { if (epoch === accountEpoch.current) setNotice(error instanceof EditorialServiceError ? error.message : 'No se pudo cargar la revisión. Comprueba tu conexión.'); }
     finally { setBusy(false); }
   };
   const saveCloud = async () => {
@@ -88,7 +88,7 @@ export function EditorialPanel({ onClose }: EditorialPanelProps) {
       if (epoch !== accountEpoch.current) return;
       setCloud({ ...cloud, revision: result.revision, status: result.status });
       setLocalIds(readLocalEditorialDrafts().map(item => item.experienceId)); setNotice(`Revisión privada ${result.revision} guardada con auditoría. El catálogo público permanece igual.`);
-    } catch (error) { if (epoch === accountEpoch.current) setNotice(error instanceof Error ? error.message : 'No se pudo guardar en el servidor.'); }
+    } catch (error) { if (epoch === accountEpoch.current) setNotice(error instanceof EditorialServiceError ? error.message : 'No se pudo guardar en el servidor. Tu borrador local permanece.'); }
     finally { setBusy(false); }
   };
   const requestReview = async () => {
@@ -97,7 +97,7 @@ export function EditorialPanel({ onClose }: EditorialPanelProps) {
       const { error } = await client.rpc('review_editorial_draft', { p_experience_id: selectedId, p_expected_revision: cloud.revision, p_decision: 'ready_for_legal', p_note: sourceNote });
       if (error) throw new Error('No se pudo registrar la revisión. Recarga la versión y comprueba permisos.');
       if (epoch === accountEpoch.current) { setCloud({ ...cloud, status: 'ready_for_legal' }); setNotice('Marcado para revisión legal. Todavía no está publicado ni es una oferta verificable.'); }
-    } catch (error) { if (epoch === accountEpoch.current) setNotice(error instanceof Error ? error.message : 'Error de revisión.'); }
+    } catch { if (epoch === accountEpoch.current) setNotice('No se pudo enviar a revisión. Recarga la versión y vuelve a intentar.'); }
     finally { setBusy(false); }
   };
   return <div className="editorial-panel"><header className="editorial-heading"><FileCheck2 size={28} /><div><h2>Estudio editorial</h2><p>Edita una copia, revisa su información y prepara la siguiente versión.</p></div>{onClose && <button className="text-button" onClick={onClose}>Cerrar estudio</button>}</header>

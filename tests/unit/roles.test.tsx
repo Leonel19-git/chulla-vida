@@ -16,7 +16,7 @@ function builder(table: string) {
   let inFilter: [string, string[]] | null = null;
   const result = () => {
     const rows = (mocks.tables[table] ?? []).filter(row => filters.every(([column, value]) => !(column in row) || row[column] === value))
-      .filter(row => !inFilter || inFilter[1].includes(String(row[inFilter[0]])));
+      .filter(row => !inFilter || inFilter[1].includes(String(inFilter[0].split('.').reduce<unknown>((value, key) => value && typeof value === 'object' ? (value as Row)[key] : undefined, row))));
     return { data: rows, error: null };
   };
   const chain = {
@@ -115,7 +115,8 @@ describe('cuenta separada por rol', () => {
       experiences: [{ id: 'tejer', organization_id: 'org-1', status: 'draft' }, { id: 'otra', organization_id: 'org-x', status: 'published' }],
       experience_requests: [{ id: 'q1', organization_id: 'org-1', status: 'requested' }, { id: 'q2', organization_id: 'org-1', status: 'acknowledged' }],
       bookings: [{ id: 'b1', organization_id: 'org-1', status: 'awaiting_payment' }, { id: 'b2', organization_id: 'org-1', status: 'awaiting_merchant_confirmation' }],
-      payouts: [{ amount: '30.50', currency: 'USD', status: 'paid' }, { amount: '12', currency: 'USD', status: 'scheduled' }],
+      transfer_payments: [{ id: 't1', organization_id: 'org-1', status: 'receipt_submitted' }, { id: 't2', organization_id: 'org-1', status: 'paid' }, { id: 't3', organization_id: 'org-x', status: 'receipt_submitted' }],
+      payouts: [{ amount: '30.50', currency: 'USD', status: 'paid', beneficiaries: { organization_id: 'org-1' } }, { amount: '12', currency: 'USD', status: 'scheduled', beneficiaries: { organization_id: 'org-1' } }],
     };
     render(<AuthPanel />);
     expect(await screen.findByRole('heading', { name: 'Tu cuenta de negocio' })).toBeInTheDocument();

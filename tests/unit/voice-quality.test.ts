@@ -40,10 +40,10 @@ describe('MIJIN elige una voz agradable', () => {
     expect(describeVoice(CHROME[2])).toBe('Google · EE. UU. · buena');
     expect(describeVoice(WINDOWS_EDGE[0])).toBe('Helena · España · robótica');
   });
-  it('si solo hay voces robóticas sugiere cómo conseguir una mejor', () => {
+  it('si solo hay voces robóticas explica cómo elegir sin prometer voces nuevas', () => {
     const robotic = WINDOWS_EDGE.slice(0, 3);
-    expect(voiceTip(robotic, 'windows', 'Mozilla/5.0 Chrome/130')).toMatch(/Edge/);
-    expect(voiceTip(robotic, 'windows', 'Mozilla/5.0 Chrome/130 Edg/130')).toMatch(/internet/);
+    expect(voiceTip(robotic, 'windows', 'Mozilla/5.0 Chrome/130')).toMatch(/otro navegador/);
+    expect(voiceTip(robotic, 'windows', 'Mozilla/5.0 Chrome/130 Edg/130')).toMatch(/si aparece en la lista/);
     expect(voiceTip(WINDOWS_EDGE, 'windows')).toBeNull();
     expect(voiceTip([v('Mónica', 'es-ES')], 'apple')).toMatch(/Ajustes → Accesibilidad → Contenido leído → Voces/);
     expect(voiceTip([v('Paulina (Mejorada)', 'es-MX')], 'apple')).toBeNull();

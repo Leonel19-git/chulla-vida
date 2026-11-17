@@ -6,10 +6,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const config = paymentConfig();
   if (!config.enabled) return res.status(503).json({ error: config.reason });
   const body = req.body;
-  if (!body || typeof body !== 'object' || !isPaymentReference(body.bookingId) || !isPaymentReference(body.idempotencyKey)
+  if (!body || typeof body !== 'object' || Array.isArray(body) || !isPaymentReference(body.bookingId) || !isPaymentReference(body.idempotencyKey)
     || Object.keys(body).some(key => !['bookingId','idempotencyKey'].includes(key))) return res.status(400).json({ error: 'Revisa la reserva y la referencia de intento.' });
-  const client = serviceClient(config);
   try {
+    const client = serviceClient(config);
     const user = await authenticatedUser(req,client);
     if (!user) return res.status(401).json({ error: 'Inicia sesión con tu correo confirmado para pagar.' });
     const { data: checkout,error } = await client.rpc('claim_payphone_checkout',{

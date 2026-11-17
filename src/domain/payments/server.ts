@@ -1,4 +1,5 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { requestBoundary } from '../../../api/_request.js';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import type { PaymentEnvironment, CheckoutStatus } from './index.js';
 
@@ -29,11 +30,11 @@ export function privateResponse(res: VercelResponse) {
 }
 export function method(req: VercelRequest, res: VercelResponse, allowed: string): boolean {
   privateResponse(res);
-  if (req.method === allowed) return true;
+  if (req.method === allowed) return requestBoundary(req, res, allowed === 'GET');
   res.setHeader('Allow', allowed); res.status(405).json({ error: 'Método no permitido.' }); return false;
 }
 export async function authenticatedUser(req: VercelRequest, client: SupabaseClient): Promise<string | null> {
-  const header = req.headers.authorization;
+  const header = req.headers?.authorization;
   if (typeof header !== 'string' || !/^Bearer \S+$/i.test(header) || header.length > 10000) return null;
   const { data, error } = await client.auth.getUser(header.slice(7));
   return !error && data.user?.email_confirmed_at ? data.user.id : null;

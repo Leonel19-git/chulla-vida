@@ -9,7 +9,7 @@ import { BuyButton } from '../../src/features/payments/BuyButton';
 import { resetWalletMemory } from '../../src/features/wallet/store';
 
 const mocks = vi.hoisted(() => ({ config: vi.fn() }));
-vi.mock('../../src/lib/supabase', () => ({ getSupabase: () => null }));
+vi.mock('../../src/lib/supabase', () => ({ getSupabase: () => ({ auth: { getUser: async () => ({ data: { user: { id: 'traveler-test', email: 'ana.perez@correo.ec', email_confirmed_at: '2026-11-17T12:00:00Z' } }, error: null }) } }) }));
 vi.mock('../../src/features/payments/api', async importOriginal => ({ ...await importOriginal<typeof import('../../src/features/payments/api')>(), getPaymentConfiguration: mocks.config }));
 
 const CEDULA = (() => { const first = '171054351'; return `${first}${cedulaCheckDigit(first)}`; })();

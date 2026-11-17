@@ -1,0 +1,163 @@
+/*
+ * Casillas del álbum (CromoSlot) y cromos especiales del Pasaporte Guambra.
+ * Seis estados honestos: hueco · visto · en mi sobre · comprado · pegado de demostración · pegado (único con brillo foil).
+ */
+
+/* ── Casilla tocable ───────────────────────────────────────────────────────── */
+.pg-slot {
+  --die: clamp(3px, 6cqi, 8px);
+  position: relative; display: block; width: 100%; margin: 0; padding: 0; border: 0; border-radius: var(--al-r-md);
+  background: none; color: inherit; cursor: pointer; container-type: inline-size; touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+}
+.pg-slot:focus-visible { outline: 3px solid var(--al-ink); outline-offset: 3px; }
+
+/* ── Cara del cromo: borde blanco troquelado, foto a sangre, pestaña con el número ─ */
+.pg-cromo {
+  --rest: 0deg;
+  /* min-height 0: con aspect-ratio, la foto no debe estirar la casilla (si no, la rejilla deja de caber). */
+  position: relative; display: block; width: 100%; min-height: 0; aspect-ratio: var(--al-cromo-ratio); padding: var(--die, 5px);
+  border-radius: var(--al-r-md); background: var(--al-paper); box-shadow: 0 0 0 1px var(--al-line), var(--al-shadow-flat);
+  transform: rotate(var(--rest));
+  transition: transform var(--al-t-base) var(--al-ease-out), box-shadow var(--al-t-base) var(--al-ease-out);
+}
+.pg-cromo-window { position: relative; display: block; width: 100%; height: 100%; min-height: 0; overflow: hidden; border-radius: calc(var(--al-r-md) - 4px); background: var(--al-paper-2); }
+.pg-cromo-photo { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; user-select: none; -webkit-user-drag: none; }
+/* Nombre impreso bajo la casilla (libro abierto de computador): dos líneas como máximo. */
+.pg-slot-name {
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden;
+  height: calc(2 * 1.15em); margin-top: 6px; color: var(--al-ink); font-size: 12px; font-weight: 700; font-stretch: 88%; line-height: 1.15; text-align: center; overflow-wrap: anywhere;
+}
+.pg-cromo-tab {
+  position: absolute; top: -4px; left: -4px; z-index: 3; min-width: 2.1em; padding: 0.2em 0.36em 0.14em;
+  border: 2px solid var(--al-paper); border-radius: 8px 4px 8px 4px; background: var(--al-field); color: var(--al-on-field);
+  font-size: clamp(12px, 17cqi, 22px); font-weight: 900; font-stretch: 75%; line-height: 1; text-align: center; font-variant-numeric: tabular-nums;
+}
+
+/* Hueco: «te falta» — filete discontinuo en la tinta de la región y número en contorno. */
+.pg-cromo.is-album { padding: 0; background: transparent; box-shadow: none; }
+.pg-cromo.is-album .pg-cromo-window { border: 2px dashed var(--al-field-ink); border-radius: var(--al-r-md); background: var(--al-halftone), var(--al-paper); }
+.pg-cromo-hole { position: absolute; inset: 0; display: grid; place-items: center; align-content: center; gap: 2px; padding-top: 10%; }
+.pg-cromo-ghost {
+  color: transparent; -webkit-text-stroke: 1.5px var(--al-field-ink);
+  font-size: 46cqi; font-weight: 900; font-stretch: 75%; line-height: 0.9; font-variant-numeric: tabular-nums;
+}
+.pg-cromo-hint { color: var(--al-field-ink); font-size: max(11px, 11cqi); font-weight: 800; font-stretch: 88%; line-height: 1; letter-spacing: 0.02em; text-transform: uppercase; white-space: nowrap; }
+
+/* Visto: la foto, apagada; marca de ojo. */
+.pg-cromo.is-visto .pg-cromo-photo { filter: grayscale(0.6) contrast(0.94); }
+.pg-cromo.is-visto .pg-cromo-window::after { content: ''; position: absolute; inset: 0; background: color-mix(in srgb, var(--al-paper) 26%, transparent); pointer-events: none; }
+.pg-cromo-eye {
+  position: absolute; right: 6%; bottom: 6%; z-index: 2; display: grid; place-items: center; width: max(22px, 26cqi); aspect-ratio: 1;
+  border-radius: 50%; background: var(--al-paper); color: var(--al-ink); box-shadow: var(--al-shadow-flat);
+}
+
+/* En mi sobre: a color, levantado con un leve giro y esquina roja. */
+.pg-cromo.is-en_sobre { --rest: -1.6deg; box-shadow: 0 0 0 1px var(--al-line), var(--al-shadow-lift); }
+.pg-cromo-corner { position: absolute; top: 0; right: 0; z-index: 2; width: 64%; aspect-ratio: 1; overflow: hidden; pointer-events: none; }
+.pg-cromo-corner > span {
+  position: absolute; top: 24%; right: -32%; width: 118%; padding: 0.18em 0 0.12em; transform: rotate(45deg);
+  background: var(--al-rojo); color: var(--al-paper); box-shadow: 0 1px 0 color-mix(in srgb, var(--al-ink) 30%, transparent);
+  font-size: max(11px, 12cqi); font-weight: 900; font-stretch: 75%; line-height: 1; letter-spacing: 0.04em; text-align: center; text-transform: uppercase;
+}
+
+/* Sello de caucho: inclinado, borde doble. */
+.pg-rubber {
+  position: absolute; left: 50%; bottom: 11%; z-index: 2; display: grid; justify-items: center; gap: 1px; padding: 0.32em 0.5em 0.24em;
+  border: 3px double currentColor; border-radius: 6px; background: color-mix(in srgb, var(--al-paper) 88%, transparent);
+  transform: translateX(-50%) rotate(-12deg);
+  font-size: max(11px, 13cqi); font-weight: 900; font-stretch: 75%; line-height: 1; letter-spacing: 0.04em; text-transform: uppercase; white-space: nowrap;
+}
+.pg-rubber small { font-size: max(11px, 10cqi); font-weight: 800; letter-spacing: 0.02em; }
+.pg-rubber.is-buy { color: var(--al-rojo); }
+.pg-rubber.is-demo { color: var(--al-ink-2); }
+.pg-cromo.is-pegado_demo { box-shadow: 0 0 0 2px var(--al-ink-2), var(--al-shadow-flat); }
+
+/* Pegado (visita verificada): marco con brillo foil, fecha y visto bueno. Único estado con brillo. */
+.pg-cromo.is-pegado {
+  padding: calc(var(--die, 5px) + 1px);
+  background: conic-gradient(from var(--foil-angle, 205deg), var(--al-maiz), var(--al-galapagos-accent), var(--al-sierra), var(--al-amazonia), var(--al-maiz), var(--al-rojo), var(--al-maiz));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--al-ink) 22%, transparent), var(--al-shadow-lift);
+}
+.pg-cromo-seal {
+  position: absolute; top: 6%; right: 6%; z-index: 2; display: grid; place-items: center; width: max(20px, 24cqi); aspect-ratio: 1;
+  border-radius: 50%; background: var(--al-ink); color: var(--al-maiz); box-shadow: 0 0 0 2px var(--al-paper);
+}
+.pg-cromo-date {
+  position: absolute; left: 6%; right: 6%; bottom: 6%; z-index: 2; padding: 3px 4px 2px; overflow: hidden; border-radius: 4px;
+  background: var(--al-paper); color: var(--al-ink); font-size: max(11px, 12cqi); font-weight: 800; font-stretch: 88%; line-height: 1.1;
+  text-align: center; text-transform: uppercase; white-space: nowrap; text-overflow: ellipsis;
+}
+.pg-cromo-art {
+  position: absolute; top: 30%; left: 6%; z-index: 2; display: inline-flex; align-items: center; gap: 3px; padding: 3px 6px;
+  border-radius: var(--al-r-pill); background: var(--al-paper); color: var(--al-ink); font-size: 11px; font-weight: 800; line-height: 1;
+}
+@container (max-width: 104px) {
+  .pg-cromo-art { padding: 4px; }
+  .pg-cromo-art span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+}
+
+/* Miniaturas de la leyenda: la forma de cada marca, sin texto. */
+.pg-cromo.is-mini { --die: 2px; border-radius: 7px; }
+.pg-cromo.is-mini .pg-cromo-window { border-radius: 5px; }
+.pg-cromo.is-mini.is-album .pg-cromo-window { border-width: 1.5px; border-radius: 7px; }
+.pg-cromo.is-mini .pg-cromo-tab { top: -3px; left: -3px; min-width: 0; padding: 1px 3px; border-width: 1.5px; border-radius: 5px 3px; font-size: 11px; }
+.pg-cromo.is-mini .pg-cromo-ghost { display: none; }
+.pg-cromo.is-mini .pg-cromo-eye { width: 16px; right: 3px; bottom: 3px; }
+.pg-cromo.is-mini .pg-cromo-corner { width: 46%; background: var(--al-rojo); clip-path: polygon(0 0, 100% 0, 100% 100%); }
+.pg-cromo.is-mini .pg-rubber { bottom: 16%; width: 64%; height: 9px; padding: 0; border-width: 2px; border-style: solid; }
+.pg-cromo.is-mini .pg-cromo-seal { top: 3px; right: 3px; width: 15px; box-shadow: 0 0 0 1.5px var(--al-paper); }
+/* Hueco del «pega con código» antes de validar: sin número todavía. */
+.pg-cromo.is-blank .pg-cromo-window { border-color: var(--al-ink-2); }
+.pg-cromo.is-blank .pg-cromo-hole { padding-top: 0; gap: 8px; color: var(--al-ink-2); }
+.pg-cromo.is-blank .pg-cromo-hint { color: var(--al-ink-2); }
+
+/* «Golpe de sello»: el cromo nuevo se pega (1,06 → 0,98 → 1) y se asienta. Solo para lo nuevo y una vez. */
+.pg-slot.is-fresh .pg-cromo, .pg-code-slot.is-fresh .pg-cromo { animation: pg-stick var(--al-t-base) var(--al-ease-stick) both; }
+@keyframes pg-stick {
+  0% { transform: scale(1.06) rotate(calc(var(--rest) - 4deg)); }
+  55% { transform: scale(0.98) rotate(calc(var(--rest) + 1deg)); }
+  100% { transform: scale(1) rotate(var(--rest)); }
+}
+@keyframes pg-stick-soft { from { opacity: 0.45; } to { opacity: 1; } }
+
+@media (hover: hover) and (pointer: fine) {
+  .pg-slot:hover .pg-cromo:not(.is-album) { transform: translateY(-4px) rotate(calc(var(--rest) - 1.2deg)); box-shadow: 0 0 0 1px var(--al-line), var(--al-shadow-lift); }
+  .pg-slot:hover .pg-cromo.is-album .pg-cromo-window { border-style: solid; }
+}
+
+/* ── Cromos especiales (logros) ────────────────────────────────────────────── */
+.pg-special { container-type: inline-size; }
+.pg-special-card {
+  --die: clamp(3px, 5cqi, 7px);
+  display: block; min-height: 0; overflow: hidden; aspect-ratio: var(--al-cromo-ratio); padding: var(--die); border-radius: var(--al-r-md);
+  background: var(--al-paper); box-shadow: 0 0 0 1px var(--al-line), var(--al-shadow-flat);
+}
+.pg-special-card.pg-foil {
+  padding: calc(var(--die) + 1px);
+  background: conic-gradient(from var(--foil-angle, 205deg), var(--al-maiz), var(--al-galapagos-accent), var(--al-sierra), var(--al-amazonia), var(--al-maiz), var(--al-rojo), var(--al-maiz));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--al-ink) 22%, transparent), var(--al-shadow-lift);
+}
+.pg-special-face {
+  position: relative; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5%;
+  padding: 9% 8% 7%; overflow: hidden; border-radius: calc(var(--al-r-md) - 4px); text-align: center;
+}
+.pg-special.is-foil .pg-special-face { background: var(--al-ink); color: var(--al-paper); }
+.pg-special.is-activity .pg-special-face { background: var(--al-halftone), var(--al-maiz); color: var(--al-ink); }
+.pg-special.is-demo .pg-special-face { background: var(--al-ink-2); color: var(--al-paper); }
+.pg-special.is-locked .pg-special-card { padding: 0; background: transparent; box-shadow: none; }
+.pg-special.is-locked .pg-special-face { border: 2px dashed var(--al-ink-2); border-radius: var(--al-r-md); background: var(--al-paper); color: var(--al-ink-2); }
+.pg-special-icon { display: grid; place-items: center; width: 34%; aspect-ratio: 1; border-radius: 50%; background: color-mix(in srgb, currentColor 14%, transparent); }
+.pg-special.is-foil .pg-special-icon { color: var(--al-maiz); }
+.pg-special strong { font-size: max(14px, 14cqi); font-weight: 900; font-stretch: 62%; line-height: 0.92; text-transform: uppercase; text-wrap: balance; }
+.pg-special-hint { font-size: max(11px, 9cqi); font-weight: 600; line-height: 1.2; }
+.pg-special-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px; margin-top: auto; }
+.pg-special-basis { padding: 2px 6px 1px; border: 1.5px solid currentColor; border-radius: var(--al-r-pill); font-size: 11px; font-weight: 800; line-height: 1.2; text-transform: uppercase; letter-spacing: 0.02em; }
+.pg-special-progress { font-size: max(12px, 10cqi); font-weight: 900; font-stretch: 75%; font-variant-numeric: tabular-nums; }
+@container (max-width: 128px) { .pg-special-hint { display: none; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .pg-cromo { transition: none; }
+  .pg-cromo.is-en_sobre { --rest: 0deg; }
+  .pg-slot.is-fresh .pg-cromo, .pg-code-slot.is-fresh .pg-cromo { animation: pg-stick-soft 160ms ease-out both; }
+  .pg-rubber { transform: translateX(-50%); }
+}

@@ -1,83 +1,152 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { experiences } from '../../src/domain/catalog';
-import { PASSPORT_PAGES } from '../../src/domain/passport/book';
-import { PassportView, nextMobileLeaf } from '../../src/components/chulla/PassportView';
+import { resetWalletMemory } from '../../src/features/wallet/store';
+import { PassportView } from '../../src/components/chulla/PassportView';
 
-const mocks = vi.hoisted(() => ({ close: vi.fn() }));
+const mocks = vi.hoisted(() => ({ close: vi.fn(), select: vi.fn() }));
 vi.mock('../../src/lib/supabase', () => ({ getSupabase: () => null, supabaseConfiguration: () => ({ available: false }) }));
 vi.mock('../../src/context/AppContext', () => ({ CURRENT_TRAVELER_EMAIL: 'demo@local', useApp: () => ({ places: [], reservations: [], language: 'es', role: 'turista', setActiveTab: vi.fn(), t: (value: string) => value }) }));
 vi.mock('../../src/context/MembershipContext', () => ({ useMembership: () => ({ hasAccess: () => false }) }));
-vi.mock('../../src/features/catalog/CatalogContext', () => ({ useCatalog: () => ({ records: experiences.filter(record => record.localizedRegion === 'sierra').slice(0, 2), saved: [], toggle: vi.fn(), select: vi.fn(), online: true }) }));
+vi.mock('../../src/features/catalog/CatalogContext', () => ({ useCatalog: () => ({ records: experiences.filter(record => record.localizedRegion === 'sierra').slice(0, 2), saved: [], toggle: vi.fn(), select: mocks.select, online: true }) }));
 
-/** Celular sin movimiento reducido: solo la consulta de ancho responde «sí». */
-const phone = () => vi.stubGlobal('matchMedia', vi.fn((query: string) => ({ matches: query.includes('max-width'), addEventListener: vi.fn(), removeEventListener: vi.fn() })));
+/** Celular (< 900 px); con `reduced`, además «reducir movimiento». */
+const phone = (reduced = false) => vi.stubGlobal('matchMedia', vi.fn((query: string) => ({ matches: query.includes('max-width') || (reduced && query.includes('reduced-motion')), addEventListener: vi.fn(), removeEventListener: vi.fn() })));
+const view = () => render(<PassportView onClose={mocks.close} onChoosePlans={vi.fn()} />);
+const counter = () => document.querySelector('.pg-pager .pg-counter strong')?.textContent;
+const current = () => document.querySelector<HTMLElement>('.pg-sheet[data-role="current"]')!;
+const deck = () => document.querySelector<HTMLElement>('.pg-deck')!;
+const finger = { pointerId: 7, pointerType: 'touch', button: 0 };
+const press = (x: number, y = 300) => fireEvent.pointerDown(deck(), { ...finger, clientX: x, clientY: y });
+const drag = (x: number, y = 304) => fireEvent.pointerMove(deck(), { ...finger, clientX: x, clientY: y });
+const lift = (x: number, y = 304) => fireEvent.pointerUp(deck(), { ...finger, clientX: x, clientY: y });
+const swipe = (from: number, to: number) => { press(from); drag((from + to) / 2); drag(to); lift(to); };
+const css = readFileSync(resolve('src/features/passport/passport-book.css'), 'utf8');
+
 beforeEach(() => {
-  localStorage.clear(); vi.clearAllMocks();
+  localStorage.clear(); resetWalletMemory(); vi.clearAllMocks();
   HTMLDialogElement.prototype.showModal = function () { this.setAttribute('open', ''); };
   HTMLDialogElement.prototype.close = function () { this.removeAttribute('open'); };
   phone();
 });
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
 
-const spread = () => document.querySelector('.pg-spread') as HTMLElement;
-const counter = () => document.querySelector('.pg-pagination small')?.textContent ?? '';
-
-describe('pasaporte a tamaño celular', () => {
-  it('nextMobileLeaf recorre cara izquierda, derecha y siguiente pliego sin salirse del libro', () => {
-    expect(nextMobileLeaf(0, 0, 1, 8)).toEqual({ page: 0, side: 1 });
-    expect(nextMobileLeaf(0, 1, 1, 8)).toEqual({ page: 1, side: 0 });
-    expect(nextMobileLeaf(1, 0, -1, 8)).toEqual({ page: 0, side: 1 });
-    expect(nextMobileLeaf(0, 0, -1, 8)).toEqual({ page: 0, side: 0 });
-    expect(nextMobileLeaf(7, 1, 1, 8)).toEqual({ page: 7, side: 1 });
+describe('Pasaporte Guambra a tamaño celular', () => {
+  it('muestra UNA página por pantalla: solo la actual es interactiva y el contador dice «1 de 12»', () => {
+    view();
+    expect(document.querySelector('.pg-passport')).toHaveAttribute('data-layout', 'phone');
+    expect(document.querySelectorAll('.pg-sheet[data-role="current"]')).toHaveLength(1);
+    for (const sheet of document.querySelectorAll('.pg-sheet:not([data-role="current"])')) {
+      expect(sheet).toHaveAttribute('inert');
+      expect(sheet).toHaveAttribute('aria-hidden', 'true');
+    }
+    expect(screen.getAllByRole('heading', { level: 3 })).toHaveLength(1);
+    expect(counter()).toBe('1 de 12');
+    expect(screen.getByRole('button', { name: 'Página anterior' })).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Página siguiente' })).toBeEnabled();
   });
 
-  it('muestra una página por pantalla y se pasa de hoja con botones y deslizando', () => {
-    render(<PassportView onClose={mocks.close} onChoosePlans={vi.fn()} />);
-    const total = PASSPORT_PAGES.length * 2;
-    expect(spread()).toHaveClass('pg-one-side');
-    expect(spread()).toHaveAttribute('data-side', '0');
-    expect(counter()).toContain(`1 de ${total}`);
-    expect(screen.getByRole('button', { name: 'Anterior' })).toBeDisabled();
-    expect(document.querySelector('.pg-pagination')).toHaveClass('pg-pagination-sticky');
+  it('deslizar sigue al dedo 1:1 y pasa la hoja; un gesto vertical no cambia de hoja y un arrastre corto vuelve a su sitio', async () => {
+    view();
+    press(300); drag(260);
+    expect(current().style.transform).toMatch(/translate3d\(-40(\.0)?px/);
+    drag(140);
+    expect(current().style.transform).toMatch(/translate3d\(-160(\.0)?px/);
+    lift(140);
+    await waitFor(() => expect(counter()).toBe('2 de 12'), { timeout: 3000 });
+    expect(current().style.transform).toBe('');
+    expect(screen.getByRole('heading', { name: 'Mi carné' })).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole('button', { name: 'Siguiente' }));
-    expect(spread()).toHaveAttribute('data-side', '1');
-    expect(counter()).toContain(`2 de ${total}`);
+    press(200, 100); drag(206, 190); lift(206, 190);
+    expect(counter()).toBe('2 de 12');
+    expect(current().style.transform).toBe('');
 
-    const book = screen.getByRole('region', { name: /Libro interactivo/ });
-    fireEvent.touchStart(book, { touches: [{ clientX: 300, clientY: 200 }] });
-    fireEvent.touchEnd(book, { changedTouches: [{ clientX: 200, clientY: 210 }] });
-    expect(counter()).toContain(`3 de ${total}`);
-    expect(spread()).toHaveAttribute('data-side', '0');
-    expect(screen.getByRole('heading', { name: 'Este viaje lleva tu nombre' })).toBeInTheDocument();
+    // Arrastre corto (menos de 24 px): ni la distancia ni la velocidad alcanzan para pasar de hoja.
+    press(300); drag(288); drag(280);
+    expect(current().style.transform).toMatch(/-20/);
+    lift(280);
+    await waitFor(() => expect(current().style.transform).toBe(''), { timeout: 3000 });
+    expect(counter()).toBe('2 de 12');
 
-    // Un gesto vertical (scroll) no cambia de hoja.
-    fireEvent.touchStart(book, { touches: [{ clientX: 200, clientY: 100 }] });
-    fireEvent.touchEnd(book, { changedTouches: [{ clientX: 150, clientY: 400 }] });
-    expect(counter()).toContain(`3 de ${total}`);
-
-    fireEvent.touchStart(book, { touches: [{ clientX: 100, clientY: 200 }] });
-    fireEvent.touchEnd(book, { changedTouches: [{ clientX: 220, clientY: 205 }] });
-    expect(counter()).toContain(`2 de ${total}`);
+    swipe(100, 260);
+    await waitFor(() => expect(counter()).toBe('1 de 12'), { timeout: 3000 });
   });
 
-  it('las pestañas llevan a la cara izquierda del pliego elegido', () => {
-    render(<PassportView onClose={mocks.close} onChoosePlans={vi.fn()} />);
-    fireEvent.click(screen.getByRole('button', { name: PASSPORT_PAGES[2].label }));
-    expect(spread()).toHaveAttribute('data-side', '0');
-    expect(counter()).toContain(`5 de ${PASSPORT_PAGES.length * 2}`);
+  it('en la primera página, deslizar hacia atrás solo cede un poco (banda elástica) y vuelve', async () => {
+    view();
+    press(100); drag(150); drag(200);
+    expect(current().style.transform).toMatch(/translate3d\(20(\.0)?px/);
+    lift(200);
+    await waitFor(() => expect(current().style.transform).toBe(''), { timeout: 3000 });
+    expect(counter()).toBe('1 de 12');
   });
 
-  it('el CSS de celular oculta la otra cara, pone sellos grandes en 2 columnas y botones de 44 px o más', () => {
-    const css = readFileSync(resolve('src/features/passport/passport-book.css'), 'utf8');
-    const phoneBlock = css.slice(css.lastIndexOf('@media(max-width:600px){'));
-    expect(phoneBlock).toContain('.pg-one-side[data-side="0"]>.pg-page:nth-of-type(2)');
-    expect(phoneBlock).toContain('.pg-stamps{grid-template-columns:repeat(2,minmax(0,1fr))');
-    expect(phoneBlock).toMatch(/\.pg-tabs button\{min-height:44px/);
-    expect(phoneBlock).toMatch(/\.pg-pagination-sticky \.button\{min-width:48px;min-height:48px/);
+  it('los botones ◀ ▶ pasan de hoja y las pestañas llevan directo a su página (Amazonía partida en 21–30 y 31–39)', async () => {
+    view();
+    fireEvent.click(screen.getByRole('button', { name: 'Página siguiente' }));
+    await waitFor(() => expect(counter()).toBe('2 de 12'), { timeout: 3000 });
+    const index = screen.getByRole('navigation', { name: 'Índice del pasaporte' });
+    fireEvent.click(within(index).getByRole('button', { name: 'Amazonía' }));
+    expect(counter()).toBe('6 de 12');
+    expect(within(index).getByRole('button', { name: 'Amazonía' })).toHaveAttribute('aria-current', 'page');
+    expect(screen.getByRole('heading', { name: 'Amazonía' })).toBeInTheDocument();
+    expect(current()).toHaveTextContent('21–30');
+    expect(current().querySelectorAll('.pg-slot')).toHaveLength(10);
+    expect(current().querySelector('.pg-grid ol')).toHaveAttribute('data-cols', '4');
+    expect(current()).toHaveClass('is-entering');
+    fireEvent.keyDown(current(), { key: 'ArrowRight' });
+    await waitFor(() => expect(counter()).toBe('7 de 12'), { timeout: 3000 });
+    expect(current()).toHaveTextContent('31–39');
+    expect(current().querySelectorAll('.pg-slot')).toHaveLength(9);
+  });
+
+  it('con movimiento reducido no hay deslizamiento animado: la hoja no sigue al dedo y el cambio es un fundido', () => {
+    phone(true);
+    view();
+    expect(document.querySelector('.pg-passport')).toHaveAttribute('data-motion', 'reduced');
+    press(300); drag(200); drag(140);
+    expect(current().style.transform).toBe('');
+    lift(140);
+    expect(counter()).toBe('2 de 12');
+    expect(current()).toHaveClass('is-entering');
+    fireEvent.click(screen.getByRole('button', { name: 'Página siguiente' }));
+    expect(counter()).toBe('3 de 12');
+  });
+
+  it('un toque sobre un cromo lo abre; arrastrar sobre él no lo abre', async () => {
+    view();
+    const index = screen.getByRole('navigation', { name: 'Índice del pasaporte' });
+    fireEvent.click(within(index).getByRole('button', { name: 'Sierra' }));
+    const first = current().querySelector<HTMLElement>('.pg-slot')!;
+    fireEvent.pointerDown(first, { ...finger, clientX: 300, clientY: 300 });
+    fireEvent.pointerMove(first, { ...finger, clientX: 286, clientY: 301 });
+    fireEvent.pointerUp(first, { ...finger, clientX: 282, clientY: 301 });
+    fireEvent.click(first);
+    expect(counter()).toBe('4 de 12');
+    expect(mocks.select).not.toHaveBeenCalled();
+    expect(mocks.close).not.toHaveBeenCalled();
+    await waitFor(() => expect(current().style.transform).toBe(''), { timeout: 3000 });
+    fireEvent.pointerDown(first, { ...finger, clientX: 300, clientY: 300 });
+    fireEvent.pointerUp(first, { ...finger, clientX: 301, clientY: 300 });
+    fireEvent.click(first);
+    expect(mocks.close).toHaveBeenCalled();
+    expect(mocks.select).toHaveBeenCalledWith(experiences.find(record => record.localizedRegion === 'sierra')!.id);
+  });
+
+  it('el CSS de celular: hoja a pantalla completa con zona segura, navegación siempre a la vista y objetivos de 44 px o más', () => {
+    const phoneBlock = css.slice(css.indexOf('@media (max-width: 899.98px) {'));
+    expect(phoneBlock).toMatch(/height: 100dvh/);
+    expect(phoneBlock).toContain('padding: env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left)');
+    expect(css).toMatch(/\.pg-pager \{[^}]*padding-bottom: max\(8px, env\(safe-area-inset-bottom\)\)/);
+    expect(css).toMatch(/\.pg-index\.is-row \.pg-tab \{[^}]*min-height: 44px; min-width: 44px/);
+    expect(css).toMatch(/\.pg-nav \{ width: 58px; height: 48px; \}/);
+    expect(css).toMatch(/\.pg-deck \{[^}]*touch-action: pan-y/);
+    expect(css).toMatch(/\.is-phone \.pg-stage \{[^}]*min-height: 0;[^}]*overflow: hidden/);
+    const reduced = css.slice(css.indexOf('@media (prefers-reduced-motion: reduce)'));
+    expect(reduced).toMatch(/\.pg-book, [^{]*\{ transition: none; \}/);
+    expect(reduced).toMatch(/\.pg-sheet\.is-entering, \.pg-side\.is-entering \{ animation: pg-fade-in/);
   });
 });

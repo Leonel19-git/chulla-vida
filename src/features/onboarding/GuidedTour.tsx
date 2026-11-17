@@ -1,42 +1,51 @@
 import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { createPortal } from 'react-dom';
 import { ArrowLeft, ArrowRight, Check, X } from 'lucide-react';
-import { roleStore } from '../roles';
+import { isHostMode } from '../roles';
 import './tour.css';
 
 import { useT, msg } from '../../i18n/v3';
 export const TOUR_EVENT = 'cv3:tour';
 export const TOUR_KEY = 'chullavida:v3:tour';
+export const TOUR_PROGRESS_KEY = `${TOUR_KEY}:progress`;
+export type TourPath = 'traveler' | 'host';
+/** Event sigue funcionando; CustomEvent admite ruta y reinicio explícitos. */
+export interface TourRequest { path?: TourPath; restart?: boolean }
 
 export interface TourStep {
   id: string;
   title: string;
   text: string;
-  /** Selectores en orden de preferencia: primero el data-tour propio, luego respaldos por clase o aria-label. */
+  /** Contrato estable: atributos en controles reales, independientes del texto y del CSS. */
   targets: string[];
 }
 
 /** Recorrido por las partes reales de la página. Cada paso apunta a un elemento marcado con data-tour. */
 export const TOUR_STEPS: TourStep[] = [
-  { id: 'regions', title: msg('Elige tu región'), text: msg('Toca una región y ves sus fichas.'), targets: ['[data-tour="regions"]', '.cv-hero-regions'] },
-  { id: 'search', title: msg('Busca y filtra'), text: msg('Busca un lugar o abre «Filtros».'), targets: ['[data-tour="search"]', '.vivo-searchbar'] },
-  { id: 'card', title: msg('Así es cada ficha'), text: msg('Desliza para ver más. Toca la foto para abrir la ficha; el corazón la guarda.'), targets: ['[data-tour="cards"] .vivo-card', '.vivo-card'] },
-  { id: 'buy', title: msg('Comprar'), text: msg('Compra en pocos pasos. Hoy es modo prueba: no se cobra nada.'), targets: ['[data-tour="cards"] .vivo-card .buy-button', '.vivo-card .buy-button', '[aria-label^="Comprar"]'] },
-  { id: 'mijin', title: msg('Habla con MIJIN'), text: msg('Tu pana de aventuras, por voz o por escrito. El micrófono solo se enciende si lo tocas.'), targets: ['[data-tour="mijin"]', '[aria-label="Habla con MIJIN"]', '.mijin-launcher'] },
-  { id: 'plan', title: msg('Mi viaje'), text: msg('Junta paradas y mira tu presupuesto.'), targets: ['[data-tour="plan"]', '[aria-label="Mi viaje"]'] },
-  { id: 'wallet', title: msg('Mi billetera'), text: msg('Tus compras de prueba y comprobantes.'), targets: ['[data-tour="wallet"]', '[aria-label="Mi billetera"]'] },
-  { id: 'offline', title: msg('Sin señal'), text: msg('Descarga fichas para leerlas sin internet.'), targets: ['[data-tour="offline"]', '[data-tour="more"]'] },
-  { id: 'passport', title: msg('Pasaporte Guambra'), text: msg('Colecciona sellos. El verificado llega cuando el anfitrión confirma tu visita.'), targets: ['[data-tour="passport"]', '.passport-nav'] },
-  { id: 'account', title: msg('Entrar o crear cuenta'), text: msg('Entra con tu correo y un código de 6 dígitos.'), targets: ['[data-tour="account"]'] },
-  { id: 'host', title: msg('Soy anfitrión'), text: msg('¿Tienes un emprendimiento o una comunidad? Desde aquí pides publicar tu experiencia.'), targets: ['[data-tour="host"]'] },
-  { id: 'privacy', title: msg('Tu privacidad'), text: msg('Tú decides qué se guarda. Cámbialo cuando quieras.'), targets: ['[data-tour="privacy-banner"]', '[data-tour="privacy"]'] },
+  { id: 'album', title: msg('Tu álbum del Ecuador'), text: msg('Abre el Álbum para hojear los cromos.'), targets: ['[data-tour="album"]'] },
+  { id: 'regions', title: msg('Elige tu región'), text: msg('Toca una región y mira sus cromos.'), targets: ['[data-tour="regions"]'] },
+  { id: 'search', title: msg('Busca un lugar'), text: msg('Escribe un nombre o una provincia.'), targets: ['[data-tour="search"]'] },
+  { id: 'filters', title: msg('A tu medida'), text: msg('Filtra por días, presupuesto o dificultad.'), targets: ['[data-tour="filters"]'] },
+  { id: 'card', title: msg('Abre una ficha'), text: msg('Toca el cromo para ver el plan. El corazón lo guarda en tu sobre.'), targets: ['[data-tour="card"]'] },
+  { id: 'plan', title: msg('Mi sobre · Mi viaje'), text: msg('Reúne tus cromos y arma tu viaje con Chulla Flex.'), targets: ['[data-tour="envelope"]', '[data-tour="plan"]'] },
+  { id: 'mijin', title: msg('Habla con MIJIN'), text: msg('Pregunta por voz o texto. Tú enciendes el micrófono.'), targets: ['[data-tour="mijin"]'] },
+  { id: 'culture', title: msg('Fiestas'), text: msg('Descubre las fechas y los lugares de cada fiesta.'), targets: ['[data-tour="culture"]'] },
+  { id: 'passport', title: msg('Pasaporte Guambra'), text: msg('Mira lo que llevas en tu álbum. Solo una visita confirmada pega el cromo.'), targets: ['[data-tour="passport"]'] },
+  { id: 'account', title: msg('Yo · Tu cuenta'), text: msg('Entra a tu cuenta y ajusta tus preferencias.'), targets: ['[data-tour="account"]'] },
+];
+export const HOST_TOUR_STEPS: TourStep[] = [
+  { id: 'host', title: msg('Tu espacio de anfitrión'), text: msg('Desde aquí gestionas tus solicitudes.'), targets: ['[data-tour="host"]'] },
+  { id: 'host-experiences', title: msg('Tus experiencias'), text: msg('Prepara tus fichas y revisa su estado.'), targets: ['[data-tour="host-experiences"]'] },
+  { id: 'host-requests', title: msg('Tus solicitudes'), text: msg('Revisa cada solicitud antes de responder.'), targets: ['[data-tour="host-requests"]'] },
+  { id: 'account', title: msg('Tu cuenta'), text: msg('Revisa tus datos y permisos. Tener cuenta no acredita una verificación.'), targets: ['[data-tour="account"]'] },
 ];
 
 function isShown(element: Element) {
+  if (element.closest('[hidden], [aria-hidden="true"]')) return false;
   const rect = element.getBoundingClientRect();
   if (rect.width < 2 || rect.height < 2) return false;
   const style = window.getComputedStyle(element);
-  return style.visibility !== 'hidden' && style.display !== 'none';
+  return style.visibility !== 'hidden' && style.display !== 'none' && style.opacity !== '0';
 }
 /** Primer elemento visible que coincide con los selectores del paso. */
 export function findTourTarget(step: TourStep, root: ParentNode = document): HTMLElement | null {
@@ -56,11 +65,23 @@ export function returnToTop() {
   title.focus({ preventScroll: true });
 }
 
-/** Pasos según el rol: el de anfitriones solo se enseña a invitados (los viajeros no ven nada de negocio). */
+/** La vista activa decide el recorrido, también cuando la cuenta tiene ambos roles. */
 export function stepsForRole(steps: TourStep[] = TOUR_STEPS): TourStep[] {
-  let role = 'guest';
-  try { role = roleStore.get().role; } catch { /* sin roles: invitado */ }
-  return steps.filter(step => step.id !== 'host' || role === 'guest');
+  return isHostMode() ? HOST_TOUR_STEPS : steps.filter(step => !step.id.startsWith('host'));
+}
+
+function readCheckpoint(path: TourPath, steps: TourStep[]) {
+  try {
+    const saved = JSON.parse(localStorage.getItem(TOUR_PROGRESS_KEY) ?? '{}') as Record<string, unknown> | null;
+    return Math.max(0, steps.findIndex(step => step.id === saved?.[path]));
+  } catch { return 0; }
+}
+function saveCheckpoint(path: TourPath, id: string | null) {
+  try {
+    const raw: unknown = JSON.parse(localStorage.getItem(TOUR_PROGRESS_KEY) ?? '{}');
+    const saved = raw && typeof raw === 'object' && !Array.isArray(raw) ? raw : {};
+    localStorage.setItem(TOUR_PROGRESS_KEY, JSON.stringify({ ...saved, [path]: id }));
+  } catch { /* sin almacenamiento */ }
 }
 
 interface Box { top: number; left: number; width: number; height: number }
@@ -68,35 +89,45 @@ const PAD = 8;
 
 /** Se monta una vez. Escucha `cv3:tour` y abre el recorrido con foco sobre la página real. */
 export function TourGate() {
-  const [open, setOpen] = useState(false);
+  const [request, setRequest] = useState<(TourRequest & { path: TourPath }) | null>(null);
   useEffect(() => {
-    const show = () => setOpen(true);
+    const show = (event: Event) => {
+      const detail = (event as CustomEvent<TourRequest>).detail;
+      setRequest({ restart: detail?.restart === true, path: detail?.path === 'host' || (!detail?.path && isHostMode()) ? 'host' : 'traveler' });
+    };
     window.addEventListener(TOUR_EVENT, show);
     return () => window.removeEventListener(TOUR_EVENT, show);
   }, []);
-  if (!open) return null;
-  return <GuidedTour steps={stepsForRole()} onClose={() => setOpen(false)} />;
+  return request && <GuidedTour key={request.path} {...request} steps={request.path === 'host' ? HOST_TOUR_STEPS : TOUR_STEPS} onClose={() => setRequest(null)} />;
 }
 
-export function GuidedTour({ onClose, steps = TOUR_STEPS }: { onClose: () => void; steps?: TourStep[] }) {
+export function GuidedTour({ onClose, steps = TOUR_STEPS, path = 'traveler', restart = false }: { onClose: () => void; steps?: TourStep[]; path?: TourPath; restart?: boolean }) {
   const t = useT();
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState(() => restart ? 0 : readCheckpoint(path, steps));
+  const [available, setAvailable] = useState(() => steps.filter(step => findTourTarget(step)));
   const [box, setBox] = useState<Box | null>(null);
   const [bubble, setBubble] = useState<{ top: number; left: number; placement: 'below' | 'above' | 'dock' }>({ top: 0, left: 0, placement: 'dock' });
   const bubbleRef = useRef<HTMLDivElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const previousFocus = useRef<HTMLElement | null>(null);
   const backToTop = useRef(false);
+  const closed = useRef(false);
   const titleId = useId();
   const textId = useId();
-  const step = steps[index];
-  const last = index === steps.length - 1;
+  const step = available.find(item => steps.indexOf(item) >= index) ?? available.at(-1);
+  const position = step ? available.indexOf(step) : -1;
+  const last = position === available.length - 1;
 
   const finish = useCallback((completed: boolean) => {
+    if (closed.current) return;
+    closed.current = true;
     try { localStorage.setItem(TOUR_KEY, completed ? 'done' : 'skipped'); } catch { /* sin almacenamiento */ }
+    if (completed) saveCheckpoint(path, null);
     backToTop.current = true;
     onClose();
-  }, [onClose]);
+  }, [onClose, path]);
+
+  useEffect(() => { if (step) saveCheckpoint(path, step.id); else finish(false); }, [step, path, finish]);
 
   // Fondo inerte mientras dura el recorrido; al cerrar, el foco vuelve a donde estaba.
   useEffect(() => {
@@ -114,6 +145,7 @@ export function GuidedTour({ onClose, steps = TOUR_STEPS }: { onClose: () => voi
 
   // Lleva el elemento del paso a la vista.
   useEffect(() => {
+    if (!step) return;
     const target = findTourTarget(step);
     if (target) {
       // Desplazamiento suave solo si está cerca; si está lejos (pie de página), salto directo para no marear.
@@ -124,31 +156,51 @@ export function GuidedTour({ onClose, steps = TOUR_STEPS }: { onClose: () => voi
     titleRef.current?.focus({ preventScroll: true });
   }, [step]);
 
-  // Sigue la posición del elemento (scroll, cambios de tamaño, carga perezosa).
+  // Sigue cambios reales, sin un bucle de medidas en cada fotograma.
   useLayoutEffect(() => {
     let frame = 0;
     const measure = () => {
-      const target = findTourTarget(step);
-      const vw = window.innerWidth, vh = window.innerHeight;
+      frame = 0;
+      const visible = steps.filter(item => findTourTarget(item));
+      setAvailable(previous => previous.length === visible.length && previous.every((item, i) => item === visible[i]) ? previous : visible);
+      const target = step && findTourTarget(step);
+      const viewport = window.visualViewport;
+      const vw = viewport?.width ?? window.innerWidth, vh = viewport?.height ?? window.innerHeight;
+      const ox = viewport?.offsetLeft ?? 0, oy = viewport?.offsetTop ?? 0;
       const bw = Math.min(360, vw - 24);
-      const bh = bubbleRef.current?.offsetHeight ?? 220;
+      const bh = Math.min(bubbleRef.current?.offsetHeight || 260, vh - 24);
       if (!target) { setBox(null); setBubble({ top: Math.max(12, (vh - bh) / 2), left: (vw - bw) / 2, placement: 'dock' }); return; }
       const rect = target.getBoundingClientRect();
       const next = { top: rect.top - PAD, left: rect.left - PAD, width: rect.width + PAD * 2, height: rect.height + PAD * 2 };
       setBox(previous => previous && Math.abs(previous.top - next.top) < 0.5 && Math.abs(previous.left - next.left) < 0.5 && Math.abs(previous.width - next.width) < 0.5 && Math.abs(previous.height - next.height) < 0.5 ? previous : next);
-      const left = Math.min(Math.max(12, rect.left + rect.width / 2 - bw / 2), vw - bw - 12);
+      const left = Math.min(Math.max(ox + 12, rect.left + rect.width / 2 - bw / 2), ox + vw - bw - 12);
       let placement: 'below' | 'above' | 'dock' = 'dock';
-      let top = vh - bh - 12;
-      if (rect.bottom + PAD + 14 + bh <= vh - 8) { placement = 'below'; top = rect.bottom + PAD + 14; }
-      else if (rect.top - PAD - 14 - bh >= 8) { placement = 'above'; top = rect.top - PAD - 14 - bh; }
+      let top = oy + vh - bh - 12;
+      if (rect.bottom + PAD + 14 + bh <= oy + vh - 12) { placement = 'below'; top = rect.bottom + PAD + 14; }
+      else if (rect.top - PAD - 14 - bh >= oy + 12) { placement = 'above'; top = rect.top - PAD - 14 - bh; }
+      top = Math.max(oy + 12, Math.min(top, oy + vh - bh - 12));
       setBubble(previous => previous.top === top && previous.left === left && previous.placement === placement ? previous : { top, left, placement });
     };
-    const loop = () => { measure(); frame = requestAnimationFrame(loop); };
-    loop();
-    return () => cancelAnimationFrame(frame);
-  }, [step]);
+    const schedule = () => { if (!frame) frame = requestAnimationFrame(measure); };
+    measure();
+    window.addEventListener('resize', schedule);
+    document.addEventListener('scroll', schedule, true);
+    window.visualViewport?.addEventListener('resize', schedule);
+    window.visualViewport?.addEventListener('scroll', schedule);
+    const observer = new MutationObserver(records => { if (records.some(record => !(record.target instanceof Element) || !record.target.closest('.cv-tour'))) schedule(); });
+    observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['hidden', 'aria-hidden', 'class', 'style', 'data-tour'] });
+    const resize = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(schedule);
+    if (bubbleRef.current) resize?.observe(bubbleRef.current);
+    const element = step && findTourTarget(step);
+    if (element) resize?.observe(element);
+    return () => {
+      cancelAnimationFrame(frame); observer.disconnect(); resize?.disconnect();
+      window.removeEventListener('resize', schedule); document.removeEventListener('scroll', schedule, true);
+      window.visualViewport?.removeEventListener('resize', schedule); window.visualViewport?.removeEventListener('scroll', schedule);
+    };
+  }, [step, steps]);
 
-  const go = (delta: number) => setIndex(current => Math.min(steps.length - 1, Math.max(0, current + delta)));
+  const go = (delta: number) => { const next = available[position + delta]; if (next) setIndex(steps.indexOf(next)); };
   const onKeyDown = (event: ReactKeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Escape') { event.preventDefault(); finish(false); return; }
     if (event.key === 'ArrowRight' && !(event.target instanceof HTMLInputElement)) { event.preventDefault(); if (last) finish(true); else go(1); return; }
@@ -162,21 +214,22 @@ export function GuidedTour({ onClose, steps = TOUR_STEPS }: { onClose: () => voi
     }
   };
 
+  if (!step) return null;
   return createPortal(<div className={`cv-tour ${reduced() ? 'is-reduced' : ''}`} onKeyDown={onKeyDown}>
     <div className="cv-tour-backdrop" aria-hidden="true" onClick={event => event.stopPropagation()} />
     {box ? <div className="cv-tour-spot" aria-hidden="true" style={{ top: box.top, left: box.left, width: box.width, height: box.height }} /> : <div className="cv-tour-dim" aria-hidden="true" />}
     <div ref={bubbleRef} className={`cv-tour-bubble is-${bubble.placement}`} role="dialog" aria-modal="true" aria-labelledby={titleId} aria-describedby={textId} style={{ top: bubble.top, left: bubble.left }}>
       <div className="cv-tour-head">
-        <p className="cv-tour-count" aria-live="polite">{t("Paso {n} de {total}", { n: index + 1, total: steps.length })}</p>
+        <p className="cv-tour-count" aria-live="polite">{t("Paso {n} de {total}", { n: position + 1, total: available.length })}</p>
         <button type="button" className="cv-tour-close" onClick={() => finish(false)} aria-label={t("Cerrar el recorrido")}><X size={18} /></button>
       </div>
       <h2 id={titleId} ref={titleRef} tabIndex={-1}>{t(step.title)}</h2>
-      <p id={textId}>{t(step.text)}{!box && <span className="cv-tour-missing">{' '}{t("Está en el menú.")}</span>}</p>
-      <div className="cv-tour-progress" aria-hidden="true">{steps.map((item, i) => <i key={item.id} className={i === index ? 'is-on' : i < index ? 'is-done' : ''} />)}</div>
+      <p id={textId}>{t(step.text)}</p>
+      <div className="cv-tour-progress" aria-hidden="true">{available.map((item, i) => <i key={item.id} className={i === position ? 'is-on' : i < position ? 'is-done' : ''} />)}</div>
       <div className="cv-tour-actions">
         <button type="button" className="cv-tour-skip" onClick={() => finish(false)}>{t("Saltar recorrido")}</button>
         <span>
-          {index > 0 && <button type="button" className="cv-tour-back" onClick={() => go(-1)}><ArrowLeft size={16} />{t("Atrás")}</button>}
+          {position > 0 && <button type="button" className="cv-tour-back" onClick={() => go(-1)}><ArrowLeft size={16} />{t("Atrás")}</button>}
           {last
             ? <button type="button" className="cv-tour-next" onClick={() => finish(true)}><Check size={16} />{t("¡Listo, a explorar!")}</button>
             : <button type="button" className="cv-tour-next" onClick={() => go(1)}>{t("Siguiente")}<ArrowRight size={16} /></button>}

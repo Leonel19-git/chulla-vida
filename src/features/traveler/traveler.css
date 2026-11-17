@@ -1,39 +1,25 @@
-.traveler{display:grid;gap:22px;margin-top:8px}
-.traveler h3{font-size:20px;margin:0 0 6px;display:flex;gap:10px;align-items:center}.traveler h3>svg{flex:none}.traveler h3 small{font-size:14px;font-weight:500;color:var(--muted,#5e6658)}
-.traveler-welcome{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border-radius:18px;background:linear-gradient(120deg,#fff3cf,#e6f6f5);border:1px solid #f0cf73;color:#3d2a00;animation:traveler-in .5s cubic-bezier(.2,.9,.3,1.2) both}
-.traveler-welcome strong{font-size:18px;color:#103452}.traveler-welcome p{margin:4px 0 0!important}.traveler-welcome svg{flex:none;color:#b3263a}
-.traveler-card{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px;align-items:center;padding:18px;border-radius:20px;background:#103452;color:#fff;box-shadow:0 16px 32px -20px #103452}
-.traveler-card h3{color:#fff;font-family:Newsreader,Georgia,serif;font-size:24px;margin:0;overflow-wrap:anywhere}.traveler-card p{margin:0!important;color:#d6e6ee;font-size:14px;overflow-wrap:anywhere}
-.traveler-avatar{display:grid;place-items:center;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#efb22c,#079da5);color:#103452;font-weight:800;font-size:24px}
-.traveler-badge{display:inline-flex;gap:6px;align-items:center;margin-top:6px;padding:3px 10px;border-radius:999px;background:#ffffff1f;font-size:13px;font-weight:650}
-.traveler-card .traveler-signout{background:#fff;color:#103452;border-color:#fff}
-.traveler-shortcuts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.traveler-shortcuts button{display:flex;gap:10px;align-items:flex-start;text-align:left;min-height:64px;padding:14px;border-radius:16px;border:1px solid var(--line,#ddd8cb);background:#fff;color:#103452;cursor:pointer;transition:transform .2s,box-shadow .2s,border-color .2s}
-.traveler-shortcuts button:hover{transform:translateY(-2px);border-color:#079da5;box-shadow:0 10px 22px -16px #10345299}.traveler-shortcuts button:focus-visible{outline:3px solid #efb22c;outline-offset:2px}
-.traveler-shortcuts span{display:grid;gap:2px}.traveler-shortcuts strong{font-size:15px}.traveler-shortcuts small{font-size:13px;color:var(--muted,#5e6658)}.traveler-shortcuts svg{flex:none;margin-top:2px;color:#079da5}
-.traveler-section{padding:20px;border-radius:18px;border:1px solid var(--line,#ddd8cb);background:#fffdf8;margin:0!important}
-.traveler-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-.traveler-prefs{border:0;padding:0;margin:0;display:grid;gap:14px}.traveler-prefs legend{font-weight:650;margin-bottom:8px}
-.traveler-chips{display:flex;flex-wrap:wrap;gap:8px}.traveler-chips label{display:inline-flex!important;gap:8px;align-items:center;min-height:44px;padding:8px 14px;border-radius:999px;border:1px solid #c8d3cf;background:#fff;cursor:pointer;font-size:14px;font-weight:600;transition:background .2s,border-color .2s}
-.traveler-chips label.is-on{background:#e6f6f5;border-color:#079da5;color:#0b4f55}.traveler-chips input{width:18px;height:18px;accent-color:#079da5}.traveler-chips label:has(input:focus-visible){outline:3px solid #efb22c;outline-offset:2px}
-.traveler-doc{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:12px 14px;border-radius:12px;background:#eef3f1}.traveler-doc .text-button{min-height:44px}
-.traveler-list{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:10px}
-.traveler-list li{display:flex;gap:12px;justify-content:space-between;flex-wrap:wrap;padding:12px 14px;border-radius:12px;background:#fff;border:1px solid var(--line,#ddd8cb)}
-.traveler-list li>div{display:grid;gap:2px;min-width:0}.traveler-list strong{overflow-wrap:anywhere}.traveler-list small{font-size:13px;color:var(--muted,#5e6658);display:block}.traveler-list small svg{vertical-align:-2px}
-.traveler-list-meta{justify-items:end;text-align:right}
-.traveler-pill{display:inline-block;padding:2px 10px;border-radius:999px;background:#e6f6f5;color:#0b4f55;font-size:13px;font-weight:700}.traveler-pill.is-test{background:#fff3cf;color:#5a4103}
-.traveler-subtitle{font-size:15px;margin:18px 0 0}
-.traveler-empty{display:grid;justify-items:center;text-align:center;gap:8px;padding:20px 8px}.traveler-empty svg{color:#079da5}.traveler-empty p{margin:0!important}
-.traveler-loading{display:flex;gap:10px;align-items:center;color:var(--muted,#5e6658)}.traveler-loading .cv-skeleton{width:28px;height:12px}
-.auth-business{margin-top:28px;border:1px solid var(--line,#ddd8cb);border-radius:18px;padding:4px 18px 12px}.auth-business>summary{font-weight:650;text-decoration:none!important;gap:10px}
-@keyframes traveler-in{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
-@media(max-width:560px){.traveler-card{grid-template-columns:auto minmax(0,1fr)}.traveler-card .traveler-signout{grid-column:1/-1}.traveler-shortcuts,.traveler-two{grid-template-columns:minmax(0,1fr)}.traveler-section{padding:16px}.traveler-list-meta{justify-items:start;text-align:left}}
-@media(prefers-reduced-motion:reduce){.traveler *,.traveler-welcome{animation:none!important;transition:none!important}}
-.traveler-card.is-pro{background:radial-gradient(120% 140% at 0% 0%,#3a2e0e 0%,#14324a 55%,#0d2436 100%);border:1px solid #d9a92f80;box-shadow:0 18px 36px -20px #7a5a10}
-.traveler-card.is-pro .traveler-avatar{background:#103452;color:#fed65a;box-shadow:0 0 0 3px #103452,0 0 0 6px #efb22c,0 0 18px 4px #efb22c66}
-.traveler-pro{position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:4px;margin-left:10px;padding:2px 9px;border-radius:999px;background:linear-gradient(135deg,#fed65a,#efb22c 55%,#c98a10);color:#3a2a00;font:800 12px/1.5 'Plus Jakarta Sans',system-ui,sans-serif;letter-spacing:.08em;vertical-align:middle}
-.traveler-pro:after{content:'';position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,#ffffffb3 50%,transparent 70%);transform:translateX(-120%);animation:traveler-shine 3.6s ease-in-out infinite}
-.traveler-benefits{grid-column:1/-1;list-style:none;margin:4px 0 0;padding:12px 0 0;border-top:1px solid #ffffff26;display:flex;flex-wrap:wrap;gap:8px}
-.traveler-benefits li{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;background:#efb22c26;color:#ffe6a3;font-size:13px;font-weight:650}
-@keyframes traveler-shine{0%,60%{transform:translateX(-120%)}100%{transform:translateX(120%)}}
-@media(prefers-reduced-motion:reduce){.traveler-pro:after{animation:none;display:none}}
+.traveler{display:grid;gap:24px;margin-top:8px;min-width:0;color:var(--al-ink);font:400 16px/1.5 var(--al-font)}
+.traveler h3{font:900 22px/1.2 var(--al-font);font-stretch:var(--al-display-stretch);margin:0 0 8px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}.traveler h3>svg{flex:none}.traveler h3 small{font-size:14px;font-weight:500;color:var(--al-ink-2)}
+.traveler-welcome{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border-radius:var(--al-r-md);background:var(--al-maiz);border:2px solid var(--al-ink);color:var(--al-ink)}.traveler-welcome strong{font-size:18px}.traveler-welcome p{margin:4px 0 0!important}.traveler-welcome svg{flex:none}
+.traveler-card{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:16px;align-items:center;padding:20px;border:6px solid var(--al-paper);outline:2px solid var(--al-ink);border-radius:var(--al-r-lg);background:var(--al-ink);color:var(--al-paper)}
+.traveler-card h3{color:var(--al-paper);font-size:26px;margin:0;overflow-wrap:anywhere}.traveler-card p{margin:0!important;color:var(--al-paper);font-size:14px;overflow-wrap:anywhere}
+.traveler-avatar{display:grid;place-items:center;width:56px;height:56px;border-radius:var(--al-r-sm);background:var(--al-maiz);color:var(--al-ink);font-weight:900;font-size:28px}
+.traveler-badge{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:8px;padding:4px 10px;border:1px solid var(--al-paper);border-radius:var(--al-r-pill);font-size:14px;font-weight:700}
+.traveler-card .traveler-signout{background:var(--al-paper);color:var(--al-ink);border-color:var(--al-paper)}
+.traveler-shortcuts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.traveler-shortcuts button{display:flex;gap:10px;align-items:flex-start;text-align:left;min-height:64px;padding:14px;border-radius:var(--al-r-md);border:2px solid var(--al-ink);background:var(--al-paper);color:var(--al-ink);cursor:pointer}
+.traveler-shortcuts span{display:grid;gap:4px;min-width:0}.traveler-shortcuts strong{font-size:16px}.traveler-shortcuts small{font-size:14px;color:var(--al-ink-2)}.traveler-shortcuts svg{flex:none;margin-top:2px}
+.traveler :is(button,input):focus-visible{outline:3px solid var(--al-sierra);outline-offset:3px}.traveler-card button:focus-visible{outline-color:var(--al-maiz)}
+.traveler-section{padding:24px 0;border:0;border-top:1px solid var(--al-line);background:var(--al-paper);margin:0!important;min-width:0}.traveler-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.traveler-prefs{border:0;padding:0;margin:0;display:grid;gap:16px;min-width:0}.traveler-prefs legend{font-weight:700;margin-bottom:12px}
+.traveler-chips{display:flex;flex-wrap:wrap;gap:8px}.traveler-chips label{display:inline-flex!important;gap:8px;align-items:center;min-height:44px;padding:8px 14px;box-sizing:border-box;border-radius:var(--al-r-pill);border:2px solid var(--al-ink);background:var(--al-paper);cursor:pointer;font-size:14px;font-weight:700}.traveler-chips label.is-on{background:var(--al-ink);color:var(--al-paper)}.traveler-chips input{width:20px;height:20px;accent-color:var(--al-ink)}.traveler-chips label:has(input:focus-visible){outline:3px solid var(--al-sierra);outline-offset:3px}
+.traveler-doc{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:12px 14px;border-radius:var(--al-r-md);background:var(--al-paper-2)}.traveler-doc .text-button{min-height:44px}
+.traveler-list{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:12px}.traveler-list li{display:flex;gap:12px;justify-content:space-between;flex-wrap:wrap;padding:14px 0;border-bottom:1px solid var(--al-line)}.traveler-list li>div{display:grid;gap:4px;min-width:0}.traveler-list strong{overflow-wrap:anywhere}.traveler-list small{font-size:14px;color:var(--al-ink-2);display:block}.traveler-list small svg{vertical-align:-2px}.traveler-list-meta{justify-items:end;text-align:right}
+.traveler-pill{display:inline-block;padding:4px 10px;border-radius:var(--al-r-pill);background:var(--al-paper-2);color:var(--al-ink);font-size:14px;font-weight:700}.traveler-pill.is-test{background:var(--al-maiz)}
+.traveler-subtitle{font-size:16px;margin:24px 0 0}.traveler-empty{display:grid;justify-items:start;gap:12px;padding:20px 0}.traveler-empty p{margin:0!important}.traveler-loading{display:flex;gap:10px;align-items:center;color:var(--al-ink-2)}.traveler-loading .cv-skeleton{width:28px;height:12px}
+.traveler-card.is-pro{border-color:var(--al-maiz);background:var(--al-ink)}.traveler-card.is-pro .traveler-avatar{background:var(--al-maiz);color:var(--al-ink)}
+.traveler-pro{display:inline-flex;align-items:center;gap:4px;margin-inline-start:8px;padding:4px 10px;border-radius:var(--al-r-pill);background:conic-gradient(from 30deg,var(--al-maiz),var(--al-costa),var(--al-maiz),var(--al-paper),var(--al-maiz));color:var(--al-ink);font:800 14px/1.5 var(--al-font)}
+.traveler-benefits{grid-column:1/-1;list-style:none;margin:4px 0 0;padding:12px 0 0;border-top:1px solid var(--al-paper);display:flex;flex-wrap:wrap;gap:8px}.traveler-benefits li{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:var(--al-r-pill);background:var(--al-maiz);color:var(--al-ink);font-size:14px;font-weight:700}
+@media(hover:hover){.traveler-shortcuts button:hover{background:var(--al-maiz)}}
+@media(max-width:560px){.traveler-card{grid-template-columns:auto minmax(0,1fr);padding:16px}.traveler-card .traveler-signout{grid-column:1/-1}.traveler-shortcuts,.traveler-two{grid-template-columns:minmax(0,1fr)}.traveler-list-meta{justify-items:start;text-align:left}}
+@media(prefers-reduced-motion:reduce){.traveler *,.traveler *::before,.traveler *::after{animation:none!important;transition:none!important}}
+.traveler .traveler-card h3{color:var(--al-paper);font-size:26px}.traveler-edit{display:grid;gap:20px;min-width:0;border:0;padding:0;margin:0}

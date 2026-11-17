@@ -57,10 +57,7 @@ export async function loadTravelerProfile(client: SupabaseClient, userId: string
   }
   if (result.error) throw result.error;
   const row = (result.data ?? {}) as Record<string, unknown>;
-  const documentResult = await client.from('buyer_identity_documents').select('document_type,last4').eq('user_id', userId).maybeSingle();
-  const documentRow = documentResult.error ? null : documentResult.data as { document_type?: string; last4?: string } | null;
-  const document = documentRow && (documentRow.document_type === 'cedula' || documentRow.document_type === 'passport') && typeof documentRow.last4 === 'string' && /^[0-9A-Z]{4}$/.test(documentRow.last4)
-    ? { type: documentRow.document_type, last4: documentRow.last4 } as const : null;
+  const document = await loadTravelerDocument(client, userId);
   const text = (value: unknown, max: number) => typeof value === 'string' ? value.slice(0, max) : '';
   return {
     displayName: text(row.display_name, PROFILE_LIMITS.displayName) || fallbackName.slice(0, PROFILE_LIMITS.displayName),
@@ -70,6 +67,20 @@ export async function loadTravelerProfile(client: SupabaseClient, userId: string
     marketing: Boolean(row.marketing_consent_at),
     document, extendedColumns,
   };
+}
+
+/** Owner-only summary. Older deployments may not have the signup migration yet. */
+export async function loadTravelerDocument(client: SupabaseClient, userId: string): Promise<TravelerProfile['document']> {
+  const result = await client.from('buyer_identity_documents').select('document_type,last4').eq('user_id', userId).maybeSingle();
+  const row = result.error ? null : result.data;
+  if (row && (row.document_type === 'cedula' || row.document_type === 'passport') && typeof row.last4 === 'string' && /^[0-9A-Z]{4}$/.test(row.last4)) {
+    return { type: row.document_type, last4: row.last4 };
+  }
+  try {
+    const { data, error } = await client.from('signup_identity').select('last4,status').eq('user_id', userId).maybeSingle();
+    return !error && data?.status === 'unverified' && typeof data.last4 === 'string' && /^[0-9]{4}$/.test(data.last4)
+      ? { type: 'cedula', last4: data.last4 } : null;
+  } catch { return null; }
 }
 
 export type SaveOutcome = 'saved' | 'name-only';

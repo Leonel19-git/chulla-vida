@@ -162,7 +162,7 @@ describe('MIJIN se usa hablando, con permiso y subtítulos', () => {
     weatherMocks.search.mockImplementation(() => new Promise(resolve => { resolveSearch = resolve; }));
     render(<MijinAssistant />); open(); await begin(); phrase('Clima de Quito');
     fireEvent.click(screen.getByRole('button', { name: 'Permitir y consultar clima' }));
-    fireEvent.click(screen.getByRole('button', { name: 'Detener' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Cancelar y volver' }));
     await act(async () => resolveSearch([{ id: 1, placeName: 'Quito', province: 'Pichincha', lat: -0.2, lon: -78.5, precision: 'locality_approx' }]));
     expect(weatherMocks.get).not.toHaveBeenCalled(); expect(screen.queryByRole('region', { name: /Pronóstico de/ })).not.toBeInTheDocument();
   });
@@ -191,7 +191,7 @@ describe('MIJIN se usa hablando, con permiso y subtítulos', () => {
     phrase('Quiero conocer Saraguro');
     expect(spoken()).toMatch(/saraguro/i);
   });
-  it.each(['Detener', 'Cerrar prueba'])('%s impide que un pronóstico pendiente reproduzca audio después', async action => {
+  it.each(['Cancelar y volver', 'Cerrar prueba'])('%s impide que un pronóstico pendiente reproduzca audio después', async action => {
     let resolveWeather!: (value: WeatherReport) => void;
     weatherMocks.search.mockResolvedValue([{ id: 1, placeName: 'Quito', province: 'Pichincha', lat: -0.2, lon: -78.5, precision: 'locality_approx' }]);
     weatherMocks.get.mockImplementation(() => new Promise(resolve => { resolveWeather = resolve; }));

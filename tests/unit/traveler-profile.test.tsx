@@ -12,7 +12,7 @@ const mocks = vi.hoisted(() => ({
   session: null as null | { user: { id: string; email: string; user_metadata?: Record<string, unknown> } },
   listener: null as null | ((event: string, session: unknown) => void),
   tables: {} as Record<string, Row[]>,
-  missingColumns: false,
+  missingColumns: false, failedProfiles: false,
   updates: [] as { table: string; values: Row; filters: [string, unknown][] }[],
   rpc: vi.fn(),
   signUp: vi.fn(), verifyOtp: vi.fn(), signOut: vi.fn(),
@@ -23,6 +23,7 @@ function builder(table: string) {
   let columns = '';
   let update: Row | null = null;
   const result = () => {
+    if (mocks.failedProfiles && table === 'profiles') return { data: null, error: { code: 'NETWORK' } };
     if (mocks.missingColumns && table === 'profiles' && (/home_country/.test(columns) || (update && 'home_country' in update))) {
       return { data: null, error: { code: '42703', message: 'column profiles.home_country does not exist' } };
     }
@@ -58,7 +59,7 @@ vi.mock('../../src/lib/supabase', () => ({
 const traveler = { user: { id: 'viajera-1', email: 'amaru@example.com', user_metadata: { display_name: 'Amaru' } } };
 beforeEach(() => {
   localStorage.clear(); sessionStorage.clear(); roleStore.reset();
-  mocks.session = null; mocks.listener = null; mocks.missingColumns = false; mocks.updates = [];
+  mocks.session = null; mocks.listener = null; mocks.missingColumns = false; mocks.failedProfiles = false; mocks.updates = [];
   mocks.tables = { profiles: [{ id: 'viajera-1', display_name: 'Amaru', home_country: '', home_city: '', travel_preferences: {}, marketing_consent_at: null }] };
   mocks.rpc.mockReset(); mocks.signUp.mockReset(); mocks.verifyOtp.mockReset(); mocks.signOut.mockReset();
   mocks.rpc.mockImplementation(async (name: string, args: Record<string, string>) => name === 'set_buyer_document'
@@ -67,6 +68,43 @@ beforeEach(() => {
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
 
 describe('cuenta de viajero conectada', () => {
+  it('oculta gestión y revisión de negocios en modo viajero incluso con rol administrativo', async () => {
+    mocks.session = traveler;
+    mocks.tables.user_roles = [{ user_id: traveler.user.id, role: 'admin' }];
+    mocks.tables.organizations = [{ id: 'org-1', owner_id: traveler.user.id, name: 'Negocio propio', kind: 'business', verification_status: 'in_review' }];
+    mocks.tables.merchant_verification_requests = [{ id: 'request-1', organization_id: 'org-1', status: 'submitted' }];
+    roleStore.setWelcomePath('traveler'); roleStore.setMode('traveler');
+    render(<AuthPanel />);
+    await screen.findByLabelText('Nombre visible');
+    expect(roleStore.get().admin).toBe(true);
+    expect(screen.queryByRole('heading', { name: 'Solicitudes para revisión' })).not.toBeInTheDocument();
+    expect(screen.queryByText('Negocio propio')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Registrar aprobación' })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('radio', { name: 'Modo negocio' }));
+    expect(await screen.findByRole('heading', { name: 'Solicitudes para revisión' })).toBeInTheDocument();
+    expect(screen.getAllByText('Negocio propio').length).toBeGreaterThan(0);
+  });
+
+  it('muestra solo los últimos cuatro del registro y mantiene la identidad pendiente', async () => {
+    mocks.session = traveler;
+    mocks.tables.signup_identity = [{ user_id: traveler.user.id, last4: '0400', status: 'unverified' }];
+    render(<AuthPanel />);
+    expect(await screen.findByText('•••• 0400')).toBeInTheDocument();
+    expect(screen.getByText('Identidad por verificar. Solo conservamos los últimos cuatro.')).toBeInTheDocument();
+    expect(screen.queryByLabelText(/Número de cédula/)).not.toBeInTheDocument();
+    expect(document.body.innerHTML).not.toContain('0102030400');
+  });
+
+  it('permite reintentar una carga fallida sin cerrar la sesión', async () => {
+    mocks.session = traveler; mocks.failedProfiles = true;
+    render(<AuthPanel />);
+    expect(await screen.findByRole('alert')).toHaveTextContent(/Tu sesión sigue abierta/);
+    mocks.failedProfiles = false;
+    fireEvent.click(screen.getByRole('button', { name: 'Volver a cargar' }));
+    expect(await screen.findByLabelText('Nombre visible')).toHaveValue('Amaru');
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
+
   it('con sesión muestra el perfil viajero, sus secciones y deja el negocio plegado', async () => {
     mocks.session = traveler;
     render(<AuthPanel />);
@@ -162,6 +200,7 @@ describe('registro que termina en el perfil', () => {
     expect(screen.getByRole('heading', { name: 'Entrar / Crear cuenta' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Crear cuenta' })).toHaveAttribute('aria-pressed', 'true');
     await user.type(screen.getByLabelText('Cómo te llamas'), 'Amaru');
+    await user.type(screen.getByLabelText('Cédula ecuatoriana'), '0102030400');
     await user.type(screen.getByLabelText('Correo electrónico'), 'amaru@example.com');
     await user.type(screen.getByLabelText('Contraseña'), 'montaña-verde-2026');
     expect(screen.getByText('Una letra mayúscula (A-Z)')).toHaveTextContent(/pendiente/);
@@ -181,6 +220,7 @@ describe('registro que termina en el perfil', () => {
     const user = userEvent.setup();
     render(<AuthPanel initialTab="signup" />);
     await user.type(screen.getByLabelText('Cómo te llamas'), 'Amaru');
+    await user.type(screen.getByLabelText('Cédula ecuatoriana'), '0102030400');
     await user.type(screen.getByLabelText('Correo electrónico'), 'amaru@example.com');
     await user.type(screen.getByLabelText('Contraseña'), 'Montaña-Verde-2026');
     await user.click(screen.getByRole('checkbox', { name: /Acepto los Términos/ }));

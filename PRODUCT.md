@@ -44,3 +44,14 @@ Logo original en public/brand y public/chulla-vida-logo.png; fotografías y cré
 - Mostrar de forma honesta qué está verificado, qué es referencial y qué es una prueba.
 - Mantener precio, moneda, comisión, estado y entorno de pago visibles antes de confirmar.
 - Respetar movimiento reducido, teclado, lectores de pantalla y pantallas pequeñas.
+
+## Dirección visual vigente — 16 de noviembre de 2026
+
+El dueño eligió la dirección **«Álbum del Ecuador»** (rediseño completo; sustituye al mundo visual anterior de papel crema, serif y barra lateral, y a cualquier variante «papel cálido»). Compromisos de marca que mandan sobre lo descrito arriba cuando haya conflicto:
+
+- CHULLA VIDA es un álbum de cromos: cada lugar es un cromo numerado (01–51), los sobres son sugerencias de MIJIN, «Mi sobre» reúne guardados y Mi viaje, y solo una visita verificada «pega» el cromo con brillo.
+- Tintas planas a página completa (maíz, azul noche, azul cumbre, turquesa, verde selva, lava, rojo) y la familia Archivo Variable; no usar crema, Newsreader ni Plus Jakarta Sans en lo nuevo.
+- Logo 2026 (`public/brand/`) siempre como sticker blanco troquelado. La intro sale solo en la primera visita y **termina con el logo**.
+- Navegación única: barra superior en escritorio y barra inferior de cinco destinos en móvil (Álbum, Fiestas, MIJIN, Mi sobre, Yo). Las pantallas del prototipo antiguo dejan de mostrarse.
+- Se puede ver el álbum sin cuenta; comprar, pagar, pedir información, la billetera y el pasaporte exigen cuenta con correo verificado, y el servidor decide importes y estados de pago. Las membresías no se activan desde el navegador en producción.
+- Detalle completo en `.impeccable/album-direction.md`; `DESIGN.md` se reescribe al terminar la obra con el mundo construido.

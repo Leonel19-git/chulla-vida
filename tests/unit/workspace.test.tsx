@@ -47,10 +47,11 @@ it('agrupa herramientas en «Más»: abre, cierra con Escape y devuelve el foco'
   expect(screen.queryByRole('menu')).not.toBeInTheDocument();
   expect(more).toHaveFocus();
 });
-it('«Mi billetera» abre la billetera desde la barra de herramientas', async () => {
+it('«Mi billetera» requiere una cuenta confirmada antes de abrir los datos personales', async () => {
   render(<Workspace />);
   fireEvent.click(screen.getByRole('button', { name: 'Mi billetera' }));
-  expect(await screen.findByRole('dialog', { name: /billetera/i }, { timeout: 5000 })).toBeInTheDocument();
+  expect(await screen.findByRole('dialog', { name: 'Tu espacio de viaje' }, { timeout: 5000 })).toBeInTheDocument();
+  expect(await screen.findByText('Entra con tu correo confirmado para abrir tu espacio.')).toBeInTheDocument();
   expect(screen.queryByRole('alert')).not.toBeInTheDocument();
 });
 it('el pie ofrece los PDF de protección de datos y abre el ejercicio de derechos', async () => {

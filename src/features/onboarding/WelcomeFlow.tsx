@@ -26,7 +26,7 @@ const INTERESTS: { id: TravelInterest; label: string }[] = [
   { id: 'aventura', label: msg('Aventura') }, { id: 'gastronomia', label: msg('Comida típica') }, { id: 'relax', label: msg('Relax y termas') },
 ];
 /** Tras la bienvenida, el recorrido guiado muestra cada parte sobre la página real (GuidedTour). */
-const startTour = () => window.setTimeout(() => window.dispatchEvent(new Event(TOUR_EVENT)), 120);
+const startTour = (path: 'traveler' | 'host' = 'traveler') => window.setTimeout(() => window.dispatchEvent(new CustomEvent(TOUR_EVENT, { detail: { path } })), 120);
 
 export function readTravelPreferences(): TravelPreferences | null {
   try {
@@ -147,6 +147,7 @@ export function WelcomeFlow({ onClose }: { onClose: () => void }) {
         {step === 'interests' && <button className="button button-primary" onClick={() => setStep('trip')}>{t("Siguiente")}<ArrowRight size={16} /></button>}
         {step === 'trip' && <button className="button button-primary" onClick={() => finish('traveler', true)}>{t("Ver el recorrido por la página")}<ArrowRight size={16} /></button>}
         {step === 'host' && <button className="button button-primary" onClick={() => { finish('host'); window.dispatchEvent(new Event('cv3:host')); }}>{t("Ir al espacio de anfitriones")}<ArrowRight size={16} /></button>}
+        {step === 'host' && <button className="button button-secondary" onClick={() => { finish('host'); window.dispatchEvent(new Event('cv3:host')); startTour('host'); }}>{t('Ver recorrido de anfitriones')}</button>}
       </div>
     </div>
   </Dialog>;

@@ -1,14 +1,39 @@
 import { describe, expect, it } from 'vitest';
-import { PASSPORT_BOOK_KEY, PASSPORT_PAGES, addJournalEntry, emptyPassportBook, isPassportBook, nextPassportPage, passportExportHtml, passportProgress, readPassportBook, savePassportBook, toggleVirtualExploration } from '../../src/domain/passport/book';
+import { albumPage } from '../../src/domain/album';
+import { PASSPORT_BOOK_KEY, addJournalEntry, emptyPassportBook, isPassportBook, passportExportHtml, passportProgress, readPassportBook, savePassportBook, toggleVirtualExploration } from '../../src/domain/passport/book';
+import { PASSPORT_PAGES, PASSPORT_TABS, PHONE_MAX_SLOTS, nextPassportPage, pageIndexForId, pageIndexForTab, passportPages, spreadCount, spreadOf, spreadPages } from '../../src/domain/passport/pages';
 
-describe('Pasaporte Guambra personal', () => {
-  it('limita la navegación a las páginas existentes y conserva las cuatro regiones', () => {
+describe('páginas del libro-álbum', () => {
+  it('en computador: tapa, carné, mapa, una página por región, especiales, diario, código y contratapa', () => {
+    expect(PASSPORT_PAGES.map(page => page.id)).toEqual(['tapa', 'carne', 'ecuador', 'sierra', 'costa', 'amazonia', 'galapagos', 'especiales', 'diario', 'codigo', 'contratapa']);
+    expect(PASSPORT_PAGES.filter(page => page.region).map(page => [page.region, page.first, page.last])).toEqual([['sierra', 1, 13], ['costa', 14, 20], ['amazonia', 21, 39], ['galapagos', 40, 51]]);
+    expect(PASSPORT_TABS).toEqual(['tapa', 'carne', 'ecuador', 'sierra', 'costa', 'amazonia', 'galapagos', 'especiales', 'diario', 'codigo']);
+  });
+  it('en celular Amazonía (19) se parte en dos páginas para caber sin desplazarse en un iPhone SE; el resto queda igual', () => {
+    const phone = passportPages('phone');
+    expect(phone.map(page => page.id)).toEqual(['tapa', 'carne', 'ecuador', 'sierra', 'costa', 'amazonia-1', 'amazonia-2', 'galapagos', 'especiales', 'diario', 'codigo', 'contratapa']);
+    const amazonia = albumPage('amazonia');
+    expect(phone.filter(page => page.region === 'amazonia').map(page => [page.first, page.last, page.tab, page.part])).toEqual([[amazonia.first, 30, 'amazonia', 1], [31, amazonia.last, 'amazonia', 2]]);
+    for (const page of phone.filter(item => item.region)) expect(page.last! - page.first! + 1).toBeLessThanOrEqual(PHONE_MAX_SLOTS);
+    expect(pageIndexForTab(phone, 'amazonia')).toBe(5);
+    expect(pageIndexForId(PASSPORT_PAGES, 'amazonia-2')).toBe(5);
+    expect(pageIndexForId(phone, 'amazonia')).toBe(5);
+    expect(pageIndexForId(phone, 'no-existe')).toBe(0);
+  });
+  it('pliegos: la tapa sola y luego dos páginas por pliego, sin salirse del libro', () => {
+    expect(spreadCount()).toBe(6);
+    expect([0, 1, 2, 3, 4, 9, 10].map(spreadOf)).toEqual([0, 1, 1, 2, 2, 5, 5]);
+    expect(spreadPages(0)).toEqual([null, 0]);
+    expect(spreadPages(1)).toEqual([1, 2]);
+    expect(spreadPages(5)).toEqual([9, 10]);
     expect(nextPassportPage(0, -1)).toBe(0);
     expect(nextPassportPage(PASSPORT_PAGES.length - 1, 1)).toBe(PASSPORT_PAGES.length - 1);
     expect(nextPassportPage(2, 1)).toBe(3);
     expect(nextPassportPage(Number.NaN, 1)).toBe(0);
-    expect(PASSPORT_PAGES.map(page => page.id)).toEqual(['cover', 'profile', 'sierra', 'costa', 'amazonia', 'galapagos', 'journal', 'back']);
   });
+});
+
+describe('Pasaporte Guambra personal', () => {
   it('distingue planes y exploraciones virtuales sin fabricar visitas reales', () => {
     const state = toggleVirtualExploration(emptyPassportBook(), 'quito', ['quito', 'cuyabeno']);
     expect(passportProgress(state, ['quito', 'quito', 'cuyabeno'], ['quito', 'cuyabeno'], ['old-demo', 'old-demo'])).toEqual({ explored: 1, planned: 2, total: 2, validatedDemo: 1, verifiedRealVisits: 0 });
@@ -44,5 +69,24 @@ describe('Pasaporte Guambra personal', () => {
     expect(html).not.toMatch(/<script|<iframe|<img|<link|<video|<audio/i);
     expect(html).toContain('No acredita visitas reales');
     expect(html).toContain('Se puede leer sin internet');
+  });
+  it('la copia descargada luce álbum: casillas numeradas con su estado honesto, sin brillo inventado', () => {
+    const html = passportExportHtml({ ...emptyPassportBook(), nickname: 'Nayra' }, [], [], new Date('2026-11-13T17:00:00Z'), [
+      { label: '01', title: 'Saraguro <Ancestral>', region: 'Sierra', regionId: 'sierra', estado: 'pegado', fecha: '2026-11-08T16:00:00Z' },
+      { label: '02', title: 'Quilotoa', region: 'Sierra', regionId: 'sierra', estado: 'comprado', prueba: true },
+      { label: '14', title: 'Agua Blanca', region: 'Costa', regionId: 'costa', estado: 'pegado_demo' },
+      { label: '15', title: 'Guayaquil', region: 'Costa', regionId: 'costa', estado: 'album' },
+    ]);
+    expect(html).toContain('Pasaporte Guambra');
+    expect(html).toContain('Nayra');
+    expect(html).toContain('Saraguro &lt;Ancestral&gt;');
+    expect(html).toContain('Pegado · visita verificada');
+    expect(html).toContain('Comprado · por vivir · de prueba');
+    expect(html).toContain('Pegado de demostración');
+    expect(html).toContain('Te falta');
+    expect(html).toContain('Pegados: 1');
+    expect(html).toContain('Demo: 1');
+    expect(html).toContain('Sierra · 01–02');
+    expect(html).not.toMatch(/<script|<iframe|<img|<link/i);
   });
 });

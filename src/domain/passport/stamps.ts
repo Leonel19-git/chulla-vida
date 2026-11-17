@@ -39,6 +39,13 @@ export interface CollectedStamp {
 
 const isRegion = (value: unknown): value is RegionId => typeof value === 'string' && (STAMP_REGIONS as readonly string[]).includes(value);
 export const isVerifiedStamp = (stamp: Pick<CollectedStamp, 'source'>) => stamp.source === 'verified_visit';
+/**
+ * Compras de prueba que de verdad apartan el lugar: aprobada, o transferencia de prueba enviada y en revisión
+ * (mismo criterio que `isBoughtStatus` de la billetera). Sin terminar, rechazadas o canceladas no cuentan.
+ */
+export const BOUGHT_WALLET_STATUSES: readonly string[] = ['test_approved', 'test_transfer_review'];
+export const isBoughtWalletStatus = (status: string) => BOUGHT_WALLET_STATUSES.includes(status);
+const DEAD_WALLET_STATUSES: readonly string[] = ['test_rejected', 'test_transfer_rejected', 'cancelled'];
 
 export interface CollectInput {
   destinations: readonly StampDestination[];
@@ -73,7 +80,7 @@ export function collectStamps(input: CollectInput): CollectedStamp[] {
     add(validation.experienceId, 'demo_validated', { title: validation.title, region: validation.region, date: validation.validatedAt, reference: validation.code });
   }
   for (const record of input.wallet ?? []) {
-    if (record.kind !== 'test_purchase' || record.status === 'test_rejected' || record.status === 'cancelled') continue;
+    if (record.kind !== 'test_purchase' || !isBoughtWalletStatus(record.status)) continue;
     add(record.experienceId, 'purchased', { title: record.title, date: record.updatedAt, reference: record.code });
   }
   for (const id of [...(input.savedIds ?? []), ...(input.tripIds ?? [])]) add(id, 'planned');
@@ -145,27 +152,33 @@ export function saveDemoValidations(list: readonly DemoValidation[], storage?: P
   } catch { return false; }
 }
 
+/** Motivo del resultado, para que la interfaz lo cuente con sus propias palabras (y traducido). */
+export type DemoValidationReason = 'ok' | 'format' | 'not_found' | 'rejected' | 'pending' | 'duplicate';
 export type DemoValidationResult =
-  | { ok: true; added: DemoValidation[]; list: DemoValidation[]; message: string }
-  | { ok: false; list: DemoValidation[]; message: string };
+  | { ok: true; reason: 'ok'; code: string; added: DemoValidation[]; list: DemoValidation[]; message: string }
+  | { ok: false; reason: Exclude<DemoValidationReason, 'ok'>; code: string; list: DemoValidation[]; message: string };
 
 /**
  * Simula al anfitrión que escanea el QR del comprobante de prueba. Solo acepta códigos que existan en la billetera
- * de este navegador, de compras de prueba no rechazadas ni canceladas. El resultado siempre lleva `mode: 'demo'`.
+ * de este navegador, de compras de prueba aprobadas (o transferencia de prueba en revisión). El resultado siempre lleva `mode: 'demo'`.
  */
 export function validateDemoReceipt(rawCode: string, wallet: readonly WalletStampInput[], current: readonly DemoValidation[], regionOf: (experienceId: string) => RegionId | null, now = new Date()): DemoValidationResult {
   const code = normalizeReceiptCode(rawCode);
   const list = [...current];
-  if (!RECEIPT_CODE.test(code)) return { ok: false, list, message: 'El código del comprobante de prueba tiene este formato: PRB-ABC123.' };
+  if (!RECEIPT_CODE.test(code)) return { ok: false, reason: 'format', code, list, message: 'El código del comprobante de prueba tiene este formato: PRB-ABC123.' };
   const matches = wallet.filter(record => record.code.toUpperCase() === code && record.kind === 'test_purchase');
-  if (!matches.length) return { ok: false, list, message: `No encontramos ${code} en la billetera de este dispositivo. Revisa el código impreso bajo el QR.` };
-  const usable = matches.filter(record => record.status !== 'test_rejected' && record.status !== 'cancelled');
-  if (!usable.length) return { ok: false, list, message: 'Ese comprobante de prueba fue rechazado o cancelado, así que no se puede validar.' };
+  if (!matches.length) return { ok: false, reason: 'not_found', code, list, message: `No encontramos ${code} en la billetera de este dispositivo. Revisa el código impreso bajo el QR.` };
+  const usable = matches.filter(record => isBoughtWalletStatus(record.status));
+  if (!usable.length) {
+    return matches.every(record => DEAD_WALLET_STATUSES.includes(record.status))
+      ? { ok: false, reason: 'rejected', code, list, message: 'Ese comprobante de prueba fue rechazado o cancelado, así que no se puede validar.' }
+      : { ok: false, reason: 'pending', code, list, message: 'Esa compra de prueba aún no está aprobada, así que no se puede validar.' };
+  }
   const fresh = usable.filter(record => !list.some(item => item.code === code && item.experienceId === record.experienceId));
-  if (!fresh.length) return { ok: false, list, message: 'Ese comprobante ya se validó en la demostración. Tu sello demo ya está en el pasaporte.' };
+  if (!fresh.length) return { ok: false, reason: 'duplicate', code, list, message: 'Ese comprobante ya se validó en la demostración. Tu sello demo ya está en el pasaporte.' };
   const added = fresh.map(record => ({ code, experienceId: record.experienceId, title: record.title, region: regionOf(record.experienceId), validatedAt: now.toISOString(), mode: 'demo' as const }));
   const next = [...added, ...list].slice(0, 200);
-  return { ok: true, added, list: next, message: `¡Sello demo! ${added.map(item => item.title).join(', ')}: visita validada en demostración. No acredita una visita real.` };
+  return { ok: true, reason: 'ok', code, added, list: next, message: `¡Sello demo! ${added.map(item => item.title).join(', ')}: visita validada en demostración. No acredita una visita real.` };
 }
 
 export function readSeenStamps(storage?: Pick<Storage, 'getItem'>): string[] {

@@ -1,9 +1,10 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { DEMO_CODE, PRIVACY_VERSION, TERMS_VERSION, normalizeEmail, type AuthErrorLike } from './auth-flow';
+import { SIGNUP_IDENTITY_EVENT } from '../../domain/identity';
 
 export type CodePurpose = 'signup' | 'login' | 'recovery';
 export interface GatewayResult { error: AuthErrorLike | null; signedIn?: boolean }
-export interface SignUpInput { email: string; password: string; displayName: string; marketing: boolean }
+export interface SignUpInput { email: string; password: string; displayName: string; marketing: boolean; cedulaLast4?: string }
 
 /** Small surface the access flow needs. The real one wraps supabase-js v2; the demo one never leaves the browser. */
 export interface AuthGateway {
@@ -34,19 +35,41 @@ async function guard(run: () => Promise<GatewayResult>): Promise<GatewayResult> 
 }
 
 export function supabaseGateway(client: SupabaseClient): AuthGateway {
+  // Only the reduced value survives the form. No storage, metadata, logs or full document RPC.
+  let pendingIdentity: { email: string; last4: string } | null = null;
+  const recordIdentity = (email: string, sessionEmail: string | undefined) => {
+    const pending = pendingIdentity;
+    pendingIdentity = null;
+    if (!pending || pending.email !== normalizeEmail(email) || pending.email !== normalizeEmail(sessionEmail ?? '')) return;
+    void (async () => {
+      let saved = false;
+      try {
+        const { error } = await client.rpc('record_signup_identity', { p_last4: pending.last4 });
+        saved = !error;
+      } catch { /* Optional detail: confirmation and login must complete even without this migration/network. */ }
+      window.dispatchEvent(new CustomEvent(SIGNUP_IDENTITY_EVENT, { detail: { saved } }));
+    })();
+  };
   return {
     demo: false,
-    signUp: ({ email, password, displayName, marketing }) => guard(async () => {
+    signUp: ({ email, password, displayName, marketing, cedulaLast4 }) => guard(async () => {
+      pendingIdentity = null;
+      if (cedulaLast4 !== undefined && !/^[0-9]{4}$/.test(cedulaLast4)) return { error: { code: 'invalid_identity_summary' } };
       const { data, error } = await client.auth.signUp({ email: normalizeEmail(email), password, options: {
         emailRedirectTo: redirect(),
         data: { display_name: displayName.trim().slice(0, 100), terms_version: TERMS_VERSION, privacy_version: PRIVACY_VERSION,
           terms_accepted_at: new Date().toISOString(), marketing_opt_in: marketing, draft_terms_acknowledged: true },
       } });
+      if (!error && cedulaLast4) {
+        pendingIdentity = { email: normalizeEmail(email), last4: cedulaLast4 };
+        if (data?.session) recordIdentity(email, data.session.user.email);
+      }
       return { error: toError(error), signedIn: Boolean(data?.session) };
     }),
     verifyCode: (email, token, purpose) => guard(async () => {
       const type = purpose === 'signup' ? 'signup' : purpose === 'recovery' ? 'recovery' : 'email';
       const { data, error } = await client.auth.verifyOtp({ email: normalizeEmail(email), token, type });
+      if (!error && data?.session && purpose === 'signup') recordIdentity(email, data.session.user.email);
       return { error: toError(error), signedIn: Boolean(data?.session) };
     }),
     resendCode: (email, purpose) => guard(async () => {

@@ -3,11 +3,13 @@ import { createClient } from '@supabase/supabase-js';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import type { Experience } from '../src/domain/catalog/types.js';
 import { answerLocally, retrieveExperiences } from '../src/features/assistant/knowledge.js';
+import { requestBoundary } from './_request.js';
 
 const usage = new Map<string, { minute: number; minuteCount: number; day: string; dayCount: number }>();
 /** Per-instance guard. Configure a shared gateway quota before enabling across multiple server instances. */
 export function permitAssistantRequest(userId: string, now = Date.now()): boolean {
   const minute = Math.floor(now / 60000); const day = new Date(now).toISOString().slice(0, 10);
+  if (usage.size >= 2000) for (const [id, entry] of usage) { if (entry.day !== day) usage.delete(id); }
   const previous = usage.get(userId);
   const item = { minute, minuteCount: previous?.minute === minute ? previous.minuteCount : 0,
     day, dayCount: previous?.day === day ? previous.dayCount : 0 };
@@ -26,6 +28,7 @@ export function validateAssistantBody(value: unknown): { question: string } | nu
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Cache-Control', 'no-store');
   if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return res.status(405).json({ error: 'Solo consultas POST.' }); }
+  if (!requestBoundary(req, res)) return;
   if (process.env.ASSISTANT_ENABLED !== 'true' || !process.env.ANTHROPIC_API_KEY || !process.env.ANTHROPIC_MODEL)
     return res.status(503).json({ error: 'MIJIN remoto pendiente de configurar. El modo catálogo y FAQ sigue disponible.', mode: 'unconfigured' });
   const configUrl = process.env.SUPABASE_URL;
@@ -33,13 +36,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (!configUrl || !publicKey) return res.status(503).json({ error: 'Falta configurar autorización del asistente.' });
   const body = validateAssistantBody(req.body);
   if (!body) return res.status(400).json({ error: 'Envía una pregunta de hasta 1000 caracteres y consentimiento explícito para el proveedor remoto.' });
-  const header = req.headers.authorization;
+  const header = req.headers?.authorization;
   const token = typeof header === 'string' && /^Bearer [A-Za-z0-9._-]+$/.test(header) ? header.slice(7) : null;
   if (!token) return res.status(401).json({ error: 'Inicia una sesión real para usar el proveedor remoto.' });
   const supabase = createClient(configUrl, publicKey, { global: { headers: { Authorization: `Bearer ${token}` } }, auth: { persistSession: false, autoRefreshToken: false } });
   try {
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-    if (authError || !user) return res.status(401).json({ error: 'La sesión no es válida o ha vencido.' });
+    if (authError || !user?.email_confirmed_at) return res.status(401).json({ error: 'Entra con tu correo confirmado para usar MIJIN remoto.' });
     if (!permitAssistantRequest(user.id)) return res.status(429).json({ error: 'Límite de consultas alcanzado. Usa el catálogo local o vuelve más tarde.' });
     const { data, error } = await supabase.from('catalog_experiences').select('data').eq('published', true).limit(200);
     if (error || !data?.length) return res.status(503).json({ error: 'No se pudo consultar el catálogo publicado. No se generan respuestas sin fuentes.' });

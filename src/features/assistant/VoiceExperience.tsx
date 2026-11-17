@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useRef, useState, type CSSProperties, type FormEvent } from 'react';
-import { ArrowUpRight, Captions, Check, CloudSun, Compass, Cpu, Download, Keyboard, Map as MapIcon, Mic, MicOff, Pencil, RotateCcw, Send, Settings2, ShieldCheck, Sparkles, Square, Trash2, Volume2, VolumeX, WifiOff, X } from 'lucide-react';
+import { useCallback, useEffect, useEffectEvent, useRef, useState, type CSSProperties, type FormEvent } from 'react';
+import { ArrowUpRight, Captions, Check, CloudSun, Compass, Cpu, Download, Keyboard, Map as MapIcon, Mic, MicOff, Pencil, RotateCcw, Send, Settings2, ShieldCheck, Sparkles, Trash2, Volume2, VolumeX, WifiOff, X } from 'lucide-react';
 import { experiences } from '../../domain/catalog';
 import type { Experience } from '../../domain/catalog/types';
 import { getWeather, searchWeatherLocalities, weatherAdvice, type WeatherLocality, type WeatherReport } from '../../domain/weather';
@@ -10,7 +10,7 @@ import { saveTripPreferences } from './preferences';
 import { isWeatherQuestion, microphoneMessages, microphonePermission, microphoneUnblockSteps, navigationFromVoice, openMicrophone, permissionPromptMessage, requestMicrophone, voiceDebug, voicePlaceNames, weatherLocalityFromVoice, type MicrophoneResult, type VoiceNavigation } from './voice-tools';
 import { AUTO_LOCAL_FALLBACK, END_GRACE_MS, FALLBACK_TO_LOCAL, MAX_LISTEN_MS, RECOGNITION_LANGS, START_WATCHDOG_MS, SPEECH_PITCH, VOICE_SAMPLE, chunkSpeech, classifyRecognitionError, describeRecognitionCode, describeVoice, engineSilentMessage, hasGoodSpanishVoice, isAppleMobile, loadBestVoices, localVoiceMessages, markVoiceNoticeSeen, pickSpanishVoice, preferredVoiceEngine, rankSpanishVoices, readVoiceEngine, readVoiceNoticeSeen, readVoicePreference, recognitionMessages, speechRates, storeVoiceEngine, storeVoicePreference, toSpeakable, unlockSpeechSynthesis, unsupportedVoiceText, voiceTier, voiceTip, type SpeechRate, type VoiceEngine } from './speech';
 import { cleanTranscript, correctPlaceNames, isLocalVoiceCached, localVoiceGaps, localVoiceMegabytes, placeVocabulary } from './voice-model';
-import { getLocalTranscriber, LocalVoiceError, type PrepareProgress } from './local-asr';
+import { getLocalTranscriber, LocalVoiceError, type LocalTranscriber, type PrepareProgress } from './local-asr';
 import { decodeRecording, recordPhrase, type Recording } from './recorder';
 import './assistant.css';
 import { useT, tr } from '../../i18n/v3';
@@ -23,7 +23,7 @@ type Phase = 'ready' | 'offer' | 'preparing' | 'permission' | 'starting' | 'list
 /** A voice problem shown next to the microphone, with a retry button; `steps` lists how to unblock the permission. */
 interface VoiceProblem { message: string; steps?: readonly string[]; code?: string; offerLocal?: boolean }
 const browserRecognition = () => { const browser = window as unknown as { SpeechRecognition?: RecognitionConstructor; webkitSpeechRecognition?: RecognitionConstructor }; return browser.SpeechRecognition ?? browser.webkitSpeechRecognition; };
-const navigationLabels: Record<VoiceNavigation, string> = { plan: 'Armar mi viaje', culture: 'Cultura Viva', passport: 'Mi pasaporte', downloads: 'Mis descargas', account: 'Cuenta y negocio', alerts: 'Alertas y notificaciones' };
+const navigationLabels: Record<VoiceNavigation, string> = { plan: 'Armar mi viaje', culture: 'Fiestas', passport: 'Mi pasaporte', downloads: 'Mis descargas', account: 'Yo · Mi cuenta', alerts: 'Alertas y notificaciones' };
 /** The page may greet aloud only right after a tap or click (browsers block speech without one). */
 const hasUserGesture = () => (navigator as Navigator & { userActivation?: { isActive: boolean } }).userActivation?.isActive === true;
 /** Milliseconds for diagnostics only (never rendered). */
@@ -31,12 +31,21 @@ const elapsedClock = () => (typeof performance === 'undefined' ? Date.now() : pe
 /** 0,5 s at 16 kHz: the shortest recording worth transcribing. */
 const MIN_PHRASE_SAMPLES = 8000;
 const megabytes = (bytes: number) => (bytes / 1048576).toFixed(bytes > 10485760 ? 0 : 1);
+export const MIJIN_GREETING_KEY = 'chullavida:mijin-greeted';
 export function MijinAssistant(props: MijinAssistantProps) {
   const t = useT();
   const [open, setOpen] = useState(false);
   const [greetAloud, setGreetAloud] = useState(false);
-  const show = () => { unlockSpeechSynthesis(); setGreetAloud(hasUserGesture()); setOpen(true); };
-  useEffect(() => { const listener = () => { setGreetAloud(hasUserGesture()); setOpen(true); }; window.addEventListener('cv3:mijin', listener); return () => window.removeEventListener('cv3:mijin', listener); }, []);
+  const greeted = useRef(false);
+  const show = () => {
+    let seen = greeted.current;
+    try { seen ||= sessionStorage.getItem(MIJIN_GREETING_KEY) === '1'; } catch { /* memoria de esta instancia */ }
+    const greet = hasUserGesture() && !seen;
+    if (greet) { unlockSpeechSynthesis(); greeted.current = true; try { sessionStorage.setItem(MIJIN_GREETING_KEY, '1'); } catch { /* sin almacenamiento */ } }
+    setGreetAloud(greet); setOpen(true);
+  };
+  const showFromEvent = useEffectEvent(show);
+  useEffect(() => { const listener = () => showFromEvent(); window.addEventListener('cv3:mijin', listener); return () => window.removeEventListener('cv3:mijin', listener); }, []);
   return <><button className="mijin-launcher" onClick={show} aria-label={t("Habla con MIJIN, tu pana de aventuras")} aria-haspopup="dialog"><span className="mijin-launcher-mark" aria-hidden="true"><Mic size={21} /></span><span>{t("Habla con MIJIN")}</span></button>{open && <MijinConversation {...props} greetAloud={greetAloud} onClose={() => setOpen(false)} />}</>;
 }
 function MijinConversation({ onClose, onOpenExperience, publicExperiences, downloadedExperiences = [], downloadedAt, onOpenPrivacy, greetAloud = false }: MijinAssistantProps & { onClose: () => void; greetAloud?: boolean }) {
@@ -67,11 +76,14 @@ function MijinConversation({ onClose, onOpenExperience, publicExperiences, downl
   const [offerReason, setOfferReason] = useState('');
   const recognition = useRef<Recognition | null>(null);
   const recording = useRef<Recording | null>(null);
+  const localTranscriber = useRef<LocalTranscriber | null>(null);
+  const finishBrowserVoice = useRef<(() => void) | null>(null);
   const stream = useRef<MediaStream | null>(null);
   const audioContext = useRef<AudioContext | null>(null);
   const stage = useRef<HTMLElement>(null);
   const engineRef = useRef<VoiceEngine>(engine);
   const generation = useRef(0);
+  const speechGeneration = useRef(0);
   const mounted = useRef(true);
   const voiceAnswers = useRef(false);
   const readingEnabled = useRef(true);
@@ -98,10 +110,13 @@ function MijinConversation({ onClose, onOpenExperience, publicExperiences, downl
     current?.getTracks().forEach(track => { try { track.stop(); } catch { /* already stopped */ } });
   }, []);
   const stopAudio = useCallback(() => {
+    speechGeneration.current += 1;
     timers.current.forEach(id => window.clearTimeout(id)); timers.current = [];
     const instance = recognition.current; recognition.current = null;
     if (instance) { instance.onresult = null; instance.onend = null; instance.onerror = null; instance.onstart = null; instance.onaudiostart = null; try { instance.abort(); } catch { /* already stopped */ } }
     const active = recording.current; recording.current = null; active?.cancel();
+    finishBrowserVoice.current = null;
+    localTranscriber.current?.cancel?.(); localTranscriber.current = null;
     releaseMicrophone();
     if (hasSpeech) window.speechSynthesis.cancel();
     utterances.current = [];
@@ -124,19 +139,11 @@ function MijinConversation({ onClose, onOpenExperience, publicExperiences, downl
   useEffect(() => {
     if (!hasSpeech) return;
     const synthesis = window.speechSynthesis;
-    const refresh = () => { const list = synthesis.getVoices?.() ?? []; if (mounted.current && list.length) setVoices(list); };
+    const refresh = () => { const list = synthesis.getVoices?.() ?? []; if (mounted.current) setVoices(list); };
     refresh();
     synthesis.addEventListener?.('voiceschanged', refresh);
     return () => synthesis.removeEventListener?.('voiceschanged', refresh);
   }, [hasSpeech]);
-  // MIJIN greets aloud when the panel was opened with a tap and spoken answers are on.
-  useEffect(() => {
-    if (!greetAloud || !hasSpeech || !readingEnabled.current) return;
-    const request = generation.current;
-    const timer = window.setTimeout(() => { if (turn && !turn.question) speak(turn.answer.spokenSummary, request, true); }, 0);
-    return () => window.clearTimeout(timer);
-    // Only once, when the panel opens.
-  }, []);
   /** AudioContext for the level meter and decoding; created (and resumed) inside the tap so iOS lets it run. */
   function ensureAudioContext(): AudioContext | null {
     if (audioContext.current && audioContext.current.state !== 'closed') return audioContext.current;
@@ -155,12 +162,14 @@ function MijinConversation({ onClose, onOpenExperience, publicExperiences, downl
     if (!mounted.current || request !== generation.current) return;
     if (!hasSpeech || (!manual && (!voiceAnswers.current || !readingEnabled.current))) { setPhase('ready'); return; }
     const synthesis = window.speechSynthesis;
+    const speechRequest = ++speechGeneration.current;
     synthesis.cancel();
     const chunks = chunkSpeech(toSpeakable(text.slice(0, 1600)));
     if (!chunks.length) { setPhase('ready'); return; }
     const play = (voices: SpeechSynthesisVoice[], attempt = 0) => {
-      if (!mounted.current || request !== generation.current) return;
+      if (!mounted.current || request !== generation.current || speechRequest !== speechGeneration.current) return;
       const voice = pickSpanishVoice(voices, voicePreferenceRef.current);
+      if (!voice) { setPhase('ready'); setNotice(tr('Este navegador no trae voces en español: te respondo en texto.')); return; }
 
       voiceDebug('tts', { voice: voice?.name ?? null, lang: voice?.lang ?? null, chunks: chunks.length, rate: rateRef.current, attempt });
       let began = false;
@@ -180,7 +189,8 @@ function MijinConversation({ onClose, onOpenExperience, publicExperiences, downl
             setNotice(event?.error === 'not-allowed' ? tr("Tu navegador no me dejó leer en voz alta. Toca «Escuchar respuesta» para oírla.") : tr("La lectura no pudo completarse. La respuesta queda en los subtítulos."));
           }
         };
-        synthesis.speak(utterance);
+        try { synthesis.speak(utterance); }
+        catch { utterance.onerror?.({ error: 'synthesis-failed' } as SpeechSynthesisErrorEvent); }
       });
       // Chrome can stay paused after a cancel; resuming is harmless elsewhere.
       if (synthesis.paused) synthesis.resume?.();
@@ -201,6 +211,13 @@ function MijinConversation({ onClose, onOpenExperience, publicExperiences, downl
     const result: AssistantAnswer = canonical ?? { text, spokenSummary: text, cards: [], warnings: [], mode: online ? 'local_faq' as const : 'offline_downloads' as const, pricesAreEstimates: true as const, needsConfirmation: true as const };
     setTurn({ question, answer: result, byVoice, readBack: voiceAnswers.current }); speak(result.spokenSummary, request);
   }
+  const greet = useEffectEvent(() => {
+    if (greetAloud && hasSpeech && readingEnabled.current && turn && !turn.question) speak(turn.answer.spokenSummary, generation.current, true);
+  });
+  useEffect(() => {
+    const timer = window.setTimeout(() => greet(), 0);
+    return () => window.clearTimeout(timer);
+  }, []);
   async function consultWeather(reference: WeatherLocality, question: string, request = generation.current) {
     setWeatherPending(true); setPhase('thinking'); setNotice(tr("Consultando el pronóstico de {placeName}…", { placeName: reference.placeName }));
     try {
@@ -260,7 +277,7 @@ function MijinConversation({ onClose, onOpenExperience, publicExperiences, downl
     answer(result.text, trimmed, request, result, fromVoice);
   }
   const focusText = () => window.setTimeout(() => { if (details.current) details.current.open = true; textInput.current?.focus(); }, 0);
-  const fail = (message: string, steps?: readonly string[], code?: string, offerLocal = false) => { setPhase('error'); setHint(''); setProgress(null); setLevel(0); setProblem({ message, steps, code, offerLocal }); };
+  const fail = (message: string, steps?: readonly string[], code?: string, offerLocal = false) => { stopAudio(); setPhase('error'); setHint(''); setProgress(null); setLevel(0); setProblem({ message, steps, code, offerLocal }); };
   /**
    * The browser service failed. Codes in AUTO_LOCAL_FALLBACK switch to on-device recognition at once (asking first
    * only if the model still has to be downloaded); other recoverable codes offer it with a button.
@@ -295,6 +312,7 @@ function MijinConversation({ onClose, onOpenExperience, publicExperiences, downl
     if (!options.fallbackFrom) setOfferReason('');
     if (!readVoiceNoticeSeen()) { markVoiceNoticeSeen(); setVoiceNotice(true); }
     stopAudio(); const request = ++generation.current; setTranscript(''); if (!options.fallbackFrom) setNotice(''); setProblem(null);
+    setPhase('starting');
     if (chosen === 'local') { await listenLocally(request, Boolean(options.download)); return; }
     const isCurrent = () => mounted.current && request === generation.current;
     if (!micGranted.current) {
@@ -326,6 +344,7 @@ function MijinConversation({ onClose, onOpenExperience, publicExperiences, downl
     if (!cached && !confirmedDownload) { setPhase('offer'); setHint(''); return; }
     primeAudio(true);
     const transcriber = getLocalTranscriber();
+    localTranscriber.current = transcriber;
     setProgress(null);
     setPhase(cached ? 'starting' : 'preparing'); setHint(cached ? tr("Encendiendo el micrófono…") : '');
     const prepared = transcriber.prepare(update => { if (isCurrent()) setProgress(update); });
@@ -384,7 +403,10 @@ function MijinConversation({ onClose, onOpenExperience, publicExperiences, downl
   }
   function listen(Constructor: RecognitionConstructor, request: number, langIndex: number) {
     const lang = RECOGNITION_LANGS[langIndex] ?? RECOGNITION_LANGS[0];
-    const instance = new Constructor(); recognition.current = instance;
+    let instance: Recognition;
+    try { instance = new Constructor(); }
+    catch { browserFailed('engine-silent', engineSilentMessage); return; }
+    recognition.current = instance;
     instance.lang = lang; instance.continuous = false; instance.interimResults = true; instance.maxAlternatives = 1;
     setPhase('starting'); setHint(langIndex ? tr("Probando el reconocimiento con otra variante de español…") : tr("Encendiendo el micrófono…"));
     let started = false; let settled = false; let interimText = '';
@@ -394,6 +416,7 @@ function MijinConversation({ onClose, onOpenExperience, publicExperiences, downl
       settled = true; cancelTimer(startTimer); cancelTimer(maxTimer); cancelTimer(graceTimer);
       instance.onresult = null; instance.onend = null; instance.onerror = null; instance.onstart = null; instance.onaudiostart = null;
       if (recognition.current === instance) recognition.current = null;
+      finishBrowserVoice.current = null;
     };
     const shutdown = () => { detach(); try { instance.abort(); } catch { /* already ended */ } };
     /** Retries with the next Spanish variant; false when none is left. */
@@ -422,17 +445,23 @@ function MijinConversation({ onClose, onOpenExperience, publicExperiences, downl
         graceTimer = later(() => { if (current() && !settled) finish('grace-timeout'); }, END_GRACE_MS);
       }, MAX_LISTEN_MS);
     };
+    finishBrowserVoice.current = () => {
+      if (!current() || settled) return;
+      setPhase('transcribing'); setHint('');
+      try { instance.stop?.(); } catch { /* el respaldo resuelve el turno */ }
+      graceTimer = later(() => { if (current() && !settled) finish('manual'); }, END_GRACE_MS);
+    };
     instance.onstart = () => markStarted('start');
     instance.onaudiostart = () => markStarted('audiostart');
     instance.onresult = event => {
       if (!current() || settled) return;
       if (!started) markStarted('result-before-start');
       let interim = ''; let finalText = ''; let count = 0;
-      for (let i = event.resultIndex ?? 0; i < event.results.length; i += 1) { const item = event.results[i]; const text = item?.[0]?.transcript ?? ''; count += 1; if (item?.isFinal === false) interim += text; else finalText += text; }
+      for (let i = 0; i < event.results.length; i += 1) { const item = event.results[i]; const text = item?.[0]?.transcript ?? ''; count += 1; if (item?.isFinal === false) interim += ` ${text}`; else finalText += ` ${text}`; }
       voiceDebug('result', { results: count, final: Boolean(finalText.trim()) });
-      interimText = interim || finalText;
-      setTranscript((finalText || interim).slice(0, 1000));
-      if (finalText.trim()) { detach(); try { instance.stop?.(); } catch { /* already ended */ } ask(finalText, true); }
+      interimText = `${finalText} ${interim}`.trim();
+      setTranscript(interimText.slice(0, 1000));
+      if (finalText.trim() && !interim.trim()) { detach(); try { instance.stop?.(); } catch { /* already ended */ } ask(finalText, true); }
     };
     instance.onend = () => { voiceDebug('end', { lang }); if (current() && !settled) finish('end'); };
     instance.onerror = event => {
@@ -464,24 +493,25 @@ function MijinConversation({ onClose, onOpenExperience, publicExperiences, downl
   const labels: Record<Phase, string> = { ready: 'Aquí estoy, wambra.', offer: 'Un paso antes de hablar', preparing: 'Preparando tu voz…', permission: 'Esperando tu permiso…', starting: 'Encendiendo el micrófono…', listening: 'Escuchando…', transcribing: 'Transcribiendo…', thinking: 'Pensando…', speaking: 'Hablando…', error: 'Probemos de nuevo.' };
   const busyVoice = phase === 'listening' || phase === 'permission' || phase === 'starting' || phase === 'preparing' || phase === 'transcribing';
   const localListening = phase === 'listening' && engine === 'local';
-  const showStop = phase !== 'ready' && phase !== 'error' && phase !== 'offer';
   const voiceTap = (options: { engine?: VoiceEngine; download?: boolean } = {}) => { primeAudio(options.engine ? options.engine === 'local' : undefined); void startVoice(options); };
   const orbTap = () => {
     if (localListening) { recording.current?.finish(); return; }
+    if (phase === 'listening' && engine === 'browser') { finishBrowserVoice.current?.(); return; }
+    if (phase === 'thinking') { stopEverything(); return; }
     if (busyVoice) { stopEverything(); return; }
     voiceTap();
   };
-  const orbLabel = localListening ? 'Listo, terminé de hablar' : phase === 'preparing' || phase === 'transcribing' ? 'Cancelar y volver' : busyVoice ? 'Detener micrófono' : phase === 'speaking' ? 'Interrumpir y hablar con MIJIN' : 'Hablar con MIJIN';
+  const orbLabel = phase === 'listening' ? 'Listo, terminé de hablar' : phase === 'preparing' ? 'Cancelar descarga' : phase === 'transcribing' || phase === 'thinking' ? 'Cancelar y volver' : busyVoice ? 'Detener micrófono' : phase === 'speaking' ? 'Interrumpir y hablar con MIJIN' : 'Hablar con MIJIN';
   const megabytesNeeded = localVoiceMegabytes();
   const percent = progress && progress.stage === 'download' && progress.total ? Math.min(100, Math.round(progress.loaded / progress.total * 100)) : null;
   const help = phase === 'ready' ? (!hasVoice ? 'Escríbeme abajo: te respondo igual.' : 'Toca y habla. Te respondo cuando haces una pausa.')
-    : phase === 'offer' ? 'Se descarga una sola vez; luego funciona sin internet.'
+    : phase === 'offer' ? 'Modelo: 76 MB, más el motor de voz. Tú decides si descargarlo.'
     : phase === 'preparing' ? (progress?.stage === 'engine' ? 'Iniciando la voz en tu dispositivo…' : localVoiceMessages.preparing(megabytesNeeded))
     : phase === 'permission' || phase === 'starting' ? hint || 'Encendiendo el micrófono…'
-    : phase === 'listening' ? (engine === 'local' ? 'Habla ahora. Toca «Listo» al terminar.' : 'Habla con calma; te respondo al terminar.')
+    : phase === 'listening' ? (engine === 'local' ? 'Habla ahora. Toca el micrófono al terminar.' : 'Habla con calma; te respondo al terminar.')
     : phase === 'transcribing' ? 'Paso tu voz a texto aquí mismo, sin enviarla.'
     : phase === 'thinking' ? 'Buscando… Puedes detenerme.'
-    : phase === 'speaking' ? 'Toca para interrumpirme.'
+    : phase === 'speaking' ? 'Toca para interrumpir y hablar.'
     : 'Micrófono apagado. Reintenta o escríbeme.';
   const retry = () => voiceTap();
   const openPlace = (id: string) => { close(); onOpenExperience?.(id); };
@@ -509,22 +539,20 @@ function MijinConversation({ onClose, onOpenExperience, publicExperiences, downl
   const actions = (turn?.answer.actions ?? []).filter(action => (action.target !== 'privacy' || onOpenPrivacy) && action.target !== navigation);
   const chips = turn?.answer.chips ?? [];
   return <Dialog title={t("MIJIN · Tu pana de aventuras")} onClose={close} wide><div className={`mijin-panel mijin-voice-first phase-${phase} engine-${engine}`}>
-    <div className="mijin-mode"><span><Sparkles size={16} />{t("Tu guía por voz")}</span><span>{online ? t("{length} fichas", { length: catalog.length }) : <><WifiOff size={15} />{catalog.length} descargadas</>}</span></div>
+    <div className="mijin-mode"><span><Sparkles size={16} />{t("Tu pana de aventuras")}</span><span>{online ? t("{length} fichas", { length: catalog.length }) : <><WifiOff size={15} />{catalog.length} descargadas</>}</span></div>
     <section ref={stage} className="mijin-stage" aria-label={t("Conversación de voz con MIJIN")}>
-      <div className="mijin-orb-wrap"><span className="mijin-orbit orbit-one" /><span className="mijin-orbit orbit-two" /><button className="mijin-orb" aria-describedby="mijin-voice-help" onClick={orbTap} aria-label={orbLabel}><span className="mijin-orb-core" /><span className="mijin-orb-icon">{localListening ? <Check size={36} /> : phase === 'preparing' || phase === 'transcribing' ? <X size={32} /> : busyVoice ? <MicOff size={34} /> : phase === 'speaking' ? <Volume2 size={34} /> : <Mic size={34} />}</span><span className="mijin-wave" aria-hidden="true">{[0, 1, 2, 3, 4, 5, 6].map(index => <i key={index} style={{ '--bar': index } as CSSProperties} />)}</span></button></div>
-      <h3 role="status">{labels[phase]}</h3>
+      <div className="mijin-orb-wrap"><span className="mijin-orbit orbit-one" /><span className="mijin-orbit orbit-two" /><button className="mijin-orb" aria-describedby="mijin-voice-help" onClick={orbTap} disabled={phase === 'offer'} aria-label={t(orbLabel)}><span className="mijin-orb-core" /><span className="mijin-orb-icon">{localListening ? <Check size={36} /> : phase === 'preparing' || phase === 'transcribing' ? <X size={32} /> : busyVoice ? <MicOff size={34} /> : phase === 'speaking' ? <Volume2 size={34} /> : <Mic size={34} />}</span><span className="mijin-wave" aria-hidden="true">{[0, 1, 2, 3, 4, 5, 6].map(index => <i key={index} style={{ '--bar': index } as CSSProperties} />)}</span></button></div>
+      <p className="mijin-mic-action">{t(orbLabel)}</p><h3 role="status">{t(labels[phase])}</h3>
       <p id="mijin-voice-help" className={phase === 'permission' ? 'mijin-permission-hint' : undefined}>{help}</p>
       {localListening && <div className="mijin-level" aria-hidden="true"><span /></div>}
       {phase === 'listening' && engine === 'browser' && <p className="mijin-live">{transcript ? `«${transcript}»` : t("Habla ahora…")}</p>}
-      {localListening && <button className="button mijin-done" onClick={() => recording.current?.finish()}><Check size={18} />{t("Listo, ya terminé")}</button>}
       {phase === 'preparing' && <div className="mijin-progress-wrap"><div className="mijin-progress" role="progressbar" aria-label={t("Descarga de la voz para tu dispositivo")} aria-valuemin={0} aria-valuemax={100} aria-valuenow={percent ?? undefined} aria-valuetext={percent === null ? t("Iniciando") : `${percent} %`}><span style={{ width: `${percent ?? (progress?.stage === 'engine' ? 100 : 2)}%` }} /></div><small>{progress?.stage === 'download' && progress.total ? `${megabytes(progress.loaded)} de ${megabytes(progress.total)} MB` : t("Un momento…")}</small></div>}
       {offerReason && phase !== 'offer' && <p className="mijin-fallback-note" role="note">{offerReason}{' '}{t("Cambié a la voz de este dispositivo.")}</p>}
       {phase === 'offer' && <div className="mijin-voice-offer" role="group" aria-label={t("Descargar la voz para este dispositivo")}>{offerReason && <p className="mijin-offer-reason">{offerReason}</p>}<p>{localVoiceMessages.offer(megabytesNeeded)}</p><div><button className="button button-primary" onClick={() => voiceTap({ engine: 'local', download: true })}><Download size={17} />{t("Descargar y hablar")}</button><button className="mijin-control" onClick={() => { setPhase('ready'); focusText(); }}><Keyboard size={17} />{t("Mejor escribo")}</button></div></div>}
       {problem && <div className="mijin-voice-problem" role="alert"><p>{problem.message}</p>{problem.code && <p className="mijin-problem-code">{describeRecognitionCode(problem.code)}</p>}{problem.steps && <ol>{problem.steps.map(step => <li key={step}>{step}</li>)}</ol>}<div>{problem.offerLocal && <button className="button button-primary" onClick={() => voiceTap({ engine: 'local' })}><Cpu size={17} />{t("Usar voz en mi dispositivo")}</button>}<button className="button button-secondary mijin-retry" onClick={retry}><RotateCcw size={17} />{t("Reintentar")}</button><button className="mijin-control" onClick={() => { setProblem(null); setPhase('ready'); focusText(); }}><Keyboard size={17} />{t("Mejor escribo")}</button></div></div>}
       {engine === 'local' && hasVoice && <p className="mijin-local-privacy"><ShieldCheck size={16} aria-hidden="true" />{localVoiceMessages.privacy}</p>}
-      <div className="mijin-stage-controls">{showStop && <button className="mijin-control mijin-stop" onClick={stopEverything}><Square size={15} />{t("Detener")}</button>}<button className="mijin-control" aria-pressed={readAnswers} onClick={() => { const enabled = !readAnswers; readingEnabled.current = enabled; if (!enabled) voiceAnswers.current = false; setReadAnswers(enabled); if (hasSpeech) window.speechSynthesis.cancel(); if (phase === 'speaking') setPhase('ready'); setNotice(enabled ? t("Leeré en voz alta lo que te responda cuando me hables.") : t("No leeré en voz alta; las respuestas quedan en los subtítulos.")); }}>{readAnswers ? <Volume2 size={17} /> : <VolumeX size={17} />}{t("Respuesta con voz")}</button></div>
+      <div className="mijin-stage-controls"><button className="mijin-control" disabled={!hasSpeech} aria-pressed={readAnswers} onClick={() => { const enabled = !readAnswers; readingEnabled.current = enabled; if (!enabled) voiceAnswers.current = false; setReadAnswers(enabled); speechGeneration.current += 1; if (hasSpeech) window.speechSynthesis.cancel(); if (phase === 'speaking') setPhase('ready'); setNotice(enabled ? t("Leeré en voz alta lo que te responda cuando me hables.") : t("No leeré en voz alta; las respuestas quedan en los subtítulos.")); }}>{readAnswers ? <Volume2 size={17} /> : <VolumeX size={17} />}{t("Respuesta con voz")}</button></div>
       {voiceNotice && engine === 'browser' && <p className="mijin-voice-notice" role="note">{t("Tu voz la reconoce el navegador (Google o Apple). CHULLA VIDA no guarda audio.")}</p>}
-      {tip && <p className="mijin-voice-tip" role="note">{tip}</p>}
     </section>
     {!online && <div className="mijin-permission"><p className="mijin-support-note">{t("Sin conexión: uso tus fichas descargadas")}{downloadedAt ? ` (${downloadedAt})` : ''}{t(". Clima y reservas necesitan internet.")}</p></div>}
     {captions && <section className="mijin-captions" aria-label={t("Subtítulos de la conversación")} aria-live="polite">{transcript && <p className="mijin-heard"><span>{t("Tú")}</span>{transcript}</p>}{turn?.byVoice && phase !== 'listening' && <button className="text-button mijin-correct" onClick={correct}><Pencil size={15} />{t("Corregir lo que entendí")}</button>}{turn && <div className="mijin-caption-answer"><span>MIJIN</span><p>{!turn.question && turn.answer.text === '¡Hola, wambra! Soy MIJIN, tu pana de aventuras. ¿Desde dónde sales?' ? t('¡Hola, wambra! Soy MIJIN, tu pana de aventuras. ¿Desde dónde sales?') : turn.answer.text}</p>{turn.question ? <SpanishContentNote text="MIJIN responde en español por ahora" /> : null}<div className="mijin-answer-tools">{hasSpeech && phase !== 'speaking' && <button className="text-button mijin-listen" onClick={() => { unlockSpeechSynthesis(); stopAudio(); const request = ++generation.current; speak(turn.answer.spokenSummary, request, true); }}><Volume2 size={16} />{t("Escuchar respuesta")}</button>}</div>{turn.answer.details && <details className="mijin-more"><summary>{t("Ver detalle")}</summary><p>{turn.answer.details}</p></details>}</div>}</section>}
@@ -539,6 +567,8 @@ function MijinConversation({ onClose, onOpenExperience, publicExperiences, downl
     <details ref={details} className="mijin-accessible" open onToggle={event => setTextFallback(event.currentTarget.open)}><summary>{t("Escríbele a MIJIN")}</summary>{textFallback && <form className="mijin-form" onSubmit={submit}><label><span className="sr-only">{t("Consulta accesible para MIJIN")}</span><input ref={textInput} value={input} onChange={event => setInput(event.target.value)} placeholder={t("Ej.: algo barato cerca de Quito")} maxLength={1000} enterKeyHint="send" /></label><button className="button button-primary" type="submit" aria-label={t("Consultar a MIJIN")} disabled={!input.trim()}><Send size={17} aria-hidden="true" /><span>{t("Enviar")}</span></button></form>}</details>
     <details className="mijin-settings"><summary><Settings2 size={17} aria-hidden="true" /><span>{t("Voz de MIJIN")}</span>{currentVoice && <small>{describeVoice(currentVoice)}</small>}</summary>
       <div className="mijin-settings-body">
+        <p className="mijin-support-note">{t("Solo aparecen las voces disponibles en tu navegador.")}</p>
+        {tip && <p className="mijin-voice-tip" role="note">{tip}</p>}
         {hasSpeech && spanishVoices.length > 0 && <div className="mijin-voice-pick"><label><span>{t("Voz de MIJIN")}</span><select value={currentVoice?.name ?? ''} onChange={event => chooseVoice(event.target.value)}>{spanishVoices.map(voice => <option key={`${voice.name}-${voice.lang}`} value={voice.name}>{describeVoice(voice)}{voiceTier(voice.name) <= 2 && voice === spanishVoices[0] ? t(" (recomendada)") : ''}</option>)}</select></label><button className="button button-secondary" onClick={playSample}><Volume2 size={16} />{t("Escuchar")}</button></div>}
         {hasSpeech && !spanishVoices.length && <p className="mijin-support-note">{t("Este navegador no trae voces en español: te respondo en texto.")}</p>}
         <div className="mijin-settings-row">{hasSpeech && <label className="mijin-setting"><span>{t("Velocidad")}</span><select value={rate} onChange={event => { const value = Number(event.target.value) as SpeechRate; rateRef.current = value; setRate(value); }}>{speechRates.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label>}<button className="mijin-setting" aria-pressed={captions} onClick={() => setCaptions(!captions)}><Captions size={17} />{t("Subtítulos")}{' '}{captions ? 'activados' : 'desactivados'}</button></div>

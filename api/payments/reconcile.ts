@@ -6,7 +6,7 @@ import { authenticatedUser,method,paymentConfig,providerPost,readPaymentStatus,s
 export default async function handler(req: VercelRequest,res: VercelResponse) {
   if (!method(req,res,'POST')) return;
   const body = req.body;
-  if (!body || typeof body !== 'object' || !isPaymentReference(body.reference) || Object.keys(body).some(key => key !== 'reference'))
+  if (!body || typeof body !== 'object' || Array.isArray(body) || !isPaymentReference(body.reference) || Object.keys(body).some(key => key !== 'reference'))
     return res.status(400).json({error:'Referencia no válida.'});
   const config = paymentConfig();
   if (!config.ready) return res.status(503).json({error:'El servicio de pagos todavía no está conectado.'});

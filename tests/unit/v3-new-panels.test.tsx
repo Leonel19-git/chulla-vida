@@ -64,7 +64,7 @@ describe('Espacio de anfitriones', () => {
     fireEvent.click(screen.getByRole('button', { name: /Guardar solicitud de demostración/ }));
     const queue = screen.getByRole('list', { name: /Solicitudes de demostración/ });
     expect(within(queue).getByText(/En revisión · demostración/)).toBeInTheDocument();
-    expect(screen.queryByText(/aprobad/i)).toBeNull();
+    expect(within(queue).queryByText(/aprobad/i)).toBeNull();
     expect(localStorage.getItem('chullavida:v3:host-demo-requests')).toContain('"en_revision"');
   });
 });

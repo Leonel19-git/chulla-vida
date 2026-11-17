@@ -30,7 +30,7 @@ const client = {
         : table === 'merchant_verification_requests' ? [{ id: 'request-a', organization_id: 'org-a', status: 'submitted', created_at: '2026-11-12' }]
           : table === 'experience_requests' ? [{ id: 'inquiry-a', experience_id: 'source-1', message: 'Consulta privada A', status: 'requested', created_at: '2026-11-12' }] : [];
     const response = Promise.resolve({ data: mocks.failedLoad ? null : rows, error: mocks.failedLoad ? new Error('network unavailable') : null });
-    return Object.assign(response, { select: () => response, order: () => response, limit: () => response });
+    return Object.assign(response, { select: () => response, eq: () => response, order: () => response, limit: () => response });
   }),
 };
 vi.mock('../../src/lib/supabase', () => ({
@@ -55,6 +55,7 @@ function pasteCode(code: string) {
 async function fillSignup(user: ReturnType<typeof userEvent.setup>, options: { terms?: boolean } = {}) {
   await user.click(screen.getByRole('button', { name: 'Crear cuenta' }));
   await user.type(screen.getByLabelText('Cómo te llamas'), 'Amaru');
+  await user.type(screen.getByLabelText('Cédula ecuatoriana'), '0102030400');
   await user.type(screen.getByLabelText('Correo electrónico'), 'viajera@example.com');
   await user.type(screen.getByLabelText('Contraseña'), STRONG);
   if (options.terms !== false) await user.click(screen.getByRole('checkbox', { name: /Acepto los Términos/ }));
@@ -91,6 +92,8 @@ describe('registro con código de 6 dígitos', () => {
     const terms = screen.getByRole('checkbox', { name: /Acepto los Términos/ });
     const marketing = screen.getByRole('checkbox', { name: /novedades/ });
     expect(terms).not.toBeChecked(); expect(marketing).not.toBeChecked(); expect(submit).toBeDisabled();
+    await user.type(screen.getByLabelText('Cómo te llamas'), 'Amaru');
+    await user.type(screen.getByLabelText('Cédula ecuatoriana'), '0102030400');
     await user.type(screen.getByLabelText('Correo electrónico'), 'viajera@example.com');
     await user.type(screen.getByLabelText('Contraseña'), 'corta1');
     expect(screen.getByText('Al menos 10 caracteres')).toHaveTextContent(/pendiente/);
@@ -156,6 +159,8 @@ describe('registro con código de 6 dígitos', () => {
     render(<AuthPanel />);
     await act(async () => { await Promise.resolve(); });
     fireEvent.click(screen.getByRole('button', { name: 'Crear cuenta' }));
+    fireEvent.change(screen.getByLabelText('Cómo te llamas'), { target: { value: 'Amaru' } });
+    fireEvent.change(screen.getByLabelText('Cédula ecuatoriana'), { target: { value: '0102030400' } });
     fireEvent.change(screen.getByLabelText('Correo electrónico'), { target: { value: 'viajera@example.com' } });
     fireEvent.change(screen.getByLabelText('Contraseña'), { target: { value: STRONG } });
     fireEvent.click(screen.getByRole('checkbox', { name: /Acepto los Términos/ }));
@@ -221,8 +226,10 @@ describe('acceso y recuperación', () => {
 
   it('retira los datos privados de A al entrar B aunque la nueva carga falle', async () => {
     mocks.session = { user: { id: 'user-a', email: 'a@example.com' } };
+    roleStore.requestHost(); // La revisión administrativa solo existe en la vista de negocio.
     render(<AuthPanel />);
     expect(await screen.findByText('Organización privada A')).toBeInTheDocument();
+    await act(async () => roleStore.requestTraveler());
     expect(screen.getByText('Consulta privada A')).toBeInTheDocument();
     mocks.failedLoad = true;
     await act(async () => mocks.listener?.('SIGNED_IN', { user: { id: 'user-b', email: 'b@example.com' } }));

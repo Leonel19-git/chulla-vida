@@ -16,7 +16,7 @@ describe('index.html para iPhone', () => {
   });
   it('declara icono de inicio, color de tema y modo app', () => {
     expect(html).toMatch(/<link rel="apple-touch-icon"[^>]*href="\/brand\/icon-180\.png"/);
-    expect(html).toMatch(/<meta name="theme-color" content="#103452"/);
+    expect(html).toMatch(/<meta name="theme-color" content="#ffc83d"/);
     expect(html).toMatch(/<meta name="apple-mobile-web-app-capable" content="yes"/);
     expect(html).toMatch(/<meta name="apple-mobile-web-app-title" content="CHULLA VIDA"/);
     expect(html).toMatch(/<meta name="format-detection" content="telephone=no"/);
@@ -28,7 +28,7 @@ describe('manifest', () => {
   it('abre en modo standalone, con tema e iconos 192/512 y uno enmascarable', () => {
     expect(manifest.display).toBe('standalone');
     expect(manifest.start_url).toBe('/');
-    expect(manifest.theme_color).toBe('#103452');
+    expect(manifest.theme_color).toBe('#ffc83d');
     const sizes = manifest.icons.map((icon: { sizes: string }) => icon.sizes);
     expect(sizes).toEqual(expect.arrayContaining(['192x192', '512x512']));
     expect(manifest.icons.some((icon: { purpose?: string }) => icon.purpose === 'maskable')).toBe(true);

@@ -34,7 +34,7 @@ const steps: TourStep[] = [
 
 describe('recorrido guiado sobre la página real', () => {
   it('cubre todas las partes pedidas, en orden y con data-tour', () => {
-    expect(TOUR_STEPS.map(step => step.id)).toEqual(['regions', 'search', 'card', 'buy', 'mijin', 'plan', 'wallet', 'offline', 'passport', 'account', 'host', 'privacy']);
+    expect(TOUR_STEPS.map(step => step.id)).toEqual(['album', 'regions', 'search', 'filters', 'card', 'plan', 'mijin', 'culture', 'passport', 'account']);
     for (const step of TOUR_STEPS) expect(step.targets[0]).toMatch(/data-tour=/);
   });
   it('encuentra el primer objetivo visible y descarta los que no miden nada', () => {
@@ -89,21 +89,25 @@ describe('recorrido guiado sobre la página real', () => {
     expect(root.inert).toBe(false);
     vi.unstubAllGlobals();
   });
-  it('el paso de anfitriones solo aparece para invitados', async () => {
+  it('los anfitriones tienen un recorrido separado del viajero y del invitado', async () => {
     const { stepsForRole } = await import('../../src/features/onboarding/GuidedTour');
     const { roleStore } = await import('../../src/features/roles');
     roleStore.reset();
-    expect(stepsForRole().some(step => step.id === 'host')).toBe(true);
+    expect(stepsForRole().some(step => step.id === 'host')).toBe(false);
     roleStore.setWelcomePath('traveler');
     expect(stepsForRole().some(step => step.id === 'host')).toBe(false);
+    roleStore.requestHost();
+    expect(stepsForRole().some(step => step.id === 'host')).toBe(true);
+    expect(stepsForRole().some(step => step.id === 'regions')).toBe(false);
     roleStore.reset();
   });
-  it('si la parte no está a la vista lo dice y centra el globo sin foco', () => {
-    mountPage([]);
+  it('salta las partes ausentes sin afirmar que están en un menú', () => {
+    mountPage(['account']);
     render(<GuidedTour onClose={() => {}} steps={steps} />);
-    expect(screen.getByText(/Está en el menú/)).toBeInTheDocument();
-    expect(document.querySelector('.cv-tour-spot')).toBeNull();
-    expect(document.querySelector('.cv-tour-dim')).not.toBeNull();
+    expect(screen.getByRole('dialog', { name: 'Entrar o crear cuenta' })).toBeInTheDocument();
+    expect(screen.getByText('Paso 1 de 1')).toBeInTheDocument();
+    expect(screen.queryByText(/Está en el menú/)).not.toBeInTheDocument();
+    expect(document.querySelector('.cv-tour-spot')).not.toBeNull();
   });
   it('el último paso termina el recorrido y lo marca como hecho', () => {
     mountPage(['regions', 'search', 'account']);

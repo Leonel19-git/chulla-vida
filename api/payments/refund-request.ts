@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { isPaymentReference } from '../../src/domain/payments/index.js';
 import { authenticatedUser, paymentConfig, privateResponse, serviceClient } from '../../src/domain/payments/server.js';
+import { requestBoundary } from '../_request.js';
 
 /** A request for human review only. This handler never invokes a provider refund operation. */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -8,6 +9,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'GET' && req.method !== 'POST') {
     res.setHeader('Allow', 'GET, POST'); return res.status(405).json({ error: 'Método no permitido.' });
   }
+  if (!requestBoundary(req, res, req.method === 'GET')) return;
   const body = req.body as Record<string, unknown> | undefined;
   const bookingId = req.method === 'GET' ? req.query.bookingId : body?.bookingId;
   if (!isPaymentReference(bookingId)) return res.status(400).json({ error: 'Reserva no válida.' });

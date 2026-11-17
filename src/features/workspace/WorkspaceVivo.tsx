@@ -1,3 +1,4 @@
+import { AccountRequired } from './AccountRequired';
 import { lazy, Suspense, useEffect, useId, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type ReactNode } from 'react';
 import { ChevronDown, Compass, Store, Bell, BookOpen, CircleHelp, CreditCard, Download, FilePenLine, FileText, Image as ImageIcon, Map, Mic, MoreHorizontal, PlayCircle, ShieldCheck, UserRound, Wallet } from 'lucide-react';
 import { REGION_LABELS, type RegionId } from '../../domain/catalog';
@@ -134,7 +135,7 @@ function WorkspaceContent() {
     {panel === 'editorial' && <Dialog title={t("Estudio de contenido")} onClose={() => setPanel('')} wide><div className="dialog-content"><Suspense fallback={loading}><EditorialPanel onPublished={() => window.dispatchEvent(new Event('cv3:catalog-updated'))} /></Suspense></div></Dialog>}
     {panel === 'alerts' && <Dialog title={t("Tus avisos, a tu manera")} onClose={() => setPanel('')} wide><div className="dialog-content"><Suspense fallback={loading}><NotificationCenter /></Suspense></div></Dialog>}
     {panel === 'host' && <Suspense fallback={loading}><HostHub onClose={() => setPanel('')} /></Suspense>}
-    {panel === 'wallet' && <Suspense fallback={loading}><WalletPanel onClose={() => setPanel('')} onOpenExperience={id => { setPanel(''); select(id); }} /></Suspense>}
+    {panel === 'wallet' && <Suspense fallback={loading}><AccountRequired onClose={() => setPanel('')}><WalletPanel onClose={() => setPanel('')} onOpenExperience={id => { setPanel(''); select(id); }} /></AccountRequired></Suspense>}
     {panel === 'privacy-rights' && <Suspense fallback={loading}><RightsRequestForm onClose={() => setPanel('')} /></Suspense>}
     <Suspense fallback={null}><WelcomeGate /></Suspense>
     <Suspense fallback={null}><TourGate /></Suspense>

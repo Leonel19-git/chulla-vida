@@ -7,9 +7,10 @@ import { useWallet } from '../wallet/store';
 import { experiences } from '../../domain/catalog';
 import { PRIVACY_VERSION } from '../auth/auth-flow';
 import { useMembership } from '../../context/MembershipContext';
+import { SIGNUP_IDENTITY_EVENT } from '../../domain/identity';
 import {
   BOOKING_STATUS, INTEREST_IDS, INTEREST_LABELS, PAYMENT_STATUS, PROFILE_LIMITS, cardLabel, closeContainingDialog, emptyPreferences, formatMoney,
-  loadPurchases, loadTravelerProfile, loadVerifiedStamps, preferencesFromOnboarding, profileProblems, saveMarketingChoice, saveTravelerDocument,
+  loadPurchases, loadTravelerDocument, loadTravelerProfile, loadVerifiedStamps, preferencesFromOnboarding, profileProblems, saveMarketingChoice, saveTravelerDocument,
   saveTravelerProfile, type BookingRow, type PaymentRow, type TravelerPreferences, type TravelerProfile as Profile,
 } from './profile';
 import './traveler.css';
@@ -59,9 +60,11 @@ export function TravelerProfile({ client, session, welcomeName, onSignOut, busy:
   const [marketing, setMarketing] = useState(false);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<{ tone: 'success' | 'error' | 'info'; text: string } | null>(null);
+  const [noticeScope, setNoticeScope] = useState<'profile' | 'document' | 'marketing'>('profile');
   const [purchases, setPurchases] = useState<{ bookings: BookingRow[]; payments: PaymentRow[] } | null>(null);
   const [purchaseError, setPurchaseError] = useState(false);
   const [verifiedCount, setVerifiedCount] = useState<number | null>(null);
+  const [loadRevision, setLoadRevision] = useState(0);
 
   useEffect(() => {
     let active = true;
@@ -75,10 +78,29 @@ export function TravelerProfile({ client, session, welcomeName, onSignOut, busy:
     loadPurchases(client).then(value => { if (active) setPurchases(value); }).catch(() => { if (active) setPurchaseError(true); });
     loadVerifiedStamps(client, userId).then(rows => { if (active) setVerifiedCount(rows.length); }).catch(() => { if (active) setVerifiedCount(null); });
     return () => { active = false; };
-  }, [client, userId, metadataName, onboarding]);
+  }, [client, userId, metadataName, onboarding, loadRevision]);
+
+  useEffect(() => {
+    let active = true;
+    const update = (event: Event) => {
+      if (!(event as CustomEvent<{ saved: boolean }>).detail?.saved) {
+        setNoticeScope('document');
+        setNotice({ tone: 'info', text: tr('Tu cuenta está activa. No se guardó la cédula; puedes añadirla aquí.') });
+        return;
+      }
+      void loadTravelerDocument(client, userId).then(document => {
+        if (!active || !document) return;
+        setProfile(value => value ? { ...value, document } : value); setEditingDocument(false);
+      }).catch(() => undefined);
+    };
+    window.addEventListener(SIGNUP_IDENTITY_EVENT, update);
+    return () => { active = false; window.removeEventListener(SIGNUP_IDENTITY_EVENT, update); };
+  }, [client, userId]);
 
   async function saveProfile(event: FormEvent) {
     event.preventDefault();
+    if (busy || parentBusy) return;
+    setNoticeScope('profile');
     const problems = profileProblems({ displayName: name, homeCountry: country, homeCity: city });
     if (problems.length) { setNotice({ tone: 'error', text: problems.join(' ') }); return; }
     setBusy(true); setNotice(null);
@@ -90,6 +112,8 @@ export function TravelerProfile({ client, session, welcomeName, onSignOut, busy:
     finally { setBusy(false); }
   }
   async function saveDocument() {
+    if (busy || parentBusy) return;
+    setNoticeScope('document');
     const validity = documentValidity(documentValue);
     if (!validity.valid) { setNotice({ tone: 'error', text: tr("Revisa el documento: el formato todavía no es válido.") }); return; }
     setBusy(true); setNotice(null);
@@ -102,6 +126,8 @@ export function TravelerProfile({ client, session, welcomeName, onSignOut, busy:
     finally { setBusy(false); }
   }
   async function toggleMarketing(next: boolean) {
+    if (busy || parentBusy) return;
+    setNoticeScope('marketing');
     setBusy(true); setNotice(null);
     try { await saveMarketingChoice(client, next, PRIVACY_VERSION); setMarketing(next); setNotice({ tone: 'success', text: next ? tr("Te escribiremos con novedades, fiestas y ofertas. Puedes darte de baja cuando quieras.") : tr("Listo: ya no te enviaremos novedades ni ofertas por correo.") }); }
     catch { setNotice({ tone: 'error', text: tr("No se pudo guardar tu preferencia de correos. Vuelve a intentarlo.") }); }
@@ -143,10 +169,11 @@ export function TravelerProfile({ client, session, welcomeName, onSignOut, busy:
     </nav>
 
     {load === 'loading' && <p className="traveler-loading" role="status"><span className="cv-skeleton" />{t("Cargando tu perfil…")}</p>}
-    {load === 'error' && <p className="auth-notice auth-notice-error" role="alert">{t("No pudimos cargar tu perfil. Tu sesión sigue abierta; revisa tu conexión y vuelve a abrir este panel.")}</p>}
+    {load === 'error' && <div className="auth-notice auth-notice-error" role="alert"><p>{t('No pudimos cargar tu perfil. Tu sesión sigue abierta.')}</p><button type="button" className="button button-secondary" onClick={() => { setLoad('loading'); setLoadRevision(value => value + 1); }}>{t('Volver a cargar')}</button></div>}
     {load === 'ready' && profile && <>
       <form className="traveler-section auth-form" onSubmit={saveProfile} aria-labelledby={`${ids}-profile`}>
         <h3 id={`${ids}-profile`}>{t("Tu perfil viajero")}</h3>
+        <fieldset className="traveler-edit" disabled={working}><legend className="sr-only">{t('Datos y preferencias')}</legend>
         <div className="auth-field"><label htmlFor={`${ids}-name`}>{t("Nombre visible")}</label><input id={`${ids}-name`} className="field" autoComplete="nickname" maxLength={PROFILE_LIMITS.displayName} value={name} onChange={event => setName(event.target.value)} required /></div>
         <div className="traveler-two">
           <div className="auth-field"><label htmlFor={`${ids}-country`}>{t("País de origen")}</label><input id={`${ids}-country`} className="field" list={`${ids}-countries`} autoComplete="country-name" maxLength={PROFILE_LIMITS.homeCountry} value={country} onChange={event => setCountry(event.target.value)} placeholder={t("Ecuador")} /><datalist id={`${ids}-countries`}>{COUNTRIES.map(item => <option key={item} value={item} />)}</datalist></div>
@@ -162,20 +189,24 @@ export function TravelerProfile({ client, session, welcomeName, onSignOut, busy:
           {onboarding?.completed && <p className="auth-fine">{t("Precargado desde la bienvenida.")}</p>}
         </fieldset>
         <button className="button button-primary" disabled={working}><Save size={16} />{busy ? t("Guardando…") : t("Guardar mi perfil")}</button>
+        </fieldset>
+        {noticeScope === 'profile' && noticeView}
       </form>
 
       <section className="traveler-section" aria-labelledby={`${ids}-doc`}>
-        <h3 id={`${ids}-doc`}><IdCard size={20} aria-hidden="true" />{t("Cédula o pasaporte")}{' '}<small>{t("(opcional)")}</small></h3>
-        <p className="auth-fine">{t("Agiliza tus compras. Solo guardamos los últimos 4; nada queda en este navegador.")}</p>
-        {profile.document && !editingDocument ? <div className="traveler-doc"><span>{profile.document.type === 'cedula' ? t("Cédula") : t("Pasaporte")} <strong>•••• {profile.document.last4}</strong></span><button type="button" className="text-button" onClick={() => setEditingDocument(true)}>{t("Cambiar")}</button></div>
+        <h3 id={`${ids}-doc`}><IdCard size={20} aria-hidden="true" />{t("Cédula o pasaporte")}</h3>
+        <p className="auth-fine">{t('Identidad por verificar. Solo conservamos los últimos cuatro.')}</p>
+        {profile.document && !editingDocument ? <div className="traveler-doc"><span>{profile.document.type === 'cedula' ? t("Cédula") : t("Pasaporte")} <strong>•••• {profile.document.last4}</strong></span><button type="button" className="text-button" disabled={working} onClick={() => setEditingDocument(true)}>{t("Cambiar")}</button></div>
           : <><CedulaField value={documentValue} onChange={setDocumentValue} disabled={working} />
             <div className="auth-actions"><button type="button" className="button button-secondary" disabled={working || !documentValidity(documentValue).valid} onClick={() => void saveDocument()}>{t("Guardar documento")}</button>
-              {profile.document && <button type="button" className="text-button" onClick={() => { setEditingDocument(false); setDocumentValue({ type: 'cedula', number: '' }); }}>{t("Cancelar")}</button>}</div></>}
+              {profile.document && <button type="button" className="text-button" disabled={working} onClick={() => { setEditingDocument(false); setDocumentValue({ type: 'cedula', number: '' }); }}>{t("Cancelar")}</button>}</div></>}
+        {noticeScope === 'document' && noticeView}
       </section>
 
       <section className="traveler-section" aria-labelledby={`${ids}-mail`}>
         <h3 id={`${ids}-mail`}>{t("Correos de novedades")}</h3>
         <label className="auth-check"><input type="checkbox" checked={marketing} disabled={working} onChange={event => void toggleMarketing(event.target.checked)} /><span>{t("Quiero recibir novedades, fiestas y ofertas por correo. Opcional.")}</span></label>
+        {noticeScope === 'marketing' && noticeView}
       </section>
     </>}
 
@@ -195,6 +226,5 @@ export function TravelerProfile({ client, session, welcomeName, onSignOut, busy:
       {purchases && purchases.bookings.length === 0 && testPurchases.length === 0 && <div className="traveler-empty"><ShoppingBag size={34} aria-hidden="true" /><p><strong>{t("Todavía no tienes compras ni reservas.")}</strong></p>
         <button type="button" className="button button-primary" onClick={event => explore(event.currentTarget)}>{t("Explorar experiencias")}<ArrowRight size={16} /></button></div>}
     </section>
-    {noticeView}
   </div>;
 }

@@ -98,7 +98,7 @@ scope.onmessage = async (event: MessageEvent<Inbound>) => {
   }
   if (message.type === 'transcribe') {
     try {
-      ready ??= load();
+      if (!ready) throw new Error('Primero autoriza y prepara la voz local.');
       const asr = await ready;
       const output = await asr(message.audio, { language: 'spanish', task: 'transcribe', return_timestamps: false, chunk_length_s: 30 });
       const text = Array.isArray(output) ? output.map(item => item.text ?? '').join(' ') : output.text ?? '';

@@ -45,7 +45,7 @@ describe('MIJIN usa contexto público y responde con límites honestos', () => {
   it('proveedor apagado devuelve indisponible sin fingir IA ni éxito', async () => {
     vi.stubEnv('ASSISTANT_ENABLED', 'false');
     const response = { setHeader: vi.fn(), status: vi.fn(), json: vi.fn() }; response.status.mockReturnValue(response);
-    await handler({ method: 'POST' } as never, response as never);
+    await handler({ method: 'POST', headers: {}, query: {}, body: { question: 'Hola', consentRemote: true } } as never, response as never);
     expect(response.status).toHaveBeenCalledWith(503);
     expect(response.json).toHaveBeenCalledWith(expect.objectContaining({ mode: 'unconfigured' }));
   });
