@@ -2,24 +2,24 @@ import { lazy, Suspense, type ReactNode, useEffect, useId, useRef, useState, typ
 const MoneyFlow = lazy(() => import('../transparency/MoneyFlow').then(module => ({ default: module.MoneyFlow })));
 import { experienceVisual } from './experienceArt';
 import { prefersReducedMotion, useReveal } from '../../components/common/motion';
-import { ArrowDown, ArrowRight, ArrowUpRight, Bookmark, ChevronLeft, ChevronRight, Clock3, Compass, Download, Heart, Info, Leaf, MapPin, Mic, Mountain, PawPrint, Search, ShieldCheck, SlidersHorizontal, Stamp, Trees, Waves, X } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Bookmark, ChevronLeft, ChevronRight, Clock3, Compass, Download, Heart, Info, Leaf, MapPin, Mic, Mountain, PawPrint, Search, ShieldCheck, SlidersHorizontal, Stamp, Trees, Waves, X } from 'lucide-react';
 import { catalogSourceDownload, catalogSources, filterExperiences, formatExperiencePrice, REGION_LABELS, type Experience, type RegionId } from '../../domain/catalog';
 import { useApp } from '../../context/AppContext';
 import { Dialog } from '../../components/chulla/Dialog';
 import { LocationPanel } from '../location/LocationPanel';
 import { useCatalog } from './CatalogContext';
-import { HeroVideo } from './HeroVideo';
+import { JourneyHero } from './JourneyHero';
 import { NoteChip, Rail } from './Rail';
 import './catalog.css';
 import './vivo.css';
 import './vivo-2026.css';
 import './compact.css';
+import './journey.css';
 
 import { useT } from '../../i18n/v3';
 import { SpanishContentNote } from '../../i18n/v3/SpanishContentNote';
 const icons = { sierra: Mountain, costa: Waves, amazonia: Trees, galapagos: Compass };
 const money = (value: number, currency = 'USD') => new Intl.NumberFormat('es-EC', { style: 'currency', currency, maximumFractionDigits: 2 }).format(value);
-const speak = () => window.dispatchEvent(new Event('cv3:mijin'));
 
 type BuyButtonProps = { experience: Experience; variant?: 'card' | 'detail' };
 const BuyButton = lazy((): Promise<{ default: ComponentType<BuyButtonProps> }> => import('../payments/BuyButton').then(module => ({ default: module.BuyButton as ComponentType<BuyButtonProps> })).catch(() => ({ default: () => null })));
@@ -111,8 +111,8 @@ export function CatalogExplorer({ onPlan, onDownloads, onDemo }: { onPlan: () =>
   const scrollToList = () => document.getElementById('experiencias')?.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
   const goToRegion = (id: RegionId) => { setSelectedRegion(REGION_LABELS[id]); setProvince(''); setSearchQuery(''); scrollToList(); };
   const chooseRegion = (id: RegionId | 'all') => { setSelectedRegion(id === 'all' ? 'Todas' : REGION_LABELS[id]); setProvince(''); };
-  return <div className="vivo-catalog cv-compact" ref={rootRef}>
-    <section className="vivo-hero cv-hero" aria-labelledby="hero-title" data-region-tone={heroRegion ?? undefined}><img key={hero.src} className="vivo-hero-photo" src={hero.src} srcSet={hero.srcSet} sizes="(max-width:760px) 100vw, 80vw" width="1280" height="782" alt={hero.alt} fetchPriority="high" />{!heroRegion && <HeroVideo />}<div className="vivo-hero-shade" /><div className="vivo-hero-copy"><h1 id="hero-title" tabIndex={-1}>{t("Un país.")}<br />{t("Mil formas de")}{' '}<em>{t("vivirlo.")}</em></h1><p>{t("Cumbres, río, bosque y mar.")}</p><div className="vivo-hero-actions"><a className="vivo-primary" href="#experiencias">{t("Encuentra tu aventura")}<ArrowDown size={19} /></a><button className="vivo-voice-hero" onClick={speak}><span className="cv-pulse"><Mic size={21} /></span>{t("Habla con MIJIN")}</button></div><div className="vivo-hero-place cv-hero-place"><span><MapPin size={14} aria-hidden="true" />{hero.place}</span>{(hero.credit || !heroRegion) && <details className="cv-hero-credit"><summary>{t("Créditos")}</summary><p>{hero.credit && <>{hero.photo ? t("Foto") : t("Ilustración")}: {hero.credit}</>}{!heroRegion && <>{hero.credit && ' · '}<a href="/video/CREDITS.md" target="_blank" rel="noreferrer">{t("Créditos del video")}</a></>}</p></details>}</div></div><div className="cv-hero-regions" role="group" aria-label={t("Explora por región")} data-tour="regions">{REGION_ORDER.map(id => { const RegionIcon = icons[id]; const count = records.filter(item => item.localizedRegion === id).length; return <button key={id} data-region-tone={id} aria-label={`${REGION_LABELS[id]}, ${count} ${count === 1 ? 'ficha' : 'fichas'}`} aria-pressed={region === id} onMouseEnter={() => setPreview(id)} onMouseLeave={() => setPreview(null)} onFocus={() => setPreview(id)} onBlur={() => setPreview(null)} onClick={() => goToRegion(id)}><RegionIcon size={20} /><span><strong>{REGION_LABELS[id]}</strong><small>{count}</small></span></button>; })}</div></section>
+  return <div className="vivo-catalog cv-compact cv-journey" ref={rootRef}>
+    <JourneyHero hero={hero} active={heroRegion} selected={region} regions={REGION_ORDER.map(id => ({ id, visual: heroVisual(id, records), count: records.filter(item => item.localizedRegion === id).length }))} onPreview={setPreview} onRegion={goToRegion} />
     <nav className="vivo-trip-rail cv-quick" aria-label={t("Prepara tu aventura")}><button onClick={onPlan}><Compass size={22} aria-hidden="true" /><span><strong>{t("Chulla Flex")}</strong><small>{t("Arma tu plan")}</small></span></button><button onClick={onDownloads} data-tour="offline"><Download size={22} aria-hidden="true" /><span><strong>{t("Sin señal")}</strong><small>{t("Fichas offline")}</small></span></button><button onClick={() => window.dispatchEvent(new Event('cv3:passport'))} data-tour="passport"><Stamp size={22} aria-hidden="true" /><span><strong>{t("Pasaporte")}</strong><small>{t("Tus sellos")}</small></span></button></nav>
     <Suspense fallback={<HomeSkeleton />}><HomeIntro onRegion={goToRegion} /></Suspense>
     <section id="experiencias" className="vivo-discovery cv-discovery" aria-labelledby="experience-heading"><div className="cv-section-head"><h2 id="experience-heading">{t("¿Qué historia quieres vivir?")}</h2><p>{online ? t("{length} fichas en 4 regiones", { length: records.length }) : t("{length} fichas guardadas · sin conexión", { length: records.length })}</p></div>

@@ -79,6 +79,7 @@ describe('intro con video nuevo', () => {
     expect(node.muted).toBe(true);
     expect(node.hasAttribute('playsinline')).toBe(true);
     expect(node.autoplay).toBe(true);
+    expect(node.loop).toBe(false);
   });
   it('los títulos siguen al video: lugar, región/provincia y crédito; en el cierre se van', async () => {
     motion(false);
@@ -145,6 +146,43 @@ describe('intro con video nuevo', () => {
     expect(document.querySelector('video')).toBeNull();
     expect(document.querySelector('img.cv-intro-video')).toHaveAttribute('src', INTRO_POSTER);
     expect(document.querySelector('picture source')?.getAttribute('srcset')).toMatch(/portrait/);
+    expect(document.querySelector('.cvi-finale-art .animated-logo--intro')).not.toBeNull();
+    expect(document.querySelector('.cvi')).toHaveClass('is-outro');
+  });
+  it('termina con el logo grande, permite pausarlo y repetir la película desde cero', async () => {
+    motion(false);
+    const onClose = vi.fn();
+    render(<AppProvider><BrandIntro onClose={onClose} /></AppProvider>);
+    await waitFor(() => expect(document.querySelector('.cvi-place')).not.toBeNull());
+    expect(document.querySelector('.cvi-finale')).toBeNull();
+    fireEvent.playing(video());
+    setTime(cuesFile.closingStart + 0.2);
+    expect(document.querySelector('.cvi-finale-art .animated-logo--intro')).not.toBeNull();
+    fireEvent.ended(video());
+    expect(document.querySelector('.cvi')).toHaveClass('is-outro');
+    fireEvent.click(screen.getByRole('button', { name: 'Pausar logo' }));
+    expect(document.querySelector('.cvi-finale-art svg')).toHaveAttribute('data-moving', 'false');
+    // Native currentTime is writable during an explicit replay.
+    Object.defineProperty(video(), 'currentTime', { configurable: true, writable: true, value: cuesFile.duration });
+    fireEvent.click(screen.getByRole('button', { name: 'Ver intro' }));
+    expect(video().currentTime).toBe(0);
+    expect(document.querySelector('.cvi')).not.toHaveClass('is-outro');
+    expect(onClose).not.toHaveBeenCalled();
+  });
+  it('sin metadatos de tomas el evento ended conserva un cierre con logo y entrada', () => {
+    motion(false);
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('offline')));
+    render(<AppProvider><BrandIntro onClose={() => {}} /></AppProvider>);
+    fireEvent.ended(video());
+    expect(document.querySelector('.cvi-finale-art .animated-logo--intro')).not.toBeNull();
+    expect(screen.getByRole('button', { name: 'Entrar a CHULLA VIDA' })).toBeEnabled();
+  });
+  it('con movimiento reducido el logo final permanece estático', () => {
+    motion(true);
+    render(<AppProvider><BrandIntro onClose={() => {}} /></AppProvider>);
+    fireEvent.ended(video());
+    expect(document.querySelector('.cvi-finale-art svg')).toHaveAttribute('data-animated', 'false');
+    expect(video().loop).toBe(false);
   });
 });
 

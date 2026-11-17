@@ -1,227 +1,202 @@
 ---
 name: CHULLA VIDA
-description: Turismo ecuatoriano con paisaje, color de marca, iconos claros y una voz joven ecuatoriana.
+description: Ecuador en primer plano: fotografía real, papel cálido y acciones claras.
 colors:
-  ink: "#28372d"
-  navy: "#28372d"
-  teal: "#304a36"
-  teal-dark: "#233d2a"
-  cream: "#f3efe5"
-  paper: "#fffdf8"
-  muted: "#5e6658"
-  line: "#ddd8cb"
-  andes-clay: "#995137"
-  andes-clay-dark: "#7f402d"
-  andes-maize: "#bf903d"
-  andes-maize-ink: "#795c25"
-  andes-sage: "#e9eddf"
-  andes-linen: "#eee8db"
-  andes-clay-wash: "#f3e7df"
-  brand-navy: "#103452"
-  brand-turquoise: "#079da5"
-  brand-maize: "#efb22c"
-  brand-red: "#c93143"
+  navy: "#103452"
+  teal: "#087f87"
+  paper: "#fbf7ee"
+  surface: "#fffdf8"
+  muted: "#455c61"
+  line: "#dcded7"
+  selected: "#e7efeb"
+  primary-hover: "#1d5368"
+  maize: "#efb22c"
+  brand-red: "#c61534"
 typography:
   display:
+    fontFamily: "Archivo Variable, Archivo, sans-serif"
+    fontSize: "clamp(40px, 4.3vw, 64px)"
+    fontWeight: 600
+    lineHeight: 1.06
+    letterSpacing: "-.035em"
+  expressive:
     fontFamily: "Newsreader, Georgia, serif"
-    fontSize: "62px"
+    fontSize: "1.18em"
     fontWeight: 450
-    lineHeight: 1.04
     letterSpacing: "-.025em"
   headline:
-    fontFamily: "Newsreader, Georgia, serif"
-    fontSize: "42px"
-    fontWeight: 500
-    lineHeight: 1.15
-    letterSpacing: "-.03em"
-  welcome:
-    fontFamily: "Newsreader, Georgia, serif"
-    fontSize: "clamp(35px, 3.5vw, 49px)"
-    fontWeight: 500
-    lineHeight: 1.12
+    fontFamily: "Archivo Variable, Archivo, sans-serif"
+    fontSize: "clamp(23px, 2.5vw, 30px)"
+    fontWeight: 550
     letterSpacing: "-.025em"
-  music-heading:
-    fontFamily: "Newsreader, Georgia, serif"
-    fontSize: "clamp(28px, 2.1vw, 34px)"
-    lineHeight: 1.1
-  music-title:
-    fontFamily: "Plus Jakarta Sans, sans-serif"
-    fontSize: "19px"
-    fontWeight: 650
-    lineHeight: 1.25
   title:
     fontFamily: "Plus Jakarta Sans, sans-serif"
-    fontSize: "25px"
-    fontWeight: 650
-    lineHeight: 1.3
-    letterSpacing: "-.04em"
+    fontSize: "15px"
+    fontWeight: 700
+    lineHeight: 1.5
   body:
     fontFamily: "Plus Jakarta Sans, sans-serif"
-    fontSize: "13px"
-    lineHeight: 1.8
+    fontSize: "16px"
+    lineHeight: 1.6
   label:
     fontFamily: "Plus Jakarta Sans, sans-serif"
     fontSize: "12px"
     fontWeight: 650
 rounded:
-  photograph: "19px"
-  compact-control: "6px"
-  control: "11px"
-  navigation: "11px"
-  card: "19px"
-  choice: "15px"
-  dialog: "22px"
+  control: "8px"
+  region: "10px"
+  card: "14px"
+  panel: "16px"
 spacing:
-  small: "8px"
-  medium: "12px"
-  content: "17px"
+  compact: "8px"
+  control: "12px"
+  regular: "16px"
   section: "24px"
+  generous: "32px"
+  wide: "48px"
 components:
   button-primary:
-    backgroundColor: "{colors.teal}"
-    textColor: "{colors.paper}"
-    rounded: "{rounded.control}"
-    padding: "11px 17px"
+    backgroundColor: "{colors.navy}"
+    textColor: "{colors.surface}"
+    padding: "12px 20px"
   button-primary-hover:
-    backgroundColor: "{colors.teal-dark}"
-  button-secondary:
-    backgroundColor: "{colors.paper}"
-    textColor: "{colors.ink}"
+    backgroundColor: "{colors.primary-hover}"
+  button-conversation:
+    textColor: "{colors.teal}"
+    padding: "8px 0"
+  navigation-active:
+    backgroundColor: "{colors.selected}"
+    textColor: "{colors.navy}"
     rounded: "{rounded.control}"
-    padding: "11px 17px"
-  field:
-    backgroundColor: "{colors.paper}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.control}"
-    padding: "11px 12px"
-  experience-card:
-    backgroundColor: "{colors.paper}"
+  destination-card:
+    backgroundColor: "{colors.surface}"
     rounded: "{rounded.card}"
 ---
 
 # Design System: CHULLA VIDA
 
-## Direction and voice
+## Overview
 
-**Páramo, barro y maíz, con el color del logo.** Warm paper and natural landscape photography form the base. Original-logo navy gives headings definition; turquoise supports icons and routes, maize highlights invitations and red marks saved favorites. Páramo green and clay still connect planning and business tools. Newsreader supplies editorial headings and Plus Jakarta Sans keeps operational content clear.
+**Creative North Star: "Ecuador en primer plano"**
 
-Use short Ecuadorian Spanish: “panas”, “planazo”, “de ley” and “ve pilas” in context. Cards show place, photograph, price and icon facts rather than description paragraphs. Complete information remains available through tabs and disclosures. The audience is wambras; the product is CHULLA VIDA.
+Fotografías reales de Ecuador sobre papel cálido, con titulares breves y acciones claras. La portada tiene una voz editorial; las herramientas mantienen la densidad necesaria para explorar, planificar y operar. Este documento registra el código vigente de portada, carcasa e intro, y las primitivas compartidas observadas; no convierte cada pantalla histórica en un patrón aprobado.
 
-## Palette and hierarchy
+La marca conserva el arte original y sus colores. La intro audiovisual culmina en el logo grande sobre azul y se detiene con acciones visibles. Las cuatro regiones conservan identidad y nombres; el paisaje aporta riqueza sin recargar la navegación.
 
-The frontmatter records the current materials. Base tokens are finalized in finish-theme.css, which also adds the four brand colors; youth-ui.css supplies compact destination detail. Legacy navy and teal names remain green compatibility tokens, while brand-navy and brand-turquoise identify the original-logo accents. Use explicit active, selected and status text alongside color.
+**Key Characteristics:**
+- Fotografía real y créditos consultables.
+- Papel cálido, tinta azul y turquesa funcional.
+- Archivo para jerarquía, Newsreader expresivo y Plus Jakarta Sans para operar.
+- Navegación sólida, compacta y accesible desde móvil y escritorio.
 
-Hero headings reach 62px; section headings use 35px Newsreader. The welcome uses 35–49px serif, 35px on mobile and 32px on narrow screens. Functional card titles are 18px (20px on narrow mobile); ordinary copy and controls generally use 12–14px. Avoid canonizing residual tiny ancillary labels as a typography scale. Keep body text readable and move detail behind user-controlled disclosures rather than shrinking it.
+## Colors
 
-## Layout and surfaces
+La base es cálida y tranquila; azul y turquesa organizan lectura y acción.
 
-Desktop retains a fixed left rail, 82px top bar and centered workspace. Catalog cards form three columns, two below 960px and one below 700px. Mobile uses a drawer and bottom navigation. Region filters wrap separately from the filter action; the narrowest layout uses a two-column region grid. Shared controls use 10–11px corners, experience cards 19px, and the main hero/dialogs 22px. Borders and pale surfaces provide structure; shadows stay soft.
+### Primary
+- **Azul tinta** (`navy`): titulares, acción principal, cierre de intro y contenedores destacados.
+- **Turquesa** (`teal`): conversación MIJIN, iconos activos, enlaces y foco de portada y carcasa.
 
-The intro divides a real landscape selector and logo stage into two columns. Sierra, Costa and Amazonía buttons update the photograph. Below 700px the scene becomes a shallow strip above the logo and manual-entry controls. Logo size responds to viewport height; short screens retain entry and skip actions.
+### Secondary
+- **Maíz** (`maize`): acento de marca y señal puntual de MIJIN. La llamada del pasaporte conserva su amarillo propio.
+- **Rojo de marca** (`brand-red`): arte original y estados semánticos heredados; no es el color de selección de la nueva navegación.
 
-Checkout pairs its form with a 243px summary; below 700px the summary moves above the form and the action row remains visible while scrolling. The offline route uses a full-width schematic, stop selector and expandable practical details; below 600px its actions stack.
+### Neutral
+- **Papel** (`paper`): fondo de contenido.
+- **Superficie** (`surface`): navegación, tarjetas, leyendas sobre foto y controles.
+- **Texto secundario** (`muted`): apoyo, ubicación y datos de ficha.
+- **Línea** (`line`): divisiones discretas y contornos.
+- **Selección suave** (`selected`): elemento activo de navegación; las regiones usan un lavado cercano propio.
 
-## Components and interaction
+**The Solid Caption Rule.** Las leyendas y créditos de la portada se apoyan en una superficie sólida para seguir siendo legibles al cambiar de fotografía.
 
-- **Logo:** AnimatedLogo clips the unchanged supplied raster into four landscape pieces, sun and wordmark, registered in SVG. The pieces assemble individually; the actual sun rotates. Preserve the original artwork, proportions and seam registration. The supplied raster misspells its tagline («CONSCISTENTE»); AnimatedLogo redraws that single line as live text, «TURISMO SOSTENIBLE Y CONSCIENTE», over a paper band. The PNG file itself stays untouched.
-- **Cards:** photograph, province/locality, title, duration/adventure/group icons with text, price and “Conocer”. No description paragraph. Navy headings, turquoise facts and a red saved heart express brand color through useful states.
-- **Details:** tabs “Lo esencial”, “Incluye” and “Ve pilas” keep context concise; story, expenses and FAQs expand on request. Keep reference-image and demo-price disclosure.
-- **Planner:** eight steps retain checked choices, tabular totals, bounded counters and a desktop recap. Origin offers 28 Ecuadorian cities plus custom input. Group budget starts at $20, with $20/$50/$150/$500 presets in a mobile two-column grid. The catalog has 28 destinations; added ideas carry indicative prices and no fabricated verification or contact details.
-- **Offline route:** keyboard-operable SVG nodes select up to three stops. Origin, days, group cost, remaining budget, inclusions and advice remain available in a validated browser snapshot. The network indicator reflects navigator connectivity; the switch previews an offline state. The self-contained downloaded HTML opens from disk without network dependencies. The map is schematic, without GPS or road calculations. The web app has no service worker or guaranteed offline first startup.
-- **Payments:** three demo steps cover date/group, method and review. Card uses fixed dummy details and an approval/rejection choice; transfer saves a pending fictitious reference; Deuna QR contains only CHULLA-VIDA:DEMO. Processing, retry and receipt clearly describe simulation. Payment-demo state and business confirmation stay separate in traveler and business views.
-- **Memberships:** weekly $2.99 / 7 days, monthly $4.99 / calendar month and annual $49.99 / calendar year. Show period, price and explicit demo activation together. Any active plan unlocks offline routes and Comunidad wambra; only annual unlocks the premium passport. Cancellation retains access until expiry; no real renewal or automatic charge occurs. Expired plans return to the plan prompt. The desktop plan comparison stacks on mobile with wrapping labels and reachable actions. These are browser-local controls, not server-enforced entitlements.
-- **Passport:** a free basic passport displays regional stamps for the traveler's visits with a business-recorded arrival. One verified stamp per destination; newly added stamps receive a short stamp impression animation. Test stamps remain separately labeled, editable demonstration state and never assert a verified visit or reward. Annual-active presentation adds premium material and decoration. Preserve stamps when membership expires; remove premium access, not travel history. Motion reduction retains content without impact animation.
-- **Business wallet:** “Cobros y retiros” belongs to the selected demo business. Explain traveler payment → arrival validation → business withdrawal through icons and text. Show gross, 10% platform commission, 90% net, retained funds, available funds and requested demo withdrawals with tabular currency. Compute per charge in cents, retaining the exact remainder for the business. Only approved demo payments on accepted requests enter the ledger; pending/cancelled/duplicate payments contribute nothing. Release retained funds after the business validates a confirmed approved-demo visit on or after its Ecuador visit date. The code form uses the full voucher code or exact QR payload, without a simulated scanner claim.
-- **Withdrawal:** require a focused native confirmation dialog showing the available amount, fixed fictional account and explicit no-transfer notice. No banking fields, invented fee or minimum threshold. Persist scoped visit allocations once in separate demo withdrawal history. A later cancellation or changed visit produces a review notice, without a negative balance or invented refund. Empty, disabled, stale-balance and storage-error states must remain readable. On mobile the available amount and action lead; movement references wrap instead of widening the page.
-- **Music/socials:** the supplied Folklore ecuatoriano playlist is primary, with user-initiated Spotify playback. Instagram, Facebook and TikTok remain simulated buttons with explicit feedback.
+## Typography
 
-## Motion and accessibility
+**Display Font:** Archivo Variable, Archivo, sans-serif.
+**Body Font:** Plus Jakarta Sans, sans-serif.
+**Expressive Font:** Newsreader, Georgia, serif.
 
-Landscape pieces arrive over 1.55s, the sun over 1.6s and the wordmark over .85s after a .72s delay. The intro sun turns over 24s after a 1.65s delay; compact-logo rotation takes 20s and moves only on hover or keyboard focus. Pause and repeat controls are explicit. Motion pauses outside the viewport or when the page is hidden. Reduced motion is static by default; only an explicit “Reproducir animación” or replay action opts into logo movement.
+Archivo aporta jerarquía directa; Newsreader se reserva como contraste expresivo en portada y cierre de intro. Plus Jakarta Sans conserva continuidad en controles, datos y catálogo.
 
-The welcome appears on each page load and stays until “¡De ley, vamos!” (accessible name “Entrar a CHULLA VIDA”), skip or Escape. Exit fades over 260ms, without a delay for reduced motion. Preserve native dialog focus, scrolling and restoration. The whole image does not spin; the registered sun piece does.
+### Hierarchy
+- **Display:** escala fluida del frontmatter; en móvil cambia a `clamp(36px,10vw,48px)`, interlínea (1.02).
+- **Expressive:** palabra en cursiva dentro del titular; en móvil la proporción es (1.1em). El cierre de intro usa Newsreader de peso (500).
+- **Headline:** títulos de sección fluidos; las cabeceras de carrusel usan Plus Jakarta Sans (18px, 650).
+- **Title:** nombres de destino; en móvil (14px).
+- **Body:** apoyo de portada con ancho máximo (30ch); en móvil (14px).
+- **Label:** navegación y datos compactos. Los datos de tarjeta bajan a (11px) en móvil; no trasladar ese tamaño a texto de lectura.
 
-Checkout step entry is 240ms, success stamp 460ms and check drawing 500ms after 120ms. Named local processing phases accompany the spinner and progress track; reduced motion removes effects while preserving text. Route-stop entry is 240ms and removed for reduced motion. Keep visible focus and text equivalents for every informational icon and status.
+**The Operational Type Rule.** Los controles y datos del catálogo conservan Plus Jakarta Sans; el acento Newsreader no sustituye su voz funcional.
 
-Offline motion follows selected stops and their regional landscape, with map/node feedback and an explicit simulation of no connection. Do not use animation or an offline badge to imply live GPS, real network access, or that the entire app starts without a connection. The HTML already downloaded remains usable after membership expires.
+## Layout
 
-## Guardrails
+Portada de dos columnas: texto ligeramente menor que la fotografía, con separación horizontal (36px) y vertical (24px). La fotografía crece dentro de su columna; la franja de cuatro regiones ocupa el ancho conjunto. Las acciones y el texto viven fuera de la foto.
 
-Preserve the supplied logo and real image credits. Keep demo prices, simulated payment/subscription/withdrawal/social states and offline limitations explicit. Do not imply real banking, live navigation, verified new businesses, external messages or shared reservations. Local profile and plan controls are not authentication or payment security. Vercel project `chulla-vida` is linked; publication of this update remains pending verification and does not add a backend. Add color through hierarchy and state; retain calm backgrounds and readable contrast.
+A (1100px) se equilibran las columnas y se compactan las ventanas regionales. A (700px) la portada pasa a una columna: texto, acciones, paisaje de (220px) y cuatro ventanas que siguen en una fila. A (360px) se ajustan etiquetas y acciones y el paisaje mide (200px). El documento base admite (320px) de ancho mínimo.
 
-## Regional identity and languages
+La carcasa usa cabecera adhesiva y herramientas de escritorio debajo. A (700px), las herramientas ceden a cinco destinos inferiores con MIJIN al centro, área segura del dispositivo y reserva de espacio en el contenido. El menú conserva herramientas adicionales y modos de viajero/negocio. El pie móvil presenta dos columnas de grupos plegables con objetivos de (44px).
 
-RegionalSpotlight uses four illustrated, actionable landscapes instead of text-only region filters. Sierra has terracotta terraces and navy peaks; Costa has turquoise waves and sand; Amazonía has canopy greens and a winding river; Galápagos has blue ocean, volcanic islands and a turtle. The same trusted static SVG artwork is reused in RegionalRouteMap and the standalone HTML. Active stops select their actual regional scene; the legend links to stops present in the itinerary. Do not imply cartographic accuracy.
+El ritmo compartido parte de pasos de (4px), con separaciones frecuentes registradas en frontmatter. Cultura Viva reserva (128px) a la derecha del encabezado para flechas de carrusel en pantallas desde (768px) con hover. Las fichas con cotización permiten precio y acción en líneas distintas.
 
-The regional catalog palette is `#a44932`, `#006e82`, `#28623d`, `#244db0` against warm paper. The yellow/navy/red bands on the hero and logo rail intentionally reference Ecuador's flag in response to the user's request; they are identity details, not status indicators. They are deliberate exceptions to the detector's stripe warning. State also has text, check marks and pressed semantics.
+## Elevation & Depth
 
-LanguageSelector is visible in the intro and header. Preserve native language names and stable Spanish domain values while translating labels; data-region attributes remain untranslated. Long labels wrap, and intermediate-width headers condense business actions. Below 380px the brand wraps onto two lines so it does not collide with language selection. Both Kichwa choices now change visible UI through a shared editorial draft of 644 phrases, including navigation, planner, offline route, memberships, passport and wallet. Do not describe that common draft as two regionally validated dialects. Their unified-draft/review notice lives in the intro's content area and below the header selector, never over region buttons. Remaining long checkout/publication phrases fall back to source Spanish; local catalog prose, proper names and user content also retain their source. See src/i18n/README.md for exact scope and primary sources.
+La navegación y la portada descansan planas: superficies sólidas, líneas finas y cambios tonales. Las tarjetas de destino conservan una sombra ambiental tenue; al hover suben (3px) y aumenta su sombra. La reducción de movimiento elimina ese desplazamiento. El cierre de intro sí admite profundidad ambiental alrededor del arte; es un escenario de marca específico, no el tratamiento de todas las tarjetas.
 
-### Pitch refresh, 23 October 2026
-The current supplied logo is public/chulla-vida-logo.png, reused untouched with registered landscape clips and a wordmark boundary that preserves its taller lettering. The hero reads «Ecuador te espera. Sal a vivirlo.» Music offers the user-supplied Sierra/folklore, Costa and Oriente playlists, with a matching landscape, translated regional labels and no autoplay. Each selection keeps the correct Spotify link and embed. The five-slide pitch follows the same navy, turquoise, maize and red palette.
+### Shadow Vocabulary
+- **Tarjeta en reposo:** `0 4px 12px #1034520d`.
+- **Tarjeta al hover:** `0 8px 22px #10345214`.
+- **Créditos abiertos:** `0 8px 24px #10345226`.
+- **Arte de cierre:** `0 22px 64px #00142e59`.
 
-### V3 additions, 12 November 2026
+**The Quiet Shell Rule.** La carcasa vigente usa fondos sólidos y selección tonal, sin añadir desenfoques ni sombras a su navegación.
 
-The public catalog now opens with «Ecuador se vive. Arma tu próxima historia.» and 33 source-backed records. The original demo remains available through an explicit link. Existing logo and regional illustrations are retained; Galápagos cards use the schematic island illustration rather than mainland coast photography.
+## Shapes
 
-New operational views use 16px inputs and body copy, 14px secondary explanations, 18–22px local headings, and Newsreader editorial headings. Fonts are self-hosted under the existing family names. These additions intentionally increase the old 11–13px operational text sizes. Warning materials use warm sand and brown; normal actions retain páramo green, with navy on the MIJIN launcher. Color, radius and type additions were flagged as advisory differences by the mechanical detector; visual verification remains pending.
+Controles de curvas contenidas y tarjetas suavemente redondeadas según frontmatter. Las ventanas regionales tienen contorno fino y recorte de imagen. El paisaje usa una esquina inferior derecha menor que las otras (24px 24px 8px 24px); en móvil (18px 18px 6px 18px). Las acciones compactas conservan radios propios cercanos a los controles. Círculos para guardar y MIJIN, y píldoras para etiquetas, siguen siendo formas funcionales existentes.
 
-New surfaces: source-preserving experience detail, budget ideas with unknown costs, Cultura Viva with unconfirmed editions, account/business verification pending configuration, selected downloads, local FAQ/voice/weather controls and legal drafts. External Spotify embeds mount only after media consent and opening the player; revocation removes them.
+## Components
 
-### Connected payments continuation, 13 November 2026
+### Buttons
 
-This narrow extension inherits the existing dialog, account and task flows. Earlier payment, wallet and withdrawal descriptions remain the historical local demo. Source evidence: `src/features/payments/payments.css`, `PaymentsPanel.tsx`, `RefundReview.tsx`, `api.ts`, `reference.ts` and `src/features/workspace/WorkspaceVivo.tsx`. It establishes no replacement visual world or new palette.
+Acciones legibles, con icono acompañado de texto. La principal de portada mide al menos (50px) de alto, con radio (9px); en móvil (46px). MIJIN es una acción turquesa sin fondo, de al menos (44px). El hover principal usa `primary-hover`. Foco visible turquesa (3px), separado (4px) en portada y (3px) en carcasa. La compra de tarjeta usa azul, radio de control y altura mínima (44px).
 
-The source retains warm paper, navy headings, páramo-green actions and sage availability notices. Newsreader supplies the panel heading; Plus Jakarta Sans remains the operational face. Continue V3's readable operational hierarchy: body and fields (16px), secondary explanations and action labels (14px), local headings (19px), and tabular amounts (22px). These are surface roles, not replacements for the incumbent discovery scale.
+### Chips
 
-**The Verified State Rule.** Show loading, failed consultation and empty results as distinct states. Availability is unknown after a failed configuration request; keep payment disabled until checked. Text describes sandbox, live, pending and review states alongside color. A return reference alone never supplies a success state.
+Las etiquetas regionales compartidas conservan color semántico de región y forma de píldora; no sustituyen los botones fotográficos de región. Los avisos distinguen contenido referencial, demostración y estados conectados mediante texto explícito. El color no acredita verificación ni permisos.
 
-**The Review Before Departure Rule.** Keep the date → host confirmation → PayPhone sequence visible, with reservation amount, environment and cancellation conditions before leaving the application. The local practice action remains a separately labeled section. Refund review is a request with persistent status, not a successful transfer animation.
+### Cards / Containers
 
-Live review also includes the published terms version, dates and full text behind a native disclosure. An explicit checkbox and acceptance action precede payment; only server-confirmed acceptance enables the payment action. Loading, missing, changed and failed terms remain readable blocking states. This disclosure extends the existing form language without introducing a new display style.
+Tarjetas de destino con superficie clara, radio de tarjeta y foto (4:3); en móvil la foto cambia a (16:10). Cuerpo de (13px 14px 14px), o (10px 12px 12px) en móvil. Ubicación, hechos, precio y acción mantienen jerarquía; guardar aparece sobre superficie clara. Los desplegables de confianza y contenido secundario usan líneas, superficie clara y radios contenidos.
 
-The panel uses a centered reading column (maximum 860px), thin separators and the incumbent control language. Long references wrap; amounts use tabular numerals. Controls retain minimum heights (44px buttons, 46px fields) and a visible turquoise focus outline (3px, offset 3px). At the source breakpoint (560px), steps stack and actions fill the available row; the surrounding native dialog retains its existing scrolling and focus behavior. No new shadow or motion vocabulary was added.
+### Inputs / Fields
 
-Recorded from source only: desktop/mobile rendering and responsive inspection remain unverified because browser access was unavailable. The detector's operational-size advisories are consistent with the existing V3 additions and do not constitute visual approval. Not canonized: residual tiny legacy labels and any unrendered claim of visual correctness; neither earns a future system rule.
+La búsqueda del catálogo conserva superficie clara, contorno fino, radio (12px) y altura mínima (52px). Su contenedor recibe foco mediante `:focus-within`, con anillo (2px) y separación (2px), mientras el campo interior permanece limpio. Formularios operativos conservan etiquetas visibles y mensajes de error textuales. Los deshabilitados muestran cursor de indisponibilidad; no convertir el foco o el error en un cambio de color aislado.
 
-## Ecuador Vivo 2026 (13-11-2026)
+### Navigation
 
-**Dirección.** La paleta del logo 2026 manda: navy `#012960`, rojo `#c61534`, maíz `#fed65a`, menta `#4cc69f`, petróleo `#1f575a` y papel cálido `#fbf6ea`. Los tokens viven en `src/index.css` (`--cv-*`): colores, color de texto y lavado por región (`--cv-sierra`, `--cv-costa`, `--cv-amazonia`, `--cv-galapagos` y sus `-wash`, todos AA sobre papel), sombras `--cv-shadow-1..3`, radios `--cv-r-s/m/l/xl/pill`, espacios `--cv-space-1..8`, tipos `--cv-text-*` y movimiento `--cv-ease`, `--cv-dur-1..3`. Un elemento con `data-region-tone="sierra|costa|amazonia|galapagos"` expone `--tone` y `--tone-wash` a sus hijos.
+Barra lateral clara, iconos y etiquetas, selección suave y turquesa en icono activo. Objetivos de al menos (44px). Móvil: cabecera compacta, menú y cinco destinos inferiores; la acción MIJIN circular se eleva visualmente sobre la barra. El lanzador flotante se oculta para no duplicarla. Los avisos de privacidad se sitúan encima de la barra inferior. El cambio de modo no supone autorización del servidor.
 
-**Textil.** `--cv-textile` es una banda propia de rombos y trazos (navy, maíz, rojo, menta), sin reproducir diseños de una comunidad concreta. Se usa solo en bordes: barra lateral, pie y la banda de Cultura Viva (`.cv-textile-edge`). La barra de herramientas lleva una línea de cuatro colores.
+### Regional windows
 
-**Portada como historia.** Héroe con foto real y las cuatro regiones navegables dentro (al pasar o enfocar una región cambia la foto: foto real grande de una ficha si existe, si no la foto regional con crédito, si no la ilustración propia), «Así funciona» en cuatro pasos ilustrados (es una secuencia real, por eso lleva número), números del catálogo con barras por región, una ficha para empezar en cada región, Amazonía, catálogo, Cultura Viva con próximas fiestas reales del módulo `culture` (fechada u orientativa, dicho así), Pasaporte Guambra, «Viaja con confianza», la sección de protección de datos (`DataProtectionSection`, cargada con respaldo) y el pie en columnas. Las secciones bajo el pliegue están en `src/features/catalog/HomeStory.tsx` y cargan bajo demanda.
+Cuatro botones con foto, nombre y `aria-pressed`. Hover y foco previsualizan el paisaje; activar filtra la región. El foco se distingue de la selección persistente. Fotografías de portada con texto alternativo; miniaturas regionales decorativas con alternativa vacía y nombre accesible en el botón. Créditos mediante desplegable.
 
-**Tarjetas y ficha.** Banda superior del color de la región, zoom suave de la foto y elevación al pasar. Las fotos por ficha usan `srcset` 640/1280 (`/images/places/<id>-640.webp` y `-1280.webp`, o `srcLarge` del registro) y muestran su crédito: `title` en la tarjeta, pie visible en la ficha. Sin foto real, ilustración original rotulada como tal. `BuyButton` se monta en cada tarjeta y en la ficha; el precio siempre se rotula como referencial propuesto y la compra como prueba sin cobro mientras los pagos no estén activos.
+### Intro and motion
 
-**Barra de herramientas.** MIJIN, Mi viaje, Mi billetera y Reservas y pagos a la vista; Sin señal, Mis avisos, Anfitriones y Cuenta en el menú «Más» (teclado: flechas, Inicio/Fin, Escape devuelve el foco). En móvil, cinco botones de icono con etiqueta corta y nombre accesible completo; objetivos de 52 px.
+Diálogo con título, entrada, salto, reproducción/pausa y cierre con Escape. Al finalizar el recorrido se mantiene el arte original grande y acciones visibles: entrar, pausar logo, repetir y saltar. El formato se adapta a retrato, paisaje y poca altura. No redibujar ni recrear el logo con texto.
 
-**Movimiento.** Solo `transform` y `opacity`. Entrada escalonada al hacer scroll con `useReveal` (`src/components/common/motion.tsx`; si no hay IntersectionObserver o se pide menos movimiento, todo se ve desde el inicio), contadores (`CountUp`, el valor real siempre está para lectores de pantalla), barras que crecen, transición al cambiar de región, pulso sutil en MIJIN, golpe de sello en el pasaporte, corazón que late al guardar, skeletons con brillo y scroll suave. Todo se apaga con `prefers-reduced-motion`.
+La fotografía entra en (0.5s), con `cubic-bezier(.16,1,.3,1)`; el arte final llega en (0.72s) con la misma curva. La animación del sol del cierre termina tras una iteración de (8s). Los controles regionales cambian fondo y borde en (0.2s). Con movimiento reducido la foto y el cierre no animan y el vídeo no empieza solo; el usuario puede reproducirlo explícitamente. La aplicación detiene animaciones en pestañas no visibles. El contenido debe seguir disponible sin ejecutar una entrada animada.
 
-**Integración con otros frentes.** Paneles que quizá no existan todavía se cargan con `optionalLazy(import.meta.glob('<ruta>'), '<export>', Respaldo)` (`src/features/workspace/optionalModule.tsx`): si el archivo falta, el build sigue y se ve un respaldo honesto. Eventos nuevos: `cv3:wallet` (billetera) y `cv3:privacy-rights` (ejercicio de derechos). PDF legales enlazados en el pie: `/legal/aviso-proteccion-datos-chulla-vida.pdf` y `/legal/formulario-derechos-datos-chulla-vida.pdf`.
+## Do's and Don'ts
 
-## CHULLA VIDA 3.1: video, tour y nitidez (15-11-2026)
+### Do:
+- **Do** conservar el arte original de marca, fotografías existentes y créditos consultables.
+- **Do** mantener acciones claras y detalles ampliables sin eliminar información útil.
+- **Do** conservar foco visible, etiquetas accesibles y controles de movimiento.
+- **Do** comprobar móvil y escritorio, incluidos contenido largo, cotizaciones y áreas seguras.
 
-**Video de intro.** `public/video/chulla-vida-intro.webm` (~16 s, 1280×720, VP9, sin audio, ~2,2 MB) y un bucle sin textos para el hero (`chulla-vida-hero.webm`, 960 px, ~0,8 MB), cada uno con póster WebP. Es una animación original sobre siete fotos reales del catálogo (Quilotoa, Mompiche, Cuyabeno, León Dormido, Cotopaxi, Pailón del Diablo, Otavalo) con Ken Burns, fundidos, nombre del lugar y región, y cierre con el logo y «Descubre el Ecuador que se vive». Se regenera con `node scripts/make-intro-video.mjs` (Vite en puerto libre + Playwright + ffmpeg de Playwright; el procedimiento está en la cabecera del script). Créditos: `public/video/CREDITS.md`.
+### Don't:
+- **Don't** recuperar como norma los mundos históricos de álbum o navegación decorativa sustituidos por la portada vigente.
+- **Don't** extender la sombra del cierre de intro a navegación y tarjetas comunes.
+- **Don't** presentar una demostración o una preferencia visual como permiso, pago o visita verificada.
 
-**Intro (`BrandIntro`).** Diálogo modal a pantalla completa con el video (muted, playsInline, autoplay solo sin `prefers-reduced-motion`; con movimiento reducido se ve el póster y «Ver video»), logo animado encima, «Entrar» (foco inicial) y «Saltar»; Escape también sale. Pausa con la pestaña oculta. Solo en la primera visita; «Ver intro» la repite. El hero de la portada usa el bucle como fondo con póster, carga perezosa, pausa fuera de pantalla y botón de pausa; el chunk inicial sigue en ~190 kB (el video es archivo aparte).
-
-**Tour guiado (`src/features/onboarding/GuidedTour.tsx`).** Doce pasos con foco real: recorte (spotlight) sobre el elemento y globo explicativo. Los objetivos se buscan por `data-tour="…"` (`regions`, `search`, `cards`, `mijin`, `plan`, `wallet`, `more`, `offline`, `passport`, `account`, `host`, `privacy`, `privacy-banner`) y, si faltan, por selector o `aria-label`; un paso sin objetivo visible se omite. Flechas ← → y Esc, foco en el título del globo, scroll al elemento, globo anclado abajo en móvil, sin animación con movimiento reducido. Se abre después de la bienvenida de doble entrada y se repite con `cv3:tour` o «Volver a ver tutorial» (`cv3:welcome`).
-
-**Banner de privacidad.** Barra inferior: ~116 px en escritorio y ~220 px en 360–390 px (antes 448 y 623 px). Texto breve, tres segmentos de igual peso (Privado / Equilibrado / Personalizado, sin preselección), «Guardar mi elección» y el detalle de cada nivel en «¿Qué incluye cada nivel?». El lanzador de MIJIN sube por encima con `--cv-consent-h`; el título del hero queda siempre libre.
-
-**Nitidez.** Ninguna entrada parte de `opacity:0`: `useReveal` desplaza 14 px y como mucho baja a 0,88, solo si hay IntersectionObserver, la pestaña está visible y no se pide menos movimiento; una red de seguridad muestra todo a los 2,5 s y al ocultarse la pestaña. Texto secundario (`--cv-muted` #3a4a55) y bordes (`--cv-line` #d6ccb5) más oscuros, y sombras `--cv-shadow-1..3` en dos capas con más definición.
-
-**Cabecera.** Botón rojo «Entrar / Crear cuenta» siempre visible (`AccountButton`, abre `cv3:account` en la pestaña de registro); con sesión muestra la inicial y el nombre corto, nunca el correo completo. En móvil estrecho dice «Entrar» y el nombre de la marca cede su sitio.
-
-**Integraciones.** `useUrlRouting()` de `src/features/routing` y `downloadExperienceFile()` de `src/features/offline/experienceFile.ts` se cargan con `optionalExport(import.meta.glob(...))`: si faltan, la página funciona sin enlaces profundos y «Descargar ficha» solo guarda en la biblioteca sin señal.
-## CHULLA VIDA 3.4: portada compacta y carcasa móvil (16-11-2026)
-**Medida.** Alto de la portada (todo montado, `scrollHeight / innerHeight`): iPhone 13 8,36 → **5,94** pantallas; iPhone SE 8,36 → 5,90; iPhone 15 Pro Max 7,51 → 5,38; Pixel 7 6,62 → 4,73; escritorio 1440 6,17 → 4,96. 0 px de desborde horizontal en los cinco. La prueba `tests/e2e/home-compact.spec.ts` falla si pasa de 6.
-**Carruseles (`Rail`, `src/features/catalog/Rail.tsx`).** Pista flex con `scroll-snap-type:x mandatory`; cada tarjeta tiene ancho fijo (`--rail-w`: 66 % en móvil, un tercio desde 600 px, un cuarto desde 1000 px, máximo 300 px en móvil), así la siguiente asoma por el lado. Ya no depende del tamaño de la foto: antes WebKit estiraba la tarjeta de Costa a 618 px. Flechas solo con puntero fino. Se usa para las cuatro regiones, «Así funciona» (62 %) y el respaldo de Cultura Viva.
-**Tarjeta en carrusel.** Foto 16:9 en móvil (16:10 en el resto), provincia como chip sobre la foto (la región ya está en el título del carrusel), nombre en una línea con puntos suspensivos, dos datos con icono y pie con precio corto («USD 45» y debajo «Referencial» / «Propuesto» / «Verificado») junto a «Comprar».
-**Avisos.** «Precios referenciales · compra de prueba» es un `NoteChip` con detalle desplegable, en la misma fila que «Ver el prototipo anterior». Los créditos del héroe son un solo «Créditos» desplegable junto al lugar. «Tus datos (LOPDP)» y «Música» comparten fila como plegables; el abierto ocupa todo el ancho y la música solo monta el reproductor al abrirla.
-**Cultura Viva en portada.** `CultureCarousel` del frente de cultura con cartas de 250 × 310 px en móvil (260 × 360 desde 760 px). La variable `--cvc-card-w` solo existía dentro de `.cvc-page`; la portada la define en `.cv-culture-band`. Chips sólidos (sin `backdrop-filter`).
-**Búsqueda móvil.** Una fila: campo, botón de filtros de 48 px (icono con nombre accesible «Filtros») y orden de 120 px.
-**Carcasa.** Cabecera fija y sólida con «Entrar» rojo arriba; barra inferior fija (Explorar, Mi viaje, MIJIN, Billetera, Cuenta) con zona segura a ambos lados y abajo; el aviso de privacidad y su confirmación se colocan encima de la barra. Pie móvil: marca y redes, cuatro grupos plegados y una fila final con la nota de prueba y «Soy anfitrión» (solo invitados; antes era navy sobre navy e invisible).
-**Roles.** Viajero e invitado no ven nada de negocio. Modo negocio: solo «Mi negocio», el chip «Panel de prueba», `TransferReviewList` y el portal; el menú ofrece «Modo viajero» a quien solo es anfitrión (quien tiene ambos usa `RoleSwitch`).
-**Recorrido.** Al terminar u omitir vuelve arriba (suave, o instantáneo con movimiento reducido) y enfoca `#hero-title`; comprobado en Chromium y WebKit.
+No canonizado: tamaños mínimos históricos de otras pantallas y etiquetas de introducción heredadas no constituyen una nueva escala tipográfica ni un patrón de encabezado; las reglas anteriores se limitan a componentes comprobados en el código vigente.

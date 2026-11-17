@@ -142,7 +142,10 @@ function MainContent({ onReplayIntro }: { onReplayIntro: () => void }) {
 }
 const INTRO_KEY = 'chullavida:v3:intro';
 export function App() {
-  const [intro, setIntro] = useState(() => { try { return localStorage.getItem(INTRO_KEY) !== 'seen'; } catch { return true; } });
+  const [intro, setIntro] = useState(() => {
+    if (new URLSearchParams(window.location.search).get('intro') === '1') return true;
+    try { return localStorage.getItem(INTRO_KEY) !== 'seen'; } catch { return true; }
+  });
   const closeIntro = () => {
     setIntro(false);
     try { localStorage.setItem(INTRO_KEY, 'seen'); } catch { /* almacenamiento bloqueado: la intro volverá a mostrarse */ }

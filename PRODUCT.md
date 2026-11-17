@@ -6,59 +6,41 @@
 web
 
 ## Users
-Viajeros jóvenes (wambras) que quieren descubrir y organizar experiencias en Ecuador. Negocios y comunidades anfitrionas que publican experiencias y gestionan sus propias solicitudes. Esta distribución fue confirmada por el usuario.
+Wambras que descubren y organizan viajes por Ecuador desde el celular o una computadora. Anfitriones, comunidades y negocios con un recorrido separado para sus publicaciones y solicitudes.
 
 ## Product Purpose
-Facilitar turismo sostenible y personalizado en Ecuador, con exploración, planificación y favoritos para visitantes, y un espacio de gestión separado para anfitriones.
+Acercar a los jóvenes a Ecuador mediante experiencias locales, planificación por preferencias y presupuesto, cultura y un pasaporte de viaje.
 
 ## Capabilities and Constraints
-Aplicación existente React, TypeScript y Vite. La versión actual funciona localmente en el navegador; no cuenta con autenticación, pasarela de pagos real, mensajería externa ni sincronización entre usuarios. El checkout tiene tres pasos con fecha, grupo, total y métodos simulados: tarjeta ficticia con aprobación/rechazo, transferencia pendiente y QR Deuna de texto sin cobro. Su comprobante es de demostración. «Mis viajes y pagos» separa el estado de la prueba de la respuesta del negocio; una aprobación simulada no implica disponibilidad ni pago real. No recoger datos bancarios, inventar certificaciones ni indicar mensajes enviados.
+Aplicación React, TypeScript y Vite con 51 fichas referenciales, fotos acreditadas, cuatro regiones, búsqueda, favoritos, planificador, MIJIN y Cultura Viva. Los precios del catálogo son orientativos y no implican disponibilidad ni venta habilitada. Presupuesto de grupo desde $20; transporte y extras se revisan aparte.
 
-El modelo de membresía se representa como demostración local por instrucción del usuario: semanal $2,99 por 7 días, mensual $4,99 por mes calendario y anual $49,99 por año calendario. Ruta sin internet y Comunidad wambra requieren cualquier plan activo; pasaporte premium requiere anual activo. La activación es explícita y ficticia. Cancelar renovación conserva acceso hasta vencer; no hay renovación ni cargo automático real. Un plan vencido vuelve a cerrar esas funciones. El pasaporte básico permanece gratuito y reúne un sello animado por destino de las visitas del viajero con llegada registrada. Los sellos de prueba se distinguen y no acreditan visitas ni premios.
+La extensión conectada usa Supabase para cuentas, organizaciones y solicitudes; API y reglas de base de datos deciden permisos y estados de pago. Elegir el modo negocio en una demostración no concede autorización de servidor. Las compras conectadas requieren una sesión válida y correo verificado, una oferta habilitada, confirmación del anfitrión y términos vigentes aceptados. El servidor calcula los importes y verifica el resultado con el proveedor. El formulario de tarjeta pertenece a PayPhone; CHULLA VIDA no recibe datos de tarjeta. El retorno del navegador no acredita pago.
 
-«Cobros y retiros» muestra el pago del viajero a CHULLA VIDA, comisión del 10% y neto del 90% al negocio, por cobro en centavos. Cuenta pagos demo aprobados y aceptados del negocio seleccionado, sin pendientes, canceladas o duplicadas. El neto queda retenido hasta registrar por código la llegada de una solicitud confirmada y demo aprobada, desde su fecha de visita en Ecuador. Los retiros son solicitudes ficticias con confirmación, cuenta fija de prueba e historial; asignan cada visita una sola vez y se guardan aparte de liquidaciones reales. Cambios posteriores que afectan un retiro producen revisión, sin saldo negativo ni reembolso inventado. Nunca afirmar transferencia realizada.
+Los cobros conectados están desactivados hasta configurar y validar el proveedor, los requisitos comerciales y los servicios necesarios. La interfaz distingue la demostración local del pago conectado. Las pruebas locales no rellenan `pagado_en`, no crean ingresos ni acreditan una liquidación real.
 
-Las restricciones de planes y perfiles son controles locales de interfaz, no autorización de servidor ni una barrera de pago segura. La publicación del frontend no añade esos servicios. El proyecto está vinculado a Vercel como `chulla-vida`, con despliegue de esta actualización aún pendiente de ejecución y comprobación.
+Planes de referencia solicitados: semanal $2,99, mensual $4,99 y anual $49,99. La antigua ruta premium, Comunidad wambra y pasaporte premium se muestran como funciones de membresía (premium exclusivo anual). No existe todavía una compra conectada de suscripciones. En la web publicada se rechazan las membresías guardadas en el navegador y la activación ficticia está deshabilitada. La simulación histórica de planes se conserva solo en desarrollo.
 
-Ruta sin señal ofrece un esquema interactivo con cuatro paisajes regionales, instantánea validada en el navegador, indicador de conexión, vista de prueba sin conexión y descarga HTML autónoma en el idioma elegido. La descarga abre desde disco sin red; la primera apertura de la aplicación web requiere conexión. No hay service worker, navegación GPS ni cálculo de carreteras. El origen propone 28 ciudades ecuatorianas y permite escribir otra. El catálogo tiene 28 destinos; las propuestas añadidas son ideas orientativas, sin presentarse como negocios verificados. El presupuesto del grupo parte de $20; transporte y extras se revisan por separado.
+El pasaporte básico y los sellos de prueba se distinguen de visitas verificadas. Billetera, solicitudes de retiro y comisión 10% deben distinguir siempre simulación y datos conectados. Ninguna prueba implica dinero transferido.
 
-La interfaz ofrece español, inglés, francés, portugués y chino simplificado. Kichwa Sierra y Amazonía cambian la interfaz mediante 644 frases de una base editorial unificada, con navegación, planificador, ruta offline, planes, pasaporte y cobros. No son dos dialectos validados: ambas opciones muestran un aviso de borrador con revisión regional pendiente. Algunos textos largos del checkout y publicación conservan el español por falta de traducción; la cobertura aún es parcial en esas pantallas. Los nombres propios, relatos locales y contenido del usuario conservan su idioma original. El selector aparece en bienvenida y cabecera, persiste en el navegador y actualiza el idioma del documento.
+La biblioteca de fichas y el itinerario HTML se guardan en el dispositivo. La versión HTTPS utiliza service worker para apertura sin red tras cargar los recursos; puede depender del almacenamiento del navegador. Las fichas descargadas son una instantánea. IA remota, clima, cuentas, disponibilidad y transacciones necesitan internet. El esquema de ruta no es navegación GPS.
+
+Idiomas: español, inglés, francés, portugués, chino y borradores de Kichwa Sierra y Amazonía. Las dos opciones Kichwa comparten una base de trabajo y requieren revisión comunitaria; no presentarlas como dialectos certificados. Mantener nombres propios, relatos y contenido de usuarios en su idioma. Algunas pantallas históricas tienen cobertura parcial.
 
 ## Brand Commitments
-Nombre CHULLA VIDA. Usar wambras como nombre de la audiencia. Reutilizar el logo actualizado aportado el 23 de octubre en public/chulla-vida-logo.png: sus paisajes se ensamblan y su sol gira, con pausa y repetición. La intro aparece en cada carga con selector visual Sierra/Costa/Amazonía y espera «¡De ley, vamos!», salto o Escape. Respetar movimiento reducido y ofrecer reproducción solo por acción explícita. Colores naturales andinos con azul, turquesa, maíz y rojo del logo. Español ecuatoriano juvenil, breve y claro; iconos informativos y detalle ampliable en lugar de párrafos en cada tarjeta.
+CHULLA VIDA; audiencia: wambras. Mantener el logo original actualizado y los activos de marca existentes, sin redibujar su arte. La intro conserva el recorrido audiovisual y termina con el logo original grande y animado; debe poder saltarse, pausarse y repetirse. Movimiento reducido muestra una alternativa estática.
+
+Dirección confirmada por el usuario el 16 de noviembre: portada editorial de viajes con fotografías grandes, pocos textos y detalle al abrir cada destino. Papel cálido, azul del logo y turquesa; maíz y rojo como acentos medidos. Preservar las funciones y los datos del trabajo existente. El concepto de álbum anterior ya no dirige la portada.
+
+Usar frases ecuatorianas breves y comprensibles, iconos acompañados por etiquetas, contraste legible y acciones táctiles. Escritorio y móvil son igualmente importantes. La barra lateral se mantiene accesible; el móvil tiene cinco accesos inferiores y herramientas adicionales en el menú.
 
 ## Evidence on Hand
-Proyecto web adjunto en C:/Users/leone/Downloads/workspace-cf86751b-0d45-494b-8d28-f14e0ef711c6 y ocho capturas del planificador. Catálogo de experiencias existente de demostración en src/data/mockData.ts. El usuario compartió la playlist Spotify 1YViurI7F7HxTMSS0DiabA (Folklore ecuatoriano) y pidió botones sociales simulados, colores naturales andinos y una intro con su logo animado.
+Logo original en public/brand y public/chulla-vida-logo.png; fotografías y créditos en public/images; vídeo y créditos en public/video. Playlist Sierra 1YViurI7F7HxTMSS0DiabA, Costa 18gSr3UmtEr6wuDRWSD4yX y Amazonía 5nRsIgwAyODNTv4V6JzUZp. Botones sociales simulados, sin inventar perfiles reales. Proyecto independiente en C:/Users/leone/Desktop/CHULLA VIDA y publicación vinculada a https://chulla-vida.vercel.app/.
 
 ## Product Principles
-- Separar los recorridos y herramientas de viajeros y negocios.
-- Las preferencias deben modificar las recomendaciones.
-- Preservar información útil del catálogo e indicar su carácter orientativo.
-- Hacer las acciones claras, accesibles y utilizables en móviles.
-- Hacer visible la bienvenida y los resultados de cada paso, sin impedir saltarlos o volver atrás.
-- Mantener independientes la aprobación de pago de prueba y la confirmación de una solicitud.
-- Priorizar fotografías, iconos con texto y datos breves; conservar la información completa en pestañas y desplegables.
-- Describir el alcance offline con precisión: ruta descargada disponible sin red, sin prometer que toda la web arranque offline.
-- Hacer visibles precio, vigencia y alcance de cada plan demo; distinguir pasaporte básico gratuito, premium anual y sellos de prueba.
-- Mostrar comisión, saldo retenido, saldo habilitado e historial sin presentar cobros o retiros ficticios como dinero real.
-
-## Continuación conectada — 13 de noviembre de 2026
-
-Las capacidades locales descritas arriba conservan el alcance del prototipo histórico. La extensión «Reservas y pagos» implementa un recorrido separado con Supabase, API y checkout alojado de PayPhone, probado con dobles del proveedor. Está desactivada por defecto: no hay credenciales Supabase/PayPhone configuradas, cobro real validado ni despliegue de esta actualización en producción. Las 51 fichas referenciales actuales mantienen la compra bloqueada. Véanse `docs/PAGOS_ECUADOR.md` y `docs/ROADMAP.md` para configuración y validación pendientes.
-
-Cuando se configure el servicio, el viajero autenticado solicita cupos de ofertas habilitadas; el anfitrión autorizado confirma disponibilidad y habilita el pago. La propiedad de las reservas y los permisos reales del negocio dependen del servidor y RLS; elegir un perfil demo no concede acceso. Antes de continuar se revisan importe USD, entorno y política de cancelación. El formulario de tarjeta se abre en la página superior de PayPhone; CHULLA VIDA no recoge datos de tarjeta. Las reservas EUR conservan su moneda y no se convierten automáticamente. El cobro live también requiere los controles comerciales, fiscales y de términos aprobados exigidos por el servidor.
-
-La referencia de regreso solo abre la consulta: el servidor verifica el resultado con PayPhone. Los intentos conservan referencia e idempotencia para recuperación; un resultado pendiente o incierto requiere consulta antes de reintentar. El resumen descargable de un pago verificado no sustituye una factura ni acredita liquidación al anfitrión. «Revisión y reembolso» registra una solicitud del propietario, sin cancelar automáticamente la visita ni devolver dinero. Membresías, billetera, retiros y checkout anteriores siguen siendo demo local; `pago_demo` no rellena `pagado_en` ni alimenta pagos conectados.
-
-La revisión live muestra los términos públicos aprobados, publicados y vigentes con versión, fecha y contenido ampliable. La aceptación requiere una acción explícita y registro confirmado por el servidor para esa versión; un borrador, una consulta fallida, términos ausentes o cambiados mantienen bloqueado el pago. La mera selección de la casilla no habilita el cobro. Deben aplicarse todas las migraciones antes de validar este recorrido alojado.
-
-## Dirección visual vigente — 16 de noviembre de 2026
-
-El dueño eligió la dirección **«Álbum del Ecuador»** (rediseño completo, sustituye al mundo visual anterior de papel crema, serif y barra lateral). Compromisos de marca que mandan sobre lo descrito arriba cuando haya conflicto:
-
-- CHULLA VIDA es un álbum de cromos: cada lugar es un cromo numerado (01–51), los sobres son sugerencias de MIJIN, «Mi sobre» reúne guardados y Mi viaje, y solo una visita verificada «pega» el cromo con brillo.
-- Tintas planas a página completa (maíz, azul noche, azul cumbre, turquesa, verde selva, lava, rojo) y la familia Archivo Variable; no usar crema, Newsreader ni Plus Jakarta Sans en lo nuevo.
-- Logo 2026 (`public/brand/`) siempre como sticker blanco troquelado. La intro sale solo en la primera visita y **termina con el logo**.
-- Navegación única: barra superior en escritorio y barra inferior de cinco destinos en móvil (Álbum, Fiestas, MIJIN, Mi sobre, Yo). Las pantallas del prototipo antiguo dejan de mostrarse.
-- Se puede ver el álbum sin cuenta; comprar, pagar, pedir información, la billetera y el pasaporte exigen cuenta con correo verificado, y el servidor decide importes y estados de pago.
-- Detalle completo en `.impeccable/album-direction.md`; `DESIGN.md` se reescribe al terminar la obra.
+- Explorar sin cuenta; comprobar autorización en el servidor para datos privados y operaciones conectadas.
+- Separar las herramientas de viajeros y negocios.
+- Fotografía y acciones claras primero; información completa en detalles, pestañas y desplegables.
+- Preservar las preferencias, favoritos y recomendaciones al cambiar el diseño.
+- Mostrar de forma honesta qué está verificado, qué es referencial y qué es una prueba.
+- Mantener precio, moneda, comisión, estado y entorno de pago visibles antes de confirmar.
+- Respetar movimiento reducido, teclado, lectores de pantalla y pantallas pequeñas.

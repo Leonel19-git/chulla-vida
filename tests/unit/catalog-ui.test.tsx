@@ -82,7 +82,9 @@ describe('portada Ecuador Vivo', () => {
   });
   it('cuenta los pasos, el reparto por región y aclara que la compra es de prueba', async () => {
     render(<Catalog />);
-    expect(await screen.findByRole('heading', { name: 'Así funciona CHULLA VIDA' })).toBeInTheDocument();
+    const how = await screen.findByText('Así funciona CHULLA VIDA');
+    expect(how).toBeVisible();
+    await userEvent.click(how);
     expect(screen.getAllByRole('listitem').some(item => /Compra o pregunta/.test(item.textContent ?? ''))).toBe(true);
     const amazonia = experiences.filter(item => item.localizedRegion === 'amazonia').length;
     expect(screen.getByRole('button', { name: `Amazonía, ${amazonia} fichas` })).toBeInTheDocument();

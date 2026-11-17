@@ -4,6 +4,7 @@ import { kichwaReviewNotice } from '../../i18n/kichwa';
 import { useCallback, useEffect, useRef, useState, type SyntheticEvent } from 'react';
 import { ArrowRight, Pause, Play, PlayCircle } from 'lucide-react';
 import { AnimatedLogo } from './AnimatedLogo';
+import './intro-finale.css';
 
 /** Videos de la intro, hechos con scripts/make-video-ffmpeg.mjs a partir de fotos reales (sin texto incrustado). */
 export const INTRO_SOURCES = {
@@ -78,6 +79,9 @@ export function BrandIntro({ onClose }: { onClose: () => void }) {
   const [wantsVideo, setWantsVideo] = useState(() => !reducedMotion());
   const [playing, setPlaying] = useState(false);
   const [failed, setFailed] = useState(false);
+  const [completed, setCompleted] = useState(false);
+  const [finalePaused, setFinalePaused] = useState(false);
+  const [duration, setDuration] = useState(0);
   // Algunos navegadores dicen poder con H.264 y luego no lo decodifican: entonces se prueba solo el WebM.
   const [webmOnly, setWebmOnly] = useState(false);
   const [time, setTime] = useState(0);
@@ -120,23 +124,23 @@ export function BrandIntro({ onClose }: { onClose: () => void }) {
   useEffect(() => {
     const onVisibility = () => {
       const video = videoRef.current;
-      if (!video || !wantsVideo) return;
+      if (!video || !wantsVideo || completed || failed) return;
       if (document.visibilityState === 'hidden') video.pause();
       else void video.play()?.catch(() => setPlaying(false));
     };
     document.addEventListener('visibilitychange', onVisibility);
     return () => document.removeEventListener('visibilitychange', onVisibility);
-  }, [wantsVideo]);
+  }, [wantsVideo, completed, failed]);
 
   useEffect(() => {
     const video = videoRef.current;
-    if (!video || !wantsVideo || failed) return;
+    if (!video || !wantsVideo || failed || completed) return;
     // iOS exige muted como propiedad (no solo atributo) para reproducir en línea sin gesto.
     video.muted = true;
     video.defaultMuted = true;
     const attempt = video.play?.();
     if (attempt && typeof attempt.catch === 'function') attempt.catch(() => setPlaying(false));
-  }, [wantsVideo, failed, webmOnly]);
+  }, [wantsVideo, failed, webmOnly, completed]);
 
   // Sincronía fina de títulos: timeupdate llega cada ~250 ms (en Safari a veces más); con el video en marcha
   // se lee el tiempo en cada fotograma (requestVideoFrameCallback o requestAnimationFrame), redondeado a 0,1 s.
@@ -170,19 +174,33 @@ export function BrandIntro({ onClose }: { onClose: () => void }) {
     void video.play()?.catch(() => setPlaying(false));
   };
 
+  const replayVideo = () => {
+    const video = videoRef.current;
+    if (!video || failed) return;
+    video.currentTime = 0;
+    setTime(0);
+    setCompleted(false);
+    setFinalePaused(false);
+    setWantsVideo(true);
+    void video.play()?.catch(() => setPlaying(false));
+  };
+
   const showVideo = !failed;
   // Con movimiento reducido y sin video en marcha, título estático de la primera toma (la del póster).
   const index = reduced && !playing ? (cues ? 0 : -1) : cueIndexAt(cues, time);
-  const cue = index >= 0 ? cues?.shots[index] : undefined;
-  const outro = Boolean(cues) && index === -1 && !(reduced && !playing);
+  const closingTime = cues?.closingStart ?? (duration > 2.3 ? duration - 2.3 : Number.POSITIVE_INFINITY);
+  const outro = failed || completed || (time >= closingTime && !(reduced && !wantsVideo));
+  const cue = !outro && index >= 0 ? cues?.shots[index] : undefined;
   const progress = shotProgress(cues, reduced && !playing ? 0 : time);
   const playLabel = playing ? t('Pausar video') : reduced && !wantsVideo ? t('Ver video') : t('Reproducir video');
 
   return <dialog ref={dialogRef} className={`brand-intro cvi ${outro ? 'is-outro' : ''} ${reduced ? 'is-reduced' : ''} ${leaving ? 'is-leaving' : ''} ${language.startsWith('ki') ? 'intro-kichwa' : ''}`} aria-labelledby="intro-title" aria-describedby="intro-description" onCancel={event => { event.preventDefault(); dismiss(); }}>
     <div className="cvi-stage">
       {showVideo
-        ? <video key={webmOnly ? 'webm' : 'all'} ref={videoRef} className="cv-intro-video cvi-video" poster={INTRO_POSTER} muted playsInline loop preload={reduced ? 'none' : 'auto'} autoPlay={!reduced} aria-hidden="true" tabIndex={-1} data-user-motion="true" disablePictureInPicture disableRemotePlayback
+        ? <video key={webmOnly ? 'webm' : 'all'} ref={videoRef} className="cv-intro-video cvi-video" poster={INTRO_POSTER} muted playsInline preload={reduced ? 'none' : 'auto'} autoPlay={!reduced} aria-hidden="true" tabIndex={-1} data-user-motion="true" disablePictureInPicture disableRemotePlayback
             onPlay={() => setPlaying(true)} onPlaying={() => setPlaying(true)} onPause={() => setPlaying(false)} onError={onVideoError}
+            onLoadedMetadata={event => setDuration(Number.isFinite(event.currentTarget.duration) ? event.currentTarget.duration : 0)}
+            onEnded={() => { setCompleted(true); setPlaying(false); setWantsVideo(false); }}
             onTimeUpdate={event => setTime(event.currentTarget.currentTime)}>
             {!webmOnly && <source src={INTRO_SOURCES.portrait} type="video/mp4" media={PORTRAIT_MEDIA} />}
             {!webmOnly && <source src={INTRO_SOURCES.mp4} type='video/mp4; codecs="avc1.640028"' />}
@@ -200,7 +218,10 @@ export function BrandIntro({ onClose }: { onClose: () => void }) {
       <p className="cvi-chip"><span>{cue.region}</span><span aria-hidden="true">·</span><span>{cue.province}</span></p>
       <p className="cvi-photo-credit">{t('Foto')}: {cue.credit.author} · {cue.credit.license}</p>
     </div>}
-    {outro && <div className="cvi-outro" aria-hidden="true"><p className="cvi-wordmark">CHULLA VIDA</p><p>Sierra · Costa · Amazonía · Galápagos</p></div>}
+    {outro && <div className="cvi-outro cvi-finale">
+      <div className="cvi-finale-art"><AnimatedLogo variant="intro" paused={finalePaused} /></div>
+      <p>{t('Ecuador te espera.')} {t('Sal a vivirlo.')}</p>
+    </div>}
 
     <div className="cvi-bar">
       {progress.length > 0 && <div className="cvi-progress" aria-hidden="true">{progress.map((value, i) => <span key={i}><i style={{ transform: `scaleX(${value})` }} /></span>)}</div>}
@@ -216,7 +237,11 @@ export function BrandIntro({ onClose }: { onClose: () => void }) {
         </div>
         <div className="cvi-actions">
           <button ref={enterRef} className="cvi-enter" onClick={dismiss} aria-label={t('Entrar a CHULLA VIDA')}>{t('Entrar')}<ArrowRight size={19} aria-hidden="true" /></button>
-          {showVideo && <button className="cvi-ghost cvi-play" onClick={toggleVideo} aria-label={playLabel}>
+          {outro && <button className="cvi-ghost cvi-play" onClick={() => setFinalePaused(value => !value)} aria-label={t(finalePaused ? 'Reproducir animación' : 'Pausar logo')}>
+            {finalePaused ? <Play size={18} aria-hidden="true" /> : <Pause size={18} aria-hidden="true" />}<span>{t(finalePaused ? 'Reproducir animación' : 'Pausar logo')}</span>
+          </button>}
+          {outro && showVideo && <button className="cvi-ghost cvi-replay" aria-label={t('Ver intro')} onClick={replayVideo}><PlayCircle size={18} aria-hidden="true" /><span>{t('Ver intro')}</span></button>}
+          {!outro && showVideo && <button className="cvi-ghost cvi-play" onClick={toggleVideo} aria-label={playLabel}>
             {playing ? <Pause size={18} aria-hidden="true" /> : reduced && !wantsVideo ? <PlayCircle size={18} aria-hidden="true" /> : <Play size={18} aria-hidden="true" />}
             <span>{playLabel}</span>
           </button>}

@@ -81,3 +81,47 @@
 /* Idiomas: aviso breve de contenido que se queda en español. */
 .cv-lang-note{display:inline-flex;align-items:center;gap:4px;margin:0 0 10px;padding:4px 10px;border-radius:999px;background:#eef4fb;color:#012960;font-size:13px;font-weight:600;line-height:1.3}
 .cv-lang-note span{font-weight:800;letter-spacing:.04em}
+
+/* Ecuador en primer plano: la navegación acompaña las fotografías, sin ruido visual. */
+.app-shell{--shell-ink:#103452;--shell-teal:#087f87;--shell-paper:#fbf7ee;--shell-line:#dcded7}
+.app-shell .main-content{background:var(--shell-paper)}
+.app-shell .sidebar{background:#fffdf8;color:var(--shell-ink);border-right:1px solid var(--shell-line);box-shadow:none}
+.app-shell .sidebar::after,.app-shell .cv-toolbar::after{display:none}
+.app-shell .sidebar-brand{border-color:var(--shell-line)}
+.app-shell .sidebar-brand>button:first-child{background:none;border-radius:0;padding:6px;box-shadow:none}
+.app-shell .sidebar-brand .animated-logo{mix-blend-mode:normal}
+.app-shell .sidebar-brand>button.sidebar-close{color:var(--shell-ink)}
+.app-shell .sidebar-mode,.app-shell .sidebar-country{color:#52656b}
+.app-shell .mode-dot{background:var(--shell-teal)}
+.app-shell .main-navigation{gap:4px}
+.app-shell .main-navigation>button{min-height:44px;color:#405b65;border-radius:8px;font-size:12px}
+.app-shell .main-navigation>button svg{color:#547681}
+.app-shell .main-navigation>button.active{color:var(--shell-ink);background:#e7efeb;font-weight:750;box-shadow:none}
+.app-shell .main-navigation>button.active svg{color:var(--shell-teal)}
+.app-shell .main-navigation>button:not(.active):hover{background:#f0f3ed;color:var(--shell-ink)}
+.app-shell .nav-active-dot{background:var(--shell-teal)}
+.app-shell .nav-count{background:#e7efeb;color:var(--shell-ink)}
+.app-shell .sidebar-help,.app-shell .replay-intro{color:#405b65}
+.app-shell .sidebar-help:hover,.app-shell .replay-intro:hover{color:var(--shell-teal)}
+.app-shell .sidebar-country{border-color:var(--shell-line)}
+.app-shell .sidebar-bottom{padding-top:22px}
+.app-shell .topbar.cv-topbar,.app-shell .cv-toolbar.cv-toolbar{background:#fffdf8;border-color:var(--shell-line);box-shadow:none}
+.app-shell .topbar-title{color:var(--shell-ink)}
+.app-shell .cv-toolbar .cv-tool{border-radius:8px;box-shadow:none}
+.app-shell .cv-toolbar .cv-tool.cv-tool-mijin{background:var(--shell-ink);color:#fff}
+.app-shell .cv-tool-mijin>.cv-pulse{background:#efb22c;color:#103452}
+.app-shell .cv-toolbar .cv-tool:hover{background:#e7efeb;color:var(--shell-ink)}
+.app-shell .cv-toolbar .cv-tool.cv-tool-mijin:hover{background:#1d5368;color:#fff}
+.app-shell :is(.main-navigation>button,.sidebar-help,.replay-intro,.cv-tool,.cv-account-button):focus-visible{outline:3px solid var(--shell-teal);outline-offset:3px}
+@media(max-width:700px){
+ .app-shell .topbar.topbar{padding-inline:12px;gap:6px}
+ .app-shell .topbar-left{gap:6px}
+ .app-shell .topbar-actions{gap:4px}
+ .app-shell .topbar .icon-button{width:44px;height:44px}
+ .app-shell .topbar .header-intro{display:none}
+ .app-shell .cv-account-button{padding-inline:10px;font-size:12px}
+ .app-shell .cv-bottom-nav.mobile-bottom-nav{background:#fffdf8;border-color:var(--shell-line);box-shadow:none}
+ .app-shell .cv-bottom-nav button.active svg{color:var(--shell-teal)}
+ .app-shell .cv-bottom-nav .cv-bottom-mijin-mark{background:var(--shell-ink);box-shadow:none;border-color:#fffdf8}
+}
+@media(max-width:360px){.app-shell .topbar.topbar{padding-inline:8px}.app-shell .topbar .mobile-brand-name{font-size:11px;letter-spacing:.02em}.app-shell .cv-account-button{padding-inline:8px}}

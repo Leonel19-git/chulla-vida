@@ -40,9 +40,10 @@ describe('transferencia bancaria con comprobante', () => {
     await admin(db, 'insert into auth.users(id,email_confirmed_at) values($1,now()),($2,now()),($3,now()),($4,now()),($5,now())', [traveler, owner, other, guide, outsider]);
     await admin(db, "insert into public.organizations(id,owner_id,name,kind,verification_status) values($1,$2,'Negocio de prueba','business','identity_reviewed'),($3,$4,'Otro negocio','business','identity_reviewed')", [org, owner, otherOrg, outsider]);
     await admin(db, "insert into public.organization_members(organization_id,user_id,role,status) values($1,$2,'guide','active')", [org, guide]);
-    await admin(db, `insert into public.experiences(id,slug,organization_id,title,localized_region,price_type,price_min,status)
-      values('transfer-test','transfer-test',$1,'Experiencia de prueba','sierra','proposed',30,'published'),
-            ('no-account','no-account',$2,'Sin cuenta','sierra','proposed',30,'published')`, [org, otherOrg]);
+    await admin(db, `insert into public.experiences(id,slug,organization_id,title,localized_region,price_type,price_min,status,operator_verification_status,booking_enabled)
+      values('transfer-test','transfer-test',$1,'Experiencia de prueba','sierra','verified_offer',30,'published','identity_reviewed',true),
+            ('no-account','no-account',$2,'Sin cuenta','sierra','verified_offer',30,'published','identity_reviewed',true),
+            ('proposed-only','proposed-only',$1,'Solo propuesta','sierra','proposed',30,'published','identity_reviewed',false)`, [org, otherOrg]);
   }, 120000);
   afterAll(async () => { await db?.close(); });
 
@@ -100,6 +101,25 @@ describe('transferencia bancaria con comprobante', () => {
     await expect(review(transfer, guide, 'paid')).rejects.toThrow('Not allowed');
     await expect(review(transfer, outsider, 'paid')).rejects.toThrow('Not allowed');
     expect((await admin(db, 'select status from public.transfer_payments where id=$1', [transfer.id]))[0].status).toBe('receipt_submitted');
+  });
+
+  it('rechaza un precio forjado desde el navegador y una oferta no verificada sin crear transferencias', async () => {
+    const before = (await admin(db, 'select count(*)::integer as n from public.transfer_payments'))[0].n;
+    await expect(start(traveler, 'transfer-test', crypto.randomUUID(), 0.01)).rejects.toThrow('Transfer amount does not match server price');
+    await expect(start(traveler, 'transfer-test', crypto.randomUUID(), 89.99)).rejects.toThrow('Transfer amount does not match server price');
+    await expect(start(traveler, 'proposed-only')).rejects.toThrow('Verified fixed offer required');
+    expect((await admin(db, 'select count(*)::integer as n from public.transfer_payments'))[0].n).toBe(before);
+  });
+
+  it('no reutiliza una clave de intento para cambiar precio, fechas o personas', async () => {
+    const key = crypto.randomUUID();
+    const transfer = await start(traveler, 'transfer-test', key);
+    await expect(start(traveler, 'transfer-test', key, 0.01)).rejects.toThrow('Idempotency conflict');
+    await expect(run(db, user(traveler), 'select public.start_transfer_payment($1,$2,$3,$4,$5,$6,$7)',
+      ['transfer-test', future(12), future(13), 2, 1, 90, key])).rejects.toThrow('Idempotency conflict');
+    await expect(run(db, user(traveler), 'select public.start_transfer_payment($1,$2,$3,$4,$5,$6,$7)',
+      ['transfer-test', future(10), future(11), 1, 2, 90, key])).rejects.toThrow('Idempotency conflict');
+    expect((await start(traveler, 'transfer-test', key)).id).toBe(transfer.id);
   });
 
   it('el comprobante es privado: solo el viajero y los miembros del negocio lo leen', async () => {

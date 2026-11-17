@@ -1,0 +1,38 @@
+/* The existing regional film leads into the actual brand, then holds for entry. */
+.cvi.is-outro .cvi-stage{background:#103452}
+.cvi.is-outro .cvi-video{visibility:hidden}
+.cvi.is-outro .cvi-shade{display:none}
+.cvi .cvi-finale{inset:60px 0 164px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:21px;overflow:visible;padding:20px}
+.cvi-finale-art{width:min(46vw,440px,calc((100dvh - 270px)*1.085));min-width:160px;padding:clamp(14px,2vw,26px);background:#fffdfb;border-radius:28px;box-shadow:0 22px 64px #00142e59;animation:cvi-brand-arrival .72s cubic-bezier(.16,1,.3,1) both}
+.cvi-finale-art .animated-logo{width:100%;height:auto}
+.cvi .cvi-finale>p:last-child{font-family:Newsreader,Georgia,serif;font-size:clamp(23px,2.7vw,36px);font-weight:500;letter-spacing:-.02em;color:#fffaf0;line-height:1.15;text-wrap:balance;max-width:25ch;margin:0}
+.cvi.is-outro .cvi-logo{display:none}
+.cvi.is-outro .cvi-progress{display:none}
+.cvi.is-outro .cvi-copy>p#intro-description{display:none}
+.cvi.is-outro .cvi-bar{padding-top:16px;background:#103452}
+.cvi-finale-art .brand-logo-sun{animation-duration:8s;animation-iteration-count:1;animation-fill-mode:forwards}
+.cvi-replay{white-space:nowrap}
+@keyframes cvi-brand-arrival{from{opacity:.9;transform:scale(.94);clip-path:inset(3% round 28px)}to{opacity:1;transform:none;clip-path:inset(0 round 28px)}}
+@media(max-width:760px),(orientation:portrait) and (max-width:900px){
+ .cvi .cvi-finale{inset:65px 0 215px;gap:22px;padding:16px}
+ .cvi-finale-art{width:min(84vw,390px,calc((100dvh - 340px)*1.085));padding:18px;border-radius:23px}
+ .cvi .cvi-finale>p:last-child{font-size:27px;max-width:18ch}
+ .cvi.is-outro .cvi-actions{flex-wrap:wrap}
+ .cvi.is-outro .cvi-enter{flex:1 0 calc(100% - 180px)}
+ .cvi-replay{font-size:12px;padding-inline:12px}
+ .cvi-replay>span{display:none}
+ .cvi-replay{width:48px;padding:0}
+}
+@media(max-height:700px) and (orientation:portrait){
+ .cvi .cvi-finale{inset:62px 0 184px;gap:13px}
+ .cvi-finale-art{width:min(72vw,calc((100dvh - 305px)*1.085));min-width:145px;padding:12px}
+ .cvi .cvi-finale>p:last-child{font-size:23px}
+}
+@media(max-height:480px) and (orientation:landscape){
+ .cvi .cvi-finale{inset:15px 0 77px;gap:8px;flex-direction:row;gap:40px}
+ .cvi-finale-art{width:min(37vw,calc((100dvh - 112px)*1.085));min-width:120px;padding:10px}
+ .cvi .cvi-finale>p:last-child{max-width:12ch;font-size:29px}
+}
+@media(prefers-reduced-motion:reduce){
+ .cvi .cvi-finale,.cvi-finale-art{animation:none}
+}

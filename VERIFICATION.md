@@ -1,4 +1,26 @@
 # Verificación final · CHULLA VIDA
+## Portada editorial, intro y permisos · 16 de noviembre de 2026
+
+- Dirección aceptada: fotografías grandes, menos texto y detalle ampliable. Portada y navegación renovadas, con el catálogo y las funciones existentes preservados. Fuente activa independiente: C:/Users/leone/Desktop/CHULLA VIDA.
+- Producción READY: `dpl_ETUmq7ch2SaABQi6bux5arCUqjLy`; alias público https://chulla-vida.vercel.app/ verificado sin cookies. `?intro=1` permite revisar el cierre aunque ya se haya visto la intro.
+- Navegador publicado: filtros de cuatro regiones, búsqueda, pestañas de fichas e inglés comprobados a 1440, 820, 390 y 320 px. Sin desbordamiento horizontal ni errores de ejecución; alturas de portada 4,69 / 4,05 / 4,83 / 5,49 pantallas respectivamente.
+- Intro: vídeo original sin bucle, logo grande al finalizar, pausa del logo, repetición desde cero y Escape comprobados en escritorio, móvil y 320 px. Movimiento reducido no inicia vídeo automáticamente. El botón de repetición tiene nombre accesible también cuando solo muestra el icono.
+- 871 pruebas automáticas aprobadas; seis recorridos móviles de navegación aprobados en Edge con emulación Pixel 7. Build y tipos de API correctos. Lint sin errores, con avisos heredados. Verificaciones de dominio, planes, billetera, catálogo e idiomas correctas. Auditoría de dependencias de producción: cero vulnerabilidades conocidas al revisar.
+- Corrección de seguridad aplicada al Supabase de esta aplicación: migración aislada `202611160102_transfer_price_security.sql`, con respaldo previo de la función. La base comprueba oferta habilitada/verificada, tarifa fija USD y total por personas; rechaza importes alterados y reintentos con datos distintos. Postflight: ejecución anónima prohibida; controles de precio, oferta e idempotencia presentes. Historia de migraciones registrada como aplicada. Las pruebas SQL y API focalizadas suman 71 casos aprobados.
+- Producción ignora las membresías ficticias guardadas en el navegador y deshabilita su activación; la simulación histórica solo funciona en desarrollo. Las suscripciones comerciales continúan pendientes de implementación conectada. PayPhone continúa `enabled=false`: no se realizaron ni habilitaron cargos reales.
+- Revisión visual independiente, disposición final **ship**:
+
+| Hallazgo | Resultado final |
+| --- | --- |
+| Procedencia de dirección y elección del usuario | Resuelto |
+| Palabras unidas en titular móvil | Resuelto |
+| Espacio y ancho de Cultura Viva | Resuelto |
+| Precio por confirmar cortado | Resuelto |
+| Agenda y flechas superpuestas | Resuelto |
+
+- Un detector mecánico ejecutado: dos avisos de Plus Jakarta Sans, conservada para controles y catálogo existentes por continuidad; la portada usa Archivo y un acento Newsreader. Sistema documentado desde lo construido en DESIGN.md y su sidecar.
+- Se consultaron Impeccable y las referencias públicas de MotionSites. Figma no estaba conectado y no se atribuye trabajo a ese servicio. No se habilitó una pasarela ni se inventaron traducciones regionales validadas: Kichwa continúa como borrador comunitario pendiente. La emulación de móvil no sustituye una prueba física de Safari/iPhone.
+- Evidencia local privada: `.impeccable/review/nov16/` (capturas, resultados, detector y respaldo SQL). Los registros históricos siguientes describen estados de fechas anteriores.
 
 ## Publicación de reservas, pagos y voz · 13 de noviembre de 2026
 
