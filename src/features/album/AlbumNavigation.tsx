@@ -28,7 +28,7 @@ export function AlbumNavigation({ culture, onHome, onCulture, onSaved, onReplay 
     <header className="al-header">
       <button className="al-brand" aria-label={t('CHULLA VIDA · Inicio')} onClick={onHome}><img src="/brand/wordmark.webp" alt="CHULLA VIDA" width="170" height="41" /></button>
       <nav className="al-desktop-nav" aria-label={t('Menú principal')}>
-        {role.isHost ? <button onClick={() => signal('account')}><Store size={18} />{t('Mi negocio')}</button> : <><button aria-current={!culture ? 'page' : undefined} onClick={onHome}>{t('Álbum')}</button><button data-tour="culture" onClick={onCulture} aria-current={culture ? 'page' : undefined}>{t('Fiestas')}</button><button className="al-nav-mijin" data-tour="mijin" onClick={() => signal('mijin')}><Mic size={17} />MIJIN</button><button data-tour="envelope" onClick={onSaved}>{t('Mi sobre')}<span className="al-nav-count">{saved.length}</span></button></>}
+        {role.isHost ? <button onClick={() => signal('account')}><Store size={18} />{t('Mi negocio')}</button> : <><button aria-current={!culture ? 'page' : undefined} onClick={onHome}>{t('Inicio')}</button><button data-tour="culture" onClick={onCulture} aria-current={culture ? 'page' : undefined}>{t('Cultura Viva')}</button><button className="al-nav-mijin" data-tour="mijin" onClick={() => signal('mijin')}><Mic size={17} />MIJIN</button><button data-tour="envelope" onClick={onSaved}>{t('Mi sobre')}<span className="al-nav-count">{saved.length}</span></button></>}
       </nav>
       <div className="al-header-end"><LanguageSelector /><AccountButton /><button className="al-menu-button" aria-expanded={more} aria-label={t('Más herramientas')} onClick={() => setMore(!more)}>{more ? <X size={20} /> : <HelpCircle size={20} />}</button></div>
     </header>
@@ -40,7 +40,7 @@ export function AlbumNavigation({ culture, onHome, onCulture, onSaved, onReplay 
         <button onClick={() => hostArea('.host-dash-transfers')}><Wallet size={21} /><span>{t('Cobros')}</span></button>
         <button onClick={() => signal('tour')}><Compass size={21} /><span>{t('Guía')}</span></button>
         <button onClick={() => openAccount()}><UserRound size={21} /><span>{t('Yo')}</span></button>
-      </> : <><button onClick={onHome} aria-current={!culture ? 'page' : undefined}><BookOpen size={21} /><span>{t(role.isHost ? 'Mi negocio' : 'Álbum')}</span></button><button data-tour="culture" onClick={onCulture}><Sparkles size={21} /><span>{t('Fiestas')}</span></button><button className="al-bottom-mijin" data-tour="mijin" onClick={() => signal('mijin')}><Mic size={23} /><span>MIJIN</span></button><button data-tour="envelope" onClick={onSaved}><Heart size={21} /><span>{t('Mi sobre')}</span></button><button data-tour="account" onClick={() => openAccount()}><UserRound size={21} /><span>{t('Yo')}</span></button>
+      </> : <><button onClick={onHome} aria-current={!culture ? 'page' : undefined}><BookOpen size={21} /><span>{t(role.isHost ? 'Mi negocio' : 'Inicio')}</span></button><button data-tour="culture" onClick={onCulture}><Sparkles size={21} /><span>{t('Cultura Viva')}</span></button><button className="al-bottom-mijin" data-tour="mijin" onClick={() => signal('mijin')}><Mic size={23} /><span>MIJIN</span></button><button data-tour="envelope" onClick={onSaved}><Heart size={21} /><span>{t('Mi sobre')}</span></button><button data-tour="account" onClick={() => openAccount()}><UserRound size={21} /><span>{t('Yo')}</span></button>
 </>}
     </nav>
   </>;

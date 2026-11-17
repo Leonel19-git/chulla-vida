@@ -59,3 +59,7 @@ Comprobado en Chromium de escritorio, Pixel 7 y WebKit con iPhone 13; sin desbor
 ## Figma
 
 Archivo creado: https://www.figma.com/design/S5LD6rUB25BIr2GE2efYaJ . La cuenta Starter alcanzó el límite de llamadas antes de crear los marcos editables; el archivo aún no contiene la réplica del sitio. La implementación y las capturas locales son la referencia comprobada.
+
+## Prioridad del propietario · 17/11/2026
+
+El propósito turístico vuelve al titular del inicio («Descubre el Ecuador que se vive»). El acceso principal encuentra experiencias y el secundario abre **Cultura Viva**, nombre permanente en toda la navegación. El sobre y los cromos se conservan como herramienta secundaria. Mejorar por ajustes acotados, sin reemplazar otra vez la estructura o los nombres del producto.

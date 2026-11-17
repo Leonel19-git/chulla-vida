@@ -41,7 +41,7 @@ describe('recorrido del Álbum', () => {
     expect(JSON.parse(localStorage.getItem(TOUR_PROGRESS_KEY)!)).toMatchObject({ traveler: 'search' });
     launch(); expect(screen.getByRole('dialog', { name: 'Busca un lugar' })).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Cerrar el recorrido' }));
-    launch({ restart: true }); expect(screen.getByRole('dialog', { name: 'Tu álbum del Ecuador' })).toBeInTheDocument();
+    launch({ restart: true }); expect(screen.getByRole('dialog', { name: 'Descubre el Ecuador que se vive' })).toBeInTheDocument();
   });
   it('completar limpia el avance, vuelve arriba y enfoca el título', () => {
     const root = page(['account']); render(<TourGate />); launch();
@@ -55,7 +55,7 @@ describe('recorrido del Álbum', () => {
   it('con teclado retiene foco, avanza con flechas y Esc permite continuar luego', () => {
     page(['album', 'account']); render(<TourGate />); launch();
     const close = screen.getByRole('button', { name: 'Cerrar el recorrido' });
-    fireEvent.keyDown(screen.getByRole('heading', { name: 'Tu álbum del Ecuador' }), { key: 'Tab', shiftKey: true });
+    fireEvent.keyDown(screen.getByRole('heading', { name: 'Descubre el Ecuador que se vive' }), { key: 'Tab', shiftKey: true });
     expect(screen.getByRole('button', { name: 'Siguiente' })).toHaveFocus();
     fireEvent.keyDown(document.activeElement!, { key: 'Tab' }); expect(close).toHaveFocus();
     fireEvent.keyDown(close, { key: 'ArrowRight' });
@@ -103,7 +103,7 @@ describe('recorrido del Álbum', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Siguiente' }));
     fireEvent.click(screen.getByRole('button', { name: 'Saltar recorrido' }));
     roleStore.setMode('traveler'); launch();
-    expect(screen.getByRole('dialog', { name: 'Tu álbum del Ecuador' })).toBeInTheDocument();
+    expect(screen.getByRole('dialog', { name: 'Descubre el Ecuador que se vive' })).toBeInTheDocument();
     expect(TOUR_STEPS.some(step => step.id.startsWith('host'))).toBe(false);
     expect(JSON.parse(localStorage.getItem(TOUR_PROGRESS_KEY)!)).toMatchObject({ host: 'host-experiences', traveler: 'album' });
   });

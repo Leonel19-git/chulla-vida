@@ -1,3 +1,4 @@
+import { CULTURE_EXPANSION_CARDS } from './data-20261117';
 import { getExperienceById } from '../catalog';
 import {
   CULTURAL_EVENTS,
@@ -77,9 +78,9 @@ describe('contenido semilla de Cultura Viva', () => {
     expect(byId('provincializacion-galapagos')).toMatchObject({ usualMonths: [2], category: 'civica' });
   });
 
-  it('solo publica la URL que aporta la especificación', () => {
+  it('la semilla solo publica la URL que aporta la especificación', () => {
     expect(LOJA_FESTIVAL_AGENDA_URL).toBe('https://cultura.ec/festival/artes-vivas-loja?vista=agenda');
-    for (const event of CULTURAL_EVENTS) {
+    for (const event of CULTURAL_EVENT_SEED) {
       const urls = [event.officialUrl, ...event.editions.map(edition => edition.sourceUrl)].filter(Boolean);
       if (event.id === 'artes-vivas-loja') expect(new Set(urls)).toEqual(new Set([LOJA_FESTIVAL_AGENDA_URL]));
       else expect(urls).toEqual([]);
@@ -133,7 +134,7 @@ describe('contenido semilla de Cultura Viva', () => {
     for (const event of CULTURAL_EVENTS) {
       expect(event.protocols.length).toBeGreaterThanOrEqual(3);
       expect(event.description.length).toBeGreaterThan(80);
-      expect(event.lastCheckedAt).toBe(seedIdsAll.has(event.id) ? '2026-11-12' : '2026-11-15');
+      expect(event.lastCheckedAt).toBe(seedIdsAll.has(event.id) ? '2026-11-12' : event.id in CULTURE_EXPANSION_CARDS ? '2026-11-17' : '2026-11-15');
       const joined = event.protocols.join(' | ');
       expect(seen.has(joined)).toBe(false);
       seen.add(joined);
@@ -174,13 +175,13 @@ describe('contenido semilla de Cultura Viva', () => {
 describe('getEventsByMonth', () => {
   it('devuelve las fiestas del mes habitual', () => {
     expect(seedIds(getEventsByMonth(6))).toEqual(['inti-raymi', 'san-pedro-san-pablo']);
-    expect(ids(getEventsByMonth(1))).toEqual(['diablada-pillaro']);
+    expect(ids(getEventsByMonth(1))).toEqual(['diablada-pillaro', 'purificacion-huaca']);
     expect(seedIds(getEventsByMonth(2))).toEqual(['fruta-flores', 'provincializacion-galapagos']);
     expect(seedIds(getEventsByMonth(11))).toEqual(['mama-negra', 'artes-vivas-loja']);
     expect(seedIds(getEventsByMonth(4))).toEqual(['fiesta-chonta']);
     expect(seedIds(getEventsByMonth(7))).toEqual([]);
     // Fiestas añadidas.
-    expect(ids(getEventsByMonth(7))).toEqual(['fundacion-guayaquil']);
+    expect(ids(getEventsByMonth(7))).toEqual(['fundacion-guayaquil', 'carmen-huataraco']);
     expect(ids(getEventsByMonth(9))).toEqual(expect.arrayContaining(['yamor', 'kulla-raymi', 'virgen-del-cisne', 'maiz-sangolqui']));
     expect(ids(getEventsByMonth(12))).toEqual(expect.arrayContaining(['pase-nino-viajero', 'ano-viejo', 'kapak-raymi']));
   });
@@ -274,7 +275,7 @@ describe('getUpcomingEvents', () => {
     expect(lateDecember.map(item => [item.year, item.month])).toEqual(lateDecember.map(() => [2026, 12]));
     expect(lateDecember.map(item => item.event.id)).toContain('ano-viejo');
     const january = getUpcomingEvents(new Date('2027-01-01T06:00:00Z'), { monthsAhead: 0 });
-    expect(january.map(item => [item.event.id, item.year, item.month])).toEqual([['diablada-pillaro', 2027, 1]]);
+    expect(january.map(item => [item.event.id, item.year, item.month])).toEqual([['diablada-pillaro', 2027, 1], ['purificacion-huaca', 2027, 1]]);
   });
 });
 

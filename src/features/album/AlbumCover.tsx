@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ArrowDown, ArrowUpRight, Check, MapPin, Pause, Play, RotateCcw, Sparkles } from 'lucide-react';
+import { ArrowDown, ArrowUpRight, Check, MapPin, Pause, Play, RotateCcw } from 'lucide-react';
 import { useCatalog } from '../catalog/CatalogContext';
 import { albumLabel, ALBUM_TOTAL } from '../../domain/album';
 import { experienceVisual } from '../catalog/experienceArt';
@@ -38,9 +38,9 @@ export function AlbumCover() {
   return <section className="al-cover" data-field="portada" data-tour="album" aria-labelledby="hero-title">
     <div className="al-cover-copy">
       <div className="al-country"><span className="al-flag" aria-hidden="true" /><span>Ecuador, a tu manera</span><span className="al-edition">VOL. 01</span></div>
-      <h1 id="hero-title">{t('Llena tu álbum del Ecuador')}</h1>
-      <p>{t('Lugares que se guardan. Historias que se viven.')}</p>
-      <div className="al-cover-actions"><button className="al-button" onClick={() => setOpened(true)}><Sparkles size={19} />{t('Abrir mi primer sobre')}</button><a href="#experiencias" className="al-text-link">{t('Hojear el álbum')}<ArrowDown size={17} /></a></div>
+      <h1 id="hero-title">{t('Descubre el Ecuador que se vive')}</h1>
+      <p className="al-purpose">{t('Conectamos viajeros con comunidades y anfitriones locales para descubrir Ecuador con respeto por su cultura y naturaleza.')}</p>
+      <div className="al-cover-actions"><a className="al-button" href="#experiencias">{t('Encuentra tu aventura')}<ArrowDown size={17} /></a><button className="al-text-link" onClick={() => window.dispatchEvent(new Event('cv3:culture'))}>{t('Cultura Viva')}<ArrowUpRight size={17} /></button></div>
       <div className="al-cover-index"><span><strong>{ALBUM_TOTAL}</strong>{t('lugares')}</span><i aria-hidden="true" /><span><strong>04</strong>{t('regiones')}</span><i aria-hidden="true" /><span><strong>{String(saved.length).padStart(2, '0')}</strong>{t('En mi sobre')}</span></div>
     </div>
     <div className={`al-pack-stage ${opened ? 'is-open' : ''}`} data-tour="pack">

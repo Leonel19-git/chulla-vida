@@ -1,12 +1,16 @@
+import { CULTURAL_EVENT_EXPANSION, CULTURE_EXPANSION_CARDS } from './data-20261117.js';
 import type { CulturalEvent, EventEdition, RegionId } from '../catalog/types.js';
 import { CULTURAL_EVENT_SEED, CULTURE_CHECKED_AT, CULTURE_SOURCE, LOJA_FESTIVAL_AGENDA_URL } from './data.js';
 import { CULTURAL_EVENT_MORE, CULTURE_MORE_CHECKED_AT } from './data-more.js';
-import { CULTURE_CARDS, CULTURE_SOURCES_CHECKED_AT, RESPECT_LABELS, type CultureCardInfo, type RespectIcon } from './sources.js';
+import { CULTURE_CARDS as BASE_CULTURE_CARDS, CULTURE_SOURCES_CHECKED_AT, RESPECT_LABELS, type CultureCardInfo, type RespectIcon } from './sources.js';
 import { CULTURE_PHOTOS, type CulturePhoto } from './photos.js';
+
+export const CULTURE_CARDS: Readonly<Record<string, CultureCardInfo>> = Object.freeze({ ...BASE_CULTURE_CARDS, ...CULTURE_EXPANSION_CARDS });
+export { CULTURAL_EVENT_EXPANSION };
 
 export type { CulturalEvent, EventConfirmation, EventEdition } from '../catalog/types.js';
 export { CULTURE_CHECKED_AT, CULTURE_SOURCE, LOJA_FESTIVAL_AGENDA_URL };
-export { CULTURAL_EVENT_SEED, CULTURAL_EVENT_MORE, CULTURE_MORE_CHECKED_AT, CULTURE_CARDS, CULTURE_SOURCES_CHECKED_AT, RESPECT_LABELS, CULTURE_PHOTOS };
+export { CULTURAL_EVENT_SEED, CULTURAL_EVENT_MORE, CULTURE_MORE_CHECKED_AT, CULTURE_SOURCES_CHECKED_AT, RESPECT_LABELS, CULTURE_PHOTOS };
 export type { CultureCardInfo, CulturePhoto, RespectIcon };
 
 function deepFreeze<T>(value: T): T {
@@ -21,7 +25,7 @@ function deepFreeze<T>(value: T): T {
  * Cultura Viva: las diez fiestas de la especificación (sección 5) más las añadidas tras la investigación
  * de noviembre de 2026 (`data-more.ts`). Fechas orientativas salvo ediciones fechadas con fuente.
  */
-export const CULTURAL_EVENTS: readonly CulturalEvent[] = deepFreeze([...CULTURAL_EVENT_SEED, ...CULTURAL_EVENT_MORE]);
+export const CULTURAL_EVENTS: readonly CulturalEvent[] = deepFreeze([...CULTURAL_EVENT_SEED, ...CULTURAL_EVENT_MORE, ...CULTURAL_EVENT_EXPANSION]);
 
 const MONTH_NAMES = [
   'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
@@ -261,7 +265,7 @@ export interface CultureCard {
 
 /** Carta lista para mostrar: ficha + datos cortos + foto (si la hay). */
 export function getCultureCard(event: CulturalEvent): CultureCard {
-  const info = CULTURE_CARDS[event.id];
+  const info = CULTURE_CARDS[event.id] ?? CULTURE_EXPANSION_CARDS[event.id];
   if (!info) throw new Error(`Falta la carta de Cultura Viva para ${event.id}`);
   // Las ceremonias comunitarias nunca muestran foto, aunque alguien la añada al registro.
   const photo = event.sensitive ? null : CULTURE_PHOTOS[event.id] ?? null;

@@ -7,6 +7,7 @@ import userEvent from '@testing-library/user-event';
 import {
   CULTURAL_EVENTS,
   CULTURAL_EVENT_MORE,
+  CULTURAL_EVENT_EXPANSION,
   CULTURAL_EVENT_SEED,
   CULTURE_CARDS,
   CULTURE_PHOTOS,
@@ -31,7 +32,7 @@ describe('Cultura Viva: más fiestas, cada una con fuente', () => {
   it('suma al menos 20 fiestas reales a las 10 de la especificación, en las cuatro regiones', () => {
     expect(CULTURAL_EVENT_SEED).toHaveLength(10);
     expect(CULTURAL_EVENT_MORE.length).toBeGreaterThanOrEqual(20);
-    expect(CULTURAL_EVENTS).toHaveLength(CULTURAL_EVENT_SEED.length + CULTURAL_EVENT_MORE.length);
+    expect(CULTURAL_EVENTS).toHaveLength(CULTURAL_EVENT_SEED.length + CULTURAL_EVENT_MORE.length + CULTURAL_EVENT_EXPANSION.length);
     expect(new Set(CULTURAL_EVENTS.map(event => event.id)).size).toBe(CULTURAL_EVENTS.length);
     for (const region of ['sierra', 'costa', 'amazonia', 'galapagos'] as const) {
       expect(CULTURAL_EVENT_MORE.some(event => event.region === region), region).toBe(true);
@@ -110,8 +111,8 @@ describe('Cultura Viva: fotos con licencia libre', () => {
 
 describe('Cultura Viva: filtros', () => {
   it('filtra por mes y región y ordena por calendario', () => {
-    expect(getCultureCards({ month: 1 }).map(card => card.event.id)).toEqual(['diablada-pillaro']);
-    expect(getCultureCards({ region: 'galapagos' }).map(card => card.event.id)).toEqual(['provincializacion-galapagos', 'cantonizacion-isabela']);
+    expect(getCultureCards({ month: 1 }).map(card => card.event.id)).toEqual(['diablada-pillaro', 'purificacion-huaca']);
+    expect(getCultureCards({ region: 'galapagos' }).map(card => card.event.id)).toEqual(['provincializacion-galapagos', 'anexion-galapagos', 'cantonizacion-isabela']);
     expect(getCultureCards({ month: 10, region: 'costa' }).map(card => card.event.id)).toEqual(['rodeo-montuvio', 'independencia-guayaquil']);
     const months = getCultureCards().map(card => Math.min(...(card.event.usualMonths.length ? card.event.usualMonths : [13])));
     expect(months).toEqual([...months].sort((a, b) => a - b));
@@ -181,14 +182,14 @@ describe('Cultura Viva: cartas que giran', () => {
 
     await user.click(screen.getByRole('button', { name: 'Enero' }));
     expect(screen.getByRole('button', { name: 'Enero' })).toHaveAttribute('aria-pressed', 'true');
-    expect(screen.getByText('1 fiesta')).toBeInTheDocument();
+    expect(screen.getByText('2 fiestas')).toBeInTheDocument();
     const all = screen.getByRole('list', { name: 'Todas las fiestas' });
-    expect(all.querySelectorAll(':scope > li')).toHaveLength(1);
+    expect(all.querySelectorAll(':scope > li')).toHaveLength(2);
 
     await user.click(screen.getByRole('button', { name: 'Galápagos' }));
     expect(screen.getByText(/Nada con esos filtros/)).toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Todo el año' }));
-    expect(screen.getByRole('list', { name: 'Todas las fiestas' }).querySelectorAll(':scope > li')).toHaveLength(2);
+    expect(screen.getByRole('list', { name: 'Todas las fiestas' }).querySelectorAll(':scope > li')).toHaveLength(3);
   });
 
   it('el giro respeta «reducir movimiento» y la hoja de estilos usa objetivos de 44 px', () => {

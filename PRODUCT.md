@@ -55,3 +55,7 @@ El dueño eligió la dirección **«Álbum del Ecuador»** (rediseño completo; 
 - Navegación única: barra superior en escritorio y barra inferior de cinco destinos en móvil (Álbum, Fiestas, MIJIN, Mi sobre, Yo). Las pantallas del prototipo antiguo dejan de mostrarse.
 - Se puede ver el álbum sin cuenta; comprar, pagar, pedir información, la billetera y el pasaporte exigen cuenta con correo verificado, y el servidor decide importes y estados de pago. Las membresías no se activan desde el navegador en producción.
 - Detalle completo en `.impeccable/album-direction.md`; `DESIGN.md` se reescribe al terminar la obra con el mundo construido.
+
+## Corrección del propietario · 17/11/2026
+
+Refinar conservando la identidad; no sustituir de nuevo toda la plataforma. El nombre es **Cultura Viva**, también en navegación móvil y tutorial, no «Fiestas». La página presenta al inicio su objetivo: conectar viajeros con comunidades y anfitriones, respetando cultura y naturaleza. El álbum acompaña el turismo; no sustituye su propósito. Ampliar celebraciones de las cuatro regiones con fuentes y fechas honestas, manteniendo cartas, fotos acreditadas y giro horizontal.
