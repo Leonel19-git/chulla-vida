@@ -42,8 +42,14 @@ La auditoría de dependencias de producción informó cero vulnerabilidades cono
 5. Los borradores legales conservan revisión jurídica y datos del responsable pendientes. No se declaró cumplimiento legal automático.
 6. Figma: se creó https://www.figma.com/design/S5LD6rUB25BIr2GE2efYaJ pero el límite de la cuenta Starter impidió generar los marcos. El archivo no es una réplica entregada. El diseño implementado y sus capturas son la referencia.
 
-La promoción a producción se registra después de pasar la regresión global y comprobar el alias público.
+Publicación verificada: https://chulla-vida.vercel.app — despliegue `dpl_9qgodyxKYAWbL8LXbnoWf9YeuBXS`, código `a6502fc`, rama `chulla-vida-4-album`. Vercel confirmó READY y el alias de producción.
 
 ## Cierre de verificación
 
 Regresión global: **973 pruebas aprobadas, cero fallidas**. También aprobaron análisis estático (con avisos de código heredado/exportaciones), compilación de producción, tipos de las API y verificaciones del catálogo, manifiesto legal, traducciones, membresías y billetera. No se presentan los avisos como errores corregidos.
+
+## Comprobación del sitio publicado
+
+Escritorio (1440 px) y WebKit iPhone (390 px) respondieron HTTP 200, sin errores de página ni desborde. El registro abre en modo conectado a Supabase, muestra cédula y MIJIN tiene un control principal. Las respuestas incluyeron Content-Security-Policy. No se enviaron formularios de registro ni cobros.
+
+`/api/payments/config` confirmó pagos deshabilitados, proveedor PayPhone en sandbox. Una escritura de pagos con origen ajeno respondió 403. `/api/assistant` respondió 503 `unconfigured`. El proxy `/api/weather` respondió 503 porque su activación sigue pendiente; la interfaz conserva la consulta directa de clima descrita en ASISTENTE_IA.md. No se activaron proveedores por el despliegue.

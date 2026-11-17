@@ -78,3 +78,7 @@ Los objetos históricos con `metadata IS NULL` conservan compatibilidad: no pued
 Los límites HTTP de aplicación se verifican después del parseo de la plataforma; no sustituyen el límite de entrada del alojamiento. Las cuotas del asistente son por instancia, sin protección distribuida. La disponibilidad real de pagos depende de las variables del despliegue, del proveedor y de los requisitos comerciales del servidor, que no se activaron ni inspeccionaron remotamente aquí.
 
 Antes de dar por validado el entorno publicado quedan las comprobaciones remotas del responsable: políticas y acceso de Storage con cuentas de prueba, permisos bancarios de dueño/manager, sesión/correo/propiedad en HTTP, configuración comercial y prueba autorizada del proveedor. Despliegue y Supabase remoto quedan a cargo del responsable del cierre.
+
+## Comprobaciones de cierre sobre servicios reales
+
+El responsable confirmó el historial remoto de las migraciones 202611170201 y 202611170202. Con el acceso público, las lecturas de `user_roles`, `profiles`, `organization_bank_accounts`, `verification_documents`, `transfer_payments` y `signup_identity` devolvieron 401/42501, sin exponer filas. El sitio publicado entregó CSP y rechazó una escritura de pagos con origen ajeno mediante 403. Estas comprobaciones no sustituyen probar permisos con sesiones reales de dueño, manager y viajero, ni validan un proveedor de cobro aún apagado.
