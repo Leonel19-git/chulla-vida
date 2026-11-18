@@ -45,6 +45,8 @@ Actualización del 17/11: los botones sociales históricos de demostración fuer
 
 ## Ajuste vigente · 18 de noviembre de 2026
 
+Administración: `/administracion` ofrece revisión humana de solicitudes y documentos privados, correcciones y registro de decisiones con historial. Solo cuentas confirmadas con rol `admin`. No hay autoaprobación de negocios ni contraseñas compartidas en el código. Ver `docs/ADMINISTRACION_NEGOCIOS.md`.
+
 La última petición prevalece sobre las referencias históricas a MIJIN y los cuatro videos regionales: ambos se retiran del inicio. Comunidad wambra pasa a «ECUADOR A TU RITMO»; Favoritos, Próximos viajes y Billetera y reservas sustituyen los accesos anteriores. Se mantienen modos negocio/viajero y el recorrido guiado actualizado.
 
 Chulla Flex muestra sugerencias desde el inicio y propone hasta tres paradas compatibles en una provincia, sin afirmar tiempos de traslado. La compra de ruta de demostración suma todas las paradas con precio y separa las que requieren cotización; el cobro conectado sigue limitado a una oferta y pendiente de activación comercial. El perfil permite registrar una solicitud privada de eliminación para revisión, no un borrado inmediato. «BBS · Bueno, bonito y seguro» es una guía de comprobaciones y no un sello de seguridad verificado.

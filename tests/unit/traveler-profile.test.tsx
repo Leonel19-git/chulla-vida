@@ -68,7 +68,7 @@ beforeEach(() => {
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
 
 describe('cuenta de viajero conectada', () => {
-  it('oculta gestión y revisión de negocios en modo viajero incluso con rol administrativo', async () => {
+  it('separa la gestión del negocio y ofrece la revisión en el panel administrativo', async () => {
     mocks.session = traveler;
     mocks.tables.user_roles = [{ user_id: traveler.user.id, role: 'admin' }];
     mocks.tables.organizations = [{ id: 'org-1', owner_id: traveler.user.id, name: 'Negocio propio', kind: 'business', verification_status: 'in_review' }];
@@ -81,7 +81,8 @@ describe('cuenta de viajero conectada', () => {
     expect(screen.queryByText('Negocio propio')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Registrar aprobación' })).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole('radio', { name: 'Modo negocio' }));
-    expect(await screen.findByRole('heading', { name: 'Solicitudes para revisión' })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: 'Abrir administración' })).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'Solicitudes para revisión' })).not.toBeInTheDocument();
     expect(screen.getAllByText('Negocio propio').length).toBeGreaterThan(0);
   });
 

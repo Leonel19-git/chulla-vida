@@ -2,6 +2,7 @@ import { getExperienceById, getExperienceBySlug, type Experience } from '../../d
 
 /** Vistas con URL propia. `event` es el nombre del evento `cv3:<event>` que abre cada una. */
 export const VIEW_ROUTES = {
+  admin: { path: '/administracion', event: 'admin', title: 'Administración' },
   culture: { path: '/cultura-viva', event: 'culture', title: 'Cultura Viva' },
   passport: { path: '/pasaporte', event: 'passport', title: 'Pasaporte Guambra' },
   plan: { path: '/mi-viaje', event: 'plan', title: 'Mi viaje' },

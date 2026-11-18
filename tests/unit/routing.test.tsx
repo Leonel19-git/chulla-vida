@@ -21,6 +21,7 @@ describe('rutas con URL', () => {
     expect(parsePath('/')).toEqual({ kind: 'home' });
   });
   it('pathForExperience usa el ID estable y el título cambia por vista', () => {
+    expect(parsePath('/administracion')).toEqual({ kind: 'view', view: 'admin' });
     expect(pathForExperience(quilotoa)).toBe('/experiencias/gen-02-quilotoa-shalala');
     expect(titleForTarget(parsePath('/mi-viaje'))).toBe('Mi viaje · CHULLA VIDA');
     expect(titleForTarget(parsePath(pathForExperience(quilotoa)))).toBe('Quilotoa Shalalá · CHULLA VIDA');

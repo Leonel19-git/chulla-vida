@@ -1,6 +1,6 @@
 # Verificación de negocios
 
-La cuenta conectada se abre desde «Cuenta y negocio». Su operativa necesita Supabase configurado y las migraciones aplicadas. Cambiar el perfil demo no otorga acceso de servidor.
+La cuenta conectada se abre desde «Mi cuenta». Su operativa necesita Supabase configurado y las migraciones aplicadas. Cambiar el perfil demo no otorga acceso de servidor. El equipo tiene un panel propio en `/administracion`; consultar `ADMINISTRACION_NEGOCIOS.md` para el procedimiento vigente.
 
 El solicitante crea una organización y una solicitud de revisión. Puede aportar documentos en un bucket privado bajo el prefijo de su organización/solicitud. Los enlaces de revisión son firmados y temporales. Usuarios ajenos no tienen acceso.
 

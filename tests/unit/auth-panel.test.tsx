@@ -26,7 +26,7 @@ const client = {
   rpc: mocks.rpc,
   from: vi.fn((table: string) => {
     const rows = table === 'user_roles' ? [{ role: 'admin' }]
-      : table === 'organizations' ? [{ id: 'org-a', name: 'Organización privada A', kind: 'business', verification_status: 'in_review' }]
+      : table === 'organizations' ? [{ id: 'org-a', name: 'Organización privada A', kind: 'business', verification_status: 'in_review', owner_id: 'user-a' }]
         : table === 'merchant_verification_requests' ? [{ id: 'request-a', organization_id: 'org-a', status: 'submitted', created_at: '2026-11-12' }]
           : table === 'experience_requests' ? [{ id: 'inquiry-a', experience_id: 'source-1', message: 'Consulta privada A', status: 'requested', created_at: '2026-11-12' }] : [];
     const response = Promise.resolve({ data: mocks.failedLoad ? null : rows, error: mocks.failedLoad ? new Error('network unavailable') : null });
@@ -226,9 +226,9 @@ describe('acceso y recuperación', () => {
 
   it('retira los datos privados de A al entrar B aunque la nueva carga falle', async () => {
     mocks.session = { user: { id: 'user-a', email: 'a@example.com' } };
-    roleStore.requestHost(); // La revisión administrativa solo existe en la vista de negocio.
+    roleStore.requestHost(); // El negocio propio aparece en su panel; la administración tiene un acceso separado.
     render(<AuthPanel />);
-    expect(await screen.findByText('Organización privada A')).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Organización privada A' })).toBeInTheDocument();
     await act(async () => roleStore.requestTraveler());
     expect(screen.getByText('Consulta privada A')).toBeInTheDocument();
     mocks.failedLoad = true;

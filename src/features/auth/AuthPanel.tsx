@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import type { Session } from '@supabase/supabase-js';
-import { FileCheck2, MailCheck, PlayCircle, RefreshCw, Store, UserRound } from 'lucide-react';
+import { ShieldCheck, MailCheck, PlayCircle, RefreshCw, Store, UserRound } from 'lucide-react';
 import { TravelerProfile } from '../traveler/TravelerProfile';
 import { HostDashboard, type HostApplication, type HostDocument, type HostOrganization } from '../host/HostDashboard';
 import { RoleSwitch, useRole } from '../roles/RoleContext';
@@ -55,11 +55,14 @@ function AccountPanel({ experienceId, initialTab }: { experienceId?: string; ini
   const [admin, setAdmin] = useState(false);
   const [message, setMessage] = useState('');
   const [revision, setRevision] = useState(0);
-  const [reviewNote, setReviewNote] = useState('');
-  const [registryReference, setRegistryReference] = useState('');
   const [requestKey, setRequestKey] = useState(() => crypto.randomUUID());
   const [welcomeName, setWelcomeName] = useState<string | null>(null);
   const sessionUser = useRef<string | null>(null);
+  useEffect(() => {
+    const refresh = () => setRevision(value => value + 1);
+    window.addEventListener('cv3:host-updated', refresh);
+    return () => window.removeEventListener('cv3:host-updated', refresh);
+  }, []);
 
   useEffect(() => {
     if (!client) return;
@@ -69,7 +72,7 @@ function AccountPanel({ experienceId, initialTab }: { experienceId?: string; ini
       const nextId = nextSession?.user.id ?? null;
       if (sessionUser.current !== nextId) {
         setApplications([]); setOrganizations([]); setOwnIds([]); setInquiries([]); setDocuments([]); setDocumentLinks({}); setAdmin(false);
-        setReviewNote(''); setRegistryReference(''); setMessage(''); setRequestKey(crypto.randomUUID());
+        setMessage(''); setRequestKey(crypto.randomUUID());
         if (!nextId) setWelcomeName(null);
         roleStore.setServer(null);
         sessionUser.current = nextId;
@@ -145,19 +148,6 @@ function AccountPanel({ experienceId, initialTab }: { experienceId?: string; ini
     finally { setBusy(false); }
   }
 
-  async function review(requestId: string, decision: 'approved' | 'rejected') {
-    if (!client || busy || reviewNote.trim().length < 5) return;
-    setBusy(true); setNotice('');
-    try {
-      const { error } = await client.rpc('review_merchant_application', { p_request_id: requestId, p_decision: decision,
-        p_note: reviewNote.trim(), p_registry_reference: registryReference.trim() || null });
-      if (error) throw error;
-      setReviewNote(''); setRegistryReference(''); setRevision(value => value + 1);
-      setNotice(tr("Revisión registrada con tu usuario. Aprobar la identidad no habilita compras ni certifica seguridad."));
-    } catch { setNotice(tr("No se pudo registrar la revisión. Revisa permisos, estado y conexión.")); }
-    finally { setBusy(false); }
-  }
-
   async function upload(application: Application, file: File | undefined) {
     if (!client || !session || !file || busy) return;
     if (file.size > 5 * 1024 * 1024 || !['application/pdf', 'image/jpeg', 'image/png'].includes(file.type)) {
@@ -225,7 +215,7 @@ function AccountPanel({ experienceId, initialTab }: { experienceId?: string; ini
           {experienceId && <form className="auth-form" onSubmit={inquire}><h3>{t("Consultar esta experiencia")}</h3><p className="auth-fine">{t("Llega al equipo de CHULLA VIDA. Aún no hay disponibilidad confirmada.")}</p><label>{t("Tu pregunta")}<textarea className="field" maxLength={2000} minLength={1} value={message} onChange={event => setMessage(event.target.value)} required /></label><button className="button button-primary" disabled={busy || !message.trim()}>{t("Registrar consulta")}</button></form>}
           {inquiries.length > 0 && <section className="auth-section"><h3>{t("Tus consultas")}</h3>{inquiries.map(inquiry => <article className="auth-request" key={inquiry.id}><strong>{inquiry.experience_id}</strong><p>{inquiry.message}</p><span>{statusLabel[inquiry.status] ?? inquiry.status}</span></article>)}</section>}
         </>}
-      {hostView && admin && applications.length > 0 && <section className="auth-section"><h3><FileCheck2 size={20} />{t("Solicitudes para revisión")}</h3><p className="auth-fine">{t("Eres administrador según el servidor.")}</p>{applications.map(application => { const org = organizations.find(item => item.id === application.organization_id); return <article className="auth-request" key={application.id}><strong>{org?.name ?? t("Organización")}</strong><span>{statusLabel[application.status] ?? application.status}{org && ` · ${statusLabel[org.verification_status] ?? org.verification_status}`}</span><small>{t("Referencia:")}{' '}{application.id}</small>{documents.filter(document => document.request_id === application.id).map((document, index) => <div className="auth-actions" key={document.id}><button className="button button-secondary" disabled={busy} onClick={() => void openDocument(document)}>{t("Preparar acceso privado al documento")}{' '}{index + 1}</button>{documentLinks[document.id] && <a href={documentLinks[document.id]} target="_blank" rel="noreferrer" className="button button-secondary">{t("Abrir documento · vence en 60 s")}</a>}</div>)}{application.status === 'submitted' && <div className="auth-actions"><button className="button button-secondary" disabled={busy || reviewNote.trim().length < 5} onClick={() => review(application.id, 'rejected')}>{t("Rechazar con motivo")}</button><button className="button button-primary" disabled={busy || reviewNote.trim().length < 5} onClick={() => review(application.id, 'approved')}>{t("Registrar aprobación")}</button></div>}</article>; })}<div className="auth-form"><label>{t("Motivo de la revisión (mínimo 5 caracteres)")}<textarea className="field" value={reviewNote} onChange={event => setReviewNote(event.target.value)} minLength={5} maxLength={2000} /></label><label>{t("Referencia oficial comprobada, solo si corresponde")}<input className="field" value={registryReference} onChange={event => setRegistryReference(event.target.value)} maxLength={1000} /></label><p className="auth-fine">{t("Sin referencia oficial solo se registra la revisión de identidad.")}</p></div></section>}
+      {admin && <button className="button button-secondary" onClick={() => window.dispatchEvent(new Event('cv3:admin'))}><ShieldCheck size={18} />{t('Abrir administración')}</button>}
     </>}
     <p role="status" className="auth-notice">{notice}</p>
   </section>;
