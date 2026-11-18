@@ -12,7 +12,7 @@ Acercar a los jóvenes a Ecuador mediante experiencias locales, planificación p
 
 ## Capabilities and Constraints
 
-- Catálogo de 51 fichas referenciales: 41 con fotos reales acreditadas y 10 ilustradas; cuatro regiones, búsqueda, favoritos, planificador, MIJIN y Cultura Viva con 39 celebraciones. Precios orientativos, sin garantía de disponibilidad ni venta habilitada; presupuesto de grupo desde $20, transporte y extras aparte.
+- Catálogo de 51 fichas referenciales: 42 con fotos del sitio acreditadas y 9 con referencias regionales; cuatro regiones, búsqueda, favoritos, planificador, MIJIN y Cultura Viva con 39 celebraciones. Precios orientativos, sin garantía de disponibilidad ni venta habilitada; presupuesto de grupo desde $20, transporte y extras aparte.
 - Supabase conecta cuentas, organizaciones y solicitudes; API y reglas de base de datos deciden permisos y estados de pago. Elegir modo negocio en una demostración no concede autorización del servidor.
 - Las compras conectadas requieren sesión válida, correo verificado, oferta habilitada, confirmación del anfitrión y términos vigentes aceptados. El servidor calcula importes y verifica al proveedor; PayPhone aloja el formulario de tarjeta y CHULLA VIDA no recibe esos datos. El retorno del navegador no acredita pago.
 - Cobros conectados desactivados hasta configurar y validar proveedor, requisitos comerciales y servicios. Distinguir demostración local y pago conectado: las pruebas no rellenan `pagado_en`, crean ingresos ni acreditan liquidaciones.

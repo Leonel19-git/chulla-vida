@@ -156,7 +156,7 @@ describe('nada es reservable ni está verificado', () => {
       expect(() => readFileSync(resolve(`public${media.src}`))).not.toThrow();
       expect(media.credit).not.toBe('');
       expect(media.license).not.toBe('');
-      expect(media.depictsThisPlace).toBe(true);
+      expect(media.depictsThisPlace || media.referencePhoto === true).toBe(true);
     }
     // La foto de bosque no corresponde a un lugar ecuatoriano verificado: no se usa.
     expect(EXPERIENCES.some(record => record.media.some(media => media.src.includes('forest')))).toBe(false);

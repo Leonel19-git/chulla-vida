@@ -210,11 +210,13 @@ function applyPlacePhotos(records) {
   const registryPath = join(root, 'scripts/place-images.json');
   if (!existsSync(registryPath)) return;
   const photos = new Map(JSON.parse(readFileSync(registryPath, 'utf8')).map(photo => [photo.id, photo]));
+  const references = JSON.parse(readFileSync(join(root, 'src/domain/catalog/data/reference-photos.json'), 'utf8'));
   for (const record of records) {
-    const photo = photos.get(record.id);
+    const reference = references[record.id];
+    const photo = photos.get(record.id) || photos.get(reference);
     if (!photo) continue;
-    record.media = [{ src: photo.src, srcLarge: photo.srcLarge || photo.src, alt: photo.alt, credit: `${photo.author} · Wikimedia Commons`,
-      license: photo.license, pageUrl: photo.pageUrl, depictsThisPlace: true }];
+    record.media = [{ src: photo.src, srcLarge: photo.srcLarge || photo.src, alt: reference ? `Foto de referencia regional; no muestra este sitio. ${photo.alt}` : photo.alt, credit: `${photo.author} · Wikimedia Commons`,
+      license: photo.license, pageUrl: photo.pageUrl, depictsThisPlace: !reference, ...(reference ? { referencePhoto: true } : {}) }];
   }
 }
 

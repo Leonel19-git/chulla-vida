@@ -35,7 +35,7 @@ function OptionCard({ experience, draft, actions, children, chip }: { experience
         <button type="button" className="flex-link" onClick={() => actions.onSelect(experience.id)}>{t("Revisar ficha")}<ArrowUpRight size={14} aria-hidden="true" /></button>
         <button type="button" className="flex-add" aria-label={t("Añadir {title} al borrador", { title: experience.title })} disabled={added} onClick={() => actions.onAdd(experience.id)}>{added ? <Check size={19} /> : <Plus size={19} />}</button>
       </div>
-      {photo && <small className="flex-credit">{t("Foto:")}{' '}{photo.credit}</small>}
+      {photo && <small className="flex-credit">{t(photo.referencePhoto ? "Foto de referencia · no muestra este sitio" : "Foto:")}{' '}{photo.credit}</small>}
     </div>
   </article>;
 }

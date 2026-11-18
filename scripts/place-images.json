@@ -490,5 +490,17 @@
     "src": "/images/places/amz-18-alto-nangaritza-640.webp",
     "srcLarge": "/images/places/amz-18-alto-nangaritza-1280.webp",
     "retrievedAt": "2026-11-13"
+  },
+  {
+    "id": "gen-03-yunguilla",
+    "file": "File:ECP Yunguilla 050 (17382260802).jpg",
+    "pageUrl": "https://commons.wikimedia.org/wiki/File:ECP_Yunguilla_050_(17382260802).jpg",
+    "author": "Diego Tirira",
+    "license": "CC BY-SA 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/",
+    "alt": "Comunidad de Yunguilla, Pichincha, entre laderas de bosque nublado.",
+    "src": "/images/places/gen-03-yunguilla-640.webp",
+    "srcLarge": null,
+    "retrievedAt": "2026-11-17"
   }
 ]

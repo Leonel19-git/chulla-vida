@@ -16,7 +16,7 @@ Spotify se carga solo con permiso para medios y acción de abrir reproductor. La
 
 ## Fotos reales por ficha
 
-41 de 51 fichas muestran una fotografía real del lugar o de su atractivo principal, tomada de
+42 de 51 fichas muestran una fotografía real del lugar o de su atractivo principal, tomada de
 Wikimedia Commons y aceptada solo con licencia de dominio público, CC0, CC BY o CC BY-SA, tras revisar
 título, descripción y categorías. Cada archivo es una obra derivada (recorte 16:10 centrado, WebP de 640 y
 1280 px); las fotos CC BY-SA se comparten bajo la misma licencia. La tarjeta muestra autor y licencia y
@@ -57,6 +57,7 @@ Una foto con licencia libre no implica aval del autor ni de las personas o comun
 | `gal-12-plan-normal-5-dias` | [Charles Darwin Research Station.jpg](https://commons.wikimedia.org/wiki/File:Charles_Darwin_Research_Station.jpg) | TriiipleThreat | [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0) |
 | `gen-01-saraguro-ancestral` | [Unterwegs nach Loja Ecuador408.JPG](https://commons.wikimedia.org/wiki/File:Unterwegs_nach_Loja_Ecuador408.JPG) | Arabsalam | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0) |
 | `gen-02-quilotoa-shalala` | [Quilotoa Laguna Quilotoa seen from Mirador Cristal 1.jpg](https://commons.wikimedia.org/wiki/File:Quilotoa_Laguna_Quilotoa_seen_from_Mirador_Cristal_1.jpg) | Ymblanter | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0) |
+| `gen-03-yunguilla` | [ECP Yunguilla 050 (17382260802).jpg](https://commons.wikimedia.org/wiki/File:ECP_Yunguilla_050_(17382260802).jpg) | Diego Tirira | [CC BY-SA 2.0](https://creativecommons.org/licenses/by-sa/2.0/) |
 | `gen-04-salasaca-viva` | [Tiendas artesanales, Salasaca - Pelileo.jpg](https://commons.wikimedia.org/wiki/File:Tiendas_artesanales,_Salasaca_-_Pelileo.jpg) | David C. S. | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0) |
 | `gen-05-oyacachi` | [Oyacachi.JPG](https://commons.wikimedia.org/wiki/File:Oyacachi.JPG) | Patricio Mena Vásconez | Public domain |
 | `gen-06-valle-de-intag` | [Rio Intag Ecuador 979.jpg](https://commons.wikimedia.org/wiki/File:Rio_Intag_Ecuador_979.jpg) | Arabsalam | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0) |
@@ -69,9 +70,8 @@ Una foto con licencia libre no implica aval del autor ni de las personas o comun
 | `gen-13-riobamba` | [Catedral Riobamba.jpg](https://commons.wikimedia.org/wiki/File:Catedral_Riobamba.jpg) | Dr. Carlos Costales Terán | [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0) |
 | `gen-14-mindo` | [Mindo-Cloud-Forest-02.jpg](https://commons.wikimedia.org/wiki/File:Mindo-Cloud-Forest-02.jpg) | Ayacop | Public domain |
 
-Fichas sin foto a propósito (siguen con la ilustración propia, rotulada como tal):
+Fichas con foto de contexto regional, rotulada como referencia; no se afirma que muestre el sitio:
 
-- `gen-03-yunguilla`: no hay en Commons una foto libre que muestre con certeza la comunidad de Yunguilla.
 - `gal-06-los-tuneles-cabo-rosa`: solo hay fotos de fauna suelta, sin el paisaje de los túneles de lava.
 - `amz-02-laguna-de-limoncocha`: sin foto libre fiable de la laguna.
 - `amz-03-laguna-panacocha`: sin foto libre fiable de la laguna.

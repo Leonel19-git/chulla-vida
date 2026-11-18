@@ -186,6 +186,8 @@ export interface ExperienceMedia {
   license: string;
   /** false cuando la imagen es ilustrativa de la región y no del lugar concreto. */
   depictsThisPlace: boolean;
+  /** Fotografía de contexto, identificada explícitamente; no acredita el lugar. */
+  referencePhoto?: boolean;
 }
 
 export interface WeatherReference {

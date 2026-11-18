@@ -4930,7 +4930,18 @@
           "verifiedAt": null
         }
       ],
-      "media": [],
+      "media": [
+        {
+          "src": "/images/places/amz-10-laguna-anango-640.webp",
+          "srcLarge": "/images/places/amz-10-laguna-anango-1280.webp",
+          "alt": "Foto de referencia regional; no muestra este sitio. Laguna Añangu vista desde el aire, rodeada de selva.",
+          "credit": "Añangu · Wikimedia Commons",
+          "license": "CC BY-SA 4.0",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Dron_de_la_Laguna_A%C3%B1angu.jpg",
+          "depictsThisPlace": false,
+          "referencePhoto": true
+        }
+      ],
       "locationInfo": {
         "accessSummary": "La fuente propone acceso por carretera desde Lago Agrio o El Coca. Confirmar lugar de embarque, transporte final y recorrido con guía local.",
         "transportOptions": [
@@ -5069,7 +5080,18 @@
           "verifiedAt": null
         }
       ],
-      "media": [],
+      "media": [
+        {
+          "src": "/images/places/amz-01-reserva-cuyabeno-640.webp",
+          "srcLarge": "/images/places/amz-01-reserva-cuyabeno-1280.webp",
+          "alt": "Foto de referencia regional; no muestra este sitio. Árboles que emergen del agua en la Laguna Grande de Cuyabeno.",
+          "credit": "Fährtenleser · Wikimedia Commons",
+          "license": "CC BY-SA 4.0",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Macrolobiumb%C3%A4ume_in_der_Laguna_Grande,_Cuyabeno-Reservat.jpg",
+          "depictsThisPlace": false,
+          "referencePhoto": true
+        }
+      ],
       "locationInfo": {
         "accessSummary": "La propuesta parte de Shushufindi o Lago Agrio con guía local. No se ha confirmado la combinación de carretera/navegación ni el punto de partida del recorrido.",
         "transportOptions": [
@@ -5548,7 +5570,18 @@
           "verifiedAt": null
         }
       ],
-      "media": [],
+      "media": [
+        {
+          "src": "/images/places/amz-08-parque-nacional-yasuni-640.webp",
+          "srcLarge": "/images/places/amz-08-parque-nacional-yasuni-1280.webp",
+          "alt": "Foto de referencia regional; no muestra este sitio. Río Tiputini y selva en el Parque Nacional Yasuní.",
+          "credit": "Lauren Whitehurst · Wikimedia Commons",
+          "license": "CC BY-SA 4.0",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Estacion_Cientifica_Yasuni_(ECY)_Yasuni_Research_Station.jpg",
+          "depictsThisPlace": false,
+          "referencePhoto": true
+        }
+      ],
       "locationInfo": {
         "accessSummary": "Coordinar en Tena y confirmar primero el nombre, localidad y acceso exactos. No se publica una coordenada ni una carretera atribuida sin evidencia.",
         "transportOptions": [
@@ -5678,7 +5711,18 @@
           "verifiedAt": null
         }
       ],
-      "media": [],
+      "media": [
+        {
+          "src": "/images/places/amz-05-cavernas-de-jumandy-640.webp",
+          "srcLarge": "/images/places/amz-05-cavernas-de-jumandy-1280.webp",
+          "alt": "Foto de referencia regional; no muestra este sitio. Cavernas de Jumandy, en Archidona.",
+          "credit": "Agencia de Noticias ANDES · Wikimedia Commons",
+          "license": "CC BY-SA 2.0",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:CAVERNAS_DE_JUMANDY_(19971925995).jpg",
+          "depictsThisPlace": false,
+          "referencePhoto": true
+        }
+      ],
       "locationInfo": {
         "accessSummary": "Coordinar en Tena y confirmar la cueva concreta, acceso, recorrido, guía y equipo. La fuente no aporta ubicación de precisión.",
         "transportOptions": [
@@ -6022,7 +6066,18 @@
           "verifiedAt": null
         }
       ],
-      "media": [],
+      "media": [
+        {
+          "src": "/images/places/amz-04-puerto-misahualli-640.webp",
+          "srcLarge": "/images/places/amz-04-puerto-misahualli-1280.webp",
+          "alt": "Foto de referencia regional; no muestra este sitio. Botes en la playa de Puerto Misahuallí, en Napo.",
+          "credit": "David C. S. · Wikimedia Commons",
+          "license": "CC BY-SA 4.0",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Puerto_Misahuall%C3%AD.JPG",
+          "depictsThisPlace": false,
+          "referencePhoto": true
+        }
+      ],
       "locationInfo": {
         "accessSummary": "La fuente agrupa Taracoa, Añango e Ila Kucha como lagunas dentro o cerca del entorno de Yasuní. No determina acceso ni punto de encuentro para cada una; coordinar con organizadores de Orellana.",
         "transportOptions": [
@@ -6312,7 +6367,18 @@
           "verifiedAt": null
         }
       ],
-      "media": [],
+      "media": [
+        {
+          "src": "/images/places/amz-10-laguna-anango-640.webp",
+          "srcLarge": "/images/places/amz-10-laguna-anango-1280.webp",
+          "alt": "Foto de referencia regional; no muestra este sitio. Laguna Añangu vista desde el aire, rodeada de selva.",
+          "credit": "Añangu · Wikimedia Commons",
+          "license": "CC BY-SA 4.0",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Dron_de_la_Laguna_A%C3%B1angu.jpg",
+          "depictsThisPlace": false,
+          "referencePhoto": true
+        }
+      ],
       "locationInfo": {
         "accessSummary": "La fuente agrupa Taracoa, Añango e Ila Kucha como lagunas dentro o cerca del entorno de Yasuní. No determina acceso ni punto de encuentro para cada una; coordinar con organizadores de Orellana.",
         "transportOptions": [
@@ -6624,7 +6690,18 @@
           "verifiedAt": null
         }
       ],
-      "media": [],
+      "media": [
+        {
+          "src": "/images/places/amz-15-macas-y-cascadas-cercanas-640.webp",
+          "srcLarge": "/images/places/amz-15-macas-y-cascadas-cercanas-1280.webp",
+          "alt": "Foto de referencia regional; no muestra este sitio. Vista panorámica del centro y norte de Macas.",
+          "credit": "David C. S. · Wikimedia Commons",
+          "license": "CC BY-SA 4.0",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:Centro_y_norte_de_Macas.jpg",
+          "depictsThisPlace": false,
+          "referencePhoto": true
+        }
+      ],
       "locationInfo": {
         "accessSummary": "La fuente no aporta ruta ni ubicación exacta. Confirmar el mirador, transporte, horario y regreso antes de considerarlo como parada, especialmente al atardecer.",
         "transportOptions": [
@@ -7048,7 +7125,18 @@
           "verifiedAt": null
         }
       ],
-      "media": [],
+      "media": [
+        {
+          "src": "/images/places/amz-18-alto-nangaritza-640.webp",
+          "srcLarge": "/images/places/amz-18-alto-nangaritza-1280.webp",
+          "alt": "Foto de referencia regional; no muestra este sitio. Río Nangaritza visto desde el puente de Sumayaku, al sur de Guayzimi.",
+          "credit": "AndresJM1989 · Wikimedia Commons",
+          "license": "CC BY-SA 3.0",
+          "pageUrl": "https://commons.wikimedia.org/wiki/File:R%C3%ADo_Nangaritza.JPG",
+          "depictsThisPlace": false,
+          "referencePhoto": true
+        }
+      ],
       "locationInfo": {
         "accessSummary": "La referencia municipal vincula El Quimi con Bomboiza, Gualaquiza. No se ofrece una ruta abierta al público; consultar administración del área y comunidades para establecer si la visita es admisible.",
         "transportOptions": [

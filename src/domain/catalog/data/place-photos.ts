@@ -1,5 +1,6 @@
 /* Generado por scripts/fetch-place-images.py desde scripts/place-images.json. No editar a mano. */
 import type { ExperienceMedia } from '../types';
+import { referenceMedia } from './reference-photos';
 
 /** Foto real del lugar (Wikimedia Commons, licencia libre). `srcLarge` y `pageUrl` son extras opcionales. */
 export type PlacePhoto = ExperienceMedia & { srcLarge: string; pageUrl: string };
@@ -275,6 +276,15 @@ export const PLACE_PHOTOS: Readonly<Record<string, PlacePhoto>> = {
     pageUrl: 'https://commons.wikimedia.org/wiki/File:Quilotoa_Laguna_Quilotoa_seen_from_Mirador_Cristal_1.jpg',
     depictsThisPlace: true,
   },
+  'gen-03-yunguilla': {
+    src: '/images/places/gen-03-yunguilla-640.webp',
+    srcLarge: '/images/places/gen-03-yunguilla-640.webp',
+    alt: 'Comunidad de Yunguilla, Pichincha, entre laderas de bosque nublado.',
+    credit: 'Diego Tirira · Wikimedia Commons',
+    license: 'CC BY-SA 2.0',
+    pageUrl: 'https://commons.wikimedia.org/wiki/File:ECP_Yunguilla_050_(17382260802).jpg',
+    depictsThisPlace: true,
+  },
   'gen-04-salasaca-viva': {
     src: '/images/places/gen-04-salasaca-viva-640.webp',
     srcLarge: '/images/places/gen-04-salasaca-viva-1280.webp',
@@ -379,5 +389,5 @@ export const PLACE_PHOTOS: Readonly<Record<string, PlacePhoto>> = {
 /** Media de una ficha: su foto real si existe; si no, vacío (la tarjeta usa la ilustración propia). */
 export const placeMedia = (id: string): ExperienceMedia[] => {
   const photo = PLACE_PHOTOS[id];
-  return photo ? [photo] : [];
+  return photo ? [photo] : referenceMedia(id, PLACE_PHOTOS);
 };

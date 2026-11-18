@@ -1,5 +1,7 @@
 /** Interfaz de descubrimiento; nombres de lugares y créditos permanecen en su idioma. */
 const rows: [string, string, string, string, string][] = [
+  ['Foto de referencia', 'Reference photo', 'Photo de référence', 'Foto de referência', '参考照片'],
+  ['Foto de referencia · no muestra este sitio', 'Reference photo · does not show this site', 'Photo de référence · ne montre pas ce lieu', 'Foto de referência · não mostra este lugar', '参考照片 · 非该地点实景'],
   ['De una, ñaño. ¡Se arma el plan!', 'Let’s go, friend. The plan is on!', 'C’est parti, l’ami. Le voyage se prépare !', 'Bora, amigo. O plano está de pé!', '走吧，朋友！旅行计划开始啦！'],
   ['¡Qué bacán estar aquí!', 'So good to be here!', 'Qu’est-ce qu’on est bien ici !', 'Que bom estar aqui!', '能在这里真好！'],
   ['Achachay… ¡pero qué vista!', 'Brr… but what a view!', 'Brr… mais quelle vue !', 'Brr… mas que vista!', '好冷呀……但风景太美了！'],

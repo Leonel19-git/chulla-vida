@@ -42,7 +42,7 @@ Accesos con esquinas de 16px, postales de 14px y pantallas de video de 18px; con
 ## Components
 - Inicio: cinco accesos de color explican las herramientas; HomeIntro conserva sus cuatro pasos y todo su contenido dentro de un desplegable.
 - Navegación e intro: menú completo de escritorio y móvil; barra inferior Explorar, Mi viaje, MIJIN, Billetera y Cuenta. La intro conserva video y cierre con logo original grande, salto, pausa, repetición y alternativa estática con movimiento reducido.
-- Catálogo: 51 fichas, 41 con fotos reales y 10 ilustradas; región, guardar, nombre, duración, dificultad, precio y compra permanecen accesibles. Cultura Viva conserva 39 celebraciones y sus cartas; el pasaporte y sus cromos permanecen intactos.
+- Catálogo: 51 fichas, 42 con fotos del sitio y 9 con referencias regionales; región, guardar, nombre, duración, dificultad, precio y compra permanecen accesibles. Cultura Viva conserva 39 celebraciones y sus cartas; el pasaporte y sus cromos permanecen intactos.
 - Ocho postales editoriales: ubicación («Esta foto se tomó aquí»), autores/créditos, apertura de ficha, guardado real y compartir nativo o enlace profundo. Son contenido editorial propio, no publicaciones reales de Instagram. Reutilizar fotos no aumenta el conteo de fotos del catálogo.
 - Cuatro videos regionales locales: archivos de 720×1280 y 8.29s cada uno; montajes de fotografías licenciadas de Wikimedia Commons, 12 tomas en conjunto y CREDITS público. Carga y play explícitos, uno a la vez y pausa fuera de pantalla. Sin red, las nuevas postales se limitan a fichas descargadas y los videos se ocultan.
 

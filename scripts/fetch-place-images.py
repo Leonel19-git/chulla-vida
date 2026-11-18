@@ -102,6 +102,7 @@ QUERIES: dict[str, list[str]] = {
 #   amz-11 Ila Kucha, amz-13 Shinguipata, amz-16 El Quimi (solo láminas científicas).
 # Tercer elemento opcional: autor, cuando Commons no lo trae en forma legible por máquina.
 SELECTIONS: dict[str, tuple[str, ...]] = {
+    'gen-03-yunguilla': ('File:ECP Yunguilla 050 (17382260802).jpg', 'Comunidad de Yunguilla, Pichincha, entre laderas de bosque nublado.'),
     'gen-01-saraguro-ancestral': ('File:Unterwegs nach Loja Ecuador408.JPG', 'Plaza central de Saraguro, en la provincia de Loja.'),
     'gen-02-quilotoa-shalala': ('File:Quilotoa Laguna Quilotoa seen from Mirador Cristal 1.jpg', 'Laguna verde turquesa del cráter del Quilotoa vista desde un mirador del borde.'),
     'gen-04-salasaca-viva': ('File:Tiendas artesanales, Salasaca - Pelileo.jpg', 'Tiendas de artesanías locales en Salasaca, Pelileo.'),
@@ -359,7 +360,7 @@ def rights_block(registry: list[dict]) -> str:
         lines.append(f"| `{r['id']}` | [{title}]({r['pageUrl']}) | {r['author']} | {lic} |")
     missing = [i for i in NO_PHOTO_REASONS if i not in {r['id'] for r in registry}]
     if missing:
-        lines += ['', 'Fichas sin foto a propósito (siguen con la ilustración propia, rotulada como tal):', '']
+        lines += ['', 'Fichas con foto de contexto regional, rotulada como referencia; no se afirma que muestre el sitio:', '']
         lines += [f'- `{i}`: {NO_PHOTO_REASONS[i]}.' for i in missing]
     lines += ['', CREDITS_END]
     return '\n'.join(lines)
@@ -381,14 +382,14 @@ def write_outputs(registry: list[dict]) -> None:
             f"  }},")
     TS_OUT.write_text(
         '/* Generado por scripts/fetch-place-images.py desde scripts/place-images.json. No editar a mano. */\n'
-        "import type { ExperienceMedia } from '../types';\n\n"
+        "import type { ExperienceMedia } from '../types';\nimport { referenceMedia } from './reference-photos';\n\n"
         '/** Foto real del lugar (Wikimedia Commons, licencia libre). `srcLarge` y `pageUrl` son extras opcionales. */\n'
         'export type PlacePhoto = ExperienceMedia & { srcLarge: string; pageUrl: string };\n\n'
         'export const PLACE_PHOTOS: Readonly<Record<string, PlacePhoto>> = {\n' + '\n'.join(rows) + '\n};\n\n'
         '/** Media de una ficha: su foto real si existe; si no, vacío (la tarjeta usa la ilustración propia). */\n'
         'export const placeMedia = (id: string): ExperienceMedia[] => {\n'
         '  const photo = PLACE_PHOTOS[id];\n'
-        '  return photo ? [photo] : [];\n'
+        '  return photo ? [photo] : referenceMedia(id, PLACE_PHOTOS);\n'
         '};\n',
         encoding='utf-8', newline=LF)
     current = CREDITS_MD.read_text(encoding='utf-8')

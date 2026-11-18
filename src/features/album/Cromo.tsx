@@ -21,7 +21,7 @@ export function Cromo({ experience }: { experience: Experience }) {
         <span className="al-number">{albumLabel(experience.id)}</span><button className="al-cromo-heart" aria-label={`${kept ? 'Quitar' : 'Guardar'} ${experience.title}`} aria-pressed={kept} onClick={() => toggle(experience.id)}><Heart size={19} fill={kept ? 'currentColor' : 'none'} /></button>
         <div className="al-cromo-strip"><strong>{price}<small>{t('Referencial')}</small></strong><button onClick={() => setFlipped(true)} aria-label={`${t('Girar cromo')}: ${experience.title}`}><RotateCw size={17} />{t('Girar')}</button></div>
         {kept && <span className="al-cromo-kept">{t('En mi sobre')}</span>}
-        {!visual.photo && <span className="al-cromo-art">{t('Ilustración')}</span>}
+        {!visual.photo && <span className="al-cromo-art">{t(visual.referencePhoto ? 'Foto de referencia' : 'Ilustración')}</span>}
       </div>
       <div className="al-cromo-back" inert={!flipped} aria-hidden={!flipped}>
         <div className="al-cromo-back-top"><span>{albumLabel(experience.id)} / 51</span><button onClick={() => setFlipped(false)} aria-label={t('Volver a la foto')}><RotateCw size={19} /></button></div>

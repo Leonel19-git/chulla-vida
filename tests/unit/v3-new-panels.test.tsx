@@ -86,11 +86,11 @@ describe('¿Cómo se distribuye tu dinero?', () => {
 });
 
 describe('Ilustraciones por ficha', () => {
-  it('cada ficha sin foto propia tiene una ilustración distinta y rotulada', () => {
+  it('cada ficha conserva una ilustración distinta como respaldo si no hay medios', () => {
     const drawn = EXPERIENCES.filter(item => !item.media.some(media => media.depictsThisPlace));
     const sources = new Set(drawn.map(item => experienceArt(item)));
     expect(sources.size).toBe(drawn.length);
-    for (const item of drawn) expect(experienceVisual(item)).toMatchObject({ photo: false, alt: expect.stringMatching(/no es una fotografía/) });
+    for (const item of drawn) expect(experienceVisual({ ...item, media: [] })).toMatchObject({ photo: false, alt: expect.stringMatching(/no es una fotografía/) });
   });
   it('la fotografía solo se usa cuando muestra el lugar', () => {
     const withPhoto = EXPERIENCES.filter(item => item.media.some(media => media.depictsThisPlace));

@@ -19,6 +19,18 @@ interface RegistryEntry {
 }
 
 const root = resolve(__dirname, '..', '..');
+it('todas las fichas tienen foto y las referencias se identifican sin acreditar el sitio', () => {
+  expect(ALL_EXPERIENCES).toHaveLength(51);
+  for (const item of ALL_EXPERIENCES) {
+    const visual = experienceVisual(item);
+    expect(visual.src, item.id).toMatch(/^\/images\/places\//);
+    if (!visual.photo) {
+      expect(visual.referencePhoto, item.id).toBe(true);
+      expect(visual.alt).toContain('no muestra este sitio');
+      expect(visual.credit).toBeTruthy();
+    }
+  }
+});
 const registry = JSON.parse(readFileSync(join(root, 'scripts', 'place-images.json'), 'utf8')) as RegistryEntry[];
 const credits = readFileSync(join(root, 'public', 'images', 'CREDITS.md'), 'utf8');
 const rights = readFileSync(join(root, 'docs', 'CONTENIDO_Y_DERECHOS.md'), 'utf8');
@@ -129,7 +141,7 @@ describe('fotos reales por ficha (Wikimedia Commons)', () => {
     expect(visual).toMatchObject({ photo: true, src: registry[0].src, alt: registry[0].alt });
     expect(visual.credit).toContain(registry[0].author);
     const withoutPhoto = ALL_EXPERIENCES.find(experience => !registry.some(entry => entry.id === experience.id));
-    if (withoutPhoto) expect(experienceVisual(withoutPhoto)).toMatchObject({ photo: false, credit: null });
+    if (withoutPhoto) expect(experienceVisual(withoutPhoto)).toMatchObject({ photo: false, referencePhoto: true });
   });
 
   it('los créditos completos están en CREDITS.md y en CONTENIDO_Y_DERECHOS.md', () => {

@@ -132,6 +132,7 @@ export interface ExperienceVisual {
   /** Página de la obra original (Wikimedia Commons u otra), si se registró. */
   sourceUrl?: string;
   photo: boolean;
+  referencePhoto?: boolean;
 }
 
 /**
@@ -147,7 +148,7 @@ export function largePhotoFor(media: { src: string; srcLarge?: unknown }): strin
 
 /** Fotografía solo si muestra de verdad el lugar; si no, ilustración propia de la ficha. */
 export function experienceVisual(experience: Experience): ExperienceVisual {
-  const media = experience.media.find(item => item.depictsThisPlace) as (Experience['media'][number] & { srcLarge?: unknown; pageUrl?: unknown }) | undefined;
+  const media = experience.media.find(item => item.depictsThisPlace || item.referencePhoto) as (Experience['media'][number] & { srcLarge?: unknown; pageUrl?: unknown }) | undefined;
   if (media) {
     const large = largePhotoFor(media);
     return {
@@ -156,7 +157,8 @@ export function experienceVisual(experience: Experience): ExperienceVisual {
       alt: media.alt,
       credit: media.credit ? `${media.credit} · ${media.license}` : null,
       ...(typeof media.pageUrl === 'string' && /^https:\/\//.test(media.pageUrl) ? { sourceUrl: media.pageUrl } : {}),
-      photo: true,
+      photo: media.depictsThisPlace,
+      ...(media.referencePhoto ? {referencePhoto:true}:{}),
     };
   }
   return { src: experienceArt(experience), alt: `Ilustración original de ${experience.title}; no es una fotografía del lugar`, credit: null, photo: false };

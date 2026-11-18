@@ -16,7 +16,7 @@ export const ESTADO_TEXT: Readonly<Record<CromoEstado, string>> = {
 };
 
 type FaceSlot = Pick<PassportSlot, 'label' | 'estado' | 'region'> & Partial<Pick<PassportSlot, 'prueba'>>;
-type FaceVisual = Pick<ExperienceVisual, 'src' | 'photo'> & Partial<Pick<ExperienceVisual, 'srcSet'>>;
+type FaceVisual = Pick<ExperienceVisual, 'src' | 'photo'> & Partial<Pick<ExperienceVisual, 'srcSet' | 'referencePhoto'>>;
 
 /**
  * Cara visible de una casilla del álbum. Decorativa (`aria-hidden`): quien la usa da el nombre accesible.
@@ -31,7 +31,7 @@ export function CromoFace({ slot, visual, date, mini = false }: { slot: FaceSlot
     <span className="pg-cromo-window">
       {photo ? <img className="pg-cromo-photo" src={photo.src} srcSet={photo.srcSet} sizes="(max-width: 899px) 24vw, 128px" alt="" width="128" height="170" loading="lazy" decoding="async" draggable={false} />
         : <span className="pg-cromo-hole"><span className="pg-cromo-ghost">{slot.label}</span>{!mini && <span className="pg-cromo-hint">{t('Pega aquí')}</span>}</span>}
-      {photo && !photo.photo && !mini && <span className="pg-cromo-art"><PenLine size={11} strokeWidth={2.5} /><span>{t('Ilustración')}</span></span>}
+      {photo && !photo.photo && !mini && <span className="pg-cromo-art"><PenLine size={11} strokeWidth={2.5} /><span>{t(photo.referencePhoto ? 'Foto de referencia' : 'Ilustración')}</span></span>}
       {estado === 'visto' && <span className="pg-cromo-eye"><Eye size={mini ? 11 : 14} strokeWidth={2.5} /></span>}
       {estado === 'en_sobre' && <span className="pg-cromo-corner">{!mini && <span>{t('Sobre')}</span>}</span>}
       {estado === 'comprado' && <span className="pg-rubber is-buy">{!mini && <><b>{t('Comprado')}</b>{slot.prueba && <small>{t('Prueba')}</small>}</>}</span>}
@@ -52,7 +52,7 @@ export function useSlotLabel() {
     if (slot.estado === 'comprado' && slot.revision) parts.push(t('transferencia en revisión'));
     if (slot.estado === 'pegado_demo') parts.push(t('no cuenta como visita'));
     if (slot.estado === 'pegado' && date) parts.push(t('verificado el {date}', { date }));
-    if (visual && !visual.photo && slot.estado !== 'album') parts.push(t('ilustración, no es foto del lugar'));
+    if (visual && !visual.photo && slot.estado !== 'album') parts.push(t(visual.referencePhoto ? 'Foto de referencia · no muestra este sitio' : 'ilustración, no es foto del lugar'));
     return parts.join(' · ');
   };
 }
