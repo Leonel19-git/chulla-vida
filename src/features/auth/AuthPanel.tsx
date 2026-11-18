@@ -8,6 +8,7 @@ import { roleStore } from '../roles/role';
 import { getSupabase, supabaseConfiguration } from '../../lib/supabase';
 import { AccessFlow, type AccessTab } from './AccessFlow';
 import { demoGateway, supabaseGateway } from './auth-gateway';
+import { DeleteAccount } from './DeleteAccount';
 import './auth.css';
 
 import { useT, tr } from '../../i18n/v3';
@@ -215,6 +216,7 @@ function AccountPanel({ experienceId, initialTab }: { experienceId?: string; ini
     {!signedIn ? <><p className="auth-lead">{t("Tu perfil, compras y sellos en cualquier dispositivo.")}{' '}{t("Confirmas tu correo con un")}{' '}<strong>{t("código de 6 números")}</strong>.</p>
       <AccessFlow gateway={gateway} initialTab={initialTab} startWithNewPassword={recovering} onSignedUp={displayName => setWelcomeName(displayName)} onRecoveryVerified={() => setRecovering(true)} onPasswordUpdated={() => { setRecovering(false); setNotice(t("Contraseña actualizada. Tu sesión sigue abierta.")); }} /></> : <>
       <RoleSwitch />
+      <DeleteAccount client={client!} session={session!} />
       {hostView
         ? <HostDashboard client={client!} session={session!} organizations={ownOrganizations} applications={ownApplications} documents={documents} documentLinks={documentLinks} busy={busy}
           onApply={apply} onUpload={(application, file) => void upload(application, file)} onOpenDocument={document => void openDocument(document)} onSignOut={() => void signOut()} />

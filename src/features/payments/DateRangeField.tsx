@@ -1,6 +1,7 @@
+import { rangeSummary, shortDay } from '../../i18n/travel';
 import { useRef } from 'react';
 import { ArrowRight, CalendarCheck, CalendarDays, Moon, Sun } from 'lucide-react';
-import { rangeSummary, shortDay, suggestEnd } from '../../domain/payments/travel';
+import { suggestEnd } from '../../domain/payments/travel';
 import './travel-fields.css';
 
 import { useT } from '../../i18n/v3';

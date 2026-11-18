@@ -21,13 +21,12 @@ export function useRole(): RoleValue {
   return { ...snapshot, isTraveler: isTravelerMode(snapshot), isHost: isHostMode(snapshot), setMode: roleStore.setMode, requestHost: roleStore.requestHost, requestTraveler: roleStore.requestTraveler };
 }
 
-/** Interruptor claro para quien tiene ambos roles. No se muestra a nadie más. */
+/** Cambia el recorrido visible o solicita el otro modo; no concede permisos comerciales. */
 export function RoleSwitch() {
   const t = useT();
-  const { role, mode, setMode } = useRole();
-  if (role !== 'both') return null;
+  const { role, mode, setMode, requestHost, requestTraveler } = useRole();
   return <div className="role-switch" role="radiogroup" aria-label={t("Cómo quieres usar tu cuenta")}>
-    <button type="button" role="radio" aria-checked={mode === 'traveler'} onClick={() => setMode('traveler')}><Compass size={18} aria-hidden="true" />{t("Modo viajero")}</button>
-    <button type="button" role="radio" aria-checked={mode === 'host'} onClick={() => setMode('host')}><Store size={18} aria-hidden="true" />{t("Modo negocio")}</button>
+    <button type="button" role="radio" aria-checked={mode === 'traveler'} onClick={() => role === 'both' ? setMode('traveler') : requestTraveler()}><Compass size={18} aria-hidden="true" />{t("Modo viajero")}</button>
+    <button type="button" role="radio" aria-checked={mode === 'host'} onClick={() => role === 'both' ? setMode('host') : requestHost()}><Store size={18} aria-hidden="true" />{t("Modo negocio")}</button>
   </div>;
 }

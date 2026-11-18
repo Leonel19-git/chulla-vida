@@ -439,3 +439,12 @@ textarea.pg-input { resize: vertical; min-height: 96px; }
   .pg-nav { width: 52px; }
   .pg-chip span { font-size: 12px; }
 }
+
+/* Ajuste de tamaño para que portada, bandera y controles quepan en pantallas pequeñas. */
+.pg-ecuador-flag{display:flex;flex-direction:column;flex:none;width:min(50%,200px);aspect-ratio:3/2;border-radius:6px;overflow:hidden;box-shadow:0 8px 24px #0003}
+.pg-ecuador-flag i:first-child{flex:2;background:#ffdf00}.pg-ecuador-flag i:nth-child(2){flex:1;background:#034ea2}.pg-ecuador-flag i:last-child{flex:1;background:#ed1c24}
+@media(min-width:900px){dialog.cv-dialog[open]:has(>.pg-passport){width:min(1080px,calc(100vw - 48px));height:min(780px,calc(100dvh - 40px))}}
+@media(max-width:899px){.pg-ecuador-flag{width:min(44%,148px)}.pg-cover-title{font-size:clamp(30px,10cqi,48px);line-height:1.05}.pg-cover-inner{gap:8px;padding:18px 16px}.pg-cover-sub{font-size:14px}.pg-topbar{min-height:44px}.pg-pager{padding-bottom:max(8px,env(safe-area-inset-bottom))}}
+@media(max-height:650px) and (max-width:899px){.pg-ecuador-flag{width:88px}.pg-cover-title{font-size:32px}.pg-cover-inner{padding:14px}.pg-cover-count strong{font-size:28px}.pg-cover-foot{gap:8px}.pg-cover-name{font-size:16px}}
+
+.pg-ecuador-flag img{display:block;width:100%;height:100%;object-fit:contain}

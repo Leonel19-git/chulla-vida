@@ -6,7 +6,7 @@ export const VIEW_ROUTES = {
   passport: { path: '/pasaporte', event: 'passport', title: 'Pasaporte Guambra' },
   plan: { path: '/mi-viaje', event: 'plan', title: 'Mi viaje' },
   wallet: { path: '/billetera', event: 'wallet', title: 'Mi billetera' },
-  mijin: { path: '/mijin', event: 'mijin', title: 'Habla con MIJIN' },
+  upcoming: { path: '/proximos-viajes', event: 'upcoming', title: 'Próximos viajes' },
   downloads: { path: '/sin-senal', event: 'downloads', title: 'Sin señal' },
   account: { path: '/cuenta', event: 'account', title: 'Tu cuenta' },
   host: { path: '/anfitriones', event: 'host', title: 'Anfitriones' },
@@ -45,6 +45,7 @@ export function parsePath(pathname: string): RouteTarget {
   const legal = /^\/legal\/([^/]+)$/.exec(path);
   if (legal) return SLUG.test(legal[1]) ? { kind: 'legal', slug: legal[1] } : { kind: 'unknown', path };
   if (path === '/legal') return { kind: 'view', view: 'legal' };
+  if (path === '/mijin') return { kind: 'view', view: 'plan' };
   const view = (Object.keys(VIEW_ROUTES) as ViewName[]).find(name => VIEW_ROUTES[name].path === path);
   return view ? { kind: 'view', view } : { kind: 'unknown', path };
 }

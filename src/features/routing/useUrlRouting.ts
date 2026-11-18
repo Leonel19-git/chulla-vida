@@ -3,7 +3,7 @@ import { useCatalog } from '../catalog/CatalogContext';
 import { parsePath, pathForTarget, targetForState, titleForTarget, VIEW_ROUTES, type RouteTarget, type ViewName } from './routes';
 
 /** Vistas que no son paneles de WorkspaceVivo: se siguen siempre por su evento. */
-const EXTERNAL_VIEWS: ViewName[] = ['culture', 'passport', 'mijin'];
+const EXTERNAL_VIEWS: ViewName[] = ['culture', 'passport'];
 const ALL_VIEWS = Object.keys(VIEW_ROUTES) as ViewName[];
 /** Cultura Viva es una pestaña, no un diálogo: se cierra con `cv3:home` o al abrir otra vista. */
 const NOT_DIALOG: ViewName[] = ['culture'];
@@ -62,7 +62,7 @@ export function useUrlRouting({ panel, closePanel }: UrlRoutingOptions = {}): Ro
     else if (target.kind !== 'home') {
       const path = window.location.pathname;
       // Los oyentes de eventos se registran en efectos hermanos y algunos paneles cargan en diferido: se reintenta si la URL sigue igual.
-      for (const delay of target.kind === 'view' && target.view === 'mijin' ? [0, 700, 2000] : [0]) timers.push(window.setTimeout(() => { if (window.location.pathname === path) apply(target); }, delay));
+      for (const delay of [0]) timers.push(window.setTimeout(() => { if (window.location.pathname === path) apply(target); }, delay));
       timers.push(window.setTimeout(() => { ready.current = true; }, INITIAL_WAIT_MS));
     }
     const onPop = () => apply(parsePath(window.location.pathname));

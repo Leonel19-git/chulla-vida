@@ -11,7 +11,7 @@ interface Actions { onSelect: (id: string) => void; onAdd: (id: string) => void;
 /** Lo que sabemos y lo que falta del costo, sin inventar montos. */
 export function CostLine({ option, people }: { option: RouteOption; people: number }) {
   const t = useT();
-  const missing = option.missingCosts.map(kind => COST_LABELS[kind]);
+  const missing = option.missingCosts.map(kind => t(COST_LABELS[kind]));
   return <div className="flex-cost">
     {option.experienceSubtotal === null
       ? <p><strong>{t("Precio sin sumar.")}</strong> {option.experience.price.currency === 'EUR' ? t("Está en euros y no lo convertimos.") : t("La fuente no da un importe.")}</p>
@@ -60,7 +60,7 @@ function Relaxations({ relaxations, actions }: { relaxations: Relaxation[]; acti
   if (!relaxations.length) return null;
   return <div className="flex-relax" role="group" aria-label={t("Qué puedes ajustar")}>
     <h5><Sparkles size={17} aria-hidden="true" />{t("Prueba con un toque")}</h5>
-    <ul>{relaxations.map(item => <li key={`${item.kind}-${item.value}`}><button type="button" onClick={() => actions.onRelax(item)}>{item.kind === 'budget' ? <Wallet size={16} aria-hidden="true" /> : item.kind === 'days' ? <CalendarPlus size={16} aria-hidden="true" /> : <MapPin size={16} aria-hidden="true" />}<span><strong>{item.label}</strong><small>{item.detail}</small></span></button></li>)}</ul>
+    <ul>{relaxations.map(item => <li key={`${item.kind}-${item.value}`}><button type="button" onClick={() => actions.onRelax(item)}>{item.kind === 'budget' ? <Wallet size={16} aria-hidden="true" /> : item.kind === 'days' ? <CalendarPlus size={16} aria-hidden="true" /> : <MapPin size={16} aria-hidden="true" />}<span><strong>{t(item.label)}</strong><small>{t(item.detail)}</small></span></button></li>)}</ul>
   </div>;
 }
 
@@ -81,25 +81,25 @@ export function PlannerResults({ constraints, records, draft, region, actions }:
       <h4><PawPrint size={22} aria-hidden="true" />{t("Viajar con tu perro, con honestidad")}</h4>
       <p>{t("Ninguna ficha tiene todavía una política de mascotas confirmada por su anfitrión. Estas encajan con tu presupuesto y tiempo; la etiqueta dice lo que sabemos de verdad.")}</p>
       {candidates.length > 0 && <div className="flex-cards">{candidates.map(candidate => <OptionCard key={candidate.experience.id} experience={candidate.experience} draft={draft} actions={actions} chip={{ label: candidate.label, tone: candidate.tone }}>
-        <p className="flex-pet-reason">{candidate.reason}</p>
+        <p className="flex-pet-reason">{t(candidate.reason)}</p>
         <CostLine option={evaluate(candidate.experience)} people={draft.people} />
         {candidate.canAsk && <PetAsk experience={candidate.experience} draft={draft} />}
       </OptionCard>)}</div>}
-      <div className="flex-tips"><h5><HeartHandshake size={18} aria-hidden="true" />{t("Para que tu perro también la pase bien")}</h5><ul>{PET_WELFARE_TIPS.map(tip => <li key={tip}>{tip}</li>)}</ul></div>
+      <div className="flex-tips"><h5><HeartHandshake size={18} aria-hidden="true" />{t("Para que tu perro también la pase bien")}</h5><ul>{PET_WELFARE_TIPS.map(tip => <li key={tip}>{t(tip)}</li>)}</ul></div>
     </> : options.length > 0 ? <>
       <h4>{t("Para empezar tu recorrido")}</h4>
-      <p className="flex-summary"><strong>{options.length} {options.length === 1 ? 'idea encaja' : 'ideas encajan'}</strong>{subtotals.length > 0 && <>{' '}{t("· desde")}{' '}{usd(Math.min(...subtotals))}{' '}{t("de experiencia para el grupo")}</>}{' '}{t("· tu presupuesto:")}{' '}{usd(constraints.budgetTotal)}</p>
+      <p className="flex-summary"><strong>{options.length} {t(options.length === 1 ? 'idea encaja' : 'ideas encajan')}</strong>{subtotals.length > 0 && <>{' '}{t("· desde")}{' '}{usd(Math.min(...subtotals))}{' '}{t("de experiencia para el grupo")}</>}{' '}{t("· tu presupuesto:")}{' '}{usd(constraints.budgetTotal)}</p>
       <div className="flex-cards">{options.map(option => <OptionCard key={option.experience.id} experience={option.experience} draft={draft} actions={actions}><CostLine option={option} people={draft.people} /></OptionCard>)}</div>
     </> : null}
     {stuck && help && <div className="flex-stuck">
       <h4>{pet ? t("Afinemos para encontrar más opciones") : options.length ? t("Con precio conocido nada entra aún, pero hay salida") : t("Casi: nada encaja del todo, pero hay salida")}</h4>
-      <p>{t("Con")}{' '}{usd(constraints.budgetTotal)} para {draft.people === 1 ? '1 persona' : t("{people} personas", { people: draft.people })}, {Math.ceil(constraints.maxHours / 24)} {Math.ceil(constraints.maxHours / 24) === 1 ? 'día' : 'días'}{region ? t(" y la región elegida") : ''}{t(", no hay fichas con precio conocido que quepan. Esto es lo más cercano y lo que puedes mover.")}</p>
+      <p>{t("Con")}{' '}{usd(constraints.budgetTotal)} para {draft.people === 1 ? '1 persona' : t("{people} personas", { people: draft.people })}, {Math.ceil(constraints.maxHours / 24)} {t(Math.ceil(constraints.maxHours / 24) === 1 ? 'día' : 'días')}{region ? t(" y la región elegida") : ''}{t(", no hay fichas con precio conocido que quepan. Esto es lo más cercano y lo que puedes mover.")}</p>
       <Relaxations relaxations={help.relaxations} actions={actions} />
       {help.nearest.length > 0 && <div className="flex-cards">{help.nearest.map(({ option, blockers }) => <OptionCard key={option.experience.id} experience={option.experience} draft={draft} actions={actions}>
         {blockers.length > 0 && <ul className="flex-blockers">{blockers.map(blocker => <li key={blocker}>{blocker}</li>)}</ul>}
         <CostLine option={option} people={draft.people} />
       </OptionCard>)}</div>}
-      {!help.relaxations.length && !help.nearest.length && <p>{t("No tenemos fichas con precio en dólares para comparar en este momento. Revisa el catálogo completo o pregúntale a MIJIN.")}</p>}
+      {!help.relaxations.length && !help.nearest.length && <p>{t("No hay precios comparables en dólares. Explora el catálogo o solicita una cotización al anfitrión.")}</p>}
     </div>}
     <p className="flex-cost-note">{t("Precios referenciales de la fuente, sin conversión de euros. Transporte, comida, tasas e imprevistos se confirman con cada anfitrión.")}</p>
   </section>;

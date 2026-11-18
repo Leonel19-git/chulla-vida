@@ -1,8 +1,10 @@
+import { localDay } from '../../domain/payments/travel';
+import { partyLabel, rangeSummary, shortDay } from '../../i18n/travel';
 import { useEffect, useMemo, useState } from 'react';
 import { ArrowUpRight, CalendarDays, CheckCircle2, CircleX, Clock3, Download, Eye, FlaskConical, Inbox, Landmark, ReceiptText, ShieldCheck, Trash2, Users, Wallet, XCircle } from 'lucide-react';
 import { Dialog } from '../../components/chulla/Dialog';
 import { formatUsd, isBoughtStatus, STATUS_TEXT, type WalletRecord } from '../../domain/payments/purchase';
-import { rangeSummary, shortDay } from '../../domain/payments/travel';
+
 import { TRANSFER_STATUS_TEXT } from '../../domain/payments/transfer';
 import { loadMyTransfers, receiptUrl, type TransferRow } from '../payments/transferApi';
 import { getSupabase } from '../../lib/supabase';
@@ -16,13 +18,13 @@ import './wallet.css';
 import { useT, tr, msg } from '../../i18n/v3';
 const BOOKING_LABELS: Record<string, string> = { draft: 'Borrador', requested: 'Esperando al anfitrión', awaiting_merchant_confirmation: 'En revisión del anfitrión', confirmed: 'Confirmada por el anfitrión', awaiting_payment: 'Lista para pagar', paid: 'Pagada · verificada por el servidor', completed: 'Visita completada', expired: 'Vencida', cancelled: 'Cancelada', refunded: 'Reembolsada', payment_failed: 'Pago sin completar' };
 const money = (amount: number, currency: string) => new Intl.NumberFormat('es-EC', { style: 'currency', currency }).format(amount);
-const day = (value: string) => value ? new Intl.DateTimeFormat('es-EC', { dateStyle: 'medium', timeZone: 'UTC' }).format(new Date(`${value}T12:00:00Z`)) : 'Fecha por confirmar';
+const day = (value: string) => value ? shortDay(value) : tr('Fecha por confirmar');
 function dates(record: Pick<WalletRecord, 'date' | 'endDate'>): string {
-  if (!record.date) return 'Fecha por confirmar';
+  if (!record.date) return tr('Fecha por confirmar');
   const range = record.endDate ? rangeSummary(record.date, record.endDate) : null;
   return range && record.endDate && range.days > 1 ? `${shortDay(record.date)} → ${shortDay(record.endDate)} · ${range.label}` : day(record.date);
 }
-const people = (record: Pick<WalletRecord, 'people' | 'children'>) => `${record.people} ${record.people === 1 ? 'persona' : 'personas'}${record.children ? ` · ${record.children} ${record.children === 1 ? 'niño' : 'niños'}` : ''}`;
+const people = (record: Pick<WalletRecord, 'people' | 'children'>) => partyLabel({ adults: record.people - (record.children ?? 0), children: record.children ?? 0 });
 /** Método de pago en una línea: «Visa •••• 4242» o «Transferencia · comprobante en revisión». */
 function MethodChip({ record }: { record: WalletRecord }) {
   const t = useT();
@@ -72,14 +74,16 @@ function useConnectedBookings(): Connected {
 }
 
 /** Billetera de viaje NO custodial: historial, comprobantes y estados. No guarda saldo ni dinero. */
-export function WalletPanel({ onClose, onOpenExperience, experienceId, title = msg('Mi billetera de viaje') }: { onClose: () => void; onOpenExperience?: (id: string) => void; experienceId?: string; title?: string }) {
+export function WalletPanel({ onClose, onOpenExperience, experienceId, onReservations, upcomingOnly = false, title = msg('Mi billetera de viaje') }: { onClose: () => void; onOpenExperience?: (id: string) => void; onReservations?: () => void; upcomingOnly?: boolean; experienceId?: string; title?: string }) {
   const t = useT();
   const all = useWallet();
   const connected = useConnectedBookings();
   const [filter, setFilter] = useState<Filter>('all');
   const [confirm, setConfirm] = useState('');
   const [notice, setNotice] = useState('');
-  const records = useMemo(() => all.filter(record => (!experienceId || record.experienceId === experienceId) && (filter === 'all' || (filter === 'purchases') === (record.kind === 'test_purchase'))), [all, experienceId, filter]);
+  const today = localDay(0);
+  const upcoming = (record: {date?: string; endDate?: string; status: string}) => !['completed','cancelled','refunded','rejected','expired','test_rejected','test_transfer_rejected'].includes(record.status) && (!record.date || (record.endDate || record.date) >= today);
+  const records = useMemo(() => all.filter(record => (!upcomingOnly || upcoming(record)) && (!experienceId || record.experienceId === experienceId) && (filter === 'all' || (filter === 'purchases') === (record.kind === 'test_purchase'))), [all, experienceId, filter, upcomingOnly, today]);
   const transfers = useMyTransfers();
   const approved = all.filter(record => isBoughtStatus(record.status) && (!experienceId || record.experienceId === experienceId));
   const requests = all.filter(record => record.status === 'requested' && (!experienceId || record.experienceId === experienceId));
@@ -89,6 +93,8 @@ export function WalletPanel({ onClose, onOpenExperience, experienceId, title = m
 
   return <Dialog title={t(title)} onClose={onClose} wide>
     <div className="wallet-panel">
+      {onReservations && <nav className="wallet-filter" aria-label={t('Billetera y reservas')}><button aria-current="page">{t('Billetera')}</button><button onClick={onReservations}>{t('Reservas y pagos')}</button></nav>}
+      {upcomingOnly && <p>{t('Tus planes pendientes y viajes con fechas por venir, pana.')}</p>}
       <header className="wallet-hero"><span className="wallet-hero-icon" aria-hidden="true"><Wallet size={30} /></span><div><h3>{t("Todo tu viaje, en un solo lugar.")}</h3><p>{t("Compras, solicitudes y comprobantes. Sin saldo: de tu tarjeta solo guardamos marca y 4 dígitos.")}</p></div></header>
       <ul className="wallet-stats" aria-label={t("Resumen de tu billetera")}>
         <li><span>{t("Compras de prueba")}</span><strong>{approved.length}</strong></li>
@@ -96,7 +102,7 @@ export function WalletPanel({ onClose, onOpenExperience, experienceId, title = m
         <li><span>{t("Total de prueba")}</span><strong>{formatUsd(approved.reduce((sum, record) => sum + (record.totalCents ?? 0), 0))}</strong><small>{t("sin cobro")}</small></li>
         <li><span>{t("Pagos verificados")}</span><strong>{connected.state === 'ready' ? paid.length : '—'}</strong><small>{connected.state === 'ready' ? t('por el servidor') : t('requiere cuenta')}</small></li>
       </ul>
-      <div className="wallet-filter" role="group" aria-label={t("Filtrar movimientos")}>{([['all', 'Todo'], ['purchases', 'Compras'], ['requests', 'Solicitudes']] as const).map(([id, label]) => <button key={id} type="button" aria-pressed={filter === id} onClick={() => setFilter(id)}>{label}</button>)}</div>
+      <div className="wallet-filter" role="group" aria-label={t("Filtrar movimientos")}>{([['all', 'Todo'], ['purchases', 'Compras'], ['requests', 'Solicitudes']] as const).map(([id, label]) => <button key={id} type="button" aria-pressed={filter === id} onClick={() => setFilter(id)}>{t(label)}</button>)}</div>
       {trips.length ? trips.map(([trip, items]) => { const spent = items.filter(item => isBoughtStatus(item.status)).reduce((sum, item) => sum + (item.totalCents ?? 0), 0); return <section key={trip} className="wallet-trip">
         <div className="wallet-trip-head"><h4>{trip}</h4><p>{t("Total de prueba en este viaje:")}{' '}<strong>{formatUsd(spent)}</strong></p></div>
         <ul className="wallet-records">{items.map(record => <li key={record.id} data-status={record.status}>
@@ -120,7 +126,7 @@ export function WalletPanel({ onClose, onOpenExperience, experienceId, title = m
         </li>)}</ul>
       </section>; }) : <div className="wallet-empty"><Inbox size={34} aria-hidden="true" /><h4>{experienceId ? t("Aún no tienes movimientos para esta experiencia.") : t("Tu billetera está lista para el primer viaje.")}</h4><p>{t("Cuando compres una experiencia o pidas una cotización, aparecerá aquí con su comprobante.")}</p></div>}
       {transfers.state === 'ready' && transfers.rows.length > 0 && <section className="wallet-connected" aria-label={t("Mis transferencias")}><h4><Landmark size={20} aria-hidden="true" />{t("Mis transferencias")}</h4>
-        <ul className="wallet-records">{transfers.rows.filter(item => !experienceId || item.experienceId === experienceId).map(item => <li key={item.id} data-status={item.status === 'paid' ? 'paid' : item.status === 'rejected' ? 'test_rejected' : 'requested'}>
+        <ul className="wallet-records">{transfers.rows.filter(item => (!upcomingOnly || upcoming({date:item.startDate,endDate:item.endDate,status:item.status})) && (!experienceId || item.experienceId === experienceId)).map(item => <li key={item.id} data-status={item.status === 'paid' ? 'paid' : item.status === 'rejected' ? 'test_rejected' : 'requested'}>
           <div className="wallet-record-top"><h5>{item.title}</h5><strong>{money(item.amount, 'USD')}</strong></div>
           <p className="wallet-record-meta"><span><CalendarDays size={15} aria-hidden="true" />{dates({ date: item.startDate, endDate: item.endDate })}</span><span><Users size={15} aria-hidden="true" />{people({ people: item.adults + item.children, children: item.children })}</span></p>
           <p className="wallet-chip-row"><span className={`wallet-method is-transfer ${item.status === 'paid' ? 'is-ok' : item.status === 'rejected' ? 'is-bad' : 'is-wait'}`}><Landmark size={14} aria-hidden="true" />{TRANSFER_STATUS_TEXT[item.status]}</span><span className="wallet-code">{item.reference}</span></p>
@@ -133,7 +139,7 @@ export function WalletPanel({ onClose, onOpenExperience, experienceId, title = m
           : connected.state === 'loading' ? <p role="status">{t("Consultando tus reservas…")}</p>
             : connected.state === 'signed_out' ? <><p>{t("Entra en tu cuenta para ver tus reservas conectadas y sus pagos verificados.")}</p><button type="button" className="button button-secondary" onClick={() => { onClose(); window.dispatchEvent(new Event('cv3:account')); }}>{t("Entrar en mi cuenta")}</button></>
               : connected.state === 'error' ? <p role="alert">{connected.message}</p>
-                : connected.bookings.length ? <ul className="wallet-records">{connected.bookings.filter(item => !experienceId || item.experience_id === experienceId).map(item => <li key={item.id} data-status={item.status}><div className="wallet-record-top"><h5>{item.title}</h5><strong>{money(item.total_amount, item.currency)}</strong></div><p className="wallet-chip-row"><span className={`wallet-chip is-${['paid', 'completed'].includes(item.status) ? 'test_approved' : 'requested'}`}>{BOOKING_LABELS[item.status] ?? t("Estado por consultar")}</span><span className="wallet-chip">{item.payment_environment === 'sandbox' ? t("Entorno de pruebas de la pasarela") : t("Cobro real")}</span><span className="wallet-code">{item.code}</span></p></li>)}</ul>
+                : connected.bookings.length ? <ul className="wallet-records">{connected.bookings.filter(item => (!upcomingOnly || upcoming({date:item.startsAt?.slice(0,10),status:item.status})) && (!experienceId || item.experience_id === experienceId)).map(item => <li key={item.id} data-status={item.status}><div className="wallet-record-top"><h5>{item.title}</h5><strong>{money(item.total_amount, item.currency)}</strong></div><p className="wallet-chip-row"><span className={`wallet-chip is-${['paid', 'completed'].includes(item.status) ? 'test_approved' : 'requested'}`}>{BOOKING_LABELS[item.status] ?? t("Estado por consultar")}</span><span className="wallet-chip">{item.payment_environment === 'sandbox' ? t("Entorno de pruebas de la pasarela") : t("Cobro real")}</span><span className="wallet-code">{item.code}</span></p></li>)}</ul>
                   : <p>{t("No tienes reservas conectadas todavía.")}</p>}
         <button type="button" className="text-button wallet-link" onClick={() => { onClose(); window.dispatchEvent(new Event('cv3:payments')); }}><ReceiptText size={15} aria-hidden="true" />{t("Ir a Reservas y pagos")}</button>
       </section>

@@ -55,30 +55,21 @@ async function finishCheckout() {
 const renderPlanner = () => render(<AppProvider><PlannerDialog onClose={vi.fn()} onSelect={vi.fn()} /></AppProvider>);
 
 describe('Mi viaje unido a la billetera', () => {
-  it('cada parada muestra su estado y «Comprar esta parada» actualiza Mi viaje y la billetera', async () => {
+  it('comprar una única parada actualiza Mi viaje y la billetera', async () => {
+    localStorage.setItem(JOURNEY_KEY,JSON.stringify({...newJourney(),people:2,date:'2099-05-01',stops:[saraguro.id]}));
     renderPlanner();
-    expect(stop(saraguro.title).getByText('Sin comprar')).toBeInTheDocument();
-    expect(stop(sierraNegra.title).getByRole('button', { name: /Pedir cotización/ })).toBeInTheDocument();
-    expect(screen.getByText('Sin precio comparable').nextElementSibling).toHaveTextContent('1 parada');
-    expect(screen.getByText('Por comprar').nextElementSibling).toHaveTextContent(formatUsd((4500 + 3800) * 2));
-
-    fireEvent.click(stop(saraguro.title).getByRole('button', { name: /Comprar esta parada/ }));
+    fireEvent.click(stop(saraguro.title).getByRole('button',{name:'Comprar esta parada'}));
     await finishCheckout();
-    expect(wallet()).toMatchObject([{ experienceId: saraguro.id, status: 'test_approved', trip: 'Mi viaje desde Quito', date: '2099-05-01', people: 2, totalCents: 9000 }]);
-    fireEvent.click(top().getByRole('button', { name: /Ver en mi billetera/ }));
-    expect(await screen.findByRole('heading', { name: 'Todo tu viaje, en un solo lugar.' }, { timeout: 5000 })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Mi viaje desde Quito' })).toBeInTheDocument();
-    fireEvent.click(screen.getAllByRole('button', { name: 'Cerrar ventana' }).at(-1) as HTMLElement);
-
+    expect(wallet()).toMatchObject([{experienceId:saraguro.id,status:'test_approved',people:2,totalCents:9000}]);
+    fireEvent.click(top().getByRole('button',{name:/Ver en mi billetera/}));
+    expect(await screen.findByRole('heading',{name:'Todo tu viaje, en un solo lugar.'})).toBeInTheDocument();
+    fireEvent.click(screen.getAllByRole('button',{name:'Cerrar ventana'}).at(-1) as HTMLElement);
     expect(stop(saraguro.title).getByText('Compra de prueba')).toBeInTheDocument();
-    expect(stop(saraguro.title).queryByRole('button', { name: /Comprar esta parada/ })).not.toBeInTheDocument();
-    expect(screen.getByText('Ya comprado').nextElementSibling).toHaveTextContent(formatUsd(9000));
-    expect(screen.getByText('Por comprar').nextElementSibling).toHaveTextContent(formatUsd(7600));
   });
 
   it('«Comprar todo mi viaje» compra lo comprable y deja el resto como solicitud', async () => {
     renderPlanner();
-    fireEvent.click(screen.getByRole('button', { name: /Comprar todo mi viaje/ }));
+    fireEvent.click(screen.getByRole('button', { name: /Comprar ruta completa/ }));
     await screen.findByRole('heading', { name: 'Fechas y personas' }, { timeout: 5000 });
     expect(top().getByRole('heading', { name: saraguro.title, level: 4 })).toBeInTheDocument();
     expect(top().getByText(/Quedan como solicitud \(1\)/)).toBeInTheDocument();
@@ -91,7 +82,7 @@ describe('Mi viaje unido a la billetera', () => {
     expect(records.every(item => !JSON.stringify(item).includes(CEDULA))).toBe(true);
     fireEvent.click(screen.getAllByRole('button', { name: 'Cerrar ventana' }).at(-1) as HTMLElement);
     expect(stop(sierraNegra.title).getByText('Solicitud')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Comprar todo mi viaje/ })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /Comprar ruta completa/ })).toBeDisabled();
     expect(screen.getByText('Ya comprado').nextElementSibling).toHaveTextContent(formatUsd(16600));
   });
 

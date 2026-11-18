@@ -92,7 +92,7 @@ function CoverPage({ ctx }: { ctx: PageContext }) {
   return <section className={`pg-page pg-cover${ctx.premium ? ' is-pro pg-foil' : ''}`} data-page="tapa" aria-labelledby={heading}>
     <div className="pg-cover-inner" data-field="noche">
       <span className="pg-stitch" aria-hidden="true" />
-      <span className="pg-sticker"><img src="/brand/logo-640.webp" srcSet="/brand/logo-320.webp 320w, /brand/logo-640.webp 640w, /brand/logo-1024.webp 1024w" sizes="(max-width: 899px) 46vw, 230px" width="640" height="640" alt="CHULLA VIDA" decoding="async" draggable={false} /></span>
+      <span className="pg-ecuador-flag" role="img" aria-label={t('Bandera del Ecuador')}><img src="/brand/ecuador-flag.svg" alt="" width="900" height="600" /></span>
       <h3 id={heading} className="pg-cover-title">{t('Pasaporte Guambra')}</h3>
       <p className="pg-cover-sub">{t('Tu álbum del Ecuador')}</p>
       <span className="pg-stripes" aria-hidden="true" />

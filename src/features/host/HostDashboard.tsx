@@ -149,7 +149,7 @@ export function HostDashboard({ client, session, organizations, applications, do
 
     {organizations.length > 0 && <div id={`${ids}-experiences`}><HostExperiences key={`${session.user.id}-${orgKey}`} client={client} organizationIds={organizations.map(org => org.id)} /></div>}
 
-    <details id={`${ids}-apply`} className="host-dash-section host-dash-apply" open={organizations.length === 0 ? true : undefined}>
+    <p className="host-hub-note">{t("De una, anfitrión. Prepara tus experiencias y deja claros los servicios, precios y condiciones.")}</p><details id={`${ids}-apply`} className="host-dash-section host-dash-apply" open={organizations.length === 0 ? true : undefined}>
       <summary><Store size={20} aria-hidden="true" />{organizations.length ? t('Registrar otro negocio') : t('Registra tu negocio o comunidad')}</summary>
       <form onSubmit={event => void submit(event)} className="auth-form">
         <label>{t('Nombre')}<input className="field" value={name} onChange={event => setName(event.target.value)} minLength={2} maxLength={160} required /></label>

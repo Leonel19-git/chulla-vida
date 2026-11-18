@@ -9,3 +9,17 @@ html{scroll-padding-top:110px}
 .cv-dialog .vivo-detail .vivo-detail-lead{font-size:16px;line-height:1.5;margin:12px 0}
 .vivo-detail-tabs{overflow-x:auto;flex-wrap:nowrap}.vivo-detail-tabs>button{min-height:44px;white-space:nowrap}
 @media(max-width:760px){.al-detail-book>strong{font-size:20px}.al-detail-book .buy-button{font-size:13px}.mobile-bottom-nav button{min-width:0}.sidebar-open{overflow-y:auto;overscroll-behavior:contain}.cv-dialog input,.cv-dialog select,.cv-dialog textarea{font-size:16px}}
+
+.cv-bbs{margin-block:14px;padding:12px 14px;background:#e8f3e3;border-radius:12px;color:#123b28;font-size:14px;line-height:1.6}.cv-bbs summary{cursor:pointer;font-weight:700;min-height:28px}.cv-bbs p{margin-top:8px}
+.account-delete{padding:12px 0;border-top:1px solid #d5deea;margin-block:14px}.account-delete>.text-button{color:#a51f35;min-height:44px}.account-delete .auth-form{max-width:620px}.account-delete p{font-size:14px;line-height:1.6}
+.sidebar .role-switch button{font-size:12px;padding-inline:5px;gap:4px}.sidebar .role-switch{border-radius:12px}.cv-tool-community{background:#012960;color:white}.flex-workspace form>.button{margin:8px 8px 8px 0}.buy-route-summary{padding:12px;background:#e8f3e3;border-radius:10px;color:#123b28}
+
+.cv-toolbar .cv-tool-community{background:#012960;color:white}.cv-toolbar .cv-tool-community .cv-pulse{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#ffce45;color:#012960}.cv-toolbar .cv-tool-community .cv-pulse svg{color:#012960;stroke:currentColor}
+@media(max-width:760px){
+  .app-shell .cv-toolbar.cv-toolbar{display:flex;position:static;padding:8px 16px;gap:8px}
+  .app-shell .cv-toolbar>.cv-toolbar-tag{display:grid;gap:2px;flex:none;font-size:9px;line-height:1.2}
+  .app-shell .cv-toolbar-main{width:auto;flex:1;justify-content:flex-end}
+  .app-shell .cv-toolbar-main>.cv-tool:not(.cv-tool-community),.app-shell .cv-toolbar-main>.cv-more{display:none}
+  .app-shell .cv-toolbar .cv-tool-community{flex:0 1 auto;flex-direction:row;gap:6px;padding:4px 10px;min-height:44px;border-radius:8px}
+  .app-shell .cv-bottom-nav .cv-bottom-mijin>span:last-child{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.1;font-size:11px}
+}

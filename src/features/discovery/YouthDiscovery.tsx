@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ArrowDown, ArrowUpRight, BookOpen, Camera, ChevronRight, Compass, Download, Heart, Map, MapPin, Mic, Pause, Play, Share2, Sparkles } from 'lucide-react';
+import { ArrowDown, ArrowUpRight, BookOpen, Camera, ChevronRight, Compass, Download, Heart, Map, MapPin, Pause, Play, Share2, Sparkles } from 'lucide-react';
 import { REGION_LABELS, type Experience, type RegionId } from '../../domain/catalog';
 import { albumLabel } from '../../domain/album';
 import { experienceVisual } from '../catalog/experienceArt';
@@ -11,7 +11,7 @@ import './discovery.css';
 const signal = (name: string) => window.dispatchEvent(new Event(`cv3:${name}`));
 const TOOLS = [
   { icon: Map, name: msg('Arma el plan'), hint: msg('Fechas, panas y presupuesto'), event: 'plan', tone: 'yellow' },
-  { icon: Mic, name: msg('Habla con MIJIN'), hint: msg('Ideas por voz o por texto'), event: 'mijin', tone: 'blue' },
+  { icon: Heart, name: msg('Favoritos'), hint: msg('Tus lugares para el próximo plan'), event: 'favorites', tone: 'blue' },
   { icon: Sparkles, name: msg('Cultura Viva'), hint: msg('Fiestas, historias y tradición'), event: 'culture', tone: 'red' },
   { icon: BookOpen, name: msg('Tu pasaporte'), hint: msg('Guarda recuerdos del camino'), event: 'passport', tone: 'green' },
   { icon: Download, name: msg('Llévalo sin señal'), hint: msg('Solo lo que descargaste'), event: 'downloads', tone: 'mint' },

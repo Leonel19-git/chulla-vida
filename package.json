@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "typecheck": "tsc -b",
     "typecheck:api": "tsc -p tsconfig.api.json",
-    "test": "vitest run",
+    "test": "vitest run --maxWorkers=2",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "verify": "node scripts/verify-domain.mjs && node scripts/verify-membership.mjs && node scripts/verify-wallet.mjs && node scripts/verify-i18n.mjs && node scripts/verify-payment-i18n.mjs && node scripts/build-catalog-seed.mjs --check && node scripts/build-legal-manifest.mjs --check",

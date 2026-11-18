@@ -34,7 +34,7 @@ const steps: TourStep[] = [
 
 describe('recorrido guiado sobre la página real', () => {
   it('cubre todas las partes pedidas, en orden y con data-tour', () => {
-    expect(TOUR_STEPS.map(step => step.id)).toEqual(['album', 'regions', 'search', 'filters', 'card', 'plan', 'mijin', 'culture', 'passport', 'account']);
+    expect(TOUR_STEPS.map(step => step.id)).toEqual(['album', 'regions', 'search', 'filters', 'card', 'plan', 'community', 'culture', 'passport', 'account']);
     for (const step of TOUR_STEPS) expect(step.targets[0]).toMatch(/data-tour=/);
   });
   it('encuentra el primer objetivo visible y descarta los que no miden nada', () => {

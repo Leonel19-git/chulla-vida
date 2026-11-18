@@ -15,7 +15,7 @@ describe('rutas con URL', () => {
     expect(parsePath('/experiencias/no-existe')).toMatchObject({ kind: 'unknown' });
     expect(parsePath('/experiencias/%E0%A4%A')).toMatchObject({ kind: 'unknown' });
     expect(parsePath('/experiencias/<script>')).toMatchObject({ kind: 'unknown' });
-    const views = { '/cultura-viva': 'culture', '/pasaporte': 'passport', '/mi-viaje': 'plan', '/billetera': 'wallet', '/mijin': 'mijin', '/sin-senal': 'downloads', '/cuenta': 'account', '/anfitriones': 'host', '/privacidad': 'legal' };
+    const views = { '/cultura-viva': 'culture', '/pasaporte': 'passport', '/mi-viaje': 'plan', '/billetera': 'wallet', '/mijin': 'plan', '/proximos-viajes': 'upcoming', '/sin-senal': 'downloads', '/cuenta': 'account', '/anfitriones': 'host', '/privacidad': 'legal' };
     for (const [path, view] of Object.entries(views)) expect(parsePath(path)).toEqual({ kind: 'view', view });
     expect(parsePath('/legal/terminos')).toEqual({ kind: 'legal', slug: 'terminos' });
     expect(parsePath('/')).toEqual({ kind: 'home' });

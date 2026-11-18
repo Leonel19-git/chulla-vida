@@ -1,9 +1,10 @@
+import { partyLabel, rangeSummary, shortDay } from '../../i18n/travel';
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { ArrowLeft, ArrowRight, CheckCircle2, CircleX, Clock3, CreditCard, Download, FlaskConical, Landmark, Lock, ReceiptText, ShieldCheck, Smartphone, Wallet } from 'lucide-react';
 import { Dialog } from '../../components/chulla/Dialog';
 import type { Experience } from '../../domain/catalog';
 import { choiceLabel, clampChoice, formatUsd, isEmail, isRange, lineTotalCents, maskEmail, purchasePlan, testCode, TEST_RECEIPT_LABEL, type PriceChoice, type WalletRecord, type WalletStatus } from '../../domain/payments/purchase';
-import { clampParty, experienceDays, isIsoDate, localDay, partyCapacity, partyLabel, partySize, rangeSummary, RANGE_ERROR_TEXT, shortDay, suggestEnd, validateRange, type Party } from '../../domain/payments/travel';
+import { clampParty, experienceDays, isIsoDate, localDay, partyCapacity, partySize, RANGE_ERROR_TEXT, suggestEnd, validateRange, type Party } from '../../domain/payments/travel';
 import { TRANSFER_STATUS_TEXT } from '../../domain/payments/transfer';
 import { CedulaField, documentValidity, type DocumentValue } from './CedulaField';
 import { getPaymentConfiguration, type PaymentConfiguration } from './api';
@@ -48,10 +49,10 @@ export interface CheckoutProps {
 
 export function Checkout({ experiences, quoteExperiences = [], defaults, onClose, onViewWallet = openWallet }: CheckoutProps) {
   const t = useT();
-  const initialLines = useMemo(() => experiences.flatMap((experience): Line[] => {
+  const initialLines = useMemo(() => [...new Map(experiences.map(item => [item.id,item])).values()].flatMap((experience): Line[] => {
     const plan = purchasePlan(experience);
-    return plan.kind === 'buy' ? [{ experience, choices: plan.choices, choiceId: plan.choices[0].id, valueCents: plan.choices[0].minCents }] : [];
-  }), [experiences]);
+    return plan.kind === 'buy' ? [{ experience, choices: plan.choices, choiceId: (plan.choices.find(choice => choice.fixedPeople === (defaults?.people ?? 1)) ?? plan.choices[0]).id, valueCents: (plan.choices.find(choice => choice.fixedPeople === (defaults?.people ?? 1)) ?? plan.choices[0]).minCents }] : [];
+  }), [experiences, defaults?.people]);
   const capacity = partyCapacity(...experiences.map(item => item.capacity.max));
   const single = initialLines.length === 1 && quoteExperiences.length === 0;
   const durationDays = single ? experienceDays(initialLines[0].experience.duration) : defaults?.days && defaults.days > 0 ? defaults.days : null;
@@ -91,7 +92,7 @@ export function Checkout({ experiences, quoteExperiences = [], defaults, onClose
   const lineUnit = (line: Line) => { const choice = line.choices.find(item => item.id === line.choiceId) ?? line.choices[0]; return clampChoice(choice, line.valueCents); };
   const total = lines.reduce((sum, line) => sum + lineTotalCents(lineUnit(line), linePeople(line)), 0);
   const docState = documentValidity(identity);
-  const realAvailable = Boolean(config?.enabled) && lines.every(line => serverEnabled(line.experience));
+  const realAvailable = single && Boolean(config?.enabled) && lines.every(line => serverEnabled(line.experience));
   const trip = defaults?.trip ?? 'Compras sueltas';
   const summary = rangeSummary(range.start, range.end);
   const transferRequest = useMemo<TransferRequest | null>(() => single && lines[0] && range.start && range.end
@@ -103,6 +104,8 @@ export function Checkout({ experiences, quoteExperiences = [], defaults, onClose
     if (step === 0) {
       const problem = validateRange(range.start, range.end, tomorrow());
       if (problem) return setError(problem === 'start_missing' || problem === 'start_past' ? tr("Elige una fecha a partir de mañana.") : RANGE_ERROR_TEXT[problem]);
+      const mismatch=lines.find(line=>{const choice=line.choices.find(item=>item.id===line.choiceId);return choice?.fixedPeople && choice.fixedPeople!==people;});
+      if(mismatch) return setError(tr('La tarifa de {title} no corresponde al número de viajeros. Elige la opción del grupo correcto o solicita cotización.',{title:mismatch.experience.title}));
       if (people < 1 || people > capacity) return setError(tr("Indica entre 1 y {capacity} personas.", { capacity: capacity }));
     }
     if (step === 1) {
@@ -162,12 +165,12 @@ export function Checkout({ experiences, quoteExperiences = [], defaults, onClose
   const progress = Math.round(((step + 1) / STEPS.length) * 100);
 
   return <Dialog title={single ? `Comprar · ${lines[0]?.experience.title ?? ''}` : t("Comprar todo mi viaje")} onClose={onClose} wide>
-    <div className="buy-checkout">
+    <div className="buy-checkout">{!single && <p className="buy-route-summary">{t("Esta compra incluye {n} paradas con precio y {q} solicitudes de cotización.",{n:lines.length,q:quoteExperiences.length})}</p>}
       <p className="buy-test-ribbon" role="note"><FlaskConical size={18} aria-hidden="true" /><span><strong>{t("Modo prueba sin cobro.")}</strong>{' '}{t("No se cobra nada.")}</span></p>
       <div className="buy-progress" role="progressbar" aria-label={t("Avance de la compra")} aria-valuemin={1} aria-valuemax={STEPS.length} aria-valuenow={step + 1} aria-valuetext={t("Paso {v} de {length}: {v2}", { v: step + 1, length: STEPS.length, v2: STEPS[step] })}><span style={{ width: `${progress}%` }} /></div>
-      <ol className="buy-steps" aria-label={t("Pasos de la compra")}>{STEPS.map((label, index) => <li key={label} aria-current={index === step ? 'step' : undefined} data-done={index < step || undefined}><span>{index < step ? <CheckCircle2 size={16} /> : index + 1}</span>{label}</li>)}</ol>
+      <ol className="buy-steps" aria-label={t("Pasos de la compra")}>{STEPS.map((label, index) => <li key={label} aria-current={index === step ? 'step' : undefined} data-done={index < step || undefined}><span>{index < step ? <CheckCircle2 size={16} /> : index + 1}</span>{t(label)}</li>)}</ol>
       <p className="buy-step-count" aria-hidden="true">{t("Paso")}{' '}{step + 1} de {STEPS.length}</p>
-      <h3 ref={heading} tabIndex={-1} className="buy-step-title">{STEPS[step]}</h3>
+      <h3 ref={heading} tabIndex={-1} className="buy-step-title">{t(STEPS[step])}</h3>
 
       {step < 3 && <form className="buy-form" onSubmit={next} noValidate>
         {step === 0 && <>
@@ -176,7 +179,7 @@ export function Checkout({ experiences, quoteExperiences = [], defaults, onClose
           {party.children > 0 && <p className="buy-hint">{t("Los niños pagan igual, salvo que el anfitrión diga otra cosa.")}</p>}
           {lines.map((line, index) => { const choice = line.choices.find(item => item.id === line.choiceId) ?? line.choices[0]; return <section key={line.experience.id} className="buy-line">
             {!single && <h4>{line.experience.title}</h4>}
-            <p className="buy-price-type"><span className="buy-chip">{PRICE_TYPE[line.experience.price.type]}</span>{line.experience.price.originalLabel}</p>
+            <p className="buy-price-type"><span className="buy-chip">{t(PRICE_TYPE[line.experience.price.type])}</span>{line.experience.price.originalLabel}</p>
             {line.choices.length > 1 && <label><span>{t("Opción de la fuente")}</span><select className="field" value={line.choiceId} onChange={event => { const picked = line.choices.find(item => item.id === event.target.value) ?? line.choices[0]; setLine(index, { choiceId: picked.id, valueCents: picked.minCents }); }}>{line.choices.map(item => <option key={item.id} value={item.id}>{item.label} · {choiceLabel(item)}</option>)}</select></label>}
             {isRange(choice) && <label className="buy-range"><span>{t("Tu valor dentro del rango (")}{choiceLabel(choice)})</span><input type="range" min={choice.minCents / 100} max={(choice.maxCents ?? choice.minCents) / 100} step={1} value={lineUnit(line) / 100} onChange={event => setLine(index, { valueCents: Math.round(Number(event.target.value) * 100) })} aria-valuetext={t("{v} por persona", { v: formatUsd(lineUnit(line)) })} /><output>{formatUsd(lineUnit(line))}{' '}{t("por persona")}</output></label>}
             {choice.fixedPeople && <p className="buy-hint">{t("Opción para un grupo de")}{' '}{choice.fixedPeople}{' '}{t("personas: el total usa ese número.")}</p>}

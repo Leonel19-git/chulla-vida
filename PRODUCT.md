@@ -12,7 +12,7 @@ Acercar a los jóvenes a Ecuador mediante experiencias locales, planificación p
 
 ## Capabilities and Constraints
 
-- Catálogo de 51 fichas referenciales: 42 con fotos del sitio acreditadas y 9 con referencias regionales; cuatro regiones, búsqueda, favoritos, planificador, MIJIN y Cultura Viva con 39 celebraciones. Precios orientativos, sin garantía de disponibilidad ni venta habilitada; presupuesto de grupo desde $20, transporte y extras aparte.
+- Catálogo de 51 fichas referenciales: 42 con fotos del sitio acreditadas y 9 con referencias regionales; cuatro regiones, búsqueda, favoritos, planificador y Cultura Viva con 39 celebraciones. El asistente de voz fue retirado por petición explícita del 18/11. Precios orientativos, sin garantía de disponibilidad ni venta habilitada; presupuesto de grupo desde $20, transporte y extras aparte.
 - Supabase conecta cuentas, organizaciones y solicitudes; API y reglas de base de datos deciden permisos y estados de pago. Elegir modo negocio en una demostración no concede autorización del servidor.
 - Las compras conectadas requieren sesión válida, correo verificado, oferta habilitada, confirmación del anfitrión y términos vigentes aceptados. El servidor calcula importes y verifica al proveedor; PayPhone aloja el formulario de tarjeta y CHULLA VIDA no recibe esos datos. El retorno del navegador no acredita pago.
 - Cobros conectados desactivados hasta configurar y validar proveedor, requisitos comerciales y servicios. Distinguir demostración local y pago conectado: las pruebas no rellenan `pagado_en`, crean ingresos ni acreditan liquidaciones.
@@ -22,12 +22,12 @@ Acercar a los jóvenes a Ecuador mediante experiencias locales, planificación p
 - Idiomas: español, inglés, francés, portugués, chino y borradores de Kichwa Sierra y Amazonía; estos comparten base y requieren revisión comunitaria, sin certificación dialectal. Nombres propios, relatos y contenido de usuarios conservan su idioma; algunas pantallas históricas tienen cobertura parcial.
 
 ## Brand Commitments
-CHULLA VIDA para wambras: logo original actualizado y activos existentes, sin redibujarlos. Intro audiovisual con cierre en logo original grande y animado, salto, pausa, repetición y alternativa estática con movimiento reducido. Frases ecuatorianas breves, iconos con etiquetas, contraste legible y acciones táctiles; escritorio y móvil igualmente importantes.
+CHULLA VIDA para wambras: logo original actualizado y activos existentes, sin redibujarlos. Primera intro audiovisual con cierre en logo original grande y animado, salto, pausa y alternativa estática con movimiento reducido; sin acceso para repetirla en el menú. Frases ecuatorianas breves, iconos con etiquetas, contraste legible y acciones táctiles; escritorio y móvil igualmente importantes.
 
 ## Dirección visual VIGENTE · FUSIÓN 17 de noviembre de 2026
 La última petición y `.impeccable/fusion-direction.md` gobiernan: portada fotográfica recuperada («Un país. Mil formas de vivirlo.»), menú completo, cinco destinos móviles originales y detalles de álbum que acompañan el turismo. Cinco accesos iniciales; HomeIntro conserva cuatro pasos y contenido en desplegable. Archivo en titulares, Newsreader como acento y Plus Jakarta Sans en cuerpo; base cálida, azul, maíz, turquesa, verde y rosa, según DESIGN.md.
 La dirección «Álbum del Ecuador» del 16/11 queda como antecedente sustituido: sus órdenes de rediseño total, exclusión de fuentes/base cálida, sticker obligatorio y navegación alternativa no rigen. La corrección y recuperación del 17/11 establecieron la continuidad; la fusión la extiende. Se conservan funciones, datos, seguridad, pasaporte y Cultura Viva con nombre, cartas, fotos acreditadas, giro horizontal, 39 celebraciones y fuentes/fechas honestas.
-Las ocho postales editoriales incluyen ubicación, autores, guardado real y compartir nativo o enlace profundo; no son publicaciones reales de Instagram ni aumentan las 41 fichas con fotos. Cuatro videos regionales locales de 720×1280 y 8.29s cada uno montan fotografías Commons licenciadas, 12 tomas en conjunto y CREDITS público; carga/play explícitos, uno a la vez y pausa fuera de pantalla.
+Las ocho postales editoriales incluyen ubicación, autores, guardado real y compartir nativo o enlace profundo; no son publicaciones reales de Instagram ni añaden fotografías de nuevos sitios al catálogo. Los cuatro videos regionales locales de la fusión anterior permanecen como activos acreditados, pero su sección se retira del inicio por la petición del 18/11.
 
 ## Evidence on Hand
 Logo en `public/brand` y `public/chulla-vida-logo.png`; fotografías/créditos en `public/images`, video/créditos en `public/video`. Playlist Sierra `1YViurI7F7HxTMSS0DiabA`, Costa `18gSr3UmtEr6wuDRWSD4yX`, Amazonía `5nRsIgwAyODNTv4V6JzUZp`. Botones sociales históricos simulados, sin perfiles inventados; las nuevas postales comparten enlaces reales. Proyecto: `C:/Users/leone/Desktop/CHULLA VIDA`; publicación vinculada: https://chulla-vida.vercel.app/.
@@ -41,4 +41,10 @@ Actualización del 17/11: los botones sociales históricos de demostración fuer
 - Fotografía y acciones claras primero; contenido completo accesible en detalles, pestañas y desplegables, sin ocultar funciones.
 - Preservar preferencias, favoritos y recomendaciones al cambiar diseño; distinguir hechos verificados, referencias y pruebas.
 - Mantener precio, moneda, comisión, estado y entorno de pago visibles antes de confirmar.
-- Respetar movimiento reducido, teclado, lectores de pantalla y pantallas pequeñas; conservar menú lateral, menú móvil y barra Explorar, Mi viaje, MIJIN, Billetera y Cuenta.
+- Respetar movimiento reducido, teclado, lectores de pantalla y pantallas pequeñas; menú lateral, menú móvil y barra Explorar, Mi viaje, Cultura Viva, Billetera y Cuenta.
+
+## Ajuste vigente · 18 de noviembre de 2026
+
+La última petición prevalece sobre las referencias históricas a MIJIN y los cuatro videos regionales: ambos se retiran del inicio. Comunidad wambra pasa a «ECUADOR A TU RITMO»; Favoritos, Próximos viajes y Billetera y reservas sustituyen los accesos anteriores. Se mantienen modos negocio/viajero y el recorrido guiado actualizado.
+
+Chulla Flex muestra sugerencias desde el inicio y propone hasta tres paradas compatibles en una provincia, sin afirmar tiempos de traslado. La compra de ruta de demostración suma todas las paradas con precio y separa las que requieren cotización; el cobro conectado sigue limitado a una oferta y pendiente de activación comercial. El perfil permite registrar una solicitud privada de eliminación para revisión, no un borrado inmediato. «BBS · Bueno, bonito y seguro» es una guía de comprobaciones y no un sello de seguridad verificado.

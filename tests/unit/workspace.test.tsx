@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { AppProvider } from '../../src/context/AppContext';
 import { CatalogProvider } from '../../src/features/catalog/CatalogContext';
 import { ConsentProvider } from '../../src/features/privacy/ConsentContext';
@@ -18,8 +18,7 @@ it('carga el panel de avisos real sin pedir permiso al abrirlo', async () => {
   const requestPermission = vi.fn();
   vi.stubGlobal('Notification', Object.assign(function () {}, { permission: 'default', requestPermission }));
   render(<Workspace />);
-  fireEvent.click(screen.getByRole('button', { name: 'Más herramientas' }));
-  fireEvent.click(screen.getByRole('menuitem', { name: /Mis avisos/ }));
+  act(() => { window.dispatchEvent(new Event('cv3:alerts')); });
   expect(await screen.findByRole('heading', { name: 'Que te llegue lo que te importa.' })).toBeInTheDocument();
   expect(screen.getByRole('button', { name: 'Permitir avisos del navegador' })).toBeInTheDocument();
   expect(requestPermission).not.toHaveBeenCalled();
@@ -40,8 +39,11 @@ it('agrupa herramientas en «Más»: abre, cierra con Escape y devuelve el foco'
   fireEvent.click(more);
   expect(more).toHaveAttribute('aria-expanded', 'true');
   expect(screen.getAllByRole('menuitem').map(item => item.textContent)).toEqual([
-    expect.stringMatching(/^Sin señal/), expect.stringMatching(/^Pasaporte Guambra/), expect.stringMatching(/^Mis avisos/), expect.stringMatching(/^Mi cuenta/), expect.stringMatching(/^Recorrido guiado/),
+    expect.stringMatching(/^Sin señal/), expect.stringMatching(/^Pasaporte Guambra/), expect.stringMatching(/^Mi cuenta/), expect.stringMatching(/^Recorrido guiado/),
   ]);
+  expect(screen.queryByRole('menuitem', { name: /Mis avisos/ })).not.toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Comunidad wambra' })).toBeInTheDocument();
+  expect(screen.queryByRole('button', { name: /MIJIN/ })).not.toBeInTheDocument();
   expect(screen.getAllByRole('menuitem')[0]).toHaveFocus();
   fireEvent.keyDown(window, { key: 'Escape' });
   expect(screen.queryByRole('menu')).not.toBeInTheDocument();
@@ -49,7 +51,7 @@ it('agrupa herramientas en «Más»: abre, cierra con Escape y devuelve el foco'
 });
 it('«Mi billetera» requiere una cuenta confirmada antes de abrir los datos personales', async () => {
   render(<Workspace />);
-  fireEvent.click(screen.getByRole('button', { name: 'Mi billetera' }));
+  fireEvent.click(screen.getByRole('button', { name: 'Billetera y reservas' }));
   expect(await screen.findByRole('dialog', { name: 'Tu espacio de viaje' }, { timeout: 5000 })).toBeInTheDocument();
   expect(await screen.findByText('Entra con tu correo confirmado para abrir tu espacio.')).toBeInTheDocument();
   expect(screen.queryByRole('alert')).not.toBeInTheDocument();

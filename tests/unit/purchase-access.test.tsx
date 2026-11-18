@@ -53,7 +53,7 @@ describe('Acceso a la compra desde Mi viaje', () => {
   }
   it('no permite eludir el registro comprando todo el viaje', async () => {
     mock.getUser.mockResolvedValue({ data: { user: null }, error: null });
-    plan(); fireEvent.click(screen.getByRole('button', { name: 'Comprar todo mi viaje' }));
+    plan(); fireEvent.click(screen.getByRole('button', { name: /Comprar ruta completa/ }));
     expect(await screen.findByRole('heading', { name: 'Tus historias van contigo' })).toBeInTheDocument();
     expect(screen.queryByText('Compra abierta con cuenta confirmada')).not.toBeInTheDocument();
   });

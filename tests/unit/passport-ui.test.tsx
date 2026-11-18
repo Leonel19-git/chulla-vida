@@ -47,7 +47,7 @@ afterEach(() => { cleanup(); vi.useRealTimers(); vi.unstubAllGlobals(); Element.
 describe('Pasaporte Guambra · libro abierto en computador', () => {
   it('empieza cerrado con el logo 2026 (nunca chulla-vida-logo.png); «Abrir» gira la tapa y el teclado pasa pliegos sin robar las flechas a un campo', () => {
     view();
-    expect(screen.getByRole('img', { name: 'CHULLA VIDA' })).toHaveAttribute('src', '/brand/logo-640.webp');
+    expect(screen.getByRole('img', { name: 'Bandera del Ecuador' }).querySelector('img')).toHaveAttribute('src', '/brand/ecuador-flag.svg');
     expect(document.body.innerHTML).not.toContain('chulla-vida-logo.png');
     expect(screen.getByRole('heading', { level: 3, name: 'Pasaporte Guambra' })).toBeInTheDocument();
     expect(screen.getByText('Viajero/a')).toBeInTheDocument();

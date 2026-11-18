@@ -245,8 +245,8 @@ describe('reservas y pagos conectados', () => {
   });
   it('abre el panel de pagos integrado desde la navegación principal', async () => {
     render(<AppProvider><ConsentProvider><CatalogProvider><V3Toolbar /><V3Workspace /></CatalogProvider></ConsentProvider></AppProvider>);
-    fireEvent.click(screen.getByRole('button', { name: 'Reservas y pagos' }));
-    const dialog = await screen.findByRole('dialog', { name: 'Reservas y pagos' });
+    act(()=>window.dispatchEvent(new Event('cv3:payments')));
+    const dialog = await screen.findByRole('dialog', { name: 'Billetera y reservas' });
     expect(await within(dialog).findByRole('button', { name: 'Probar pago sin cobro' })).toBeInTheDocument();
     expect(await within(dialog).findByRole('button', { name: 'Entrar en mi cuenta' }, { timeout: 3000 })).toBeInTheDocument();
   });

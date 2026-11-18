@@ -1,7 +1,8 @@
+import { shortDay } from '../../i18n/travel';
 import { useCallback, useEffect, useState } from 'react';
 import { CalendarDays, CheckCircle2, Eye, FileText, Inbox, Landmark, Loader2, RotateCcw, Users, XCircle } from 'lucide-react';
 import { formatUsd } from '../../domain/payments/purchase';
-import { shortDay } from '../../domain/payments/travel';
+
 import { TRANSFER_STATUS_TEXT, validateRejection } from '../../domain/payments/transfer';
 import { loadTransfersToReview, receiptUrl, reviewTransfer, type TransferRow } from './transferApi';
 import './transfer.css';

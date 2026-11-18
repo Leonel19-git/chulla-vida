@@ -1,9 +1,10 @@
+import { Checkout } from '../../src/features/payments/Checkout';
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
-import { getExperienceById, type Experience } from '../../src/domain/catalog';
+import { ALL_EXPERIENCES, getExperienceById, type Experience } from '../../src/domain/catalog';
 import { cedulaCheckDigit } from '../../src/domain/identity/cedula';
-import { formatUsd, TEST_RECEIPT_LABEL, WALLET_KEY, type WalletRecord } from '../../src/domain/payments/purchase';
+import { purchasePlan, formatUsd, TEST_RECEIPT_LABEL, WALLET_KEY, type WalletRecord } from '../../src/domain/payments/purchase';
 import { AppProvider } from '../../src/context/AppContext';
 import { BuyButton } from '../../src/features/payments/BuyButton';
 import { resetWalletMemory } from '../../src/features/wallet/store';
@@ -167,4 +168,18 @@ describe('comprar en modo prueba sin cobro', () => {
     expect(screen.getByLabelText('Número de la tarjeta')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /Ir a Reservas y pagos/ })).not.toBeInTheDocument();
   });
+});
+
+it('la compra de una ruta guarda todas sus paradas y la suma completa en un mismo lote', async () => {
+  const items=ALL_EXPERIENCES.filter(item=>{const plan=purchasePlan(item);return plan.kind==='buy' && plan.choices.every(choice=>choice.fixedPeople===null);}).slice(0,2);
+  render(<AppProvider><Checkout experiences={items} defaults={{date:futureDate,endDate:'2099-03-15',people:1}} onClose={vi.fn()}/></AppProvider>);
+  expect(screen.getByText(/Esta compra incluye 2 paradas/)).toBeInTheDocument();
+  next();fillBuyer();next();fireEvent.click(screen.getByRole('checkbox'));fireEvent.click(screen.getByRole('button',{name:'Elegir método de pago'}));
+  await payWith('4242424242424242');await screen.findByRole('heading',{name:'Comprobante'});
+  const records=wallet();expect(records).toHaveLength(2);
+  expect(records.map(record=>record.experienceId).sort()).toEqual(items.map(item=>item.id).sort());
+  expect(new Set(records.map(record=>record.batchId)).size).toBe(1);
+  const total=records.reduce((sum,record)=>sum+(record.totalCents??0),0);
+  expect(total).toBeGreaterThan(Math.max(...records.map(record=>record.totalCents??0)));
+  expect(document.body).toHaveTextContent(formatUsd(total));
 });

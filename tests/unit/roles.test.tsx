@@ -102,8 +102,9 @@ describe('cuenta separada por rol', () => {
     render(<AuthPanel />);
     expect(await screen.findByRole('heading', { name: 'Tu cuenta viajera' })).toBeInTheDocument();
     await screen.findByLabelText('Nombre visible');
-    expect(screen.queryByRole('radiogroup', { name: /Cómo quieres usar tu cuenta/ })).not.toBeInTheDocument();
-    expect(document.body.textContent).not.toMatch(/negocio|anfitri|Solicitar revisión|Cobrado/i);
+    expect(screen.getByRole('radio', { name: 'Modo negocio' })).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'Tu cuenta de negocio' })).not.toBeInTheDocument();
+    expect(document.body.textContent).not.toMatch(/Solicitar revisión|Cobrado/i);
   });
 
   it('un negocio ve solo lo suyo: experiencias, solicitudes, pagos por revisar y cobros', async () => {

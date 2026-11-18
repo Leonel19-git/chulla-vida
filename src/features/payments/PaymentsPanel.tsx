@@ -16,7 +16,7 @@ const date = (value: string | null) => value && Number.isFinite(Date.parse(value
 const labels: Record<string, string> = { draft: 'Borrador', requested: 'Esperando al anfitrión', awaiting_merchant_confirmation: 'En revisión del anfitrión', confirmed: 'Confirmada por el anfitrión', awaiting_payment: 'Lista para pagar', paid: 'Pagada', completed: 'Visita completada', expired: 'Vencida', cancelled: 'Cancelada', refunded: 'Reembolsada', payment_failed: 'Pago sin completar' };
 const canCancel = (status: string) => ['draft', 'requested', 'awaiting_merchant_confirmation', 'confirmed', 'awaiting_payment', 'payment_failed'].includes(status);
 
-export function PaymentsPanel({ reference, onAccount, onDemo }: { reference?: string | null; onAccount: () => void; onDemo: () => void }) {
+export function PaymentsPanel({ reference, onAccount, onDemo, onWallet }: { reference?: string | null; onAccount: () => void; onDemo: () => void; onWallet?: () => void }) {
   const t = useT();
   const client = getSupabase();
   const [session, setSession] = useState<Session | null>();
@@ -45,7 +45,7 @@ export function PaymentsPanel({ reference, onAccount, onDemo }: { reference?: st
     window.addEventListener('online', update); window.addEventListener('offline', update);
     return () => { window.removeEventListener('online', update); window.removeEventListener('offline', update); };
   }, []);
-  return <section className="payments-panel">
+  return <section className="payments-panel">{onWallet && <nav className="wallet-filter" aria-label={t("Billetera y reservas")}><button onClick={onWallet}>{t("Billetera")}</button><button aria-current="page">{t("Reservas y pagos")}</button></nav>}
     <header className="payments-heading"><CreditCard size={30} aria-hidden="true" /><div><h3>{t("Tu próxima aventura, en orden.")}</h3><p>{t("Primero confirma el anfitrión. Después eliges pagar con tarjeta en PayPhone.")}</p></div></header>
     <ol className="payments-steps" aria-label={t("Cómo funciona la reserva")}><li><CalendarDays size={19} />{t("Solicita una fecha")}</li><li><Store size={19} />{t("El anfitrión confirma")}</li><li><LockKeyhole size={19} />{t("Paga en PayPhone")}</li></ol>
     {!online && <p className="payments-warning" role="status">{t("Estás sin conexión. Los pagos y las reservas conectadas necesitan internet. Vuelve a consultar al recuperar la señal.")}</p>}
