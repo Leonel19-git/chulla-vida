@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ArrowDown, ArrowUpRight, BookOpen, Camera, ChevronRight, Compass, Download, Flower2, Heart, Map, MapPin, Pause, Play, Share2, Sparkles, Sun } from 'lucide-react';
+import { ArrowDown, ArrowUpRight, BookOpen, Camera, ChevronRight, Compass, Download, Heart, Map, MapPin, Pause, Play, Share2, Sparkles } from 'lucide-react';
 import { REGION_LABELS, type Experience, type RegionId } from '../../domain/catalog';
 import { albumLabel } from '../../domain/album';
 import { experienceVisual } from '../catalog/experienceArt';
@@ -22,8 +22,7 @@ export function QuickStart({ onPlan, onDownloads }: { onPlan: () => void; onDown
   return <section className="cv-start" aria-labelledby="cv-start-title">
     <div className="cv-start-heading"><h2 id="cv-start-title">{t('¿Qué se arma aquí?')}</h2><p>{t('Viaja con tus panas y conecta con anfitriones locales.')}</p></div>
     <div className="cv-start-tools">{TOOLS.map(({icon: Icon, name, hint, event, tone}) => <button key={event} className={`cv-start-tool is-${tone}`} data-tour={event === 'downloads' ? 'offline' : event === 'passport' ? 'passport' : undefined} onClick={() => open(event)}><Icon size={24} aria-hidden="true" /><span><strong>{t(name)}</strong><small>{t(hint)}</small></span><ChevronRight size={18} aria-hidden="true" /></button>)}</div>
-    <div className="cv-start-signoff"><p className="cv-local-saying">{t('De una, ñaño. ¡Se arma el plan!')}</p><a className="cv-start-jump" href="#experiencias">{t('Primero, encuentra tu lugar')}<ArrowDown size={16} /></a></div>
-    <div className="cv-sticker-line" aria-label={t('Así se vive el viaje')}><span className="cv-travel-sticker is-sun"><Sun size={21} aria-hidden="true" />{t('¡De ley, nos vamos!')}</span><span className="cv-travel-sticker is-route"><MapPin size={20} aria-hidden="true" />{t('Menos «algún día». Más «de una».')}</span><span className="cv-travel-sticker is-flower"><Flower2 size={22} aria-hidden="true" />{t('Pilas: cuida lo nuestro.')}</span></div>
+    <div className="cv-start-signoff"><p className="cv-local-saying">{t('De una, ñaño. ¡Se arma el plan!')}</p><img className="cv-route-mark" src="/brand/route-mark.svg" width="100" height="76" alt="" aria-hidden="true"/><a className="cv-start-jump" href="#experiencias">{t('Primero, encuentra tu lugar')}<ArrowDown size={16} /></a></div>
   </section>;
 }
 

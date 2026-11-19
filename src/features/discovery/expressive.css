@@ -130,17 +130,13 @@
 }
 @media(prefers-reduced-motion:reduce){.cv-youth .cv-photo-track>li{transform:none}.cv-youth .cv-start-tool:hover>svg:last-child{transform:none}}
 
-/* Travel notebook: playful headings and a small set of locally drawn stickers. */
-.app-shell .main-content:has(.cv-youth){background-image:url('/brand/travel-sticker-sheet.svg'),url('/brand/travel-doodles.svg'),radial-gradient(ellipse at 100% 0,#d9f3ff,transparent 60%),radial-gradient(ellipse at 0 50%,#ffe5ee,transparent 65%);background-size:1000px 960px,700px 700px,100% 900px,100% 1400px;background-position:center 80px,center top,right top,left center;background-repeat:repeat,repeat,no-repeat,no-repeat}
+/* Quiet travel accents: one fixed route mark, no repeating cartoon wallpaper. */
+.app-shell .main-content:has(.cv-youth){background-image:radial-gradient(ellipse at 100% 0,#e6f3fa,transparent 60%),radial-gradient(ellipse at 0 50%,#fff0e8,transparent 65%);background-size:100% 900px,100% 1400px;background-position:right top,left center;background-repeat:no-repeat}
 .cv-compact.cv-youth .cv-hero h1,.cv-youth .cv-hero h1 em,.cv-youth .cv-start-heading h2,.cv-youth .cv-section-head h2,.cv-youth .cv-visual-head h2{font-family:'Fredoka Local',sans-serif;font-weight:600;font-style:normal;letter-spacing:-.025em;line-height:1.04}
 .cv-youth .cv-hero h1 em{display:inline-block;color:#ffce45;font-weight:550}
 .cv-youth .cv-start-tool strong{font-family:'Fredoka Local',sans-serif;font-weight:600;letter-spacing:0;line-height:1.15}
-.cv-sticker-line{display:flex;flex-wrap:wrap;gap:16px;align-items:center;padding:22px 6px 16px}
-.cv-travel-sticker{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:9px 16px;border:4px solid #fffdf8;border-radius:12px 26px 12px 24px;background:#ffce45;color:#012960;font:550 17px/1.25 'Fredoka Local',sans-serif;box-shadow:0 4px 12px #01296018;transform:rotate(-3deg)}
-.cv-travel-sticker svg{flex:none}.cv-travel-sticker.is-route{background:#80e2d4;transform:rotate(2deg)}.cv-travel-sticker.is-flower{background:#ffb0c0;transform:rotate(-2deg)}
+.cv-youth .cv-start-signoff{display:grid;grid-template-columns:minmax(0,1fr) 100px auto;gap:20px;padding-block:24px 8px}.cv-youth .cv-start-signoff>.cv-local-saying{transform:none;font-size:26px}.cv-route-mark{display:block;width:100px;height:76px;object-fit:contain;opacity:.8}
 .cv-social-inspiration .cv-local-saying small{display:block;margin-top:8px;font:500 14px/1.5 'Plus Jakarta Sans',sans-serif}
-.cv-youth .cv-start{background-image:none}.cv-youth .cv-start-heading p,.cv-youth .cv-section-head>div>p{background:#fff9efe8;padding:4px 8px;border-radius:6px}
-.cv-youth .cv-start-heading h2,.cv-youth .cv-section-head h2,.cv-youth .cv-start-signoff>.cv-local-saying{width:fit-content;background:#fff9ef;border-radius:6px;box-shadow:0 0 0 6px #fff9ef}
-.cv-youth .cv-photostories{background-image:url('/brand/travel-sticker-sheet.svg');background-size:1000px 960px;background-position:75% 36%;background-repeat:no-repeat}
-@media(max-width:760px){.cv-sticker-line{flex-wrap:nowrap;gap:10px;overflow-x:auto;padding:16px 6px;scroll-snap-type:x proximity;scrollbar-width:thin;scrollbar-color:#01296055 transparent}.cv-travel-sticker{flex:none;scroll-snap-align:start;font-size:16px;padding:8px 12px}.cv-compact.cv-youth .cv-hero h1{line-height:1.04}.cv-youth .cv-start-heading h2{font-size:32px}}
-@media(max-width:760px){.app-shell .main-content:has(.cv-youth){background-size:450px 432px,500px 500px,100% 900px,100% 1400px;background-position:center 200px,center top,right top,left center}}
+.cv-youth .cv-start{background-image:none}
+.cv-youth .cv-photostories{background-image:url('/brand/route-contours.svg');background-size:440px 330px;background-position:right top;background-repeat:no-repeat}
+@media(max-width:760px){.cv-compact.cv-youth .cv-hero h1{line-height:1.04}.cv-youth .cv-start-heading h2{font-size:32px}.cv-youth .cv-start-signoff{grid-template-columns:minmax(0,1fr) 72px;gap:10px 16px;padding-block:20px 8px}.cv-youth .cv-start-signoff>.cv-local-saying{font-size:22px}.cv-route-mark{width:72px;height:60px}.cv-start-signoff .cv-start-jump{grid-column:1/-1}.cv-youth .cv-photostories{background-size:260px 195px}}
