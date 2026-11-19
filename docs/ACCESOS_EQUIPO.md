@@ -28,4 +28,6 @@ La recuperación o sustitución de un acceso corresponde al propietario del proy
 
 La comprobación completa pasa 1008 pruebas en 97 archivos, además de compilación web/API y verificaciones de dominio y traducciones. Se comprueban autorizaciones de un solo uso, bloqueo de autoasignación, cambio inicial obligatorio, sesiones anteriores, aislamiento entre usuarios y alcance del revisor. El navegador se revisa en escritorio y WebKit con tamaño de iPhone; las pruebas de interfaz usan datos ficticios.
 
+En Vercel, la instalación usa `ONNXRUNTIME_NODE_INSTALL=skip`: omite descargas adicionales de binarios nativos de ONNX, que no utiliza el dashboard ni la web. Mantiene la instalación normal de los demás paquetes y los recursos web ya incluidos.
+
 Fuentes de implementación: [Supabase: creación administrativa de usuarios](https://supabase.com/docs/reference/javascript/auth-admin-createuser), [inicio con contraseña](https://supabase.com/docs/reference/javascript/auth-signinwithpassword) y [sesiones y relación con `auth.sessions`](https://supabase.com/docs/guides/auth/sessions).
