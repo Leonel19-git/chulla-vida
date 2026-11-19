@@ -1,7 +1,6 @@
 /* Mismo contenido, mayor presencia fotográfica y contraste entre escenas. */
 .cv-youth .cv-start{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='90' viewBox='0 0 220 90'%3E%3Cpath d='M5 82L60 18l34 42 35-48 85 70M44 37l16-19 16 20M112 35l17-23 19 25' fill='none' stroke='%23012960' stroke-opacity='.12' stroke-width='3' stroke-linejoin='round'/%3E%3Ccircle cx='183' cy='22' r='12' fill='%23ffce45' fill-opacity='.45'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right top}
 .cv-youth .cv-region-rail[data-region-tone=costa]{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='40'%3E%3Cpath d='M0 12q20-16 40 0t40 0t40 0t40 0M0 30q20-16 40 0t40 0t40 0t40 0' fill='none' stroke='%23012960' stroke-opacity='.12' stroke-width='3'/%3E%3C/svg%3E")!important;background-repeat:no-repeat!important;background-position:right top!important}
-@font-face{font-family:'Fredoka Local';font-style:normal;font-display:swap;font-weight:300 700;src:url('@fontsource-variable/fredoka/files/fredoka-latin-wght-normal.woff2') format('woff2')}
 .app-shell .main-content:has(.cv-youth){background-color:#fff9ef;background-image:radial-gradient(ellipse 85% 540px at 100% 0,#d9f3ff 0,transparent 100%),radial-gradient(ellipse 70% 900px at 0 45%,#ffe5ee 0,transparent 100%),radial-gradient(ellipse 65% 750px at 100% 80%,#ddf4d5 0,transparent 100%)}
 .cv-youth .cv-local-saying,.cv-youth .cv-region-saying{font-family:'Fredoka Local',sans-serif;font-weight:520;letter-spacing:0;line-height:1.3;color:#012960}
 .cv-youth .cv-local-saying{font-size:clamp(22px,2.5vw,30px);margin:0;transform:rotate(-2deg)}
@@ -130,3 +129,14 @@
  .cv-youth .cv-film-screen h3{font-size:32px}
 }
 @media(prefers-reduced-motion:reduce){.cv-youth .cv-photo-track>li{transform:none}.cv-youth .cv-start-tool:hover>svg:last-child{transform:none}}
+
+/* Travel notebook: playful headings and a small set of locally drawn stickers. */
+.app-shell .main-content:has(.cv-youth){background-image:url('/brand/travel-doodles.svg'),radial-gradient(ellipse at 100% 0,#d9f3ff,transparent 60%),radial-gradient(ellipse at 0 50%,#ffe5ee,transparent 65%);background-size:700px 700px,100% 900px,100% 1400px;background-repeat:repeat,no-repeat,no-repeat}
+.cv-compact.cv-youth .cv-hero h1,.cv-youth .cv-hero h1 em,.cv-youth .cv-start-heading h2,.cv-youth .cv-section-head h2,.cv-youth .cv-visual-head h2{font-family:'Fredoka Local',sans-serif;font-weight:600;font-style:normal;letter-spacing:-.025em;line-height:1.04}
+.cv-youth .cv-hero h1 em{display:inline-block;color:#ffce45;font-weight:550}
+.cv-youth .cv-start-tool strong{font-family:'Fredoka Local',sans-serif;font-weight:600;letter-spacing:0;line-height:1.15}
+.cv-sticker-line{display:flex;flex-wrap:wrap;gap:16px;align-items:center;padding:22px 6px 16px}
+.cv-travel-sticker{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:9px 16px;border:4px solid #fffdf8;border-radius:12px 26px 12px 24px;background:#ffce45;color:#012960;font:550 17px/1.25 'Fredoka Local',sans-serif;box-shadow:0 4px 12px #01296018;transform:rotate(-3deg)}
+.cv-travel-sticker svg{flex:none}.cv-travel-sticker.is-route{background:#80e2d4;transform:rotate(2deg)}.cv-travel-sticker.is-flower{background:#ffb0c0;transform:rotate(-2deg)}
+.cv-social-inspiration .cv-local-saying small{display:block;margin-top:8px;font:500 14px/1.5 'Plus Jakarta Sans',sans-serif}
+@media(max-width:760px){.cv-sticker-line{flex-wrap:nowrap;gap:10px;overflow-x:auto;padding:16px 6px;scroll-snap-type:x proximity;scrollbar-width:thin;scrollbar-color:#01296055 transparent}.cv-travel-sticker{flex:none;scroll-snap-align:start;font-size:16px;padding:8px 12px}.cv-compact.cv-youth .cv-hero h1{line-height:1.04}.cv-youth .cv-start-heading h2{font-size:32px}}

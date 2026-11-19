@@ -32,10 +32,10 @@ const layout = (page: Page) => page.evaluate(() => {
 });
 
 test.describe('Pasaporte Guambra en el celular', () => {
-  test('abre en la tapa con el logo 2026 y pasa de página deslizando y con ▶', async ({ page }) => {
+  test('abre con la bandera ecuatoriana y pasa de página deslizando y con ▶', async ({ page }) => {
     const dialog = await openFixture(page, '?libro=1');
     await expect(dialog.getByRole('heading', { level: 3, name: 'Pasaporte Guambra' })).toBeVisible();
-    await expect(dialog.locator('.pg-cover img[src^="/brand/logo-"]')).toBeVisible();
+    await expect(dialog.locator('.pg-cover img[src="/brand/ecuador-flag.svg"]')).toBeVisible();
     expect(await page.locator('img[src*="chulla-vida-logo.png"]').count()).toBe(0);
     const counter = dialog.locator('.pg-pager .pg-counter strong');
     await expect(counter).toHaveText('1 de 12');

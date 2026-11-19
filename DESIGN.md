@@ -30,6 +30,8 @@ La base sigue siendo clara y cálida. Azul de marca para texto, controles y sele
 ## Typography
 Archivo dirige titulares y títulos de tarjetas; Newsreader queda como acento de portada; Plus Jakarta Sans sostiene cuerpo y controles. Portada: peso 780, interlínea 1.02 y ancho máximo 13ch; secciones: peso 760, interlínea 1.1. En móvil, portada de 35–48px y títulos visuales de 30px.
 
+Actualización vigente · 19/11/2026: Fredoka Local gana protagonismo en el inicio, los accesos, las frases y la portada del pasaporte por petición del propietario. Plus Jakarta sigue en textos, campos y controles; Archivo en fichas y datos. No cambiar las fuentes de pagos ni del dashboard. El fondo del catálogo incorpora dibujos vectoriales propios de viaje de bajo contraste; tres stickers traducibles acompañan los accesos sin crear otra sección larga. La portada del pasaporte lleva bandera con escudo y una postal ilustrada propia, diferenciada de las fotos reales del catálogo. El menú usa la misma bandera ecuatoriana completa. El selector nativo de idioma muestra nombre completo en escritorio y código en celular, con lista de nombres completa al abrir.
+
 ## Layout
 Cinco accesos iniciales en columnas con separación de 10px; hasta 760px pasan a carrusel de tarjetas de 174px. Postales con desplazamiento horizontal intencionado y ajuste por tarjeta, dentro del ancho de página: 304px en escritorio y hasta 83% en móvil. Controles táctiles de al menos 44px y foco visible de 3px. El pasaporte se limita al alto y ancho disponibles en móvil, con bandera ecuatoriana y escudo.
 

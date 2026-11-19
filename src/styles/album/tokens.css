@@ -4,6 +4,7 @@
  * Tintas planas de álbum impreso; nada de crema ni serif editorial.
  */
 @import '@fontsource-variable/archivo/wdth.css';
+@font-face{font-family:'Fredoka Local';font-style:normal;font-display:swap;font-weight:300 700;src:url('@fontsource-variable/fredoka/files/fredoka-latin-wght-normal.woff2') format('woff2')}
 
 :root {
   /* ── Tintas ─────────────────────────────────────────────── */

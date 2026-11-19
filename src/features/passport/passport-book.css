@@ -448,3 +448,19 @@ textarea.pg-input { resize: vertical; min-height: 96px; }
 @media(max-height:650px) and (max-width:899px){.pg-ecuador-flag{width:88px}.pg-cover-title{font-size:32px}.pg-cover-inner{padding:14px}.pg-cover-count strong{font-size:28px}.pg-cover-foot{gap:8px}.pg-cover-name{font-size:16px}}
 
 .pg-ecuador-flag img{display:block;width:100%;height:100%;object-fit:contain}
+
+/* A travel keepsake, with enough room for translated titles and the opening action. */
+.pg-cover-inner{gap:10px;padding:24px;overflow-y:auto;overscroll-behavior:contain}
+.pg-cover .pg-ecuador-flag{width:96px;min-height:64px;border:2px solid #fffdf8;border-radius:5px;box-shadow:0 4px 12px #0002}
+.pg-passport .pg-cover-title{max-width:100%;font:600 clamp(30px,11cqi,54px)/1.06 'Fredoka Local',sans-serif;letter-spacing:-.02em;text-transform:none;overflow-wrap:anywhere;margin:4px 0 0}
+.pg-cover-sub{font-size:15px;font-weight:500}
+.pg-cover-postcard{position:relative;flex:none;isolation:isolate;width:min(84%,280px);padding:5px 5px 22px;margin:7px 0;background:#fffdf8;border-radius:5px;transform:rotate(-3deg);box-shadow:0 6px 16px #0002;color:#012960}
+.pg-cover-postcard svg{display:block;width:100%;height:76px;border-radius:2px;background:#e4f3ff}
+.pg-cover-postcard>span{display:block;margin:7px 0 -13px;font:550 19px/1.2 'Fredoka Local',sans-serif}
+.pg-cover-name{font:600 18px/1.3 'Fredoka Local',sans-serif;text-transform:none;letter-spacing:0;box-shadow:none;text-shadow:none;padding:6px 14px;background:#173e70}
+.pg-cover-foot{gap:10px 14px;margin-top:2px}.pg-cover-count strong{font-size:34px}.pg-cover-count span{font-size:18px}.pg-cover-count small{font-family:'Plus Jakarta Sans',sans-serif;font-size:11px;text-transform:none;letter-spacing:0}
+.pg-carne-greeting{font:500 20px/1.25 'Fredoka Local',sans-serif;margin:0;color:#012960}
+.pg-body.is-carne{gap:16px}.pg-carne-photo{border-radius:18px 18px 28px 18px;background:#ffce45;font-family:'Fredoka Local',sans-serif;font-weight:550}
+.pg-chip{border-width:1px;border-color:#bcc9dc;border-radius:10px}.pg-chip strong{font-family:'Fredoka Local',sans-serif;font-weight:550;font-stretch:normal}.pg-chip span{line-height:1.3;font-family:'Plus Jakarta Sans',sans-serif;font-weight:650}
+@media(max-width:899px){.pg-cover-inner{gap:8px;padding:18px}.pg-passport .pg-cover-title{font-size:clamp(30px,10cqi,42px)}.pg-cover-postcard{width:min(72%,230px);margin:3px 0;padding-bottom:20px}.pg-cover-postcard svg{height:58px}.pg-cover-postcard>span{font-size:17px}.pg-cover .pg-ecuador-flag{width:80px;min-height:53px}.pg-cover-foot{gap:8px 12px}.pg-cover-count strong{font-size:28px}.pg-cover-name{font-size:16px}.pg-carne-greeting{font-size:18px}}
+@media(max-width:899px) and (max-height:620px){.pg-cover-inner{justify-content:flex-start;padding:14px;gap:6px}.pg-cover .pg-ecuador-flag{width:60px;min-height:40px}.pg-cover-postcard{width:150px;padding-bottom:17px}.pg-cover-postcard svg{height:35px}.pg-cover-postcard>span{font-size:15px}.pg-passport .pg-cover-title{font-size:30px}.pg-cover-sub{font-size:13px}}

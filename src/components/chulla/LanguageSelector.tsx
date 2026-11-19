@@ -1,4 +1,4 @@
-import { Languages } from 'lucide-react';
+import { ChevronDown, Languages } from 'lucide-react';
 import { useT } from '../../i18n/v3';
 import { useApp } from '../../context/AppContext';
 import { languageMetadata } from '../../i18n/ui';
@@ -11,7 +11,8 @@ export function LanguageSelector({ intro = false }: { intro?: boolean }) {
   const t = useT();
   const partial = language === 'ki' || language === 'ki-amz';
   return <div className={`language-control ${intro ? 'language-control-intro' : ''}`}>
-    <label className="language-select"><Languages size={17} aria-hidden="true" /><span className="sr-only">{t('Idioma')}</span>
+    <label className="language-select" title={languageMetadata[language].name}><Languages size={17} aria-hidden="true" /><span className="sr-only">{t('Idioma')}</span>
+      <span className="language-current" aria-hidden="true"><span className="language-full">{languageMetadata[language].name}</span><span className="language-short">{languageMetadata[language].short}</span></span><ChevronDown size={14} aria-hidden="true" />
       <select aria-label={t('Idioma')} value={language} onChange={event => setLanguage(event.target.value as Language)}>
         {(Object.keys(languageMetadata) as Language[]).map(code => <option key={code} value={code} lang={languageMetadata[code].tag}>{languageMetadata[code].name}</option>)}
       </select>

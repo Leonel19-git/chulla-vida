@@ -95,7 +95,7 @@ function CoverPage({ ctx }: { ctx: PageContext }) {
       <span className="pg-ecuador-flag" role="img" aria-label={t('Bandera del Ecuador')}><img src="/brand/ecuador-flag.svg" alt="" width="900" height="600" /></span>
       <h3 id={heading} className="pg-cover-title">{t('Pasaporte Guambra')}</h3>
       <p className="pg-cover-sub">{t('Tu álbum del Ecuador')}</p>
-      <span className="pg-stripes" aria-hidden="true" />
+      <div className="pg-cover-postcard"><svg viewBox="0 0 300 100" aria-hidden="true" focusable="false"><circle cx="232" cy="28" r="18" fill="#ffce45"/><path d="M0 100 74 15l57 66 34-44 55 63" fill="#80e2d4"/><path d="m49 44 25-29 25 29-15-5-10 9-10-10Z" fill="#fffdf8"/><path d="M0 84q50-24 100 0t100 0t100 0v16H0Z" fill="#70b7ff"/><path d="M143 100q-12-19 10-24t4-20" fill="none" stroke="#012960" strokeWidth="3" strokeDasharray="5 5"/></svg><span>{t('¡De una, wambra!')}</span></div>
       <p className="pg-cover-name"><span className="pg-sr">{t('Pasaporte de')} </span>{name}</p>
       <div className="pg-cover-foot">
         <p className="pg-cover-count"><strong>{ctx.counts.pegado}</strong><span>/{ctx.counts.total}</span><small>{t('pegados')}</small></p>
@@ -124,6 +124,7 @@ function CarnePage({ ctx, folio }: { ctx: PageContext; folio: number }) {
     none: t('Sin cuenta: tus pegados verificados no aparecen.'),
   }[ctx.account];
   return <PageShell id="carne" field="portada" title={t('Mi carné')} folio={folio} bodyClass="is-carne">
+    <p className="pg-carne-greeting">{t('Tu nombre, tus panas, tus historias.')}</p>
     <div className="pg-carne-id">
       <span className="pg-carne-photo" aria-hidden="true">{initial || <UserRound size={34} strokeWidth={2} />}</span>
       <div className="pg-carne-fields">

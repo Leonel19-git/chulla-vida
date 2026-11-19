@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative } from 'node:path';
-import { act, cleanup, render, screen } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 import en from '../../src/i18n/v3/en';
 import fr from '../../src/i18n/v3/fr';
@@ -15,6 +15,7 @@ import { V3Footer } from '../../src/features/workspace/V3Workspace';
 import { SpanishContentNote } from '../../src/i18n/v3/SpanishContentNote';
 import { CONSENT_CATEGORIES, CONSENT_LEVELS } from '../../src/domain/consent';
 import { PACKING_LIST } from '../../src/domain/itinerary';
+import { LanguageSelector } from '../../src/components/chulla/LanguageSelector';
 
 const dictionaries = { en, fr, pt, zh } as const;
 const root = join(__dirname, '../../src');
@@ -95,5 +96,21 @@ describe('Traducción de la interfaz 3.x', () => {
     await act(async () => { change?.('en'); await loadV3Dictionary('en'); });
     expect(document.documentElement.lang).toBe('en');
     expect(screen.getByRole('heading', { name: 'Legal & privacy' })).toBeInTheDocument();
+  });
+
+  it('el selector conserva el idioma, muestra su nombre y traduce los nuevos stickers', async () => {
+    localStorage.clear();
+    const view=render(<AppProvider><LanguageSelector /></AppProvider>);
+    const selector=screen.getByRole('combobox',{name:'Idioma'});
+    expect(selector.querySelectorAll('option')).toHaveLength(7);
+    await act(async()=>{fireEvent.change(selector,{target:{value:'fr'}});await loadV3Dictionary('fr');});
+    expect(document.documentElement.lang).toBe('fr');
+    expect(screen.getByRole('combobox',{name:'Langue'})).toHaveValue('fr');
+    expect(document.querySelector('.language-full')).toHaveTextContent('Français');
+    expect(translateV3('fr','¡De ley, nos vamos!')).toBe('C’est sûr, on y va !');
+    view.unmount();
+    render(<AppProvider><LanguageSelector /></AppProvider>);
+    expect(screen.getByRole('combobox',{name:'Langue'})).toHaveValue('fr');
+    localStorage.clear();
   });
 });
