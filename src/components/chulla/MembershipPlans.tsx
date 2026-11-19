@@ -1,11 +1,12 @@
-import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
-import { ArrowLeft, ArrowRight, Check, CreditCard, Crown, Landmark, LockKeyhole, Users, WifiOff } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { ArrowLeft, ArrowRight, Check, Crown, FlaskConical, Users, WifiOff } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { useMembership } from '../../context/MembershipContext';
 import { MEMBERSHIP_PLANS, type PlanId, type PremiumFeature } from '../../lib/membership';
 import { membershipLocale, translatePremium } from '../../i18n/premium';
 import { Dialog } from './Dialog';
 import { msg, useT } from '../../i18n/v3';
+import { MembershipPaymentDemo } from '../../features/payments/MembershipPaymentDemo';
 import './premium.css';
 import './membership-checkout.css';
 
@@ -15,26 +16,17 @@ const PLAN_HINT: Record<PlanId, string> = {
 export function MembershipPlans({ onClose, feature, onActivated }: { onClose: () => void; feature?: PremiumFeature; onActivated?: () => void }) {
   const { language } = useApp();
   const { demoAvailable, subscription, isActive, plan, activateDemoPlan, cancelRenewal, storageError } = useMembership();
-  const t = useT(), explanationId = useId();
+  const t = useT();
   const pt = (source: string) => translatePremium(language, source);
   const [selected, setSelected] = useState<PlanId>(() => plan?.id ?? (feature === 'premium-passport' ? 'annual' : 'monthly'));
-  const [reviewing, setReviewing] = useState(false), [confirmed, setConfirmed] = useState(false), [notice, setNotice] = useState('');
+  const [reviewing, setReviewing] = useState(false), [notice, setNotice] = useState('');
   const heading = useRef<HTMLHeadingElement>(null);
   const item = MEMBERSHIP_PLANS.find(value => value.id === selected)!;
-  const current = isActive && subscription?.planId === selected;
   const unavailable = feature === 'premium-passport' && selected !== 'annual';
   const money = (amount: number) => new Intl.NumberFormat(membershipLocale[language], { style: 'currency', currency: 'USD' }).format(amount);
   const date = (value: string) => new Intl.DateTimeFormat(membershipLocale[language], { dateStyle: 'medium', timeZone: 'America/Guayaquil' }).format(new Date(value));
   useEffect(() => { heading.current?.focus({ preventScroll: true }); }, [reviewing]);
-  const select = (id: PlanId) => { setSelected(id); setConfirmed(false); setNotice(''); };
-  const confirm = (event: FormEvent) => {
-    event.preventDefault();
-    if (!demoAvailable || !confirmed || unavailable || current) return;
-    if (activateDemoPlan(selected)) {
-      setNotice('Plan activado en este navegador.'); setReviewing(false); setConfirmed(false);
-      if (feature) (onActivated || onClose)();
-    } else setNotice(t('No se pudo activar la prueba. Vuelve a intentarlo.'));
-  };
+  const select = (id: PlanId) => { setSelected(id); setNotice(''); };
   return <Dialog title={pt('Planes CHULLA VIDA')} onClose={onClose} wide>
     <div className={`membership-plans membership-commerce${reviewing ? ' is-reviewing' : ''}`}>
       <header className="plans-header">
@@ -51,11 +43,7 @@ export function MembershipPlans({ onClose, feature, onActivated }: { onClose: ()
               <span className="plan-option-copy"><span className="plan-option-name">{pt(option.label)}{option.id === 'annual' && <span className="plan-pro">PRO</span>}{active && <small>{pt('Plan actual')}</small>}</span><small>{t(PLAN_HINT[option.id])}</small></span>
               <span className="plan-option-price"><strong>{money(option.price)}</strong><small>{pt(option.period)}</small></span>
             </label>;
-          })}</fieldset> : <section className="plans-payment" aria-label={t('Disponibilidad del pago')}>
-            <div className="plans-payment-title"><LockKeyhole size={20}/><h4>{demoAvailable ? t('Prueba local') : t('Pago de la membresía')}</h4></div>
-            {demoAvailable ? <p>{pt('Demostración local: sin cobros ni renovación automática. Al cambiar de plan, el nuevo periodo empieza hoy.')}</p> : <><p className="plans-payment-state">{t('Cobro aún no habilitado')}</p><p>{t('El pago de membresías aún no está conectado. Puedes revisar los planes sin realizar un cobro.')}</p></>}
-            <div className="plans-payment-methods"><span><CreditCard size={22}/>{t('Tarjeta')}<small>{t('No disponible')}</small></span><span><Landmark size={22}/>{t('Transferencia')}<small>{t('No disponible')}</small></span></div>
-          </section>}
+          })}</fieldset> : <MembershipPaymentDemo key={selected} planId={selected} amountCents={Math.round(item.price*100)} amountLabel={money(item.price)} onApproved={()=>{if(demoAvailable && !unavailable)activateDemoPlan(selected);}} onContinue={demoAvailable && feature ? onActivated ?? onClose : onClose}/>}
           {unavailable && <p role="status" className="plans-feature-note">{pt('Solo en el plan anual')}</p>}
         </section>
         <aside className="plan-order" aria-label={t('Resumen de tu plan')}>
@@ -67,11 +55,7 @@ export function MembershipPlans({ onClose, feature, onActivated }: { onClose: ()
           </ul>
           <dl className="plan-order-lines"><div><dt>{t('Duración')}</dt><dd>{pt(item.period)}</dd></div><div><dt>{t('Moneda')}</dt><dd>USD</dd></div></dl>
           <div className="plan-order-total"><span>{t('Total del periodo')}</span><strong>{money(item.price)}</strong></div>
-          {reviewing ? <form onSubmit={confirm} className="plan-confirm-form">
-            {demoAvailable && <label className="plan-demo-consent"><input type="checkbox" checked={confirmed} onChange={event => setConfirmed(event.target.checked)}/>{t('Entiendo que es una prueba local, sin cobro real.')}</label>}
-            <button type="submit" className="plan-primary" disabled={!demoAvailable || !confirmed || current || unavailable} aria-describedby={explanationId}>{current ? pt('Plan actual') : demoAvailable ? pt('Activar plan de prueba') : t('Pagar {amount}', { amount: money(item.price) })}<LockKeyhole size={17}/></button>
-            <small id={explanationId}>{demoAvailable ? t('La prueba no confirma un pago ni una suscripción real.') : t('Cobro aún no habilitado')}</small>
-          </form> : <><button className="plan-primary" onClick={() => { setReviewing(true); setNotice(''); }}>{t('Revisar este plan')}<ArrowRight size={18}/></button><small className="plan-order-caption">{t('Elegir un plan todavía no realiza un cobro.')}</small></>}
+          {reviewing ? <p className="plan-order-caption">{t('El pago se simula en el formulario. No se mueve dinero real.')}</p> : <><button className="plan-primary" onClick={() => { setReviewing(true); setNotice(''); }}>{t('Revisar este plan')}<ArrowRight size={18}/></button><small className="plan-order-caption">{t('Elegir un plan todavía no realiza un cobro.')}</small></>}
         </aside>
       </div>
       {!reviewing && <div className="plans-free"><Check size={19}/><p>{pt('Todos los viajeros tienen pasaporte básico. El premium es exclusivo del plan anual.')}</p></div>}
@@ -80,7 +64,7 @@ export function MembershipPlans({ onClose, feature, onActivated }: { onClose: ()
         {isActive && subscription.renewalEnabled && <button className="plans-back" onClick={() => { cancelRenewal(); setNotice('Renovación cancelada. Conservas el acceso hasta su vencimiento.'); }}>{pt('Cancelar renovación de prueba')}</button>}
       </section>}
       <p className="membership-notice" role="status">{pt(storageError ? 'No se pudo guardar. Tu plan estará disponible solo durante esta sesión.' : notice)}</p>
-      <footer className="plans-footer">{!reviewing && <span><LockKeyhole size={15}/>{demoAvailable ? t('Prueba local') : t('Cobro aún no habilitado')}</span>}<button className="plans-back" onClick={onClose}>{t('Seguir explorando sin plan')}<ArrowRight size={16}/></button></footer>
+      <footer className="plans-footer">{!reviewing && <span><FlaskConical size={15}/>{t('Modo prueba · sin cobro real')}</span>}<button className="plans-back" onClick={onClose}>{t('Seguir explorando sin plan')}<ArrowRight size={16}/></button></footer>
       {(language === 'ki' || language === 'ki-amz') && <p className="membership-language-note">{pt('Traducción Kichwa de trabajo, pendiente de revisión comunitaria.')}</p>}
     </div>
   </Dialog>;

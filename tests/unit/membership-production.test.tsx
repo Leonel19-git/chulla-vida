@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { MembershipProvider, useMembership } from '../../src/context/MembershipContext';
 import { createDemoMembership, MEMBERSHIP_KEY } from '../../src/lib/membership';
+import {createMembershipDemoPayment,saveMembershipDemoPayment} from '../../src/domain/membership-payment-demo';
 
 vi.mock('../../src/context/AppContext', () => ({
   useApp: () => ({ role: 'turista' }), CURRENT_TRAVELER_EMAIL: 'demo@example.test',
@@ -14,6 +15,13 @@ function AccessProbe() {
 }
 afterEach(() => { cleanup(); localStorage.clear(); vi.unstubAllEnvs(); });
 describe('production membership boundary', () => {
+  it('un pago aprobado en el simulador público no concede derechos de membresía pagada',()=>{
+    vi.stubEnv('DEV',false);
+    saveMembershipDemoPayment(createMembershipDemoPayment('annual','card','approved',{brand:'visa',last4:'4242'}));
+    render(<MembershipProvider><AccessProbe/></MembershipProvider>);
+    expect(screen.getByText('locked')).toBeTruthy();
+    expect(localStorage.getItem(MEMBERSHIP_KEY)).toBeNull();
+  });
   it('ignores a forged local plan and cannot activate the simulation in a published build', () => {
     vi.stubEnv('DEV', false);
     localStorage.setItem(MEMBERSHIP_KEY, JSON.stringify(createDemoMembership('annual', 'demo@example.test')));

@@ -31,7 +31,7 @@ function CopyValue({ label, value }: { label: string; value: string }) {
  * - Modo prueba (sin sesión, sin Supabase, compra de varias paradas o negocio sin cuenta): datos de prueba
  *   rotulados y el archivo NO sale del navegador.
  */
-export function TransferPayment({ amountCents, testReference, request, onSubmitted, busy }: { amountCents: number; testReference: string; request: TransferRequest | null; onSubmitted: (outcome: TransferOutcome) => void; busy?: boolean }) {
+export function TransferPayment({ amountCents, testReference, request, onSubmitted, busy, testReason }: { amountCents: number; testReference: string; request: TransferRequest | null; onSubmitted: (outcome: TransferOutcome) => void; busy?: boolean; testReason?: string }) {
   const t = useT();
   const [setup, setSetup] = useState<Setup>({ state: 'loading' });
   const [file, setFile] = useState<Extract<PreparedReceipt, { ok: true }> | null>(null);
@@ -43,12 +43,12 @@ export function TransferPayment({ amountCents, testReference, request, onSubmitt
 
   useEffect(() => {
     let live = true;
-    if (!request) { setSetup({ state: 'test', why: 'Varias paradas: la transferencia en línea es por experiencia.' }); return; }
+    if (!request) { setSetup({ state: 'test', why: testReason ?? 'Varias paradas: la transferencia en línea es por experiencia.' }); return; }
     startTransfer({ ...request, amount: amountCents / 100, idempotencyKey: key.current })
       .then(transfer => { if (!live) return; setSetup(transfer.bank ? { state: 'live', transfer, bank: transfer.bank } : { state: 'test', why: 'El negocio aún no registró su cuenta.' }); })
       .catch(reason => { if (live) setSetup({ state: 'test', why: reason instanceof TransferError && reason.reason !== 'no_backend' ? reason.message : 'Pagos en línea por transferencia aún no conectados.' }); });
     return () => { live = false; };
-  }, [request, amountCents]);
+  }, [request, amountCents, testReason]);
   useEffect(() => () => { if (preview) URL.revokeObjectURL(preview); }, [preview]);
 
   const pick = async (picked: File | undefined) => {
