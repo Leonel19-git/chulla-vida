@@ -6,6 +6,7 @@ import { resolve } from 'node:path';
 import { experiences } from '../../src/domain/catalog';
 import { resetWalletMemory } from '../../src/features/wallet/store';
 import { PassportView } from '../../src/components/chulla/PassportView';
+import { setV3Language } from '../../src/i18n/v3';
 
 const mocks = vi.hoisted(() => ({ close: vi.fn(), select: vi.fn() }));
 vi.mock('../../src/lib/supabase', () => ({ getSupabase: () => null, supabaseConfiguration: () => ({ available: false }) }));
@@ -35,6 +36,24 @@ beforeEach(() => {
 afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
 
 describe('Pasaporte Guambra a tamaño celular', () => {
+  it('el mapa mantiene nombres geográficos, separa totales y abre la región elegida', () => {
+    setV3Language('ki');
+    try {
+      view();
+      fireEvent.click(screen.getByRole('button',{name:'Mapa'}));
+      const map=current();
+      expect(map.querySelectorAll('.pg-region-jump')).toHaveLength(4);
+      expect([...map.querySelectorAll('.pg-bar-name')].map(node=>node.textContent)).toEqual(['Sierra','Costa','Amazonía','Galápagos']);
+      expect(map.querySelector('.pg-map-guide')).not.toHaveAttribute('open');
+      fireEvent.click(within(map).getByText('Así se llena'));
+      expect(map.querySelector('.pg-map-guide')).toHaveAttribute('open');
+      expect(within(map).getByText('Lo viviste: verificado')).toBeVisible();
+      expect(map.querySelector('.pg-bar-count')).toHaveTextContent('0 / 13');
+      fireEvent.click(within(map).getByRole('button',{name:'Ver cromos de Amazonía'}));
+      expect(counter()).toBe('6 de 12');
+      expect(current().querySelectorAll('.pg-slot')).toHaveLength(10);
+    } finally { setV3Language('es'); }
+  });
   it('muestra UNA página por pantalla: solo la actual es interactiva y el contador dice «1 de 12»', () => {
     view();
     expect(document.querySelector('.pg-passport')).toHaveAttribute('data-layout', 'phone');

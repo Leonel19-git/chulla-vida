@@ -1,4 +1,7 @@
 const rows: [string,string,string,string,string][] = [
+ ['Cada viaje deja su huella.','Every trip leaves a memory.','Chaque voyage laisse une trace.','Cada viagem deixa sua marca.','每次旅行，都留下足迹。'],
+ ['Color intenso: visitas verificadas.','Strong colour: verified visits.','Couleur intense : visites vérifiées.','Cor intensa: visitas verificadas.','深色：已验证的到访。'],
+ ['Ver cromos de {region}','View {region} stickers','Voir les vignettes de {region}','Ver figurinhas de {region}','查看{region}贴纸'],
  ['Así se vive el viaje','This is how we travel','C’est ça, le voyage','É assim que se viaja','这就是旅行'],
  ['¡De ley, nos vamos!','We’re going, for sure!','C’est sûr, on y va !','Com certeza, bora!','说走就走！'],
  ['Menos «algún día». Más «de una».','Less “someday”. More “let’s go”.','Moins de « un jour ». Plus de « on y va ».','Menos “um dia”. Mais “bora agora”.','少一点“改天”，多一点“现在出发”。'],

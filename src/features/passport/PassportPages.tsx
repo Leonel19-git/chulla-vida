@@ -1,6 +1,6 @@
 import { ECUADOR_OUTLINE } from './ecuador-outline';
 import { useId, useState, type CSSProperties, type FormEvent, type ReactNode } from 'react';
-import { ArrowDownToLine, ChevronRight, Lock, PenLine, Plus, Stamp, Trash2, UserRound } from 'lucide-react';
+import { ArrowDownToLine, ChevronDown, ChevronRight, Lock, PenLine, Plus, Stamp, Trash2, UserRound } from 'lucide-react';
 import { CROMO_ESTADO_ORDEN, type CromoEstado } from '../../domain/album';
 import type { RegionId } from '../../domain/catalog';
 import { addJournalEntry, type PassportBookState } from '../../domain/passport/book';
@@ -187,26 +187,32 @@ function EcuadorPage({ ctx, folio }: { ctx: PageContext; folio: number }) {
   const sampleSlot = ctx.slots.find(slot => ctx.visualFor(slot.experienceId)?.photo) ?? ctx.slots[0];
   const sample = sampleSlot ? ctx.visualFor(sampleSlot.experienceId) : undefined;
   return <PageShell id="ecuador" field="noche" title={t('Mi Ecuador')} folio={folio} bodyClass="is-ecuador">
+    <p className="pg-map-intro">{t('Cada viaje deja su huella.')}</p>
     <div className="pg-ecuador">
       <EcuadorMap regions={ctx.regions} />
       <ul className="pg-bars">{ctx.regions.map(region => {
-        const name = t(REGION_NAME[region.region]);
+        // Geographic names stay recognizable even in the partial Kichwa interface.
+        const name = REGION_NAME[region.region];
         const touched = region.counts.total - region.counts.album;
         return <li key={region.region} data-region={region.region}>
+          <button type="button" className="pg-region-jump" onClick={() => ctx.go(region.region)} aria-label={t('Ver cromos de {region}', { region: name })}>
           <span className="pg-bar-name">{name}</span>
           <span className="pg-bar" role="img" aria-label={t('{region}: {stuck} pegados y {touched} en camino de {total}', { region: name, stuck: region.counts.pegado, touched: touched - region.counts.pegado, total: region.counts.total })}>
             <i className="is-touched" style={{ '--w': `${(touched / Math.max(1, region.counts.total)) * 100}%` } as CSSProperties} />
             <i className="is-stuck" style={{ '--w': `${(region.counts.pegado / Math.max(1, region.counts.total)) * 100}%` } as CSSProperties} />
           </span>
-          <b className="pg-bar-count">{region.counts.pegado}/{region.counts.total}</b>
+          <b className="pg-bar-count"><span>{region.counts.pegado}</span><span className="pg-bar-separator"> / </span><span>{region.counts.total}</span></b>
+          <ChevronRight size={16} aria-hidden="true" />
+          </button>
         </li>;
       })}</ul>
     </div>
-    <h4 className="pg-legend-title">{t('Así se llena')}</h4>
+    <p className="pg-map-note">{t('Color intenso: visitas verificadas.')}</p>
+    <details className="pg-map-guide"><summary>{t('Así se llena')}<ChevronDown size={18} aria-hidden="true" /></summary>
     <ul className="pg-legend">{CROMO_ESTADO_ORDEN.map(estado => <li key={estado} data-estado={estado}>
       {sampleSlot && <CromoFace mini slot={{ label: sampleSlot.label, estado, region: sampleSlot.region, prueba: true }} visual={sample} />}
       <span><b>{t(LEGEND[estado][0])}</b><small>{t(LEGEND[estado][1])}</small></span>
-    </li>)}</ul>
+    </li>)}</ul></details>
   </PageShell>;
 }
 
