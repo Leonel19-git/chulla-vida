@@ -2,7 +2,7 @@ import { getExperienceById, getExperienceBySlug, type Experience } from '../../d
 
 /** Vistas con URL propia. `event` es el nombre del evento `cv3:<event>` que abre cada una. */
 export const VIEW_ROUTES = {
-  admin: { path: '/administracion', event: 'admin', title: 'Administración' },
+  admin: { path: '/equipo', event: 'admin', title: 'Administración' },
   culture: { path: '/cultura-viva', event: 'culture', title: 'Cultura Viva' },
   passport: { path: '/pasaporte', event: 'passport', title: 'Pasaporte Guambra' },
   plan: { path: '/mi-viaje', event: 'plan', title: 'Mi viaje' },
@@ -46,6 +46,7 @@ export function parsePath(pathname: string): RouteTarget {
   const legal = /^\/legal\/([^/]+)$/.exec(path);
   if (legal) return SLUG.test(legal[1]) ? { kind: 'legal', slug: legal[1] } : { kind: 'unknown', path };
   if (path === '/legal') return { kind: 'view', view: 'legal' };
+  if (path === '/administracion') return { kind: 'view', view: 'admin' };
   if (path === '/mijin') return { kind: 'view', view: 'plan' };
   const view = (Object.keys(VIEW_ROUTES) as ViewName[]).find(name => VIEW_ROUTES[name].path === path);
   return view ? { kind: 'view', view } : { kind: 'unknown', path };

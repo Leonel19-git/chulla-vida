@@ -19,7 +19,6 @@ import { useT, msg } from '../../i18n/v3';
 const PlannerDialog = lazy(() => import('../planner/PlannerDialog').then(module => ({ default: module.PlannerDialog })));
 const LegalCenter = lazy(() => import('../legal/LegalCenter').then(module => ({ default: module.LegalCenter })));
 const AuthPanel = lazy(() => import('../auth/AuthPanel').then(module => ({ default: module.AuthPanel })));
-const AdminPanel = lazy(() => import('../admin/AdminPanel').then(module => ({ default: module.AdminPanel })));
 const DownloadsPanel = lazy(() => import('../offline/DownloadsPanel').then(module => ({ default: module.DownloadsPanel })));
 const EditorialPanel = lazy(() => import('../cms/EditorialPanel').then(module => ({ default: module.EditorialPanel })));
 const NotificationCenter = lazy(() => import('../notifications/NotificationCenter').then(module => ({ default: module.NotificationCenter })));
@@ -109,14 +108,16 @@ function WorkspaceContent() {
   useEffect(() => {
     const openAccount = () => { if (isAuthReturn()) setPanel('account'); };
     window.addEventListener('hashchange', openAccount);
-    const handlers = ['admin', 'plan', 'upcoming', 'downloads', 'account', 'legal', 'editorial', 'alerts', 'payments', 'host', 'wallet', 'privacy-rights'].map(name => {
+    const openAdmin = () => window.location.assign('/equipo');
+    window.addEventListener('cv3:admin', openAdmin);
+    const handlers = ['plan', 'upcoming', 'downloads', 'account', 'legal', 'editorial', 'alerts', 'payments', 'host', 'wallet', 'privacy-rights'].map(name => {
       const handle = (event: Event) => {
         select(null); setPanel(name);
         if (name === 'account') { setInquiry(undefined); const tab = (event as CustomEvent<{ tab?: string } | undefined>).detail?.tab; setAccountTab(tab === 'signup' || tab === 'login' ? tab : undefined); }
       };
       window.addEventListener(`cv3:${name}`, handle); return { name, handle };
     });
-    return () => { handlers.forEach(({ name, handle }) => window.removeEventListener(`cv3:${name}`, handle)); window.removeEventListener('hashchange', openAccount); };
+    return () => { window.removeEventListener('cv3:admin', openAdmin); handlers.forEach(({ name, handle }) => window.removeEventListener(`cv3:${name}`, handle)); window.removeEventListener('hashchange', openAccount); };
   }, []);
   const loading = <div className="vivo-panel-loading cv-panel-loading" role="status"><span className="cv-skeleton" /><span className="cv-skeleton" /><span>{t("Preparando tu espacio…")}</span></div>;
   return <>
@@ -125,7 +126,6 @@ function WorkspaceContent() {
     {panel === 'plan' && <Suspense fallback={loading}><PlannerDialog onClose={() => setPanel('')} onSelect={id => { setPanel(''); select(id); }} /></Suspense>}
     {panel === 'legal' && <Suspense fallback={loading}><LegalCenter onClose={() => setPanel('')} onPrivacy={openPrivacy} /></Suspense>}
     {panel === 'account' && <Dialog title={t("Tu cuenta en CHULLA VIDA")} onClose={() => setPanel('')} wide><div className="dialog-content"><Suspense fallback={loading}><AuthPanel experienceId={inquiry} initialTab={inquiry ? undefined : accountTab} /></Suspense></div></Dialog>}
-    {panel === 'admin' && <Suspense fallback={loading}><AdminPanel onClose={() => setPanel('')} /></Suspense>}
     {panel === 'editorial' && <Dialog title={t("Estudio de contenido")} onClose={() => setPanel('')} wide><div className="dialog-content"><Suspense fallback={loading}><EditorialPanel onPublished={() => window.dispatchEvent(new Event('cv3:catalog-updated'))} /></Suspense></div></Dialog>}
     {panel === 'alerts' && <Dialog title={t("Tus avisos, a tu manera")} onClose={() => setPanel('')} wide><div className="dialog-content"><Suspense fallback={loading}><NotificationCenter /></Suspense></div></Dialog>}
     {panel === 'host' && <Suspense fallback={loading}><HostHub onClose={() => setPanel('')} /></Suspense>}

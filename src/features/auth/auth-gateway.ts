@@ -80,6 +80,10 @@ export function supabaseGateway(client: SupabaseClient): AuthGateway {
     }),
     signInWithPassword: (email, password) => guard(async () => {
       const { data, error } = await client.auth.signInWithPassword({ email: normalizeEmail(email), password });
+      if(!error && data?.user?.app_metadata?.lane === 'staff') {
+        await client.auth.signOut({ scope: 'local' });
+        return { error: { code: 'invalid_credentials' }, signedIn: false };
+      }
       return { error: toError(error), signedIn: Boolean(data?.session) };
     }),
     // shouldCreateUser: false keeps the code login from creating accounts that skipped the Terms step.

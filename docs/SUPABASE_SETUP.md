@@ -90,7 +90,7 @@ values ('UUID_REAL_DEL_ADMINISTRADOR', 'admin')
 on conflict do nothing;
 ```
 
-4. Entra con esa cuenta y abre `/administracion` o «Mi cuenta → Abrir administración». Selecciona un negocio y prepara su documento privado; el enlace dura 60 segundos. Nunca publiques esos enlaces ni los guardes en analítica.
+4. Esa cuenta de propietario se conserva para administración de confianza y recuperación. La operativa del equipo se abre en `/equipo`, con accesos individuales de usuario y contraseña; ver `ACCESOS_EQUIPO.md`. En el dashboard, selecciona un negocio y prepara su documento privado; el enlace dura 60 segundos. Nunca publiques esos enlaces ni los guardes en analítica.
 5. Registra motivo y confirmación para pedir correcciones, rechazar o aprobar. Aprobar exige documentos y lista de comprobaciones; no se permite revisar una organización propia. Sin registro oficial comprobado, la aprobación solo significa `identity_reviewed`. No hay validación turística automática ni activación de ventas. Ver `ADMINISTRACION_NEGOCIOS.md` y las migraciones `202611180001` y `202611180002`.
 
 Un documento subido cuyo registro falle permanece privado y requiere revisión de archivos huérfanos por el administrador. Los clientes no tienen permiso de sobrescritura ni borrado. Definir retención y destrucción documentada antes de recopilar documentos reales de terceros.

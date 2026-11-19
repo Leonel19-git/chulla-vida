@@ -2,9 +2,9 @@
 
 ## Acceso
 
-La revisión tiene su propia dirección: `/administracion`. La cuenta debe tener correo confirmado en Supabase Auth y rol `admin` en `public.user_roles`. Desde «Mi cuenta», un administrador también ve «Abrir administración», en modo viajero o negocio. El acceso no depende de un selector local ni de metadatos que la persona pueda editar.
+La revisión tiene una aplicación independiente en `/equipo`; `/administracion` abre el mismo acceso por compatibilidad. El equipo entra con usuario y contraseña y una sesión separada de viajeros. El rol administrativo o de revisión se asigna desde el servidor, nunca desde un selector o metadatos editables. Ver `ACCESOS_EQUIPO.md` para la operativa vigente.
 
-Una cuenta ya registrada conserva su contraseña. No hay usuario ni contraseña compartidos incluidos en el código. La recuperación se realiza por el flujo de correo existente de CHULLA VIDA.
+Las cuentas personales conservan su contraseña. Los accesos de equipo tienen claves individuales y cambio inicial obligatorio; no usan recuperación por correo personal ni aparecen en el perfil del viajero. No hay contraseñas compartidas incluidas en el código.
 
 ## Revisar una solicitud
 

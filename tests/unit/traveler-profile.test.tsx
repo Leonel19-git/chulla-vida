@@ -81,7 +81,7 @@ describe('cuenta de viajero conectada', () => {
     expect(screen.queryByText('Negocio propio')).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Registrar aprobación' })).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole('radio', { name: 'Modo negocio' }));
-    expect(await screen.findByRole('button', { name: 'Abrir administración' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Abrir administración' })).not.toBeInTheDocument();
     expect(screen.queryByRole('heading', { name: 'Solicitudes para revisión' })).not.toBeInTheDocument();
     expect(screen.getAllByText('Negocio propio').length).toBeGreaterThan(0);
   });

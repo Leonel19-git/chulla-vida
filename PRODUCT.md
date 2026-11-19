@@ -45,7 +45,7 @@ Actualización del 17/11: los botones sociales históricos de demostración fuer
 
 ## Ajuste vigente · 18 de noviembre de 2026
 
-Administración: `/administracion` ofrece revisión humana de solicitudes y documentos privados, correcciones y registro de decisiones con historial. Solo cuentas confirmadas con rol `admin`. No hay autoaprobación de negocios ni contraseñas compartidas en el código. Ver `docs/ADMINISTRACION_NEGOCIOS.md`.
+Equipo: `/equipo` y el alias `/administracion` abren un dashboard independiente con usuario y contraseña, sesión propia y cambio de clave inicial. Tiene revisión humana de solicitudes y documentos privados, correcciones e historial, con accesos individuales de administración y revisión. No aparece en el perfil del viajero ni incluye contraseñas en el código. Ver `docs/ACCESOS_EQUIPO.md` y `docs/ADMINISTRACION_NEGOCIOS.md`.
 
 La última petición prevalece sobre las referencias históricas a MIJIN y los cuatro videos regionales: ambos se retiran del inicio. Comunidad wambra pasa a «ECUADOR A TU RITMO»; Favoritos, Próximos viajes y Billetera y reservas sustituyen los accesos anteriores. Se mantienen modos negocio/viajero y el recorrido guiado actualizado.
 

@@ -46,7 +46,7 @@ export function AdminPanel({ onClose }: { onClose: () => void }) {
   </div></Dialog>;
 }
 
-function AdminWorkspace({ client, actorId, onDenied }: { client: SupabaseClient; actorId: string; onDenied: () => void }) {
+export function AdminWorkspace({ client, actorId, onDenied, onEditorial }: { client: SupabaseClient; actorId: string; onDenied: () => void; onEditorial?: () => void }) {
   const t = useT();
   const [filter, setFilter] = useState<ReviewFilter>('pending');
   const [page, setPage] = useState(0);
@@ -84,7 +84,7 @@ function AdminWorkspace({ client, actorId, onDenied }: { client: SupabaseClient;
       <div className="admin-work">{request && <RequestReview key={`${request.id}:${revision}`} client={client} actorId={actorId} request={request} onSaved={() => { setSuccess(t('Decisión registrada con tu usuario.')); setRevision(value => value + 1); }} onDenied={onDenied} />}</div>
     </div>
     <p className="admin-footnote">{t('La aprobación de identidad no activa ventas ni acredita seguridad o permisos turísticos.')}</p>
-    <button className="text-button" onClick={() => window.dispatchEvent(new Event('cv3:editorial'))}>{t('Estudio de contenido')}</button>
+    {onEditorial && <button className="text-button" onClick={onEditorial}>{t('Estudio de contenido')}</button>}
   </>;
 }
 

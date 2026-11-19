@@ -19,7 +19,7 @@ export class AdminAccessError extends Error {
 export async function requireAdministrator(client: SupabaseClient): Promise<string> {
   const { data, error } = await client.auth.getUser();
   if (error || !data.user?.email_confirmed_at) throw new AdminAccessError('signed_out');
-  const role = await client.rpc('is_admin');
+  const role = await client.rpc(data.user.app_metadata?.lane === 'staff' ? 'is_reviewer' : 'is_admin');
   if (role.error) throw new AdminAccessError('unavailable');
   if (role.data !== true) throw new AdminAccessError('denied');
   return data.user.id;

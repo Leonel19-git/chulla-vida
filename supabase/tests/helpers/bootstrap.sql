@@ -13,6 +13,12 @@ create table auth.users (
   email text unique,
   email_confirmed_at timestamptz,
   raw_user_meta_data jsonb not null default '{}',
+  raw_app_meta_data jsonb not null default '{}',
+  created_at timestamptz not null default now()
+);
+create table auth.sessions (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id),
   created_at timestamptz not null default now()
 );
 

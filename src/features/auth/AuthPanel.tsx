@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import type { Session } from '@supabase/supabase-js';
-import { ShieldCheck, MailCheck, PlayCircle, RefreshCw, Store, UserRound } from 'lucide-react';
+import { MailCheck, PlayCircle, RefreshCw, Store, UserRound } from 'lucide-react';
 import { TravelerProfile } from '../traveler/TravelerProfile';
 import { HostDashboard, type HostApplication, type HostDocument, type HostOrganization } from '../host/HostDashboard';
 import { RoleSwitch, useRole } from '../roles/RoleContext';
@@ -52,7 +52,6 @@ function AccountPanel({ experienceId, initialTab }: { experienceId?: string; ini
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [documents, setDocuments] = useState<PrivateDocument[]>([]);
   const [documentLinks, setDocumentLinks] = useState<Record<string, string>>({});
-  const [admin, setAdmin] = useState(false);
   const [message, setMessage] = useState('');
   const [revision, setRevision] = useState(0);
   const [requestKey, setRequestKey] = useState(() => crypto.randomUUID());
@@ -71,7 +70,7 @@ function AccountPanel({ experienceId, initialTab }: { experienceId?: string; ini
     const applySession = (nextSession: Session | null) => {
       const nextId = nextSession?.user.id ?? null;
       if (sessionUser.current !== nextId) {
-        setApplications([]); setOrganizations([]); setOwnIds([]); setInquiries([]); setDocuments([]); setDocumentLinks({}); setAdmin(false);
+        setApplications([]); setOrganizations([]); setOwnIds([]); setInquiries([]); setDocuments([]); setDocumentLinks({});
         setMessage(''); setRequestKey(crypto.randomUUID());
         if (!nextId) setWelcomeName(null);
         roleStore.setServer(null);
@@ -114,7 +113,7 @@ function AccountPanel({ experienceId, initialTab }: { experienceId?: string; ini
       const isAdmin = (roles.data as { role: string }[] | null)?.some(role => role.role === 'admin') ?? false;
       const orgList = (orgs.data ?? []) as Organization[];
       const own = ownOrganizationIds(userId, orgList, members.error ? [] : (members.data ?? []) as Membership[]);
-      setAdmin(isAdmin); setOrganizations(orgList); setOwnIds(own);
+      setOrganizations(orgList); setOwnIds(own);
       setApplications((requests.data ?? []) as Application[]);
       setInquiries(((questions.data ?? []) as Inquiry[]).filter(item => !item.traveler_id || item.traveler_id === userId));
       setDocuments((evidence.data ?? []) as PrivateDocument[]);
@@ -215,7 +214,6 @@ function AccountPanel({ experienceId, initialTab }: { experienceId?: string; ini
           {experienceId && <form className="auth-form" onSubmit={inquire}><h3>{t("Consultar esta experiencia")}</h3><p className="auth-fine">{t("Llega al equipo de CHULLA VIDA. Aún no hay disponibilidad confirmada.")}</p><label>{t("Tu pregunta")}<textarea className="field" maxLength={2000} minLength={1} value={message} onChange={event => setMessage(event.target.value)} required /></label><button className="button button-primary" disabled={busy || !message.trim()}>{t("Registrar consulta")}</button></form>}
           {inquiries.length > 0 && <section className="auth-section"><h3>{t("Tus consultas")}</h3>{inquiries.map(inquiry => <article className="auth-request" key={inquiry.id}><strong>{inquiry.experience_id}</strong><p>{inquiry.message}</p><span>{statusLabel[inquiry.status] ?? inquiry.status}</span></article>)}</section>}
         </>}
-      {admin && <button className="button button-secondary" onClick={() => window.dispatchEvent(new Event('cv3:admin'))}><ShieldCheck size={18} />{t('Abrir administración')}</button>}
     </>}
     <p role="status" className="auth-notice">{notice}</p>
   </section>;
