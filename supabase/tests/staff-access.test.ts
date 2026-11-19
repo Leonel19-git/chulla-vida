@@ -53,3 +53,15 @@ it('el revisor no obtiene administración y las cuentas de equipo no crean negoc
  await admin(db,'update public.staff_accounts set active=false where user_id=$1',[reviewer]);
  expect(await withStaff(reviewer,sessionId,s=>s.query('select public.is_reviewer() as allowed'))).toEqual([{allowed:false}]);
 });
+it('permite registrar una aprobación real de revisión con cada tipo de acceso de equipo',async()=>{
+ await admin(db,'update public.staff_accounts set active=true where user_id=$1',[reviewer]);
+ for(const [actor,sessionId]of [[staff,newSession],[reviewer,'20000000-0000-4000-8000-000000000003']]){
+  const [{id}]=await run<{id:string}>(db,user(owner),"select public.submit_merchant_application('Negocio de prueba para aprobación','business',true) as id");
+  const [{organization_id}]=await admin<{organization_id:string}>(db,'select organization_id from public.merchant_verification_requests where id=$1',[id]);
+  const path=`${organization_id}/${owner}/evidence.pdf`;
+  await run(db,user(owner),"insert into storage.objects(bucket_id,name) values('merchant-verification',$1)",[path]);
+  await run(db,user(owner),'insert into public.verification_documents(request_id,uploaded_by,object_path) values($1,$2,$3)',[id,owner,path]);
+  await withStaff(actor,sessionId,s=>s.query("select public.review_verification_request($1,'approved','Evidencia ficticia comprobada en prueba',$2::jsonb)",[id,JSON.stringify({identity:true,representation:true,documents:true})]));
+  expect(await run(db,user(owner),'select status from public.merchant_verification_requests where id=$1',[id])).toEqual([{status:'approved'}]);
+ }
+});

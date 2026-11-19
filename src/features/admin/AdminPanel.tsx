@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { ClipboardCheck, FileLock2, History, RefreshCw, ShieldCheck } from 'lucide-react';
 import { Dialog } from '../../components/chulla/Dialog';
@@ -99,6 +99,9 @@ function RequestReview({ client, actorId, request, onSaved, onDenied }: { client
   const [official, setOfficial] = useState(false);
   const [reference, setReference] = useState('');
   const [confirmed, setConfirmed] = useState(false);
+  const [attempted, setAttempted] = useState(false);
+  const form = useRef<HTMLFormElement>(null);
+  const requirementsId = useId();
   const [links, setLinks] = useState<Record<string, string>>({});
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const live = useRef(true);
@@ -109,8 +112,26 @@ function RequestReview({ client, actorId, request, onSaved, onDenied }: { client
   }, [client, request.id]);
   const own = request.applicant_id === actorId || request.organization?.owner_id === actorId;
   const pending = ['submitted', 'in_review', 'appealed'].includes(request.status);
-  const approvedReady = decision !== 'approved' || (Boolean(detail?.documents.length) && ['identity', 'representation', 'documents'].every(key => checklist[key]) && (!official || reference.trim().length >= 5));
-  const ready = Boolean(detail && decision && note.trim().length >= 5 && confirmed && approvedReady && !own && pending);
+  const missing: { field: string; message: string }[] = [];
+  if (!decision) missing.push({ field: 'decision', message: t('Elige qué decisión vas a registrar.') });
+  if (decision === 'approved') {
+    if (!detail?.documents.length) missing.push({ field: '', message: t('Faltan documentos. Solicítalos antes de aprobar.') });
+    const unchecked = ['identity', 'representation', 'documents'].find(key => !checklist[key]);
+    if (unchecked) missing.push({ field: unchecked, message: t('Marca las tres comprobaciones después de revisar la evidencia.') });
+    if (official && (reference.trim().length < 5 || reference.trim().length > 1000)) missing.push({ field: 'registry', message: t('Añade una referencia oficial de 5 a 1000 caracteres.') });
+  }
+  if (note.trim().length < 5 || note.trim().length > 2000) missing.push({ field: 'note', message: t('Escribe el motivo de la decisión (mínimo 5 caracteres).') });
+  if (!confirmed) missing.push({ field: 'confirmation', message: t('Confirma que quieres registrar esta decisión.') });
+  const ready = Boolean(detail && !missing.length && !own && pending);
+  const focusField = (name: string) => {
+    const field = form.current?.elements.namedItem(name);
+    if (field instanceof HTMLElement) field.focus();
+  };
+  const requestDocuments = () => {
+    setDecision('needs_changes'); setConfirmed(false); setAttempted(false); setError('');
+    if (!note.trim()) setNote(t('Adjunta documentos de identidad y representación del negocio para continuar la revisión.'));
+    focusField('note');
+  };
   const openDocument = async (document: ReviewDetail['documents'][number]) => {
     setBusy(true); setError('');
     try {
@@ -122,7 +143,9 @@ function RequestReview({ client, actorId, request, onSaved, onDenied }: { client
     finally { if (live.current) setBusy(false); }
   };
   const submit = async (event: FormEvent) => {
-    event.preventDefault(); if (!ready || busy || !decision) return;
+    event.preventDefault(); if (busy || !detail || own || !pending) return;
+    setAttempted(true); setError('');
+    if (!ready || !decision) { focusField(missing.find(item => item.field)?.field ?? ''); return; }
     setBusy(true); setError('');
     try { await decideRequest(client, actorId, request, { decision, note, checklist: { ...checklist, official_registry: official }, registryReference: official ? reference : undefined }); if (live.current) onSaved(); }
     catch (problem) { if (live.current) { if (problem instanceof AdminAccessError && problem.reason === 'denied') onDenied(); else setError(t('No se pudo registrar la revisión. Actualiza el estado antes de reintentar.')); } }
@@ -133,12 +156,18 @@ function RequestReview({ client, actorId, request, onSaved, onDenied }: { client
     <small>{t('Referencia:')} {request.id}</small>
     {request.applicant_note && <p>{request.applicant_note}</p>}{request.appeal_note && <p>{t('Motivo de la apelación')}: {request.appeal_note}</p>}
     <section><h5><FileLock2 size={18} />{t('Documentos privados')}</h5>{detail ? detail.documents.length ? <ul className="admin-documents">{detail.documents.map((document, index) => <li key={document.id}><span>{t('Documento {n}', { n: index + 1 })}</span><button className="button button-secondary" disabled={busy || Boolean(links[document.id])} onClick={() => void openDocument(document)}>{t('Preparar acceso privado al documento')}</button>{links[document.id] && <a className="button button-secondary" href={links[document.id]} target="_blank" rel="noreferrer noopener">{t('Abrir documento · vence en 60 s')}</a>}</li>)}</ul> : <p>{t('Todavía no hay documentos. Pide que los adjunten antes de aprobar.')}</p> : <p role="status">{t('Cargando documentos…')}</p>}</section>
-    {own ? <p role="note">{t('No puedes revisar tu propio negocio.')}</p> : pending && detail && <form className="auth-form" onSubmit={event => void submit(event)}><fieldset disabled={busy}>
-      <legend>{t('Registrar decisión')}</legend><label>{t('Decisión')}<select className="field" value={decision} required onChange={event => { setDecision(event.target.value as ReviewDecision); setConfirmed(false); }}><option value="">{t('Elige una opción')}</option><option value="needs_changes">{t('Solicitar correcciones')}</option><option value="rejected">{t('Rechazar con motivo')}</option><option value="approved">{t('Aprobar identidad')}</option></select></label>
-      {decision === 'approved' && <div className="admin-checklist">{([['identity', 'Identidad contrastada'], ['representation', 'Representación del negocio comprobada'], ['documents', 'Documentos revisados']] as const).map(([key, label]) => <label key={key}><input type="checkbox" checked={Boolean(checklist[key])} onChange={event => setChecklist(current => ({ ...current, [key]: event.target.checked }))} />{t(label)}</label>)}<label><input type="checkbox" checked={official} onChange={event => setOfficial(event.target.checked)} />{t('También comprobé un registro oficial')}</label>{official && <label>{t('Referencia oficial comprobada, solo si corresponde')}<input className="field" value={reference} required minLength={5} maxLength={1000} onChange={event => setReference(event.target.value)} /></label>}</div>}
-      <label>{t('Motivo de la revisión (mínimo 5 caracteres)')}<textarea className="field" rows={3} minLength={5} maxLength={2000} required value={note} onChange={event => setNote(event.target.value)} /></label>
-      <label className="admin-confirm"><input type="checkbox" checked={confirmed} onChange={event => setConfirmed(event.target.checked)} />{t('Confirmo esta decisión. Quedará registrada con mi usuario.')}</label>
-      <button className="button button-primary" type="submit" disabled={!ready || busy}>{busy ? t('Guardando…') : t('Guardar decisión')}</button>
+    {own ? <p role="note">{t('No puedes revisar tu propio negocio.')}</p> : pending && detail && <form ref={form} className="auth-form" noValidate onSubmit={event => void submit(event)}><fieldset disabled={busy}>
+      <legend>{t('Registrar decisión')}</legend><label>{t('Decisión')}<select name="decision" className="field" value={decision} required aria-invalid={attempted && !decision || undefined} onChange={event => { setDecision(event.target.value as ReviewDecision); setConfirmed(false); }}><option value="">{t('Elige una opción')}</option><option value="needs_changes">{t('Solicitar correcciones')}</option><option value="rejected">{t('Rechazar con motivo')}</option><option value="approved">{t('Aprobar identidad')}</option></select></label>
+      {decision === 'approved' && <div className="admin-checklist">{([['identity', 'Identidad contrastada'], ['representation', 'Representación del negocio comprobada'], ['documents', 'Documentos revisados']] as const).map(([key, label]) => <label key={key}><input name={key} type="checkbox" checked={Boolean(checklist[key])} aria-invalid={attempted && !checklist[key] || undefined} onChange={event => setChecklist(current => ({ ...current, [key]: event.target.checked }))} />{t(label)}</label>)}<label><input type="checkbox" checked={official} onChange={event => setOfficial(event.target.checked)} />{t('También comprobé un registro oficial')}</label>{official && <label>{t('Referencia oficial comprobada, solo si corresponde')}<input name="registry" className="field" value={reference} required minLength={5} maxLength={1000} aria-invalid={attempted && missing.some(item => item.field === 'registry') || undefined} onChange={event => setReference(event.target.value)} /></label>}</div>}
+      <label>{t('Motivo de la revisión (mínimo 5 caracteres)')}<textarea name="note" className="field" rows={3} minLength={5} maxLength={2000} required value={note} aria-invalid={attempted && missing.some(item => item.field === 'note') || undefined} onChange={event => setNote(event.target.value)} /></label>
+      <label className="admin-confirm"><input name="confirmation" type="checkbox" checked={confirmed} aria-invalid={attempted && !confirmed || undefined} onChange={event => setConfirmed(event.target.checked)} />{t('Confirmo esta decisión. Quedará registrada con mi usuario.')}</label>
+      <div id={requirementsId} className={`admin-requirements${ready ? ' is-ready' : ''}`}>
+        <strong>{t(ready ? 'Todo listo para guardar.' : 'Para guardar esta decisión')}</strong>
+        {!ready && <ul>{missing.map(item => <li key={item.field}>{item.message}</li>)}</ul>}
+        {decision === 'approved' && !detail.documents.length && <button type="button" className="button button-secondary" onClick={requestDocuments}>{t('Solicitar documentos')}</button>}
+      </div>
+      {attempted && !ready && <p role="alert" className="admin-validation">{t('Completa los requisitos indicados. La decisión todavía no se ha guardado.')}</p>}
+      <button className="button button-primary" type="submit" aria-describedby={requirementsId} disabled={busy}>{busy ? t('Guardando…') : t('Guardar decisión')}</button>
     </fieldset></form>}
     {error && <p role="alert">{error}</p>}
     {detail && <section><h5><History size={18} />{t('Historial de revisión')}</h5>{detail.history.length ? <ol className="admin-history">{detail.history.map(item => <li key={item.id}><strong>{t(STATUS[item.decision] ?? item.decision)}</strong><time>{item.created_at.slice(0, 10)}</time><p>{item.note}</p>{item.registry_reference && <small>{item.registry_reference}</small>}</li>)}</ol> : <p>{t('Sin decisiones anteriores.')}</p>}</section>}
