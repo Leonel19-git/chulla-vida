@@ -16,7 +16,11 @@ export default async function handler(req:VercelRequest,res:VercelResponse){
     if(!username||!['admin','reviewer'].includes(ticket.data.staff_role))throw new Error('Invalid ticket');
     const password=randomBytes(24).toString('base64url')+'!Aa7';
     const created=await client.auth.admin.createUser({email:staffIdentifier(username),password,email_confirm:true,app_metadata:{lane:'staff'},user_metadata:{display_name:username}});
-    if(created.error||!created.data.user)return res.status(409).json({error:'No se pudo crear la identidad del equipo.',stage:'identity',reasonCode:created.error?.code??'identity_unavailable'});
+    if(created.error||!created.data.user){
+      const secret=process.env.SUPABASE_SERVICE_ROLE_KEY||'__absent_server_secret__';
+      const reason=(created.error?.message??'Missing user response').replaceAll(secret,'[redacted]').replaceAll(password,'[redacted]');
+      return res.status(409).json({error:'No se pudo crear la identidad del equipo.',stage:'identity',reasonCode:created.error?.code??'identity_unavailable',providerStatus:created.error?.status,reason});
+    }
     const registered=await client.rpc('register_staff_account',{p_ticket_id:ticket.data.id,p_user_id:created.data.user.id});
     if(registered.error){await client.auth.admin.deleteUser(created.data.user.id);return res.status(409).json({error:'No se pudo registrar el acceso del equipo.',stage:'registration',reasonCode:registered.error.code,reason:registered.error.message});}
     return res.status(201).json({username,password,role:ticket.data.staff_role,mustChangePassword:true});
