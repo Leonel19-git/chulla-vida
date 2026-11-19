@@ -28,6 +28,14 @@ it('consume cada autorización una sola vez y asigna un actor individual con su 
  expect(await run(db,user(staff),'select username from public.staff_accounts')).toEqual([{username:'chulla.admin'}]);
  expect(await run(db,user(reviewer),'select role from public.user_roles')).toEqual([{role:'verification_reviewer'}]);
 });
+it('admite el alta transaccional del proveedor sin permitir identidades públicas de equipo',async()=>{
+ const staged='10000000-0000-4000-8000-000000000004';
+ await db.transaction(async tx=>{
+  await tx.query('insert into auth.users(id,email,email_confirmed_at) values($1,$2,now())',[staged,'staged.staff@staff.chulla-vida.invalid']);
+  await tx.query("update auth.users set raw_app_meta_data='{\"lane\":\"staff\"}' where id=$1",[staged]);
+ });
+ expect(await admin(db,'select id from auth.users where id=$1',[staged])).toEqual([{id:staged}]);
+});
 it('bloquea la revisión hasta cambiar la clave y rechaza sesiones emitidas antes del cambio',async()=>{
  await admin(db,"insert into auth.sessions(id,user_id,created_at) values($1,$2,now()-interval '1 hour')",[oldSession,staff]);
  expect(await withStaff(staff,oldSession,s=>s.query('select public.is_admin() as allowed'))).toEqual([{allowed:false}]);
